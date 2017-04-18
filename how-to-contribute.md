@@ -113,7 +113,7 @@ PR提交之后，请耐心等待维护者进行Review。
 
 为更好地促进 Contributor 间的交流，便于随时提出好的想法和反馈，我们创建了一个 Contributor Club 微信群，对成为 TiDB Contributor 有兴趣的同学可以添加 TiDB Robot 微信号，它会在后台和你打招呼，并积极招募你成为开源社区的一员。
 
-![tidb_rpbot](/images/tidb-robot.jpg)
+![tidb_rpbot](/media/tidb-robot.jpg)
 
 欢迎加入 TiDB Tech Writer 计划，让我们一起用文字的力量推动开源项目的发展。
 
@@ -132,5 +132,5 @@ PR提交之后，请耐心等待维护者进行Review。
 - 微信公众号：PingCAP
 
   [1]: http://on51si7u9.bkt.clouddn.com/meitu%20%281%29.jpg
-  [2]: http://on51si7u9.bkt.clouddn.com/2017-03-22%2010:48:31%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png
+  [2]: https://download.pingcap.org/images/tidb-convo.png
   [3]: https://guides.github.com/activities/contributing-to-open-source/convo.png
