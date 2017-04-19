@@ -28,5 +28,5 @@ tags: Tag1 Tag2
 ### 文档内容
 
 - 正文中不需要将blog的标题写在最前面 请将标题统一写在meta信息中 方便html中使用统一样式
-- 正文中用到的图片请统一放在blog或blog-cn repo的images目录下
+- 正文中用到的图片请统一放在blog或blog-cn repo的media目录下
 - 正文中引用的图片命名避免用1、2、3之类的 避免冲突
