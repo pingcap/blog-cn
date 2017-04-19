@@ -96,7 +96,7 @@ tags: TiDB
 ### Open Pull Requests
 一旦你新增一个pull request,讨论将围绕你的更改开始.其他贡献者和用户可能会进入讨论,但最终决定是由维护者决定的.你可能会被要求对你的pull request进行一些更改,如果是这样,请向你的branch添加更多代码并推送它们,它们将自动进入现有的pull request.
 
-![pr convo][3]
+![pr convo](media/pr-convo.png)
 
 如果你的pull request被合并,这会非常棒.如果没有被合并,不要灰心.也许你的更改不是项目维护者需要的.或者更改已经存在了.发生这种情况时,我们建议你根据收到的任何反馈来修改代码,并再次提出pull request.或创建自己的开源项目.
 
@@ -133,4 +133,3 @@ PR提交之后，请耐心等待维护者进行Review。
 
   [1]: http://on51si7u9.bkt.clouddn.com/meitu%20%281%29.jpg
   [2]: https://download.pingcap.org/images/tidb-convo.png
-  [3]: https://guides.github.com/activities/contributing-to-open-source/convo.png
