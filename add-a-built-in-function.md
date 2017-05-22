@@ -119,4 +119,4 @@ case ast.SHA, ast.SHA1:
 
 编辑按：添加 TiDB Robot 微信，加入 TiDB Contributor Club，无门槛参与开源项目，改变世界从这里开始吧（萌萌哒）。
 
-![tidb_rpbot](media/tidb-robot.jpg)
+![](media/tidb-robot.jpg "tidb_rpbot")
