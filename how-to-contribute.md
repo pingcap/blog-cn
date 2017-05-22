@@ -121,4 +121,4 @@ PR 提交之后，请耐心等待维护者进行 Review。
  
 为更好地促进 Contributor 间的交流，便于随时提出好的想法和反馈，我们创建了一个 Contributor Club 微信群，对成为 TiDB Contributor 有兴趣的同学可以添加 TiDB Robot 微信号，它会在后台和你打招呼，并积极招募你成为开源社区的一员。
  
-![](//blog-10039692.file.myqcloud.com/1495096157445_8989_1495096155449.png)
+![](media/tidb-robot.jpg "tidb_rpbot")
