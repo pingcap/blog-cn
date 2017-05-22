@@ -117,7 +117,7 @@ PR 提交之后，请耐心等待维护者进行 Review。
  
 **标注：本文「一个典型的开源项目是由什么组成的」及「齐步走为 Contributor」参考自英文 GitHub Guide，由社区成员朱武（GitHub ID: viile）、小卢（GitHub ID:lwhhhh）着手翻译并替换部分原文中的截图。GitHub Guides：如何参与一个 GitHub 开源项目英文原文地址： https://guides.github.com/activities/contributing-to-open-source/**
 
-**加入 TiDB Contributor Club
+**加入 TiDB Contributor Club**
  
 为更好地促进 Contributor 间的交流，便于随时提出好的想法和反馈，我们创建了一个 Contributor Club 微信群，对成为 TiDB Contributor 有兴趣的同学可以添加 TiDB Robot 微信号，它会在后台和你打招呼，并积极招募你成为开源社区的一员。
  
