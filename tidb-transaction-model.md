@@ -30,8 +30,8 @@ MVCC 其实并不是一个老的概念了，在传统的单机关系型数据库
 对于 MVCC 层，每一个 Key，在底层的 RocksDB 上都会存储同一个 Key 的多个版本，在底层存储上看来，形式如：
 
     MateKey                      --> key 的所有版本信息
-    DataKey(key+cersion_1)-->Value_v1
-    DataKey(key+cersion_2)-->Value_v2
+    DataKey(key+version_1)-->Value_v1
+    DataKey(key+version_2)-->Value_v2
 暴露给上层的接口行为定义：
 > * MVCCGet(key, version), 返回某 key 小于等于 version 的最大版本的值
 > * MVCCScan(startKey, endKey, limit, version), 返回  [startKey,  endKey)  区间内的 key 小于等于 version 的最大版本的键和值，上限 limit 个
@@ -41,7 +41,7 @@ MVCC 其实并不是一个老的概念了，在传统的单机关系型数据库
 
 给出一个 MVCCGet 的伪代码实现：
 
-    MVCCGet(key, cersion) {
+    MVCCGet(key, version) {
           versions = kv.Get(key) // read meta
           targetVer = nil
           for ver in versions {
