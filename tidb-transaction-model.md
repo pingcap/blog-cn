@@ -41,7 +41,7 @@ MVCC 其实并不是一个老的概念了，在传统的单机关系型数据库
 
 给出一个 MVCCGet 的伪代码实现：
 
-    MVCCGet(key, cersion) {
+    MVCCGet(key, version) {
           versions = kv.Get(key) // read meta
           targetVer = nil
           for ver in versions {
