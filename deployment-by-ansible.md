@@ -133,8 +133,8 @@ enable_firewalld = False
 enable_ntpd = False
 
 # binlog trigger
-#是否开启 pump，pump生成 TiDB 的 binlog 
-#如果有从此TiDB集群同步数据的需求，可以改为 True 开启
+#是否开启 pump，pump 生成 TiDB 的 binlog 
+#如果有从此 TiDB 集群同步数据的需求，可以改为 True 开启
 enable_binlog = False
 
 ```
@@ -237,8 +237,9 @@ ansible-playbook -i inventory.ini stop.yml
 ```
 
 *附录*
-> + ansible-playbook -i inventory.ini xxx.yml -k -K
+
+> **ansible-playbook -i inventory.ini xxx.yml -k -K**
 > 
-  -k 执行之后需要输入 ssh 连接用户的密码，如果做了中控机到所有节点的互信，则不需要此参数
->  
-  -K 执行之后需要输入 sudo 所需的密码，如果使用 root 用户或者 sudo 无需密码，则不需要此参数
+>   -k 执行之后需要输入 ssh 连接用户的密码，如果做了中控机到所有节点的互信，则不需要此参数
+>   
+    -K 执行之后需要输入 sudo 所需的密码，如果使用 root 用户或者 sudo 无需密码，则不需要此参数
