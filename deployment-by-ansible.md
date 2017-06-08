@@ -1,22 +1,22 @@
 ---
-title: 使用 ansible 安装部署 TiDB
+title: 使用 Ansible 安装部署 TiDB
 author: 刘博
 date: 2017-06-08
-summary: 作为一个分布式系统，在多个节点分别配置安装服务会相当繁琐。ansible 是基于 python 的自动化运维工具，糅合了众多老牌运维工具的优点实现了批量操作系统配置、批量程序的部署、批量运行命令等功能，而且使用简单，仅需在管理工作站上安装 ansible 程序配置被管控主机的IP信息，被管控的主机无客户端。选用自动化工具 ansible 来批量的安装、配置、部署 TiDB 。本文介绍如何通过 ansible 工具来批量安装，使整个过程简单化。
+summary: 作为一个分布式系统，在多个节点分别配置安装服务会相当繁琐。Ansible 是基于 Python 的自动化运维工具，糅合了众多老牌运维工具的优点实现了批量操作系统配置、批量程序的部署、批量运行命令等功能，而且使用简单，仅需在管理工作站上安装 Ansible 程序配置被管控主机的 IP 信息，被管控的主机无客户端。选用自动化工具 Ansible 来批量的安装、配置、部署 TiDB 。本文介绍如何通过 Ansible 工具来批量安装，使整个过程简单化。
 tags: Ansible TiDB
 ---
 
 ## 背景知识
 TiDB 作为一个分布式数据库，在多个节点分别配置安装服务会相当繁琐，为了简化操作以及方便管理，使用自动化工具来批量部署成为了一个很好的选择。
 
-ansible 是基于 python 研发的自动化运维工具，糅合了众多老牌运维工具的优点实现了批量操作系统配置、批量程序的部署、批量运行命令等功能，而且使用简单，仅需在管理工作站上安装 ansible 程序配置被管控主机的 IP 信息，被管控的主机无客户端。基于以上原因，我们选用自动化工具 ansible 来批量的安装配置以及部署 TiDB。
+Ansible 是基于 Python 研发的自动化运维工具，糅合了众多老牌运维工具的优点实现了批量操作系统配置、批量程序的部署、批量运行命令等功能，而且使用简单，仅需在管理工作站上安装 Ansible 程序配置被管控主机的 IP 信息，被管控的主机无客户端。基于以上原因，我们选用自动化工具 Ansible 来批量的安装配置以及部署 TiDB。
 
-下面我们来介绍如何使用 ansible 来部署 TiDB。
+下面我们来介绍如何使用 Ansible 来部署 TiDB。
 
 ## TiDB 安装环境配置如下
-操作系统使用 centos7.2 或者更高版本，文件系统使用 ext4。
+操作系统使用 CentOS7.2 或者更高版本，文件系统使用 EXT4。
 
-> 说明：低版本的操作系统(例如 centos6.6 )和 xfs 文件系统会有一些内核 bug，会影响性能，我们不推荐使用。
+> 说明：低版本的操作系统(例如 CentOS6.6 )和 XFS 文件系统会有一些内核 Bug，会影响性能，我们不推荐使用。
 
 | IP | Services |
 |----|----------|
@@ -29,10 +29,10 @@ ansible 是基于 python 研发的自动化运维工具，糅合了众多老牌�
 
 我们选择使用 3 个 PD、2 个 TiDB、1 个 TiKV，这里简单说一下为什么这样部署。
 
-+ 对于 PD 。PD 本身是一个分布式系统，由多个节点构成一个整体，并且同时有且只有一个主节点对外提供服务。各个节点之间通过选举算法来确定主节点，选举算法要求节点个数是奇数个(2n+1) ，1 个节点的风险比较高，所以我们选择使用 3 个节点。
-+ 对于 TiKV 。TiDB 底层使用分布式存储，我们推荐使用 2n+1 个备份，挂掉 n 个备份之后数据仍然可用。使用 1 备份或者 2 备份的话，有一个节点挂掉就会造成一部分数据不可用，所以我们选择使用 3 个节点、设置 3 个备份(默认值)。
++ 对于 PD 。PD 本身是一个分布式系统，由多个节点构成一个整体，并且同时有且只有一个主节点对外提供服务。各个节点之间通过选举算法来确定主节点，选举算法要求节点个数是奇数个 (2n+1) ，1 个节点的风险比较高，所以我们选择使用 3 个节点。
++ 对于 TiKV 。TiDB 底层使用分布式存储，我们推荐使用奇数 (2n+1) 个备份，挂掉 n 个备份之后数据仍然可用。使用 1 备份或者 2 备份的话，有一个节点挂掉就会造成一部分数据不可用，所以我们选择使用 3 个节点、设置 3 个备份 (默认值)。
 + 对于 TiDB 。我们的 TiDB 是无状态的，现有集群的 TiDB 服务压力大的话，可以在其他节点直接增加 TiDB 服务，无需多余的配置。我们选择使用两个 TiDB，可以做 HA 和负载均衡。
-+ 当然如果只是测试集群的话，完全可以使用一个 PD 、一个 TiDB 、三个 TiKV(少于三个的话需要修改备份数量)
++ 当然如果只是测试集群的话，完全可以使用一个 PD 、一个 TiDB 、三个 TiKV (少于三个的话需要修改备份数量)
 
 ## 下载 TiDB 安装包并解压
 
@@ -136,7 +136,6 @@ enable_ntpd = False
 #是否开启 pump，pump 生成 TiDB 的 binlog 
 #如果有从此 TiDB 集群同步数据的需求，可以改为 True 开启
 enable_binlog = False
-
 ```
 
 安装过程可以分为 root 用户安装和普通用户安装两种方式。有 root 用户当然是最好的，修改系统参数、创建目录等不会涉及到权限不够的问题，能够直接安装完成。
@@ -144,74 +143,74 @@ enable_binlog = False
 **下面介绍两种安装方式的详细过程，安装完成之后需要手动启动服务。**
 
 #### 1. 使用 root 用户安装
-+ 下载 binary 包到 downloads 目录下，并解压拷贝到 resources/bin 下，之后的安装过程就是使用的 resources/bin 下的二进制程序
++ 下载 Binary 包到 downloads 目录下，并解压拷贝到 resources/bin 下，之后的安装过程就是使用的 resources/bin 下的二进制程序
 
 ```
 ansible-playbook -i inventory.ini local_prepare.yml
 ```
 
-+ 初始化集群各个节点。会检查 inventory.ini 配置文件、python 版本、网络状态、操作系统版本等，并修改一些内核参数，创建相应的目录。
-    + 修改配置文件如下
++ 初始化集群各个节点。会检查 inventory.ini 配置文件、Python 版本、网络状态、操作系统版本等，并修改一些内核参数，创建相应的目录。
+    - 修改配置文件如下
+    
+    ```
+    ## Connection
+    # ssh via root:
+    ansible_user = root
+    # ansible_become = true
+    ansible_become_user = tidb
+    
+    # ssh via normal user
+    # ansible_user = tidb
+    ```
 
-      ```
-      ## Connection
-      # ssh via root:
-      ansible_user = root
-      # ansible_become = true
-      ansible_become_user = tidb
-      
-      # ssh via normal user
-      # ansible_user = tidb
-      ```
-
-    + 执行初始化命令
-
-      ```
-      ansible-playbook -i inventory.ini bootstrap.yml -k   #ansible-playbook 命令说明请见附录
-      ```
+    - 执行初始化命令
+        
+    ```
+    ansible-playbook -i inventory.ini bootstrap.yml -k   #ansible-playboo命令说明请见附录
+    ```
       
 + 安装服务。该步骤会在服务器上安装相应的服务，并自动设置好配置文件和所需脚本。
-    + 修改配置文件如下
-
-      ```
-      ## Connection
-      # ssh via root:
+    - 修改配置文件如下
+    
+    ```
+    ## Connection
+    # ssh via root:
       ansible_user = root
       ansible_become = true
       ansible_become_user = tidb
-      
-      # ssh via normal user
-      # ansible_user = tidb
-      ```
 
-    + 执行安装命令
+    # ssh via normal user
+    # ansible_user = tidb
+    ```
 
-      ```
-      ansible-playbook -i inventory.ini deploy.yml -k
-      ```
+    - 执行安装命令
+
+    ```
+    ansible-playbook -i inventory.ini deploy.yml -k
+    ```
 
 #### 2. 使用普通用户安装
-+ 下载 binary 包到中控机
++ 下载 Binary 包到中控机
 
 ```
 ansible-playbook -i inventory.ini local_prepare.yml
 ```
 
 + 初始化集群各个节点。
-    + 修改配置文件如下
+    - 修改配置文件如下
 
     ```
-      ## Connection
-      # ssh via root:
-      # ansible_user = root
-      # ansible_become = true
-      # ansible_become_user = tidb
-      
-      # ssh via normal user
-      ansible_user = tidb
+    ## Connection
+    # ssh via root:
+    # ansible_user = root
+    # ansible_become = true
+    # ansible_become_user = tidb
+    
+    # ssh via normal user
+    ansible_user = tidb
     ```
 
-    + 执行初始化命令
+    - 执行初始化命令
 
     ```
     ansible-playbook -i inventory.ini bootstrap.yml -k -K
@@ -242,4 +241,4 @@ ansible-playbook -i inventory.ini stop.yml
 > 
 >   -k 执行之后需要输入 ssh 连接用户的密码，如果做了中控机到所有节点的互信，则不需要此参数
 >   
-    -K 执行之后需要输入 sudo 所需的密码，如果使用 root 用户或者 sudo 无需密码，则不需要此参数
+>   -K 执行之后需要输入 sudo 所需的密码，如果使用 root 用户或者 sudo 无需密码，则不需要此参数
