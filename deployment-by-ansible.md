@@ -57,7 +57,7 @@ cd tidb-ansible-master && ls
 
 ```
 ansible.cfg: ansible 配置文件
-inventoty.ini: 组和主机的相关配置
+inventory.ini: 组和主机的相关配置
 conf: TiDB 相关配置模版
 group_vars: 相关变量配置
 scripts: grafana 监控 json 模版
