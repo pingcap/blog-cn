@@ -1,8 +1,9 @@
+---
 title: 来自 PingCAP CEO 的信：说在 B 轮融资完成之际
-author: 刘奇
+author: 刘奇 黄东旭 崔秋
 date: 2017-06-13
 summary: 平时技术说得多，今天说点走心的。
-tags:B 轮
+tags: PingCAP
 ---
 
 平时技术说得多，今天说点走心的。
