@@ -3,7 +3,7 @@ title: TiKV 的 MVCC（Multi-Version Concurrency Control）机制
 author: ivan yang
 date: 2016-11-22
 summary: 事务隔离在数据库系统中有着非常重要的作用，因为对于用户来说数据库必须提供这样一个“假象”：当前只有这么一个用户连接到了数据库中，这样可以减轻应用层的开发难度。但是，对于数据库系统来说，因为同一时间可能会存在很多用户连接，那么许多并发问题，比如数据竞争（data race），就必须解决。在这样的背景下，数据库管理系统（简称 DBMS）就必须保证并发操作产生的结果是安全的，通过可串行化（serializability）来保证。
-tags: TiKV MVCC
+tags: TiKV 可串行化 多版本并发控制 2PC 隔离级别
 ---
 
 

@@ -3,7 +3,7 @@ title: Percolator 和 TiDB 事务算法
 author: 黄东旭
 date: 2016-11-22
 summary: 本文先概括的讲一下 Google Percolator 的大致流程。Percolator 是 Google 的上一代分布式事务解决方案，构建在 BigTable 之上，在 Google 内部用于网页索引更新的业务。TiDB 的事务模型沿用了 Percolator 的事务模型。
-tags: TiDB
+tags: TiDB Percolator 事务
 ---
 
 

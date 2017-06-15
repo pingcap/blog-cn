@@ -3,7 +3,7 @@ title: TiKV 源码解析系列 - Placement Driver
 author: 唐刘
 date: 2017-01-08
 summary: Placement Driver (后续以 PD 简称) 是 TiDB 里面全局中心总控节点，它负责整个集群的调度，负责全局 ID 的生成，以及全局时间戳 TSO 的生成等。PD 还保存着整个集群 TiKV 的元信息，负责给 client 提供路由功能。
-tags: TiKV PD
+tags: TiKV Placement-Driver PD 集群调度 源码解析
 ---
 
 
