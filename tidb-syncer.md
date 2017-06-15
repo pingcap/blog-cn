@@ -3,7 +3,7 @@ title: 解析 TiDB 在线数据同步工具 Syncer
 author: 崔秋 唐刘
 date: 2016-11-21
 summary: TiDB 是一个完全分布式的关系型数据库，从诞生的第一天起，我们就想让它来兼容 MySQL 语法，希望让原有的 MySQL 用户 (不管是单机的 MySQL，还是多机的 MySQL Sharding) 都可以在基本不修改代码的情况下，除了可以保留原有的 SQL 和 ACID 事务之外，还可以享受到分布式带来的高并发，高吞吐和 MPP 的高性能。
-tags: TiDB
+tags: TiDB 数据同步 基础软件 Syncer Binlog
 ---
 
 

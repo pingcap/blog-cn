@@ -3,7 +3,7 @@ title: How do we build TiDB
 author: 刘奇
 date: 2016-10-01
 summary: 首先我们聊聊 Database 的历史，在已经有这么多种数据库的背景下我们为什么要创建另外一个数据库；以及说一下现在方案遇到的困境，说一下 Google Spanner 和 F1，TiKV 和 TiDB，说一下架构的事情，在这里我们会重点聊一下 TiKV。因为我们产品的很多特性是 TiKV 提供的，比如说跨数据中心的复制，Transaction，auto-scale...
-tags: TiDB
+tags: 架构 Raft MVCC 分布式事务 Placement-Driver PD Go
 ---
 
 
