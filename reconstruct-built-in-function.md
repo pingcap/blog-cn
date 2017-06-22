@@ -9,6 +9,7 @@ tags: TiDB
 这是十分钟成为 TiDB Contributor 系列的第二篇文章，让大家可以无门槛参与大型开源项目，感谢社区为 TiDB 带来的贡献，也希望参与 TiDB Community 能为你的生活带来更多有意义的时刻。
 
 为了加速表达式计算速度，最近我们对表达式的计算框架进行了重构，这篇教程为大家分享如何利用新的计算框架为 TiDB 重写或新增 built-in 函数。对于部分背景知识请参考这篇文章，本文将首先介绍利用新的表达式计算框架重构 built-in 函数实现的流程，然后以一个函数作为示例进行详细说明，最后介绍重构前后表达式计算框架的区别。
+
 ## 重构 built-in 函数整体流程
 
 1. 在 TiDB 源码 expression 目录下选择任一感兴趣的函数，假设函数名为 XX
@@ -188,7 +189,7 @@ select * from t where c1 + CONCAT( c2, c3 < “1.1” )
 对于上述 select 语句 where 条件中的表达式：
 在**编译阶段**，TiDB 将构建出如下图所示的表达式树:
 
-![重构前表达式计算框架](http://static.zybuluo.com/zyytop/240qmd0q4n8ow4w12llpaucn/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A1%86%E6%9E%B6%E9%87%8D%E6%9E%84%28%E7%A4%BE%E5%8C%BA%29.jpg)
+![](http://static.zybuluo.com/zyytop/240qmd0q4n8ow4w12llpaucn/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A1%86%E6%9E%B6%E9%87%8D%E6%9E%84%28%E7%A4%BE%E5%8C%BA%29.jpg)
 
 在**执行阶段**，调用根节点的 eval 方法，通过后续遍历表达式树对表达式进行计算。
 
