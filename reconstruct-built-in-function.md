@@ -258,6 +258,6 @@ TiDB Contributor Club 将大家聚集起来，我们互相分享、讨论，一�
 加入 TiDB Contributor Club 请添加我们的 AI 微信：
 
 TiDB Robot 微信二维码
-![tidb_rpbot](/media/tidb-robot.jpg)
+![](media/tidb-robot.jpg "tidb_rpbot")
  
 
