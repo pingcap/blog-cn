@@ -15,14 +15,16 @@ tags: TiDB
 1. 在 TiDB 源码 expression 目录下选择任一感兴趣的函数，假设函数名为 XX
 
 2. 重写 **XXFunctionClass.getFunction()** 方法
-   该方法参照 MySQL 规则，根据 built-in 函数的参数类型推导函数的返回值类型
-   根据参数的个数、类型、以及函数的返回值类型生成不同的函数签名，关于函数签名的详细介绍见文末附录
+
+   - 该方法参照 MySQL 规则，根据 built-in 函数的参数类型推导函数的返回值类型
+   - 根据参数的个数、类型、以及函数的返回值类型生成不同的函数签名，关于函数签名的详细介绍见文末附录
 
 3. 实现该 built-in 函数对应的所有函数签名的 **evalYY()** 方法，此处 YY 表示该函数签名的返回值类型
 
 4. 添加测试：
-   在 expression 目录下，完善已有的 TestXX() 方法中关于该函数实现的测试
-   在 executor 目录下，添加 SQL 层面的测试
+
+   - 在 expression 目录下，完善已有的 TestXX() 方法中关于该函数实现的测试
+   - 在 executor 目录下，添加 SQL 层面的测试
 
 5. 运行 make dev，确保所有的 test cast 都能跑过
 
@@ -30,11 +32,12 @@ tags: TiDB
 
 这里以重写 LENGTH() 函数的 PR 为例，进行详细说明
 
-### 首先看 expression/builtin_string.go：
+**首先看 expression/builtin_string.go:**
 
 （1）实现 lengthFunctionClass.getFunction() 方法
 
 该方法主要完成两方面工作：
+
 1. 参照 MySQL 规则推导 LEGNTH 的返回值类型
 2. 根据 LENGTH 函数的参数个数、类型及返回值类型生成函数签名。由于 LENGTH 的参数个数、类型及返回值类型只存在确定的一种情况，因此此处没有定义新的函数签名类型，而是修改已有的 builtinLengthSig，使其**组合了 baseIntBuiltinFunc（表示该函数签名返回值类型为 int）**
 
@@ -77,7 +80,7 @@ func (b *builtinLengthSig) evalInt(row []types.Datum) (int64, bool, error) {
 }
 ```
 
-### 然后看 expression/builtin_string_test.go，对已有的 TestLength() 方法进行完善：
+**然后看 expression/builtin\_string\_test.go，对已有的 TestLength() 方法进行完善：**
 
 ```go
 func (s *testEvaluatorSuite) TestLength(c *C) {
@@ -127,7 +130,7 @@ func (s *testEvaluatorSuite) TestLength(c *C) {
 
 
 
-### 最后看 executor/executor_test.go，对 LENGTH 的实现进行 SQL 层面的测试：
+**最后看 executor/executor_test.go，对 LENGTH 的实现进行 SQL 层面的测试：**
 
 
 ```go
@@ -219,12 +222,14 @@ select * from t where c1 + CONCAT( c2, c3 < “1.1” )
 - 对于一个 built-in 函数，由于其参数个数、类型以及返回值类型的不同，可能会生成多个函数签名分别用来处理不同的情况。对于大多数 built-in 函数，其每个参数类型及返回值类型均确定，此时只需要生成一个函数签名。
 - 对于较为复杂的返回值类型推导规则，可以参考 CONCAT 函数的实现和测试。可以利用 MySQLWorkbench 工具运行查询语句 `select funcName(arg0, arg1, ...)` 观察 MySQL 的 built-in 函数在传入不同参数时的返回值数据类型。
 - 在 TiDB 表达式的运算过程中，只涉及 6 种运算类型(目前正在实现对 JSON 类型的支持)，分别是
+
 1. int (int64)
 2. real (float64)
 3. decimal
 4. string
 5. Time
 6. Duration
+   
    通过 WrapWithCastAsXX() 方法可以将一个表达式转换为对应的类型。
 
 - 对于一个函数签名，其返回值类型已经确定，所以定义时需要组合与该类型对应的 baseXXBuiltinFunc，并实现 evalXX() 方法。(XX 不超过上述 6 种类型的范围)
