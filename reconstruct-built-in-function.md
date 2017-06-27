@@ -1,7 +1,7 @@
 ---
 title: 十分钟成为 Contributor 系列 | 为 TiDB 重构 built-in 函数
 author: 徐怀宇
-date: 2017-6-22
+date: 2017-06-22
 summary: 为了加速表达式计算速度，最近我们对表达式的计算框架进行了重构，这篇教程为大家分享如何利用新的计算框架为 TiDB 重写或新增 built-in 函数。
 tags: TiDB
 ---
