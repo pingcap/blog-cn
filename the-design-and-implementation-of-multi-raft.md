@@ -19,7 +19,7 @@ TiKV 是一个分布式的 KV 系统，它采用 Raft 协议保证数据的强�
 
 TiKV 的整体架构比较简单，如下：
 
-![1.png](media/tikv-architecture.png)
+![](media/tikv-architecture.png)
 
 **Placement Driver** : Placement Driver (PD) 负责整个集群的管理调度。
 
