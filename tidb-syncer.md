@@ -29,7 +29,7 @@ TiDB 是一个完全分布式的关系型数据库，从诞生的第一天起，
 2) MySQL Slave 的 I/O Thread 将 MySQL Master 的 Binlog 同步到本地保存为 Relay Log
 3）MySQL Slave 的 SQL Thread 读取本地的 Relay Log，将数据变化同步到自身
 
-![mysql-replication](media/mysql_replication.jpg)
+![](media/mysql_replication.jpg)
 
 ####MySQL Binlog 
 
