@@ -1,13 +1,12 @@
 ---
 title: TiDB Best Practice
 author: 申砾
-date: 2017-07-04
+date: 2017-07-05
 summary: 本文档用于总结在使用 TiDB 时候的一些最佳实践，主要涉及 SQL 使用、OLAP/OLTP 优化技巧，特别是一些 TiDB 专有的优化开关。建议先阅读讲解 TiDB 原理的三篇文章(讲存储，说计算，谈调度)，再来看这篇文章。
-
 tags: TiDB
 ---
 
-本文档用于总结在使用 TiDB 时候的一些最佳实践，主要涉及SQL 使用、OLAP/OLTP 优化技巧，特别是一些 TiDB 专有的优化开关。
+本文档用于总结在使用 TiDB 时候的一些最佳实践，主要涉及 SQL 使用、OLAP/OLTP 优化技巧，特别是一些 TiDB 专有的优化开关。
 建议先阅读讲解 TiDB 原理的三篇文章([讲存储](https://pingcap.com/blog-tidb-internal-1-zh)，[说计算](https://pingcap.com/blog-tidb-internal-2-zh)，[谈调度](https://pingcap.com/blog-tidb-internal-3-zh))，再来看这篇文章。
 
 ## 前言
@@ -57,8 +56,8 @@ PD 会根据整个 TiKV 集群的状态，对集群的负载进行调度。调�
 
 TiDB 自动将 SQL 结构映射为 KV 结构。具体的可以参考[这篇文档](https://pingcap.com/blog-tidb-internal-2-zh)。简单来说，TiDB 做了两件事：
 
-+ 一行数据映射为一个 KV，Key 以 TableID 构造前缀，以行 ID 为后缀
-+ 一条索引映射为一个 KV，Key 以 TableID+IndexID 构造前缀，以索引值构造后缀
++ 一行数据映射为一个 KV，Key 以 `TableID` 构造前缀，以行 ID 为后缀
++ 一条索引映射为一个 KV，Key 以 `TableID+IndexID` 构造前缀，以索引值构造后缀
 
 可以看到，对于一个表中的数据或者索引，会具有相同的前缀，这样在 TiKV 的 Key 空间内，这些 Key-Value 会在相邻的位置。那么当写入量很大，并且集中在一个表上面时，就会造成写入的热点，特别是连续写入的数据中某些索引值也是连续的(比如 update time 这种按时间递增的字段)，会再很少的几个 Region 上形成写入热点，成为整个系统的瓶颈。同样，如果所有的数据读取操作也都集中在很小的一个范围内 (比如在连续的几万或者十几万行数据上)，那么可能造成数据的访问热点。
 
@@ -87,7 +86,7 @@ TiDB 支持完整的二级索引，并且是全局索引，很多查询可以通
 
 	有两种情况不会涉及到两次访问的问题：
 	
-	- 索引中的列已经满足了查询需求。比如 Table t 上面的列 c 有索引，查询是 `select c from t where c > 10`; 这个时候，只需要访问索引，就可以拿到所需要的全部数据。这种情况我们称之为覆盖索引(Covering Index)。所以如果很关注查询性能，可以将部分不需要过滤但是需要再查询结果中返回的列放入索引中，构造成组合索引，比如这个例子： `select c1, c2 from t where c1 > 10`; 要优化这个查询可以创建组合索引 Index c12 (c1, c2)。
+	- 索引中的列已经满足了查询需求。比如 Table t 上面的列 c 有索引，查询是 `select c from t where c > 10`; 这个时候，只需要访问索引，就可以拿到所需要的全部数据。这种情况我们称之为覆盖索引(Covering Index)。所以如果很关注查询性能，可以将部分不需要过滤但是需要再查询结果中返回的列放入索引中，构造成组合索引，比如这个例子： `select c1, c2 from t where c1 > 10`; 要优化这个查询可以创建组合索引 `Index c12 (c1, c2)`。
 	- 表的 Primary Key 是整数类型。在这种情况下，TiDB 会将 Primary Key 的值当做行 ID，所以如果查询条件是在 PK 上面，那么可以直接构造出行 ID 的范围，直接扫描 Table 数据，获取结果。
 
 + 查询并发度
@@ -122,7 +121,10 @@ TiDB 支持完整的二级索引，并且是全局索引，很多查询可以通
 
 在部署之前请务必阅读 [TiDB 部署建议以及对硬件的需求](https://github.com/pingcap/docs-cn/blob/master/op-guide/recommendation.md)。
 
-推荐通过 [TiDB-Ansible](https://github.com/pingcap/tidb-ansible) 部署 TiDB 集群，这个工具可以部署、停止、销毁、升级整个集群，非常方便易用。具体的使用文档在[这里](https://github.com/pingcap/docs-cn/blob/master/op-guide/ansible-deployment.md)。非常不推荐手动部署，后期的维护和升级会很麻烦。
+推荐通过 [TiDB-Ansible](https://github.com/pingcap/tidb-ansible "TiDB-Ansible") 
+部署 TiDB 集群，这个工具可以部署、停止、销毁、升级整个集群，非常方便易用。
+
+具体的使用文档在[这里](https://github.com/pingcap/docs-cn/blob/master/op-guide/ansible-deployment.md)。非常不推荐手动部署，后期的维护和升级会很麻烦。
 
 ### 导入数据
 
@@ -185,7 +187,8 @@ for i from 0 to 23:
 
 了解一个系统或者解决使用中的问题最好的方法是阅读文档，明白实现原理，TiDB 有大量的官方文档，希望大家在遇到问题的时候能先尝试通过文档或者搜索 Issue list 寻找解决方案。官方文档在[这里](https://github.com/pingcap/docs-cn)。如果希望阅读英文文档，可以看[这里](https://github.com/pingcap/docs)。
 
-其中的 [FAQ](https://github.com/pingcap/docs-cn/blob/master/FAQ.md) 和[故障诊断](https://github.com/pingcap/docs-cn/blob/master/trouble-shooting.md)章节建议大家仔细阅读。另外 TiDB 还有一些不错的工具，也有配套的文档，具体的见各项工具的 GitHub 页面。
+其中的 [FAQ](https://github.com/pingcap/docs-cn/blob/master/FAQ.md) 
+和[故障诊断](https://github.com/pingcap/docs-cn/blob/master/trouble-shooting.md)章节建议大家仔细阅读。另外 TiDB 还有一些不错的工具，也有配套的文档，具体的见各项工具的 GitHub 页面。
 
 除了文档之外，还有很多不错的文章介绍 TiDB 的各项技术细节内幕，大家可以关注下面这些文章发布渠道：
 
