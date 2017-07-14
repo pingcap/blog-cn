@@ -8,7 +8,7 @@ tags: TiDB
 
 这是十分钟成为 TiDB Contributor 系列的第二篇文章，让大家可以无门槛参与大型开源项目，感谢社区为 TiDB 带来的贡献，也希望参与 TiDB Community 能为你的生活带来更多有意义的时刻。
 
-为了加速表达式计算速度，最近我们对表达式的计算框架进行了重构，这篇教程为大家分享如何利用新的计算框架为 TiDB 重写或新增 built-in 函数。对于部分背景知识请参考这篇文章，本文将首先介绍利用新的表达式计算框架重构 built-in 函数实现的流程，然后以一个函数作为示例进行详细说明，最后介绍重构前后表达式计算框架的区别。
+为了加速表达式计算速度，最近我们对表达式的计算框架进行了重构，这篇教程为大家分享如何利用新的计算框架为 TiDB 重写或新增 built-in 函数。对于部分背景知识请参考[这篇文章](https://pingcap.com/blog-add-a-built-in-function-zh)，本文将首先介绍利用新的表达式计算框架重构 built-in 函数实现的流程，然后以一个函数作为示例进行详细说明，最后介绍重构前后表达式计算框架的区别。
 
 ## 重构 built-in 函数整体流程
 
@@ -244,25 +244,24 @@ TiDB Contributor Club 将大家聚集起来，我们互相分享、讨论，一�
 感谢你的参与和贡献，在开源的道路上我们将义无反顾地走下去，和你一起。
 
 **成为 New Contributor 赠送限量版马克杯**的活动还在继续中，任何一个新加入集体的小伙伴都将收到我们充满了诚意的礼物，很荣幸能够认识你，也很高兴能和你一起坚定地走得更远。
-
+ 
 #### 成为 New Contributor 获赠限量版马克杯，马克杯获取流程如下：
-
+ 
 1. 提交 PR
 2. PR提交之后，请耐心等待维护者进行 Review。
-   目前一般在一到两个工作日内都会进行 Review，如果当前的 PR 堆积数量较多可能回复会比较慢。
-   代码提交后 CI 会执行我们内部的测试，你需要保证所有的单元测试是可以通过的。期间可能有其它的提交会与当前 PR 冲突，这时需要修复冲突。
-   维护者在 Review 过程中可能会提出一些修改意见。修改完成之后如果 reviewer 认为没问题了，你会收到 LGTM(looks good to me) 的回复。当收到两个及以上的 LGTM 后，该 PR 将会被合并。
+目前一般在一到两个工作日内都会进行 Review，如果当前的 PR 堆积数量较多可能回复会比较慢。
+代码提交后 CI 会执行我们内部的测试，你需要保证所有的单元测试是可以通过的。期间可能有其它的提交会与当前 PR 冲突，这时需要修复冲突。
+维护者在 Review 过程中可能会提出一些修改意见。修改完成之后如果 reviewer 认为没问题了，你会收到 LGTM(looks good to me) 的回复。当收到两个及以上的 LGTM 后，该 PR 将会被合并。
 3. 合并 PR 后自动成为 Contributor，会收到来自 PingCAP Team 的感谢邮件，请查收邮件并填写领取表单
 
-- 表单填写地址：http://cn.mikecrm.com/01wE8tX
-
+ - 表单填写地址：[http://cn.mikecrm.com/01wE8tX](http://cn.mikecrm.com/01wE8tX)
+ 
 4. 后台 AI 核查 GitHub ID 及资料信息，确认无误后随即便快递寄出属于你的限量版马克杯
 5. 期待你分享自己参与开源项目的感想和经验，TiDB Contributor Club 将和你一起分享开源的力量
-
-
-了解更多关于 TiDB 的资料请登陆我们的官方网站：https://pingcap.com
-
+ 
+ 
+了解更多关于 TiDB 的资料请登陆我们的官方网站：[https://pingcap.com](https://pingcap.com)
+ 
 加入 TiDB Contributor Club 请添加我们的 AI 微信：
-
-TiDB Robot 微信二维码
+ 
 ![](media/tidb-robot.jpg "tidb_rpbot")
