@@ -8,11 +8,12 @@ tags: TiDB SQL
 
 ## 子查询简介
 
-子查询是嵌套在另一个查询中的 SQL 表达式，比较常见的是嵌套在 FROM 子句中，如 `SELECT ID FROM (SELECT * FROM SRC) AS T`。对于出现在 FROM 中的子表达式，一般的 SQL 优化器都会处理的很好。但是当子查询出现在 `WHERE` 子句或 `SELECT` 列表中时，优化的难度就会大大增加，因为这时子查询可以出现在表达式中的任何位置，如 `CASE...WHEN...` 子句等。
+子查询是嵌套在另一个查询中的 SQL 表达式，比较常见的是嵌套在 `FROM` 子句中，如 
+    `SELECT ID FROM (SELECT * FROM SRC) AS T`。对于出现在 `FROM` 中的子表达式，一般的 SQL 优化器都会处理的很好。但是当子查询出现在 `WHERE` 子句或 `SELECT` 列表中时，优化的难度就会大大增加，因为这时子查询可以出现在表达式中的任何位置，如 `CASE...WHEN...` 子句等。
 
 对于不在 `FROM` 子句出现的子查询，分为“关联子查询”(Correlated Subquery) 和“非关联子查询”。关联子查询是指子查询中存在外部引用的列，例如：
 
-```
+```sql
 ELECT * FROM SRC WHERE
 EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 ```
@@ -26,9 +27,9 @@ EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 
 + 存在性测试（Existential Test），如NOT EXISTS(SELECT...)，T.a IN (SELECT...)
 
-对于简单的存在性测试类的子查询，一般的做法是将其改写成 SEMI-JOIN。但是很少有文献给出通用性的算法，指出什么样的查询可以“去关联化”。对于不能去关联化的子查询，数据库的做法通常是使用类似 Nested Loop 的方式去执行，称为 correlated execution。
+对于简单的存在性测试类的子查询，一般的做法是将其改写成 `SEMI-JOIN`。但是很少有文献给出通用性的算法，指出什么样的查询可以“去关联化”。对于不能去关联化的子查询，数据库的做法通常是使用类似 Nested Loop 的方式去执行，称为 correlated execution。
 
-TiDB 沿袭了 SQL Server 对子查询的处理思想，引入Apply 算子将子查询用代数形式表示，称为归一化，再根据 Cost 信息，进行去关联化。
+TiDB 沿袭了 SQL Server 对子查询的处理思想，引入 Apply 算子将子查询用代数形式表示，称为归一化，再根据 Cost 信息，进行去关联化。
 
 ## Apply 算子
 
@@ -40,17 +41,17 @@ Apply 算子的语义是：
 
 公式中的 E 代表一个“参数化”的子查询。在每一次执行中，Apply 算子会向关系 R 取一条记录 r，作为参数传入 E 中，然后让 r 和 E(r) 做 ⊗ 操作。⊗ 会根据子查询类型的不同而不同，通常是半连接 ⋉。
 
-对于SQL 语句：
+对于 SQL 语句：
 
-```
+```sql
 SELECT * FROM SRC WHERE
 EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 ```
-它的Apply 算子表示是：
+它的 Apply 算子表示是：
 
 ![](http://static.zybuluo.com/zyytop/j3bd2utrbeqeaw4hr43ydpxd/2.png)
 
-对于出现在 SELECT 列表中、GROUP BY 列表中的子查询，道理也是类似的。所以 Apply 是可以表示出现在任意位置的子查询的。
+对于出现在 `SELECT` 列表中、`GROUP BY` 列表中的子查询，道理也是类似的。所以 Apply 是可以表示出现在任意位置的子查询的。
 
 ## 去关联化
 
@@ -60,14 +61,14 @@ EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 
 根据上述规则，你可以将所有的确定性 SQL 子查询去关联化。例如 SQL 语句：
 
-```
+```sql
 SELECT C_CUSTKEY
 FROM CUSTOMER WHERE 1000000 <
 (SELECT SUM(O_TOTALPRICE)
 FROM ORDER WHERE O_CUSTKEY = C_CUSTKEY)
 ```
 
-其中两个 CUSTKEY 均为主键。转换成 Apply 之后的表达式为：
+其中两个 `CUSTKEY` 均为主键。转换成 Apply 之后的表达式为：
 
 ![](http://static.zybuluo.com/zyytop/y6o28jwzzn1dnnx4sbfa3q8j/4.png)
 
@@ -89,7 +90,7 @@ FROM ORDER WHERE O_CUSTKEY = C_CUSTKEY)
 
 TiDB 在去关联化方面，目前只支持将关联子查询改写成半连接和左外半连接。例如，对于查询：
 
-```
+```sql
 SELECT * FROM SRC WHERE
 EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 ```
@@ -100,7 +101,7 @@ TiDB 做出的 Plan 为：
 
 当子查询出现在 SELECT 子句当中时：
 
-```
+```sql
 SELECT CASE WHEN
 EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 THEN 1 ELSE 2 END FROM SRC
