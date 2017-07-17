@@ -1,8 +1,8 @@
 ---
-title: Building a Reliable Large-Scale Distributed Database: Principles and Practice
+title: Building a Reliable Large-Scale Distributed Database - Principles and Practice
 author: 申砾
 date: 2016-10-21
-summary: 日前，PingCAP Engineering VP 申砾受邀参加 2016 中国开源年会，并发表了《Building a Reliable Large-Scale Distributed Database: Principles and Practice》主题演讲。本文为演讲实录。
+summary: 日前，PingCAP Engineering VP 申砾受邀参加 2016 中国开源年会，并发表了《Building a Reliable Large-Scale Distributed Database - Principles and Practice》主题演讲。本文为演讲实录。
 tags: TiDB NewSQL Test 
 ---
 
