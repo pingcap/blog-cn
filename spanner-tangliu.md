@@ -1,5 +1,5 @@
 ---
-title: Spanner: CAP, TrueTime and Transaction
+title: Spanner - CAP, TrueTime and Transaction
 author: 唐刘
 date: 2017-02-21
 summary: 最近大家非常关注的一件事情就是 Google Spanner Cloud 的发布，这应该算是 NewSQL 又一个里程碑的事件。在本篇文章中，唐刘同学与大家分享了他自己对 Spanner 的理解，Spanner 的一些关键技术的实现以及与 TiDB 的相关对比。
@@ -40,7 +40,7 @@ TiDB 在设计的时候也是一个 CP + HA 系统，多数时候也是一个 CA
 
 1. 全局序列号生成器是一个典型的单点，即使会做一些 failover 的处理，但它仍然是整个系统的一个瓶颈。同时也避免不了网络开销。但全局序列号的实现非常简单，Google 之前的 Percolator 以及现在 TiDB 都是采用这种方式。
 2. 为什么要用时间？判断两个事件的先后顺序，时间是一个非常直观的度量方式，另外，如果用时间跟事件关联，那么我们就能知道某一个时间点整个系统的 snapshot。在 TiDB 的用户里面，一个非常典型的用法就是在游戏里面确认用户是否谎报因为回档丢失了数据，假设用户说在某个时间点得到某个装备，但后来又没有了，我们就可以直接在那个特定的时间点查询这个用户的数据，从而知道是否真的有问题。
-3. 我们不光可以用时间来确定以前的 snapshot，同样也可以用时间来约定集群会在未来达到某个状态。这个典型的应用就是 shema change。虽然笔者不清楚 Spanner schema change 的实现，但 Google F1 有一篇[Online, Asynchronous Schema Change in F1](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41376.pdf)论文提到了相关的方法，而 TiDB 也是采用的这种实现方式。简单来说，对于一个 schema change，通常都会分几个阶段来完成，如果集群某个节点在未来一个约定的时间没达到这个状态，这个节点就需要自杀下线，防止因为数据不一致损坏数据。
+3. 我们不光可以用时间来确定以前的 snapshot，同样也可以用时间来约定集群会在未来达到某个状态。这个典型的应用就是 shema change。虽然笔者不清楚 Spanner schema change 的实现，但 Google F1 有一篇 [Online, Asynchronous Schema Change in F1](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41376.pdf) 论文提到了相关的方法，而 TiDB 也是采用的这种实现方式。简单来说，对于一个 schema change，通常都会分几个阶段来完成，如果集群某个节点在未来一个约定的时间没达到这个状态，这个节点就需要自杀下线，防止因为数据不一致损坏数据。
 
 使用 TrueTime，Spanner 可以非常方便的实现笔者提到的用法，但 TureTime 也并不是万能的：
 

@@ -1,5 +1,5 @@
 ---
-title: Kudu：一个融合低延迟写入和高性能分析的存储系统
+title: Kudu - 一个融合低延迟写入和高性能分析的存储系统
 author: 唐刘
 date: 2017-05-08
 summary: Kudu 是一个基于 Raft 的分布式存储系统，它致力于融合低延迟写入和高性能分析这两种场景，并且能很好的嵌入到 Hadoop 生态系统里面，跟其他系统譬如 Cloudera Impala，Apache Spark 等对接。
