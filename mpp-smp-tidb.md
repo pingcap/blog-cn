@@ -34,7 +34,7 @@ TiDB 的目标是做一个 NewSQL 的 database ，什么是 NewSQL？从 Wikiped
 
 虚框所标的是 TiDB SQL layer，它的最上层是 protocol layer ，就是解析 MySQL 协议。然后是 SQL layer，它主要负责 SQL 的解析、查询，查询计划的制定以及生成执行器。它会调用底下的接口来获取数据，然后进行 SQL 的运算。接下来这一层，可以看到，分两个接口，一个就是 KV 的 API ，就是我们会把数据映射为 KV，因为我们最底下一层是一个 KV 的 storage engine 。比如说一行数据我们会用 Row ID 加上 Table ID 加上 Database ID 这些来做一个 key，然后把这行里面的数据作为 value ，再扔到 KV 中，就转成一种 key-value 的模式。对于 index 来说，我们也是转成了 KV 的模式，因为我们的 KV 有一个特点，就是可以进行有序的 scan。比如说你要在某些 Column 上建了 index，我们就会把这个 Column 编码成一个 key，然后再加上 index ID、Table ID 之类的东西，也 send  到这个 KV 里面去。就是说我们的上层，你可以认为只通过这个 API 也是能够正确的获取到数据、访问数据的，大概就是这样一个架构。然后这里还有一个 DistSQL API，这个是我们分布式计算框架的对上层提供了一个抽象，后面我会详细介绍这个 API 。最下面一层，就是我们的 TiKV 。你可以把 TiKV 考虑成一个纯的分布式的带事务的 key-value engine 。为了支持我们分布式 SQL 的 API ，我们给它上面加了更多功能，在这里我们有参考 HBase 的 coprocessor 方案，然后提供一些  EndPoint 的功能，这样对上一层可以提供更丰富的语义。
 
-那么，我们怎么让 SQL 在 TiDB/TiKV 中跑的更快？这半年多我们一直在做这个事情。
+**那么，我们怎么让 SQL 在 TiDB/TiKV 中跑的更快？这半年多我们一直在做这个事情。**
 
 第一就是不管是 NewSQL 数据库还是传统数据库，我们肯定要对 optimizer 进行一些优化，在这方面我们做了特别多特别多的事情，包括常量折叠，后面还会做更多的，比如常量传播这些。然后 Join 怎么去选择，还有就是我们现在有一个 Cost Based Optimize 的一个框架，我们会考虑下层数据的统计信息，然后在统计信息的基础上，再制订查询计划，所以这是一个巨大的坑，我们正在努力的填它。我觉得 Google F1 这部分做的很好，它应该也做了挺多优化，但其它的数据库我觉得倒不一定有我们做的好，比如我看了一下 Spark，它的 Optimizor 比较简单，就是用了大概一部分 Rule 不断地去 Apply。我想主要的原因是 Spark 定位于做一个通用的计算框架，所以对底层的数据信息无法有细致的了解。
 
