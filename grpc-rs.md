@@ -8,17 +8,17 @@ tags: TiKV gRPC Rust
 
 ## 介绍
 
-在[上篇文章](http://www.jianshu.com/p/48ad37e8b4ed)中，我们讲到 TiKV 为了支持 [gRPC]，我们造了个轮子 [gRPC-rs]，这篇文章简要地介绍一下这个库。首先我们来聊聊什么是 gRPC。gRPC 是 Google 推出的基于 [HTTP2] 的开源 RPC 框架，希望通过它使得各种微服务之间拥有统一的 RPC 基础设施。它不仅支持常规的平台如 Linux，Windows，还支持移动设备和IoT，现有十几种语言的实现，现在又多了一种语言 Rust。
+在[上篇文章](https://pingcap.com/blog-grpc-zh)中，我们讲到 TiKV 为了支持 [gRPC]，我们造了个轮子 [gRPC-rs]，这篇文章简要地介绍一下这个库。首先我们来聊聊什么是 gRPC。gRPC 是 Google 推出的基于 [HTTP2] 的开源 RPC 框架，希望通过它使得各种微服务之间拥有统一的 RPC 基础设施。它不仅支持常规的平台如 Linux，Windows，还支持移动设备和 IoT，现有十几种语言的实现，现在又多了一种语言 Rust。
 
 gRPC 之所以有如此多的语言支持，是因为它有一个 C 写的核心库(gRPC core)，因此只要某个语言兼容 C ABI，那么就可以通过封装，写一个该语言的 gRPC 库。Rust 对 C 有良好的支持，gRPC-rs 就是对 gRPC core ABI 的 Rust 封装。
 
 Core 能异步处理 RPC 请求，在考虑到 Rust 中已有较为成熟的异步框架 [Futures]，我们决定将 API 设计成 Future 模式。
 
-> **gRPC-rs 架构图**
+**gRPC-rs 架构图**
 
-> ![](http://static.zybuluo.com/zyytop/mvj23xmmh44w5ocliw2q1vz0/grpc-rs-arch.png)
+![](http://static.zybuluo.com/zyytop/mvj23xmmh44w5ocliw2q1vz0/grpc-rs-arch.png)
 
-我们将根据架构图从底向上地讲一下，在[上一篇文章]中已经讨论过传输层和协议，在这就不再赘述。
+我们将根据架构图从底向上地讲一下，在[上一篇文章](https://pingcap.com/blog-grpc-zh)中已经讨论过传输层和协议，在这就不再赘述。
 
 ## gRPC Core
 
@@ -265,7 +265,7 @@ pub fn unary_async<P, Q>(channel: &Channel,
 [gRPC-rs]: https://github.com/pingcap/grpc-rs
 [HTTP2]: http://httpwg.org/specs/rfc7540.html
 [Futures]: https://docs.rs/futures/0.1.14/futures/
-[上一篇文章]: http://www.jianshu.com/p/48ad37e8b4ed
+[上一篇文章]: https://pingcap.com/blog-grpc-zh
 [Combiner]: https://github.com/grpc/grpc/blob/7405347cd848f27067b9ce3c029325799ebaa888/doc/combiner-explainer.md
 [grpc-sys]: https://github.com/pingcap/grpc-rs/tree/master/grpc-sys
 [helloworld.proto]: https://github.com/pingcap/grpc-rs/blob/0d3b2db35eb65e61b59e7b2a9a38b9438f15d766/proto/proto/example/helloworld.proto#L39-L43
