@@ -2,13 +2,13 @@
 title: PAX：一个 Cache 友好高效的行列混存方案
 author: 唐刘
 date: 2017-07-19
-summary: 今年，Spanner 终于发了另一篇 Paper，Spanner: Becoming a SQL System，里面提到 Spanner 使用了一种新的存储格式 - Ressi，用来支持 OLTP 和 OLAP。在 Ressi 里面，使用了 PAX 来组织数据。因为 TiDB 定位就是一个 HTAP 系统，所以我也一直在思考在 TiKV 这层如何更好的存储数据，用来满足 HTAP 的需要，既然 Spanner 使用了 PAX，那么就有研究的必要了。
+summary: 今年，Spanner 终于发了另一篇 Paper，Spanner - Becoming a SQL System，里面提到 Spanner 使用了一种新的存储格式 - Ressi，用来支持 OLTP 和 OLAP。在 Ressi 里面，使用了 PAX 来组织数据。因为 TiDB 定位就是一个 HTAP 系统，所以我也一直在思考在 TiKV 这层如何更好的存储数据，用来满足 HTAP 的需要，既然 Spanner 使用了 PAX，那么就有研究的必要了。
 tags: Spanner TiKV
 ---
 
-今年，Spanner 终于发了另一篇 Paper [Spanner: Becoming a SQL System](https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/46103.pdf)，里面提到 Spanner 使用了一种新的存储格式 - Ressi，用来支持 OLTP 和 OLAP。在 Ressi 里面，使用了 PAX 来组织数据。因为 TiDB 定位就是一个 HTAP 系统，所以我也一直在思考在 TiKV 这层如何更好的存储数据，用来满足 HTAP 的需要，既然 Spanner 使用了 PAX，那么就有研究的必要了。
+今年，Spanner 终于发了另一篇 Paper 「[Spanner: Becoming a SQL System](https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/46103.pdf)」，里面提到 Spanner 使用了一种新的存储格式 - Ressi，用来支持 OLTP 和 OLAP。在 Ressi 里面，使用了 PAX 来组织数据。因为 TiDB 定位就是一个 HTAP 系统，所以我也一直在思考在 TiKV 这层如何更好的存储数据，用来满足 HTAP 的需要，既然 Spanner 使用了 PAX，那么就有研究的必要了。
 
-PAX 的论文可以看看 [Weaving Relations for Cache Performance](http://research.cs.wisc.edu/multifacet/papers/vldb01_pax.pdf) 或者 [Data Page Layouts for Relational Databases on Deep Memory Hierarchies](http://research.cs.wisc.edu/multifacet/papers/vldbj02_pax.pdf)。
+PAX 的论文可以看看 「[Weaving Relations for Cache Performance](http://research.cs.wisc.edu/multifacet/papers/vldb01_pax.pdf)」 或者 「[Data Page Layouts for Relational Databases on Deep Memory Hierarchies](http://research.cs.wisc.edu/multifacet/papers/vldbj02_pax.pdf)」。
 
 ## NSM and DSM
 
@@ -28,7 +28,7 @@ NSM 会将 record 依次在磁盘 page 里面存放，每个 page 的末尾会�
 
 可以看到，NSM 和 DSM 都有各自的优劣，所以如何将它们和优点结合起来，就是现在很多 hybrid storage 包括 PAX 考虑的问题。
 
-PAX 全称是 Partition Attributes Across，它在 page 里面使用了一种 mini page 的方式，将 record 切到到不同的 mini page 里面。
+PAX 全称是 Partition Attributes Across，它在 page 里面使用了一种 mini page 的方式，将 record 切到不同的 mini page 里面。
 
 ![](http://static.zybuluo.com/zyytop/htshi0pon1nl9vcnj48mklxo/PAX.png "PAX")
 
