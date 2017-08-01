@@ -107,7 +107,7 @@ TiSpark 的 jar 包可以在[这里](https://download.pingcap.org/tispark-0.1.0-
 
 ### 4.2 没有 Spark 集群的部署方式
 
-如果你没有使用中的 Spark 集群，我们推荐 Saprk Standalone 方式部署。我们在这里简单介绍下 Standalone 部署方式。如果遇到问题，你可以去官网寻找[帮助](https://spark.apache.org/docs/latest/spark-standalone.html)；也欢迎在我们的 GitHub 上提 issue。
+如果你没有使用中的 Spark 集群，我们推荐 Spark Standalone 方式部署。我们在这里简单介绍下 Standalone 部署方式。如果遇到问题，你可以去官网寻找[帮助](https://spark.apache.org/docs/latest/spark-standalone.html)；也欢迎在我们的 GitHub 上提 issue。
 
 #### 4.2.1 下载安装包并安装
 
