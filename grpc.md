@@ -145,7 +145,7 @@ gRPC 的 request 通常包含 Request-Headers, 0 或者多个 Length-Prefixed-Me
 
 Request-Headers 直接使用的 HTTP/2 headers，在 HEADERS 和 CONTINUATION frame 里面派发。定义的 header 主要有 Call-Definition 以及 Custom-Metadata。Call-Definition 里面包括 Method（其实就是用的 HTTP/2 的 POST），Content-Type 等。而 Custom-Metadata 则是应用层自定义的任意 key-value，key 不建议使用 `grpc-` 开头，因为这是为 gRPC 后续自己保留的。
 
-Length-Prefixed-Message 主要在 DATA frame 里面派发，它有一个 Compressed flag 用来表示改 message 是否压缩，如果为 1，表示该 message 采用了压缩，而压缩算啊定义在 header 里面的 Message-Encoding 里面。然后后面跟着四字节的 message length 以及实际的 message。
+Length-Prefixed-Message 主要在 DATA frame 里面派发，它有一个 Compressed flag 用来表示改 message 是否压缩，如果为 1，表示该 message 采用了压缩，而压缩算法定义在 header 里面的 Message-Encoding 里面。然后后面跟着四字节的 message length 以及实际的 message。
 
 EOS（end-of-stream） 会在最后的 DATA frame 里面带上了 `END_STREAM` 这个 flag。用来表示 stream 不会在发送任何数据，可以关闭了。
 
