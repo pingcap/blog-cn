@@ -30,22 +30,16 @@ Jepsen 验证系统由 6 个节点组成，一个控制节点（control node）�
 
     ![](http://static.zybuluo.com/zyytop/hmc5dbcl7p5jv0qaaaozm7g3/bank.png)
 
-
 + **Nemesis**
 
     Nemesis 用于对系统引入故障，比如常见的网络分区、网络延时、节点宕机，在 TiDB 的测试中，有以下几种 nemesis：
 
-
-      ```
-        parts：网络分区
-
-        majority-ring：每个节点都看到不同的 majority
-
-        start-stop：对某些节点进行 SIGSTOP
-        
-        start-kill：对某些节点进行 SIGKILL
-
-      ```
+    ```
+    parts：网络分区
+    majority-ring：每个节点都看到不同的 majority
+    start-stop：对某些节点进行 SIGSTOP
+    start-kill：对某些节点进行 SIGKILL
+    ```
 
     下图展示了 parts nemesis 引入测试中后某些语句执行时出现了 time-out 的错误。
 
