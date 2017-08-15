@@ -7,7 +7,7 @@ tags: TiDB Jepsen
 ---
 
 
-本篇文章主要介绍 TiDB 是如何使用分布式一致性验证框架[Jepsen](https://github.com/jepsen-io/jepsen)进行一致性验证的。
+本篇文章主要介绍 TiDB 是如何使用分布式一致性验证框架 [Jepsen](https://github.com/jepsen-io/jepsen) 进行一致性验证的。
 
 ## 什么是 Jepsen
 
@@ -17,35 +17,43 @@ Jepsen 是由 [Kyle Kingsbury](https://aphyr.com/about) 采用函数式编程语
 Jepsen 验证系统由 6 个节点组成，一个控制节点（control node），五个被控制节点（默认为 n1, n2, n3, n4, n5），控制节点将所有指令发送到某些或全部被控制节点，这些指令包括底层的 shell 命令到上层的 SQL 语句等等。Jepsen 提供了几个核心 API 用于验证分布式系统：
 
 + **DB**
-  DB 封装了所验证的分布式系统下载、部署、启动和关闭命令，核心函数由 setup 和 teardown 组成，在 TiDB 的 Jepsen 测试中，setup 负责下载 TiDB 并且依次启动 Placement Driver、TiKV 和 TiDB；teardown 负责关闭整个 TiDB 系统并且删除日志。
+    
+    DB 封装了所验证的分布式系统下载、部署、启动和关闭命令，核心函数由 setup 和 teardown 组成，在 TiDB 的 Jepsen 测试中，setup 负责下载 TiDB 并且依次启动 Placement Driver、TiKV 和 TiDB；teardown 负责关闭整个 TiDB 系统并且删除日志。
 
 + **Client**
-  Client 封装了每一个测试所需要提供的客户，每个 client 提供两个接口：setup 和 invoke，setup 负责对 TiDB 进行连接，而 invoke 则包含了测试中 client 对 TiDB 调用的 sql 语句，具体语句依测试而定。
+
+    Client 封装了每一个测试所需要提供的客户，每个 client 提供两个接口：setup 和 invoke，setup 负责对 TiDB 进行连接，而 invoke 则包含了测试中 client 对 TiDB 调用的 sql 语句，具体语句依测试而定。
 
 + **Checker**
-  Checker 用于对测试生成的历史进行验证，判断测试结果是否符合预期，历史的格式如下图所示：
 
-  ![](http://static.zybuluo.com/zyytop/hmc5dbcl7p5jv0qaaaozm7g3/bank.png)
+    Checker 用于对测试生成的历史进行验证，判断测试结果是否符合预期，历史的格式如下图所示：
+
+    ![](http://static.zybuluo.com/zyytop/hmc5dbcl7p5jv0qaaaozm7g3/bank.png)
 
 
 + **Nemesis**
 
-  Nemesis 用于对系统引入故障，比如常见的网络分区、网络延时、节点宕机，在 TiDB 的测试中，有以下几种 nemesis：
+    Nemesis 用于对系统引入故障，比如常见的网络分区、网络延时、节点宕机，在 TiDB 的测试中，有以下几种 nemesis：
 
-  ```
-  parts：网络分区
-  majority-ring：每个节点都看到不同的 majority
-  start-stop：对某些节点进行 SIGSTOP
-  start-kill：对某些节点进行 SIGKILL
-  ```
 
-  下图展示了 parts nemesis 引入测试中后某些语句执行时出现了 time-out 的错误。
+      ```
+        parts：网络分区
 
-  ![](http://static.zybuluo.com/zyytop/pt7oc0dau02iayxlt6tz52mn/parts.png)
+        majority-ring：每个节点都看到不同的 majority
+
+        start-stop：对某些节点进行 SIGSTOP
+        
+        start-kill：对某些节点进行 SIGKILL
+
+      ```
+
+    下图展示了 parts nemesis 引入测试中后某些语句执行时出现了 time-out 的错误。
+
+    ![](http://static.zybuluo.com/zyytop/pt7oc0dau02iayxlt6tz52mn/parts.png)
 
 + **Generator**
 
-  Generator 是 Jepsen 中的事件发生器，它将 Client 和 Nemesis 的操作交织在一起，为整个测试生成具体的执行语句。
+    Generator 是 Jepsen 中的事件发生器，它将 Client 和 Nemesis 的操作交织在一起，为整个测试生成具体的执行语句。
 
 ## TiDB 中的 Jepsen 测试
 
