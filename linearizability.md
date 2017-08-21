@@ -12,7 +12,7 @@ tags: TiDB knossos Linearizability
 
 ## Linearizability 一致性模型
 
-* 什么是一致性模型？
+### 什么是一致性模型？
 
   一致性模型确定了编写系统的程序员与系统之间的某种协议，如果程序员遵守了这种协议，那么这个系统就能提供某种一致性。常见的一致性模型有：
 
@@ -25,42 +25,44 @@ tags: TiDB knossos Linearizability
 
   需要注意的是这里的系统指并发系统，分布式系统只是其中的一类。
 
-* 什么是 Linearizability？
+### 什么是 Linearizability？
 
   首先我们需要引入*历史*（history）的概念，*历史*是并发系统中由 *invocation* 事件和 *response* 事件组成的有限序列。
 
-  > invocation: <x op(args\*) A>，x 表示被执行对象的名称；op 表示操作名称，如读和写；args* 表示一系列参数值；A 表示进程的名称
+  > - invocation: <x op(args\*) A>，x 表示被执行对象的名称；op 表示操作名称，如读和写；args* 表示一系列参数值；A 表示进程的名称
   >
-  > response：<x term(res\*) A>，term 表示结束（termination）状态；res* 表示一系列结果值
+  > - response：<x term(res\*) A>，term 表示结束（termination）状态；res* 表示一系列结果值
   >
-  > 如果 invocation 和 response 的 x（对象）和 A（进程）相同，那么我们认为它们是对应操作，并且 complete（H）表示历史中的最多成对操作
+  > - 如果 invocation 和 response 的 x（对象）和 A（进程）相同，那么我们认为它们是对应操作，并且 complete（H）表示历史中的最多成对操作
 
   当我们的*历史* H 满足以下条件时我们把它称为*顺序化*（sequential）历史：
 
   1. H 中的第一个事件是 invocation
   2. 除了可能的最后一个事件外，每个 invocation 事件都紧跟着对应[^对应意味着对象和进程相同]的 response 事件；每个 response 事件都紧跟着对应的 invocation 事件
 
-  > H|A 代表只含有进程A操作的子历史，H|x 代表只含有对象x操作的子历史
+  > - H|A 代表只含有进程A操作的子历史，H|x 代表只含有对象x操作的子历史
   >
-  > 定义well-formed：如果每个进程子历史 H|A 都是顺序化的，那么这个历史 H 就是 well-formed。
+  > - 定义well-formed：如果每个进程子历史 H|A 都是顺序化的，那么这个历史 H 就是 well-formed。
 
   如果一个*历史*不是顺序化的话那么就是并发的。
 
-  *历史* H 在操作上引出非自反的偏序关系<H：e0 <H e1 if res(e0) precedes inv(e1) in H，
+  *历史* H 在操作上引出非自反的偏序关系$<_H$
+
+  $e_0 <_H e_1$ if $res(e_0)$ precedes $inv(e_1)$ in $H$
 
   这里的 res 和 inv 分别对应 response 和 invocation。
 
   当*历史* H 可以通过增加>=0个response 事件被延长时成为 H' 并且满足以下两个条件时，则这个*历史*是**线性化（linearizable）**的。
 
-  > L1: complete(H') 与某个合法的顺序化历史 S 相等
+  > - L1: complete(H') 与某个合法的顺序化历史 S 相等
   >
-  > L2:  <H ⊆ <S
+  > - L2:  $<_H ⊆ <_S$
 
   complete(H')表示进程以完整的操作进行交互，L2 表示如果 op1 在 H 中先于 op2 存在（注意这里的先于强调实时发生的顺序 real-time order），那么在 S 中也是这样。我们把 S 称为 H 的线性化点（linearization）。
 
   下面我们通过 3 个小例子来解释一下以上 2 个条件。
 
-  ```
+```
   q 代表 FIFO 队列，A、B 代表两个进程
 
   q Enq(x) A
@@ -83,7 +85,7 @@ tags: TiDB knossos Linearizability
   q Ok(y) A
   q Ok(y) B
   不满足 linearizable 因为 Enq(y)只执行了一次，却被 Deq()了两次，不能与任何合法的顺序化历史相对应
-  ```
+```
 
   **Linearizability 的性质**
 
@@ -134,7 +136,7 @@ element Deq(queue *q)
 
 Enq 和 Deq 可以看做是 abstract operation，而 Enq 和 Deq 中的每条语句可以看做是 representation operation。
 
-对线性化的历史的验证可以被转换为对顺序化历史的验证，对于给定的线性化历史，我们把最终线性化点的对象的值称为线性值。因为给定的历史可能有超过一个线性化点，所以这个对象可能会有多个线性值。我们用 Lin(H)表示所有线性值的集合，可以把它们看作是系统外部的观察者所看到的值。
+对线性化的历史的验证可以被转换为对顺序化历史的验证，对于给定的线性化历史，我们把最终线性化点的对象的值称为线性值。因为给定的历史可能有超过一个线性化点，所以这个对象可能会有多个线性值。我们用 Lin(H) 表示所有线性值的集合，可以把它们看作是系统外部的观察者所看到的值。
 
 对于以下几个队列操作，对应的线性值分别有以下几种。
 
@@ -150,9 +152,18 @@ Enq 和 Deq 可以看做是 abstract operation，而 Enq 和 Deq 中的每条语
 
 为了证明正确性，我们需要保证：
 
-For all r in Lin(H|REP), I(r) holds and A(r) ⊆ Lin(H|ABS)
+For all $r$ in $Lin(H|REP)$, $I(r)$ holds and $A(r) ⊆ Lin(H|ABS)$
 
-其中 H|REP 和 H|ABS 都是线性化的，r 代表 H|REP 的线性值，并且 I(r)=(r.back ≥ 1) & (∀ i. i ≥ r.back -> r.elements[i] = null) & (lbound(r.elements) = 1)，其中 lbound 是最小的数组索引（队列从 1 开始）A(r) = {q | elements(r) = elements(q) & <r ⊆ <q}，其中偏序关系 <r 表示如果被插入元素 x 的赋值操作先于 y 的自增操作，则 x <r y，<q 代表队列 q 的全序关系。
+其中 H|REP 和 H|ABS 都是线性化的，r 代表 H|REP 的线性值，并且
+
+
+$I(r) = (r.back ≥ 1)$ & $(∀ i. i ≥ r.back -> r.elements[i] = null)$ & $(lbound(r.elements) = 1)$
+
+其中 lbound 是最小的数组索引（队列从 1 开始）
+
+$A(r)$ = {$q | elements(r) = elements(q)$ & $<_r ⊆ <_q$}
+
+其中偏序关系$<_r$表示如果被插入元素 x 的赋值操作先于 y 的自增操作，则 $x <_r y，<_q$ 代表队列 q 的全序关系。
 
 换句话说，队列的表现值（representation value）就是队列中的元素，这些元素的排列顺序与 Enq 操作的顺序一致。
 
@@ -160,11 +171,12 @@ For all r in Lin(H|REP), I(r) holds and A(r) ⊆ Lin(H|ABS)
 
 ![](http://static.zybuluo.com/zyytop/j6whaz94283odk946rrjyv7o/queue.png)
 
+
 ## Wing & Gong 线性化算法
 
 介绍完了如何证明 linearizability，下面我们可以继续深入到 knossos 使用的两个核心算法之一——Wing & Gong Linearibility 算法（WGL）。
 
->  WGL 算法：对于给定的某个数据类型T，它的并发实现为 ConcObj，而它的顺序化要求为 SeqObj。对于给定的历史 H，我们在保证 H 的实时顺序 <H 的情况下尝试 H 的每一系列可能的顺序化操作，然后检查每个顺序化历史 HS 在 SeqObj 上执行时是否是线性化的。如果 H 的每一种可能都失败了，那么这个历史就不是线性化的。
+>  WGL 算法：对于给定的某个数据类型T，它的并发实现为 ConcObj，而它的顺序化要求为 SeqObj。对于给定的历史 H，我们在保证 H 的实时顺序 $<_H$ 的情况下尝试 H 的每一系列可能的顺序化操作，然后检查每个顺序化历史 $H_S$ 在 SeqObj 上执行时是否是线性化的。如果 H 的每一种可能都失败了，那么这个历史就不是线性化的。
 
 我们定义**历史**是由一系列**事件**组成的：
 
@@ -256,4 +268,3 @@ typedef struct {
 [WGL算法](http://www.cs.cmu.edu/~wing/publications/WingGong93.pdf)
 
 [Testing for Linearizability](http://www.cs.ox.ac.uk/people/gavin.lowe/LinearizabiltyTesting/paper.pdf)
-
