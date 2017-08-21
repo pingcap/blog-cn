@@ -29,9 +29,9 @@ tags: TiDB knossos Linearizability
 
   首先我们需要引入*历史*（history）的概念，*历史*是并发系统中由 *invocation* 事件和 *response* 事件组成的有限序列。
 
-  > - invocation: <x op(args\*) A>，x 表示被执行对象的名称；op 表示操作名称，如读和写；args* 表示一系列参数值；A 表示进程的名称
+  > - invocation: \<x op(args\*) A\>，x 表示被执行对象的名称；op 表示操作名称，如读和写；args* 表示一系列参数值；A 表示进程的名称
   >
-  > - response：<x term(res\*) A>，term 表示结束（termination）状态；res* 表示一系列结果值
+  > - response：\<x term(res\*) A\>，term 表示结束（termination）状态；res* 表示一系列结果值
   >
   > - 如果 invocation 和 response 的 x（对象）和 A（进程）相同，那么我们认为它们是对应操作，并且 complete（H）表示历史中的最多成对操作
 
