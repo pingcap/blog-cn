@@ -18,7 +18,7 @@ tags: TiDB TiSpark Spark
 
 首先说什么是 TiDB。你可以认为 TiDB 是现在比较火的 Spanner 的一个开源实现。它具备在线水平扩展、分布式 ACID Transaction、HA、Auto failover 等特性，是一个 NewSQL 数据库。
 
-然后什么是 TiKV， 可能我们今天要说很多次了。TiKV 其实是 TiDB 这个产品底下的数据库存储引擎，更形象，更具体一点，这是一个架构图。
+然后什么是 TiKV，可能我们今天要说很多次了。TiKV 其实是 TiDB 这个产品底下的数据库存储引擎，更形象，更具体一点，这是一个架构图。
 
 ![](http://static.zybuluo.com/zyytop/7wgvtdo71rs6h5i0o9zuuw1y/%E6%9E%B6%E6%9E%84%E5%9B%BE.png)
 
@@ -53,7 +53,7 @@ CBO 这里有两部分，一部分是说，因为我们有索引，所以在这�
 
 4. Data Location 是通过 Placement Driver 的交互得到的。Java 这边，会跟 Placement Driver 进行交互，说我要知道的是每个（Task）分别要发哪一台机器，然后分别要知晓哪一块的数据。
 
-之后切分Partition 的过程就稍微简单一点，按照机器分割区间。之后需要做 Encoding / Decoding：因为还是一样的，抛弃了数据库之后，所有的数据从二进制需要还原成有 Schema 的数据。一个大数据块读上来，我怎么切分 Row，每个 Row 怎么样还原成它对应的数据类型，这个就需要自己来做。
+之后切分 Partition 的过程就稍微简单一点，按照机器分割区间。之后需要做 Encoding / Decoding：因为还是一样的，抛弃了数据库之后，所有的数据从二进制需要还原成有 Schema 的数据。一个大数据块读上来，我怎么切分 Row，每个 Row 怎么样还原成它对应的数据类型，这个就需要自己来做。
 
 计算下推，我需要把它下推的 Plan 转化成 Coprocessor 可以理解的信息。然后当作 Coprocessor 的一个请求，发送到 Coprocessor，这也是 TiKV-Client 这边做的两个东西。
 
@@ -69,7 +69,7 @@ CBO 这里有两部分，一部分是说，因为我们有索引，所以在这�
 
 首先是说谓词怎么样被处理，这里有几种不同的谓词，比如关于学生 ID 的：大于等于 8000，小于 10100，以及有两个单独学号；然后是一个 school = ‘engineer’，还有一个 UDF 叫 lottery，单独挑选一些运气不好的学生。
 
-第一步，整个处理，假设说我们索引选中的是在 studentID 上的聚簇索引。studentID 相关的谓词可以转化为区间 [8000, 10100), 10323, 10327。然后是 school=‘engineer’，因为它没有被任何索引选择，所以是一个独立的条件。这两种不同的条件，一个是跟聚簇索引相关的，可以转化成 Key Range，另外一个是跟索引没有关系的独立的谓词。两者会经过不同的处理，聚簇索引相关的谓词转化成 Key Range，独立的谓词 school=‘engineer’ 会变成 Coprocessor 的 Reqeust，然后进行 gRPC 的编码，最后把请求发过去。聚簇索引相关谓词转化的 Key Range 会通过查询 Placement Driver 取得 Region 的分布信息，进行相应的区间切割。假设说有三个 Region。Region 1 是 [0, 5000)，是一个闭开区间，然后 Region 2 是 [5000, 10000)。接着 Region 3 是 [10000, 15000)。对应我们上面的 Request 下推的区间信息你可以看到，谓词区间对应到两个 Region：Region 2 和 Region 3，Region1 的数据根本不用碰，Region 2 的数据会被切成 [8000, 10000)，因为对应的数据区间只有 [8000, 10000)。然后剩下的  [10000, 10100)会单独放到 Region 3 上面，剩下的就是编码 school=‘engineering’ 对应的 Coprocessor Request 。最后将编码完成的请求发送到对应的 Region。
+第一步，整个处理，假设说我们索引选中的是在 studentID 上的聚簇索引。studentID 相关的谓词可以转化为区间 [8000, 10100), 10323, 10327。然后是 school=‘engineer’，因为它没有被任何索引选择，所以是一个独立的条件。这两种不同的条件，一个是跟聚簇索引相关的，可以转化成 Key Range，另外一个是跟索引没有关系的独立的谓词。两者会经过不同的处理，聚簇索引相关的谓词转化成 Key Range，独立的谓词 school=‘engineer’ 会变成 Coprocessor 的 Reqeust，然后进行 gRPC 的编码，最后把请求发过去。聚簇索引相关谓词转化的 Key Range 会通过查询 Placement Driver 取得 Region 的分布信息，进行相应的区间切割。假设说有三个 Region。Region 1 是 [0, 5000)，是一个闭开区间，然后 Region 2 是 [5000, 10000)。接着 Region 3 是 [10000, 15000)。对应我们上面的 Request 下推的区间信息你可以看到，谓词区间对应到两个 Region：Region 2 和 Region 3，Region1 的数据根本不用碰，Region 2 的数据会被切成 [8000, 10000)，因为对应的数据区间只有 [8000, 10000)。然后剩下的  [10000, 10100) 会单独放到 Region 3 上面，剩下的就是编码 school=‘engineering’ 对应的 Coprocessor Request。最后将编码完成的请求发送到对应的 Region。
 上面就是一个谓词处理的逻辑。
 
 多个索引是怎么选择的呢？是通过统计信息。
@@ -90,7 +90,7 @@ TiDB 本身是有收集统计信息的， TiSpark 现在正在实现统计信息
 
 这个例子稍微有一点特殊，因为他是计算平均值，为什么特殊，因为没有办法直接在 TiKV 做 AVG 平均值计算，然后直接在 Spark 再做直接聚合计算，因此这种情况会有一个改写，将 AVG 拆解成 SUM 和 COUNT，然后会把他们分别下推到 Coprocessor，最后在 Spark 继续做聚合计算。
 
-TiSpark 项目除了改写 Plan 之外，还要负责结合做类型转换和 Schema 转换。因为 TiKV 这个项目，本身并不是为了 TiSpark 来设计的，所以整个 Schema 和类型转化的规则都是不一样的。Coprocessor 部分聚合(Partial Aggregation)的结果，数据的类型和 Spark 是完全不一样的，因此这边还会做一次 Schema 的桥接。之后其他的就是跟前面一样了，会把请求发到对应的 Region。
+TiSpark 项目除了改写 Plan 之外，还要负责结合做类型转换和 Schema 转换。因为 TiKV 这个项目，本身并不是为了 TiSpark 来设计的，所以整个 Schema 和类型转化的规则都是不一样的。Coprocessor 部分聚合 (Partial Aggregation) 的结果，数据的类型和 Spark 是完全不一样的，因此这边还会做一次 Schema 的桥接。之后其他的就是跟前面一样了，会把请求发到对应的 Region。
 
 现在来讲 TiSpark 和 TiDB／TiKV，因为是整个一个产品的不同组件，所以说 TiSpark 的存储，也就是 TiDB 的存储，TiKV 会针对 TiSpark 这个项目来做一些 OLAP 相关定的 Feature。
 
@@ -113,8 +113,8 @@ Improved CBO，我们数据库团队现在正在开发实时收集统计信息�
 
 另外一个延伸的典型用法是，你可以用 TiDB 作为将多个数据库同步到一起的解决方案。这个方案可以实时接入变更记录，比如 Binlog，实时同步到 TiDB，再使用 TiSpark 做数据分析，也可以用它将 ETL 之后的结果写到 HDFS 数仓进行归档整理。
 
-需要说明的是，由于 TiDB / TiKV 整体是偏重 OLTP，暂时使用的是行存且有一定的事务和版本开销，因此批量读的速度会比 HDFS+列存如 Parquet 要慢，并不是一个直接替代原本 Hadoop 上基于 Spark SQL / Hive 或者 Impala 这些的数仓解决方案。但是对于大数据场景下，如果你需要一个可变数据的存储，或者需要比较严格的一致性，那么它是一个合适的平台。
+需要说明的是，由于 TiDB / TiKV 整体是偏重 OLTP，暂时使用的是行存且有一定的事务和版本开销，因此批量读的速度会比 HDFS + 列存如 Parquet 要慢，并不是一个直接替代原本 Hadoop 上基于 Spark SQL / Hive 或者 Impala 这些的数仓解决方案。但是对于大数据场景下，如果你需要一个可变数据的存储，或者需要比较严格的一致性，那么它是一个合适的平台。
 
 **后续我们将写一篇文章详细介绍 TiSpark 的 Use Case，对 TiSpark 感兴趣的小伙伴，欢迎发邮件到 [info@pingcap.com](mailto:info@pingcap.com) 与我们交流。**
 
-整个这个项目的状态是在 9 月跟整个 TiDB 、TiKV 同步做 release。现在的话，刚刚把 TPC-H 跑通的状态，像刚才说的有些 Feature，例如 CBO 那些还没有完全做完。Index 也只是做了 Index 读取，但是说怎么样选 Index 还没有做，正在 Bug fix 以及 Code Cleanup 。在 GA 之前会有一个 Beta 大家可以部署了玩一次。目前 TiSpark Beta 已经发布。
+整个这个项目的状态是在 9 月跟整个 TiDB 、TiKV 同步做 release。现在的话，刚刚把 TPC-H 跑通的状态，像刚才说的有些 Feature，例如 CBO 那些还没有完全做完。Index 也只是做了 Index 读取，但是说怎么样选 Index 还没有做，正在 Bug fix 以及 Code Cleanup。在 GA 之前会有一个 Beta 大家可以部署了玩一次。目前 TiSpark Beta 已经发布。
