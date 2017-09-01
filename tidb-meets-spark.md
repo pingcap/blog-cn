@@ -43,13 +43,17 @@ CBO 这里有两部分，一部分是说，因为我们有索引，所以在这�
 
 在 Spark Driver 这边，因为这个架构上没有 TiDB 什么事，所以说 DB 本身干的事情，我们需要再干一遍，比如说 Schema 存在 TiKV 存储引擎里面，然后里面包括 Tables 的元信息，也就是告诉你数据库里面，分别有什么表，每个表里面分别有什么列，这些东西都属于 Schema 信息。因为我们没有直接连接 TiDB，所以说 Schema 信息需要我们自己去解析。
 
-比较重要的功能通过将 Spark SQL 产生的 LogicalPlan，Hook LogicalPlan，然后去做过滤，看:
+比较重要的功能通过将 Spark SQL 产生的 LogicalPlan，Hook LogicalPlan，然后去做过滤，主要是:
 
-1. 哪一些谓词可以转化成索引相关的访问
+1. 哪一些谓词可以转化成索引相关的访问；
 
-2. 哪一些可以转化成 Key Range 相关的，还有哪一些其它计算可以下推，这些 Plan 节点我们会先过滤处理一遍。然后把 TiKV 可以算的部分推下去，TiKV 算不了的反推回 Spark。
+2. 哪一些可以转化成 Key Range 相关的，还有哪一些其它计算可以下推，这些 Plan 节点我们会先过滤处理一遍。然后把 TiKV 可以算的部分推下去，TiKV 算不了的反推回 Spark；
 
-第三条是在基于代价的优化部分 Join Reorder 只是在 Plan 状态。然后 Data Location 是通过 Placement Drive 的交互得到的。Java 这边，会跟 Placement Driver 进行交互，说我要知道的是每个（Task）分别要发哪一台机器，然后分别要知晓哪一块的数据。之后 切分Partition 的过程就稍微简单一点，按照机器分割区间。之后需要做 Encoding / Decoding：因为还是一样的，抛弃了数据库之后，所有的数据从二进制需要还原成有 Schema 的数据。一个大数据块读上来，我怎么切分 Row，每个 Row 怎么样还原成它对应的数据类型，这个就需要自己来做。
+3. 在基于代价的优化部分 Join Reorder 只是在 Plan 状态；
+
+4. Data Location 是通过 Placement Driver 的交互得到的。Java 这边，会跟 Placement Driver 进行交互，说我要知道的是每个（Task）分别要发哪一台机器，然后分别要知晓哪一块的数据。
+
+之后切分Partition 的过程就稍微简单一点，按照机器分割区间。之后需要做 Encoding / Decoding：因为还是一样的，抛弃了数据库之后，所有的数据从二进制需要还原成有 Schema 的数据。一个大数据块读上来，我怎么切分 Row，每个 Row 怎么样还原成它对应的数据类型，这个就需要自己来做。
 
 计算下推，我需要把它下推的 Plan 转化成 Coprocessor 可以理解的信息。然后当作 Coprocessor 的一个请求，发送到 Coprocessor，这也是 TiKV-Client 这边做的两个东西。
 
