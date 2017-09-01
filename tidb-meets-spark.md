@@ -111,6 +111,6 @@ Improved CBO，我们数据库团队现在正在开发实时收集统计信息�
 
 需要说明的是，由于 TiDB / TiKV 整体是偏重 OLTP，暂时使用的是行存且有一定的事务和版本开销，因此批量读的速度会比 HDFS+列存如 Parquet 要慢，并不是一个直接替代原本 Hadoop 上基于 Spark SQL / Hive 或者 Impala 这些的数仓解决方案。但是对于大数据场景下，如果你需要一个可变数据的存储，或者需要比较严格的一致性，那么它是一个合适的平台。
 
-**后续我们将写一篇文章详细介绍 TiSpark 的 Use Case，对 TiSpark 感兴趣的小伙伴，欢迎发邮件到 [info@pingcap.com](mail to:info@pingcap.com) 与我们交流。**
+**后续我们将写一篇文章详细介绍 TiSpark 的 Use Case，对 TiSpark 感兴趣的小伙伴，欢迎发邮件到 [info@pingcap.com](mailto:info@pingcap.com) 与我们交流。**
 
 整个这个项目的状态是在 9 月跟整个 TiDB 、TiKV 同步做 release。现在的话，刚刚把 TPC-H 跑通的状态，像刚才说的有些 Feature，例如 CBO 那些还没有完全做完。Index 也只是做了 Index 读取，但是说怎么样选 Index 还没有做，正在 Bug fix 以及 Code Cleanup 。在 GA 之前会有一个 Beta 大家可以部署了玩一次。目前 TiSpark Beta 已经发布。
