@@ -127,7 +127,7 @@ PingCAP 攻城狮小申典型的一天：
 #### 提 PR
 当你使用 TiDB 遇到问题或者需要新的 Feature，而觉得自己有能力 Fix 或者是当前官方还没有精力 Fix 时，可以尝试自己修改代码，解决问题。
 
-目前 TiDB 项目的 Contributor 有 140多个，分散在全球 xxx 个国家。其中不乏深度参与的用户。
+目前 TiDB 项目的 Contributor 有 140 多个，分散在全球十几个国家。其中不乏深度参与的用户。
 
 如果是小的功能或者是简单的 Bug Fix，可以在相关的 Issue 下面吼一声，让大家知道你在做这个事情即可，这样不会有人做重复的工作。如果做的过程中遇到了什么问题，也可以在相关的 Issue 中和 Maintainer 讨论。
 
@@ -135,6 +135,6 @@ PingCAP 攻城狮小申典型的一天：
 
 ### 讲一点好玩的事情
 在开源项目中总能或多或少的发现奇葩的 [Issue](https://github.com/pingcap/tidb/issues/194)，比如[这个](https://github.com/pingcap/tidb/issues/194)
-![](371504487026_.pic_hd.jpg)
-![](381504487045_.pic_hd.jpg)
+![](.media/talk-about-opensource-1.jpg)
+![](.media/talk-about-opensource-2.jpg)
 看到这个 Issue 真的是震惊了。
