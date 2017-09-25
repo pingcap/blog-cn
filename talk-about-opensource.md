@@ -138,6 +138,6 @@ PingCAP 攻城狮小申典型的一天：
 ### 讲一点好玩的事情
 在开源项目中总能或多或少的发现奇葩的 [Issue](https://github.com/pingcap/tidb/issues/194)，比如[这个](https://github.com/pingcap/tidb/issues/194)
 
-![](.media/talk-about-opensource-1.jpg)
-![](.media/talk-about-opensource-2.jpg)
+![](media/talk-about-opensource-1.jpg)
+![](media/talk-about-opensource-2.jpg)
 看到这个 Issue 真的是震惊了。
