@@ -70,7 +70,7 @@ PingCAP 攻城狮小申典型的一天：
 
 9:30 到达公司，开始干活。
 
-* 打开电脑看看 GitHub 上面有什么新的 Issue
+	* 打开电脑看看 GitHub 上面有什么新的 Issue
 	* 看看自己的 PR 有没有被别人 Comment，如果有 Comment 的话，尽快解决；如果还没人看的话，at 一下相关的同学，求 Review
 	* 看看有没有别人的 PR 需要自己 Review，特别是 at 自己的那些 PR
 	* 带上耳机开始写点代码
