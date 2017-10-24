@@ -1,9 +1,9 @@
 ---
 title: 深入了解 gRPC：协议
-author: 唐刘
+author: ['唐刘']
 date: 2017-06-18
 summary: 经过很长一段时间的开发，TiDB 终于发了 RC3。RC3 版本对于 TiKV 来说最重要的功能就是支持了 gRPC，也就意味着后面大家可以非常方便的使用自己喜欢的语言对接 TiKV 了。gRPC 是基于 HTTP/2 协议的，要深刻理解 gRPC，理解下 HTTP/2 是必要的，这里先简单介绍一下 HTTP/2 相关的知识，然后在介绍下 gRPC 是如何基于 HTTP/2 构建的。
-tags: TiKV gRPC
+tags: ['TiKV', 'gRPC']
 ---
 
 经过很长一段时间的开发，TiDB 终于发了 RC3。RC3 版本对于 TiKV 来说最重要的功能就是支持了 gRPC，也就意味着后面大家可以非常方便的使用自己喜欢的语言对接 TiKV 了。
@@ -174,4 +174,4 @@ gRPC 的 service 接口是基于 protobuf 定义的，我们可以非常方便�
 
 悲催的是，Rust 刚好没有 HTTP/2 支持，也仅仅有一个可用的 protobuf 实现。为了支持 gRPC，我们 team 付出了很大的努力，也走了很多弯路，从最初使用纯 Rust 的 rust-grpc 项目，到后来自己基于 c-grpc 封装了 grpc-rs，还是有很多可以说的，后面在慢慢道来。如果你对 gRPC 和 rust 都很感兴趣，欢迎参与开发。
 
-gRPC-rs: [https://github.com/pingcap/grpc-rs](https://github.com/pingcap/grpc-rs) 
+gRPC-rs: [https://github.com/pingcap/grpc-rs](https://github.com/pingcap/grpc-rs)

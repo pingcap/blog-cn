@@ -1,9 +1,9 @@
 ---
 title: 通过 raft 的 leader lease 来解决集群脑裂时的 stale read 问题
-author: 黄东旭
+author: ['黄东旭']
 date: 2016-11-20
 summary: 当 raft group 发生脑裂的情况下，老的 raft leader 可能在一段时间内并不知道新的 leader 已经被选举出来，这时候客户端在老的 leader 上可能会读取出陈旧的数据（stale read）。TiDB 为 raft 引入 leader lease 机制解决这一问题。
-tags: Raft Raft-Group Leader-Lease Stale-Read 脑裂
+tags: ['Raft', 'Raft Group', 'Leader Lease', 'Stale Read', '脑裂']
 ---
 
 

@@ -1,9 +1,9 @@
 ---
 title: 当 TiDB 遇上 Jepsen
-author: 徐鹏
+author: ['徐鹏']
 date: 2017-08-15
 summary: 本篇文章主要介绍 TiDB 是如何使用分布式一致性验证框架进行一致性验证的。
-tags: TiDB Jepsen
+tags: ['TiDB', 'Jepsen']
 ---
 
 
@@ -17,7 +17,7 @@ Jepsen 是由 [Kyle Kingsbury](https://aphyr.com/about) 采用函数式编程语
 Jepsen 验证系统由 6 个节点组成，一个控制节点（control node），五个被控制节点（默认为 n1, n2, n3, n4, n5），控制节点将所有指令发送到某些或全部被控制节点，这些指令包括底层的 shell 命令到上层的 SQL 语句等等。Jepsen 提供了几个核心 API 用于验证分布式系统：
 
 + **DB**
-    
+
     DB 封装了所验证的分布式系统下载、部署、启动和关闭命令，核心函数由 setup 和 teardown 组成，在 TiDB 的 Jepsen 测试中，setup 负责下载 TiDB 并且依次启动 Placement Driver、TiKV 和 TiDB；teardown 负责关闭整个 TiDB 系统并且删除日志。
 
 + **Client**

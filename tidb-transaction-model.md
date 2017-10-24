@@ -1,9 +1,9 @@
 ---
 title: TiKV 事务模型概览，Google Spanner 开源实现
-author: 黄东旭
+author: ['黄东旭']
 date: 2016-09-01
 summary: 随着时代的发展，应用和数据的规模越来越大。然而在这个一切都可以水平扩展的时代，你会发现，大多数应用的最下层的关系型数据库，竟然难以找到一个优雅易用的水平扩展解决方案，一直以来不得不依赖静态 Sharding ，牺牲掉事务，然后在业务层各种 Workarounds。作为后端开发者应该深有体会。
-tags: TiKV
+tags: ['TiKV']
 ---
 
 
@@ -17,7 +17,7 @@ MVCC 其实并不是一个老的概念了，在传统的单机关系型数据库
 
     Record := {key, value}
 
-而是 
+而是
 
     Record := {key, value, version}
 

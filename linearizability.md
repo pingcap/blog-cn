@@ -1,9 +1,9 @@
 ---
 title: Linearizability 一致性验证
-author: 徐鹏
+author: ['徐鹏']
 date: 2017-08-21
 summary: 上篇文章介绍了 TiDB 如何使用 Jepsen 来进行一致性验证，并且介绍了具体的测试案例，但是并没有对 Jepsen 背后的一致性验证算法做过多介绍。这篇文章将会深入 Jepsen 的核心库 knossos，介绍 knossos 库所涉及的 Linearizability（线性化）一致性验证算法。
-tags: TiDB knossos Linearizability
+tags: ['TiDB', 'knossos', 'Linearizability']
 ---
 
 
@@ -141,7 +141,7 @@ Enq 和 Deq 可以看做是 abstract operation，而 Enq 和 Deq 中的每条语
 对于以下几个队列操作，对应的线性值分别有以下几种。
 
 | History  |      Linearized values       |
-| :------: | :--------------------------: |
+|:--------:|:----------------------------:|
 |    \     |             {[]}             |
 | Enq(x) A |          {[], [x]}           |
 | Enq(y) B | {[], [x], [y], [x,y], [y,x]} |

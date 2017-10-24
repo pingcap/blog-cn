@@ -1,9 +1,9 @@
 ---
 title: TiSpark (Beta) 用户指南
-author: 马晓宇 杨哲轩
+author: ['马晓宇', '杨哲轩']
 date: 2017-07-26
 summary: TiSpark 是 PingCAP 推出的为了解决用户复杂 OLAP 需求的产品。借助 Spark 平台本身的优势，同时融合 TiKV 分布式集群的优势，和 TiDB 一起为用户一站式解决 HTAP （Hybrid Transactional/Analytical Processing）需求。 TiSpark 依赖 TiKV 集群和 PD 的存在。当然，TiSpark 也需要你搭建一个 Spark 集群。本文简单介绍如何部署和使用 TiSpark。
-tags: TiDB TiSpark
+tags: ['TiDB', 'TiSpark']
 ---
 
 TiSpark 是 PingCAP 推出的为了解决用户复杂 OLAP 需求的产品。借助 Spark 平台本身的优势，同时融合 TiKV 分布式集群的优势，和 TiDB 一起为用户一站式解决 HTAP （Hybrid Transactional/Analytical Processing）需求。 TiSpark 依赖 TiKV 集群和 PD 的存在。当然，TiSpark 也需要你搭建一个 Spark 集群。本文简单介绍如何部署和使用 TiSpark。本文假设你对 Spark 有基本认知。你可以参阅 [Apache Spark 官网](https://spark.apache.org/docs/latest/index.html) 了解 Spark 相关信息。
@@ -125,10 +125,10 @@ TiSpark 的 jar 包可以在[这里](https://download.pingcap.org/tispark-0.1.0-
 
 ```
 cd $SPARKPATH
-./sbin/start-master.sh  
+./sbin/start-master.sh
 ```
 
-在这步完成以后，屏幕上会打印出一个 log 文件。检查 log 文件确认 Spark-Master 是否启动成功。 你可以打开 [http://spark-master-hostname:8080](http://spark-master-hostname:8080) 查看集群信息（如果你没有改动 Spark-Master 默认 Port Numebr）。在启动 Spark-Slave 的时候，你也可以通过这个面板来确认 Slave 是否已经加入集群。 
+在这步完成以后，屏幕上会打印出一个 log 文件。检查 log 文件确认 Spark-Master 是否启动成功。 你可以打开 [http://spark-master-hostname:8080](http://spark-master-hostname:8080) 查看集群信息（如果你没有改动 Spark-Master 默认 Port Numebr）。在启动 Spark-Slave 的时候，你也可以通过这个面板来确认 Slave 是否已经加入集群。
 
 #### 4.2.3 启动  Slave
 
@@ -138,7 +138,7 @@ cd $SPARKPATH
 ./sbin/start-slave.sh spark://spark-master-hostname:7077
 ```
 
-命令返回以后，你就可以通过刚才的面板查看这个 Slave 是否已经正确的加入了 Spark 集群。 在所有 Slave 节点重复刚才的命令。在确认所有的 Slave 都可以正确连接 Master，这样之后你就拥有了一个 Standalone 模式的 Spark 集群。 
+命令返回以后，你就可以通过刚才的面板查看这个 Slave 是否已经正确的加入了 Spark 集群。 在所有 Slave 节点重复刚才的命令。在确认所有的 Slave 都可以正确连接 Master，这样之后你就拥有了一个 Standalone 模式的 Spark 集群。
 
 ## 五、一个使用范例
 
@@ -153,7 +153,7 @@ val ti = new TiContext(spark, List("192.168.1.100:2379")
 
 ti.tidbMapDatabase("tpch")
 ```
-之后你可以直接调用 Spark SQL 
+之后你可以直接调用 Spark SQL
 
 ```
 	spark.sql("select count(*) from lineitem").show
@@ -172,16 +172,8 @@ ti.tidbMapDatabase("tpch")
 
 Q. 是独立部署还是和现有 Spark／Hadoop 集群共用资源？
 
-A. 你可以利用现有 Spark 集群无需单独部署，但是如果现有集群繁忙，TiSpark 将无法达到理想速度。 
+A. 你可以利用现有 Spark 集群无需单独部署，但是如果现有集群繁忙，TiSpark 将无法达到理想速度。
 
 Q. 是否可以和 TiKV 混合部署？
 
 A. 如果 TiDB 以及 TiKV 负载较高且运行关键的线上任务，请考虑单独部署 TiSpark；并且考虑使用不同的网卡保证 OLTP 的网络资源不被侵占而影响线上业务。如果线上业务要求不高或者机器负载不大，可以考虑与 TiKV 混合部署。
-
-
-
-
-
-
-
-

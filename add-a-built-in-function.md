@@ -1,9 +1,9 @@
 ---
 title: 十分钟成为 TiDB Contributor 系列 | 添加內建函数
-author: 申砾
+author: ['申砾']
 date: 2017-03-14
 summary: 最近我们对 TiDB 代码做了些改进，大幅度简化了添加內建函数的流程，这篇教程描述如何为 TiDB 新增 builtin 函数。首先介绍一些必需的背景知识，然后介绍增加 builtin 函数的流程，最后会以一个函数作为示例。
-tags: TiDB Contributor 内建函数 源码解析
+tags: ['TiDB', 'Contributor', '内建函数', '源码解析']
 ---
 
 
@@ -82,7 +82,7 @@ var shaCases = []struct {
     {1024, "128351137a9c47206c4507dcf2e6fbeeca3a9079"},
     {123.45, "22f8b438ad7e89300b51d88684f3f0b9fa1d7a32"},
  }
- 
+
  func (s *testEvaluatorSuite) TestShaEncrypt(c *C) {
     defer testleak.AfterTest(c)() // 监测 goroutine 泄漏的工具，可以直接照搬
     fc := funcs[ast.SHA]

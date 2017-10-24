@@ -1,9 +1,9 @@
 ---
 title: TiDB 的正确使用姿势
-author: 黄东旭
+author: ['黄东旭']
 date: 2017-03-04
 summary: 最近这几个月，特别是 TiDB RC1 发布后，越来越多的用户已经开始测试起来，也有很多朋友已经在生产环境中使用，我们这边也陆续的收到了很多用户的测试和使用反馈。非常感谢各位小伙伴和早期用户的厚爱，而且看了这么多场景后，也总结出了一些 TiDB 的使用实践 (其实 Spanner 的最佳实践大部分在 TiDB 中也是适用的，MySQL 最佳实践也是），也是借着 Google Cloud Spanner 发布的东风，看了一下 Spanner 官方的一些最佳实践文档，写篇文章讲讲 TiDB 以及分布式关系型数据库的一些正确的使用姿势，当然，时代也在一直发展，TiDB 也在不停的进化，这篇文章基本上只代表近期的一些观察。
-tags: TiDB 查询优化 应用场景
+tags: ['TiDB', '查询优化', '应用场景']
 ---
 
 
@@ -59,7 +59,7 @@ TiDB 的优化分为基于规则的优化（Rule Based Optimization）和基于�
 **TiDB 基于规则的优化有：**
 ***谓词下推***
 	谓词下推会将 where/on/having 条件推到离数据表尽可能近的地方，比如：
-	
+
 ```select * from t join s on t.id = s.id where t.c1 < 10```
 
 可以被 TiDB 自动改写成
@@ -107,10 +107,10 @@ TiDB 的优化分为基于规则的优化（Rule Based Optimization）和基于�
 
 ```select * from t where age = 30 and name in ( ‘小明’, ‘小强’)```
 对于包含 Join 的操作，我们可以区分大小表，TiDB 的对于一个大表和一个小表的 Join 会有特殊的优化。
-例如 
+例如
 ```select * from t join s on s.id = t.id```
 优化器会通过对表大小的估计来选择 Join 的算法：即选择把较小的表装入内存中。
-对于多种方案，利用动态规划算法选择最优者，例如: 
+对于多种方案，利用动态规划算法选择最优者，例如:
 
 ```(select * from t where c1 < 10) union all (select * from s where c2 < 10) order by c3 limit 10```
 
@@ -127,5 +127,3 @@ t 和 s 可以根据索引的数据分布来确定选择索引 c3 还是 c2。
 有分布式事务、多数据中心的数据 100% 强一致性、auto-failover 的高可用的需求。
 
 ***如果整篇文章你只想记住一句话，那就是数据条数少于 5000w 的场景下通常用不到 TiDB，TiDB 是为大规模的数据场景设计的。如果还想记住一句话，那就是单机 MySQL 能满足的场景也用不到 TiDB。***
-
-

@@ -1,9 +1,9 @@
 ---
 title: TiKV 源码解析系列 - Placement Driver
-author: 唐刘
+author: ['唐刘']
 date: 2017-01-08
 summary: Placement Driver (后续以 PD 简称) 是 TiDB 里面全局中心总控节点，它负责整个集群的调度，负责全局 ID 的生成，以及全局时间戳 TSO 的生成等。PD 还保存着整个集群 TiKV 的元信息，负责给 client 提供路由功能。
-tags: TiKV Placement-Driver PD 集群调度 源码解析
+tags: ['TiKV', 'Placement Driver', 'PD', '集群调度', '源码解析']
 ---
 
 
@@ -43,18 +43,18 @@ PD 集成了 etcd，所以通常，我们需要启动至少三个副本，才能
 2. 如果没有 leader，开始 campaign，创建一个 Lessor，并且通过 etcd 的事务机制写入相关信息，如下：
 
     ```go
-    // Create a lessor. 
+    // Create a lessor.
     ctx, cancel := context.WithTimeout(s.client.Ctx(), requestTimeout)
 	leaseResp, err := lessor.Grant(ctx, s.cfg.LeaderLease)
 	cancel()
-	
+
     // The leader key must not exist, so the CreateRevision is 0.
 	resp, err := s.txn().
 		If(clientv3.Compare(clientv3.CreateRevision(leaderKey), "=", 0)).
 		Then(clientv3.OpPut(leaderKey, s.leaderValue, clientv3.WithLease(clientv3.LeaseID(leaseResp.ID)))).
 		Commit()
     ```
-    
+
     如果 leader key 的 CreateRevision 为 0，表明其他 PD 还没有写入，那么我就可以将我自己的 leader 相关信息写入，同时会带上一个 Lease。如果事务执行失败，表明其他的 PD 已经成为了 leader，那么就重新回到 1。
 
 3. 成为 leader 之后，我们对定期进行保活处理:
@@ -66,9 +66,9 @@ PD 集成了 etcd，所以通常，我们需要启动至少三个副本，才能
 		return errors.Trace(err)
 	}
     ```
-    
+
     当 PD 崩溃，原先写入的 leader key 会因为 lease 到期而自动删除，这样其他的 PD 就能 watch 到，重新开始选举。
-    
+
 4. 初始化 raft cluster，主要是从 etcd 里面重新载入集群的元信息。拿到最新的 TSO 信息：
 
     ```go
@@ -77,7 +77,7 @@ PD 集成了 etcd，所以通常，我们需要启动至少三个副本，才能
 	if err != nil {
 		return errors.Trace(err)
 	}
-	
+
 	log.Debug("sync timestamp for tso")
 	if err = s.syncTimestamp(); err != nil {
 		return errors.Trace(err)
@@ -119,9 +119,9 @@ TSO 是一个 int64 的整形，它由 physical time + logical time 两个部分
     if err != nil {
     	return errors.Trace(err)
     }
-    
+
     var now time.Time
-    
+
     for {
     	now = time.Now()
     	if wait := last.Sub(now) + updateTimestampGuard; wait > 0 {
@@ -144,7 +144,7 @@ TSO 是一个 int64 的整形，它由 physical time + logical time 两个部分
     	}
     }
     ```
-    
+
     这么处理的好处在于，即使 PD 当掉，新启动的 PD 也会从上一次保存的最大的时间之后开始分配 TSO，也就是 1 处理的情况。
 
 3. 因为 PD 在内存里面保存了一个可分配的时间窗口，所以外面请求 TSO 的时候，PD 能直接在内存里面计算 TSO 并返回。
@@ -158,18 +158,18 @@ TSO 是一个 int64 的整形，它由 physical time + logical time 两个部分
     		time.Sleep(200 * time.Millisecond)
     		continue
     	}
-    
+
     	resp.Physical = current.physical.UnixNano() / int64(time.Millisecond)
     	resp.Logical = atomic.AddInt64(&current.logical, int64(count))
     	if resp.Logical >= maxLogical {
-    		
+
     		time.Sleep(updateTimestampStep)
     		continue
     	}
     	return resp, nil
     }
     ```
-    
+
     因为是在内存里面计算的，所以性能很高，我们自己内部测试每秒能分配百万级别的 TSO。
 
 4. 如果 client 每次事务都向 PD 来请求一次 TSO，每次 RPC 的开销也是非常大的，所以 client 会批量的向 PD 获取 TSO。client 会首先收集一批事务的 TSO 请求，譬如 n 个，然后直接向 PD 发送命令，参数就是 n，PD 收到命令之后，会生成 n 个 TSO 返回给客户端。

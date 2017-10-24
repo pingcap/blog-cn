@@ -1,9 +1,9 @@
 ---
 title: 解析 TiDB 在线数据同步工具 Syncer
-author: 崔秋 唐刘
+author: ['崔秋', '唐刘']
 date: 2016-11-21
 summary: TiDB 是一个完全分布式的关系型数据库，从诞生的第一天起，我们就想让它来兼容 MySQL 语法，希望让原有的 MySQL 用户 (不管是单机的 MySQL，还是多机的 MySQL Sharding) 都可以在基本不修改代码的情况下，除了可以保留原有的 SQL 和 ACID 事务之外，还可以享受到分布式带来的高并发，高吞吐和 MPP 的高性能。
-tags: TiDB 数据同步 基础软件 Syncer Binlog
+tags: ['TiDB', '数据同步', '基础软件', 'Syncer', 'Binlog']
 ---
 
 
@@ -31,41 +31,41 @@ TiDB 是一个完全分布式的关系型数据库，从诞生的第一天起，
 
 ![](media/mysql_replication.jpg)
 
-####MySQL Binlog 
+####MySQL Binlog
 
-MySQL 的 Binlog 分为几种不同的类型，我们先来大概了解下，也看看具体的优缺点。  
+MySQL 的 Binlog 分为几种不同的类型，我们先来大概了解下，也看看具体的优缺点。
 
 1）Row
 MySQL Master 将详细记录表的每一行数据变化的明细记录到 Binlog。
-优点：完整地记录了行数据的变化信息，完全不依赖于存储过程，函数和触发器等等，不会出现因为一些依赖上下文信息而导致的主从数据不一致的问题。  
+优点：完整地记录了行数据的变化信息，完全不依赖于存储过程，函数和触发器等等，不会出现因为一些依赖上下文信息而导致的主从数据不一致的问题。
 缺点：所有的增删改查操作都会完整地记录在 Binlog 中，会消耗更大的存储空间。
 
 
 2）Statement
-MySQL Master 将每一条修改数据的 SQL 都会记录到 Binlog。  
-优点：相比 Row 模式，Statement 模式不需要记录每行数据变化，所以节省存储量和 IO，提高性能。  
-缺点：一些依赖于上下文信息的功能，比如  auto increment id，user define function, on update current_timestamp/now 等可能导致的数据不一致问题。  
+MySQL Master 将每一条修改数据的 SQL 都会记录到 Binlog。
+优点：相比 Row 模式，Statement 模式不需要记录每行数据变化，所以节省存储量和 IO，提高性能。
+缺点：一些依赖于上下文信息的功能，比如  auto increment id，user define function, on update current_timestamp/now 等可能导致的数据不一致问题。
 
 
-3）Mixed  
-MySQL Master 相当于 Row 和 Statement 模式的融合。  
-优点：根据 SQL 语句，自动选择 Row 和 Statement 模式，在数据一致性，性能和存储空间方面可以做到很好的平衡。  
-缺点：两种不同的模式混合在一起，解析处理起来会相对比较麻烦。  
+3）Mixed
+MySQL Master 相当于 Row 和 Statement 模式的融合。
+优点：根据 SQL 语句，自动选择 Row 和 Statement 模式，在数据一致性，性能和存储空间方面可以做到很好的平衡。
+缺点：两种不同的模式混合在一起，解析处理起来会相对比较麻烦。
 
 ####MySQL Binlog Event
 了解了 MySQL Replication 和 MySQL Binlog 模式之后，终于进入到了最复杂的 MySQL Binlog Event 协议解析阶段了。
 
 
-在解析 MySQL Binlog Eevent 之前，我们首先看下 MySQL Slave 在协议上是怎么和 MySQL Master 进行交互的。  
+在解析 MySQL Binlog Eevent 之前，我们首先看下 MySQL Slave 在协议上是怎么和 MySQL Master 进行交互的。
 
-**Binlog dump**  
+**Binlog dump**
 
 首先，我们需要伪造一个 Slave，向 MySQL Master 注册，这样 Master 才会发送 Binlog Event。注册很简单，就是向 Master 发送 `COM_REGISTER_SLAVE` 命令，带上 Slave 相关信息。这里需要注意，因为在 MySQL 的 replication topology 中，都需要使用一个唯一的 server id 来区别标示不同的 Server 实例，所以这里我们伪造的 slave 也需要一个唯一的 server id。
 
-**Binlog Event**  
+**Binlog Event**
 
-对于一个 Binlog Event 来说，它分为三个部分，header，post-header 以及 payload。  
-MySQL 的 Binlog Event 有很多版本，我们只关心 v4 版本的，也就是从 MySQL 5.1.x 之后支持的版本，太老的版本应该基本上没什么人用了。  
+对于一个 Binlog Event 来说，它分为三个部分，header，post-header 以及 payload。
+MySQL 的 Binlog Event 有很多版本，我们只关心 v4 版本的，也就是从 MySQL 5.1.x 之后支持的版本，太老的版本应该基本上没什么人用了。
 
 
 Binlog Event 的 header 格式如下：
@@ -99,7 +99,7 @@ string[p]       event type header lengths
 我们需要关注的就是 event type header length 这个字段，它保存了不同 event 的 post-header 长度，通常我们都不需要关注这个值，但是在解析后面非常重要的ROWS_EVENT 的时候，就需要它来判断 TableID 的长度了, 这个后续在说明。
 
 
-`ROTATE_EVENT`  
+`ROTATE_EVENT`
 
 而 Binlog 文件的结尾，通常（只要 Master 不当机）就是 `ROTATE_EVENT`，格式如下:
 
@@ -119,7 +119,7 @@ string[p]          name of the next binlog
 其实我们可以看到，Binlog Event 的格式很简单，文档都有着详细的说明。通常来说，我们仅仅需要关注几种特定类型的 event，所以只需要写出这几种 event 的解析代码就可以了，剩下的完全可以跳过。
 
 
-`TABLE_MAP_EVENT`  
+`TABLE_MAP_EVENT`
 
 上面我们提到 Syncer 使用 Row 模式的 Binlog，关于增删改的操作，对应于最核心的ROWS_EVENT ，它记录了每一行数据的变化情况。而如何解析相关的数据，是非常复杂的。在详细说明 ROWS_EVENT 之前，我们先来看看 TABLE_MAP_EVENT，该 event 记录的是某个 table 一些相关信息，格式如下:
 
@@ -153,9 +153,9 @@ table id 需要根据 post_header_len 来判断字节长度，而 post_header_le
 `TABLE_MAP_EVENT` 最需要关注的就是里面的 column meta 信息，后续我们解析 ROWS_EVENT 的时候会根据这个来处理不同数据类型的数据。column def 则定义了每个列的类型。
 
 
-`ROWS_EVENT`  
+`ROWS_EVENT`
 
-`ROWS_EVENT` 包含了 insert，update 以及 delete 三种 event，并且有 v0，v1 以及 v2 三个版本。  
+`ROWS_EVENT` 包含了 insert，update 以及 delete 三种 event，并且有 v0，v1 以及 v2 三个版本。
 `ROWS_EVENT` 的格式很复杂，如下：
 
 ```
@@ -189,10 +189,10 @@ if UPDATE_ROWS_EVENTv1 or v2 {
 ... repeat rows until event-end
 ```
 
-`ROWS_EVENT` 的 table id 跟 `TABLE_MAP_EVENT` 一样，虽然 table id 可能变化，但是 `ROWS_EVENT` 和 `TABLE_MAP_EVENT` 的 table id 是能保证一致的，所以我们也是通过这个来找到对应的 `TABLE_MAP_EVENT`。  
-为了节省空间，`ROWS_EVENT` 里面对于各列状态都是采用 bitmap 的方式来处理的。  
+`ROWS_EVENT` 的 table id 跟 `TABLE_MAP_EVENT` 一样，虽然 table id 可能变化，但是 `ROWS_EVENT` 和 `TABLE_MAP_EVENT` 的 table id 是能保证一致的，所以我们也是通过这个来找到对应的 `TABLE_MAP_EVENT`。
+为了节省空间，`ROWS_EVENT` 里面对于各列状态都是采用 bitmap 的方式来处理的。
 
-首先我们需要得到 columns present bitmap 的数据，这个值用来表示当前列的一些状态，如果没有设置，也就是某列对应的 bit 为 0，表明该 `ROWS_EVENT` 里面没有该列的数据，外部直接使用 null 代替就成了。  
+首先我们需要得到 columns present bitmap 的数据，这个值用来表示当前列的一些状态，如果没有设置，也就是某列对应的 bit 为 0，表明该 `ROWS_EVENT` 里面没有该列的数据，外部直接使用 null 代替就成了。
 
 然后就是 null bitmap，这个用来表明一行实际的数据里面有哪些列是 null 的，这里最坑爹的是 null bitmap 的计算方式并不是 (num of columns+7)/8，也就是 MySQL 计算 bitmap 最通用的方式，而是通过 columns present bitmap 的 bits set 个数来计算的，这个坑真的很大。为什么要这么设计呢，可能最主要的原因就在于 MySQL 5.6 之后 Binlog Row Image 的格式增加了 minimal 和 noblob，尤其是 minimal，update 的时候只会记录相应更改字段的数据，比如我一行有 16 列，那么用 2 个 byte 就能搞定 null bitmap 了，但是如果这时候只有第一列更新了数据，其实我们只需要使用 1 个 byte 就能记录了，因为后面的铁定全为 0，就不需要额外空间存放了。bits set 其实也很好理解，就是一个 byte 按照二进制展示的时候 1 的个数，譬如 1 的 bits set 就是1，而 3 的 bits set 就是 2，而 255 的 bits set 就是 8 了。
 
@@ -207,11 +207,11 @@ column def 定义了该列的数据类型，对于一些特定的类型，譬如
 搞定了这些，我们终于可以完整的解析一个 `ROWS_EVENT` 了：）
 
 
-`XID_EVENT`  
+`XID_EVENT`
 在事务提交时，不管是 Statement 还是 Row 模式的 Binlog，都会在末尾添加一个 `XID_EVENT` 事件代表事务的结束，里面包含事务的 ID 信息。
 
 
-`QUERY_EVENT`  
+`QUERY_EVENT`
 
 `QUERY_EVENT` 主要用于记录具体执行的 SQL 语句，MySQL 所有的 DDL 操作都记录在这个 event 里面。
 
@@ -226,7 +226,7 @@ column def 定义了该列的数据类型，对于一些特定的类型，譬如
 
 
 ####Savepoint 的选取
-对于 Syncer 本身来说，我们更多的是考虑让它尽可能的简单和高效，所以每次 Syncer 重启都要尽可能从上次同步的 Binlog Pos 的地方做类似断点续传的同步。如何选取 Savepoint 就是一个需要考虑的问题了。  
+对于 Syncer 本身来说，我们更多的是考虑让它尽可能的简单和高效，所以每次 Syncer 重启都要尽可能从上次同步的 Binlog Pos 的地方做类似断点续传的同步。如何选取 Savepoint 就是一个需要考虑的问题了。
 对于一个 DML 操作来说(以 Insert SQL 操作举例来看)，基本的 Binlog Event 大概是下面的样子：
 
 ```
@@ -238,7 +238,7 @@ XID_EVENT
 
 我们从 MySQL Binlog Event 中可以看到，每个 Event 都可以获取下一个 Event 开始的 MySQL Binlog Pos 位置，所以只要获取这个 Pos 信息保存下来就可以了。但是我们需要考虑的是，TABLE_MAP_EVENT 这个 event 是不能被 save 的，因为对于 `WRITE_ROWS_EVENT` 来说，没有 TABLE_MAP_EVENT 基本上没有办法进行数据解析，所以为什么很多人抱怨 MySQL Binlog 协议不灵活，主要原因就在这里，因为不管是 TABLE_MAP_EVENT 还是 WRITE_ROWS_EVENT 里面都没有 Schema 相关的信息的，这个信息只能在某个地方保留起来，比如 MySQL Slave，也就是 MySQL Binlog 是没有办法自解析的。
 
-当然，对于 DDL 操作就比较简单了，DDL 本身就是一个 `QUERY_EVENT`。  
+当然，对于 DDL 操作就比较简单了，DDL 本身就是一个 `QUERY_EVENT`。
 
 所以，Syncer 处于性能和安全性的考虑，我们会定期和遇到 DDL 的时候进行 Save。大家可能也注意到了，Savepoint 目前是存储在本地的，也就是存在一定程度的单点问题，暂时还在我们的 TODO 里面。
 
@@ -255,8 +255,8 @@ WRITE_ROWS_EVENT
 XID_EVENT
 ```
 
-所以在 Syncer 里面做的事情就比较容易了，就是把每个 `WRITE_ROWS_EVENT` 结合 `TABLE_MAP_EVENT`，去生成一个 replace into 的 SQL，为什么这里不用 insert 呢？主要是 replace into 是可重入的，重复执行多次，也不会对数据一致性产生破坏。  
-另外一个比较麻烦的问题就是 DDL 的操作，TiDB 的 DDL 实现是完全无阻塞的，所以根据 TiDB Lease 的大小不同，会执行比较长的时间，所以 DDL 操作是一个代价很高的操作，在 Syncer 的处理中通过获取 DDL 返回的标准 MySQL 错误来判断 DDL 是否需要重复执行。  
+所以在 Syncer 里面做的事情就比较容易了，就是把每个 `WRITE_ROWS_EVENT` 结合 `TABLE_MAP_EVENT`，去生成一个 replace into 的 SQL，为什么这里不用 insert 呢？主要是 replace into 是可重入的，重复执行多次，也不会对数据一致性产生破坏。
+另外一个比较麻烦的问题就是 DDL 的操作，TiDB 的 DDL 实现是完全无阻塞的，所以根据 TiDB Lease 的大小不同，会执行比较长的时间，所以 DDL 操作是一个代价很高的操作，在 Syncer 的处理中通过获取 DDL 返回的标准 MySQL 错误来判断 DDL 是否需要重复执行。
 
 
 当然，在数据同步的过程中，我们也做了很多其他的工作，包括并发 sync 支持，MySQL 网络重连，基于 DB/Table 的规则定制等等，感兴趣的可以直接看我们 tidb-tools/syncer 的开源实现，这里就不展开介绍了。

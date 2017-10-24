@@ -1,9 +1,9 @@
 ---
 title: 分布式系统测试那些事儿 - 理念
-author: 刘奇
+author: ['刘奇']
 date: 2016-11-01
 summary: 本话题系列文章整理自 PingCAP Infra Meetup 第 26 期刘奇分享的《深度探索分布式系统测试》议题现场实录。文章较长，为方便大家阅读，会分为上中下三篇，本文为上篇。
-tags: TiDB 分布式系统测试 自动化测试
+tags: ['TiDB', '分布式系统测试', '自动化测试']
 ---
 
 > 本话题系列文章整理自 PingCAP NewSQL Meetup 第 26 期刘奇分享的《深度探索分布式系统测试》议题现场实录。文章较长，为方便大家阅读，会分为上中下三篇，本文为上篇。
@@ -41,22 +41,22 @@ We should walk through all of the bugs in:
 
 ###Who is the tester ?
 
-+ Quality comes from solid engineering.  
-+ Stop talking and go build things.  
-+ Don’t hire too many testers.  
-	- Testing is owned by the entire team.  It is a culture, not a process.  
-+ Are testers software engineers? Yes.  
-+ Hiring good people is the first step.  And then keep them challenged. 
++ Quality comes from solid engineering.
++ Stop talking and go build things.
++ Don’t hire too many testers.
+	- Testing is owned by the entire team.  It is a culture, not a process.
++ Are testers software engineers? Yes.
++ Hiring good people is the first step.  And then keep them challenged.
 
 我们的观念是说先有 solid engineering 。我觉得这个几乎是勿庸置疑的吧，不知道大家的经验是什么？然后还有一个就是不扯淡，尽快去把东西 build 起来，然后让东西去运转起来。我前一段时间也写了一个段子，就是：“你是写 Rust 的，他是写 Java 的，你们这聊了这么久，人家 Rust （编译速度慢） 的程序已经编译过了，你 Java 还没开始写。”原版是这样的:“你是砍柴的，他是放羊的，你们聊了一天，他的羊吃饱了，你的柴呢？”然后最近还有一个特别有争议的话题：CTO 应该干嘛。就是 CTO 到底该不该写代码，这个也是众说纷纭。因为每一个人都受到自己环境的局限，所以每个人的看法都是不一样的。那我觉得有点像，就是同样是聊天，然后不同人有不同的看法。
 
 ###Test automation
 
 + Allow developers to get a unit test results immediately.
-+ Allow developers to run all unit tests in one go.  
++ Allow developers to run all unit tests in one go.
 + Allow code coverage calculations.
 + Show the testing evolution on the dashboards.
-+ Automate everything. 
++ Automate everything.
 
 我们现在很有意思的一个事情是，迄今为止 PingCAP 没有一个测试人员，这是在所有的公司看来可能都是觉得不可思议的事情，那为什么我们要这么干？因为我们现在的测试已经不可能由人去测了。究竟复杂到什么程度呢？我说几个基本数字大家感受一下：我们现在有六百多万个 Test，这是完全自动化去跑的。然后我们还有大量从社区收集到的各种 ORM Test，一会我会提到这一点。就是这么多 Test 已经不可能是由人写出来的了，以前的概念里面是 Test 是由人写的，但实际上 Test 不一定是人写的，Test 也是可以由机器生成的。举个例子，如果给你一个合法的语法树，你按照这个语法树去做一个输出，比如说你可以更换变量名，可以更换它的表达式等等，你可以生成很多的这种 SQL 出来。
 

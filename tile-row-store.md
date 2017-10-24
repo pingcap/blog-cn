@@ -1,9 +1,9 @@
 ---
 title: 基于 Tile 连接 Row-Store 和 Column-Store
-author: 唐刘
+author: ['唐刘']
 date: 2017-05-14
 summary: 在之前的 Kudu 的文章里面已经提到过，行列混存是一个非常有意思的研究方向，因为不同的存储方式有不同的针对应用场景，但作为技术人员，折腾是天性，所以大家都在研究如何融合行存和列存，让一个服务能尽量满足大部分应用需求，而这也是 TiDB 在努力的方向。
-tags: Tile HTAP 
+tags: ['Tile', 'HTAP']
 ---
 
 在之前的 [Kudu](http://www.jianshu.com/p/a6c0fdec3d7b) 的文章里面，我已经提到过，行列混存是一个非常有意思的研究方向，因为不同的存储方式有不同的针对应用场景，但作为技术人员，折腾是天性，所以大家都在研究如何融合行存和列存，让一个服务能尽量满足大部分应用需求，而这也是 TiDB 在努力的方向。
@@ -71,7 +71,7 @@ Logical tile 隐藏了 physical tile 的具体实现，logical tile 的每个 co
 + Flexible Materialization：我们可以提前或者推迟的物化。在执行 query plan tree 的时候，甚至都能够动态去选择一个物化策略。
 + Caching Behavior：我们可以根据不同的维度去创建不同的 tile group，放到 cache 了，用来处理后续的查询。
 
-### Logical Tile Algebra 
+### Logical Tile Algebra
 
 Peloton 提供 algebra operators 来让外面更方便的使用。Operators 主要包括：
 
