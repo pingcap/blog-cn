@@ -1,9 +1,9 @@
 ---
 title: 分布式系统测试那些事儿 - 信心的毁灭与重建
-author: 刘奇
+author: ['刘奇']
 date: 2016-12-07
 summary: 本话题系列文章整理自 PingCAP Infra Meetup 第 26 期刘奇分享的《深度探索分布式系统测试》议题现场实录。文章较长，为方便大家阅读，会分为上中下三篇，本文为下篇。
-tags: TiDB 分布式系统测试 测试工具
+tags: ['TiDB', '分布式系统测试', '测试工具']
 ---
 
 > 本话题系列文章整理自 PingCAP Infra Meetup 第 26 期刘奇分享的《深度探索分布式系统测试》议题现场实录。文章较长，为方便大家阅读，会分为上中下三篇，本文为下篇。
@@ -86,7 +86,7 @@ Simulate the following errors:
 怎么模拟网络呢？假设你有网络，里面有五台机器，那我现在想做一个脑裂怎么做？不能靠拔网线对吧？比如在 TiKV 的测试框架中，我们就可以直接通过 API 把 5 个节点脑裂成两部分，让 1, 2, 3 号节点互相联通，4, 5 号节点也能联通，这两个分区彼此是隔离的，非常的方便。其实原理很简单，这种情况是用程序自己去模拟，假如是你发的包，自动给你丢掉，或者直接告诉你 unreachable，那这个时候你就知道这个网络就脑裂了，然后你怎么做？就是只允许特定类型的消息进来，把其他的都丢掉，这样一来你可以保证有些 bug 是必然重现的。这个框架给了我们极大的信心用来模拟并重现各种 corner case，确保这些 corner case 在单元测试中每次都能被覆盖到。
 
 **How to test Rocksdb**
-  
+
 + Treat storage as a black box.
 + Three steps(7*24):
 	- Fill data, Random kill -9
@@ -117,7 +117,7 @@ Simulate the following errors:
 + bug 解决后自动 verify
 
 更惊人的是 OSS-Fuzz 集群一周可以跑 ~4 trillion test cases 更多细节大家可以看这篇文章：[Announcing OSS-Fuzz: Continuous Fuzzing for Open Source Software](https://opensource.googleblog.com/2016/12/announcing-oss-fuzz-continuous-fuzzing.html)
-	
+
 另外有些工具能让分布式系统开发人员的生活变得更美好一点。
 
 **Tracing tools may help you**

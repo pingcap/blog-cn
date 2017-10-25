@@ -1,9 +1,9 @@
 ---
 title: 演讲实录|黄东旭：Cloud-Native 的分布式数据库架构与实践
-author: 黄东旭
+author: ['黄东旭']
 date: 2017-04-22
 summary: 4 月 19 日，我司 CTO 黄东旭同学在全球云计算开源大会上，发表了《Cloud-Native 的分布式数据库架构与实践》主题演讲，以下为演讲实录。
-tags: TiDB k8s
+tags: ['TiDB', 'k8s']
 ---
 
 4 月 19 日，我司 CTO 黄东旭同学在全球云计算开源大会上，发表了《Cloud-Native 的分布式数据库架构与实践》主题演讲，以下为演讲实录。

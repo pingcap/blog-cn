@@ -1,9 +1,9 @@
 ---
 title: Kudu - 一个融合低延迟写入和高性能分析的存储系统
-author: 唐刘
+author: ['唐刘']
 date: 2017-05-08
 summary: Kudu 是一个基于 Raft 的分布式存储系统，它致力于融合低延迟写入和高性能分析这两种场景，并且能很好的嵌入到 Hadoop 生态系统里面，跟其他系统譬如 Cloudera Impala，Apache Spark 等对接。
-tags: Kudu Hadoop Raft 
+tags: ['Kudu', 'Hadoop', 'Raft']
 ---
 
 Kudu 是一个基于 Raft 的分布式存储系统，它致力于融合低延迟写入和高性能分析这两种场景，并且能很好的嵌入到 Hadoop 生态系统里面，跟其他系统譬如 Cloudera Impala，Apache Spark 等对接。
@@ -22,7 +22,7 @@ Kudu 很类似 TiDB。最开始，TiDB 是为了 OLTP 系统设计的，但后�
 
 Kudu 致力于解决上面的问题，它提供了简单的来处理数据的插入，更新和删除，同时提供了 table scan 来处理数据分析。通常如果一个系统要融合两个特性，很有可能就会陷入两边都做，两边都没做好的窘境，但 Kudu 很好的在融合上面取得了平衡，那么它是如何做到的呢？
 
-## Keyword 
+## Keyword
 
 ### Tables 和 schemas
 
@@ -150,7 +150,7 @@ Tablets 在 Kudu 里面被切分成更小的单元，叫做 RowSets。一些 Row
 
 当一个 MemRowSet 被刷到 disk 之后，一个新的空的 MemRowSet 被创建出来。之前的 MemRowSet 在刷到 disk 之后，就变成了 DiskRowSet。当刷的同时，如果有新的写入，仍然会写到这个正在刷的 MemRowSet 上面，Kudu 有一套机制能够保证新写入的数据也能一起被刷到 disk 上面。
 
-### MemRowSet 
+### MemRowSet
 
 MemRowSet 是一个支持并发，提供锁优化的 B-tree，主要基于 MassTree，也有一些不同：
 
@@ -159,7 +159,7 @@ MemRowSet 是一个支持并发，提供锁优化的 B-tree，主要基于 MassT
 3. 将 Leaf link 起来，类似 B+-tree，这样对于 scan 会有明显的性能提升。
 4. 并没有完全实现 `trie of trees`，是只是使用了一个单一 tree，因为 Kudu 并没有太多高频随机访问的场景。
 
-### DiskRowSet 
+### DiskRowSet
 
 当 MemRowSets 被刷到 disk 之后，就变成了 DiskRowSets。当 MemRowSets 被刷到 disk 的时候，Kudu 发现超过 32 MB 了就滚动一个新的 DiskRowSet。因为 MemRowSet 是顺序的，所以 DiskRowSets 也是顺序的，各滚动的 DiskRowSet 里面的 primary keys 都是不相交的。
 
@@ -190,7 +190,3 @@ Delta store 维护的一个 map，key 是 `(row_offset, timestamp)`，value 就�
 对于 Tablet Storage，虽然 Kudu 是自己实现的，但我发现，很多方面其实跟 RocksDB 差不了多少，类似 LSM 架构，只是可能这套系统专门为 Kudu 做了定制优化，而不像 RocksDB 那样具有普适性。对于 storage 来说，现在我们还是考虑使用 RocksDB。
 
 另外，Kudu 采用的是列存，也就是每个列的数据单独聚合存放到一起，而 TiDB 这边还是主要使用的行存，也就是存储整行数据。列存对于 OLAP 非常友好，但在刷盘的时候压力可能会比较大，如果一个 table 有很多 column，写入性能可会有点影响。行存则是对于 OLTP 比较友好，但在读取的时候会将整行数据全读出来，在一些分析场景下压力会有点大。但无论列存还是行存，都是为满足不同的业务场景而服务的，TiDB 后续其实可以考虑的是行列混存，这样就能适配不同的场景了，只是这个目标比较远大，希望感兴趣的同学一起加入来实现。
-
-
-
-

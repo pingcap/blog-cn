@@ -1,9 +1,9 @@
 ---
 title: 三篇文章了解 TiDB 技术内幕 - 谈调度
-author: 申砾
+author: ['申砾']
 date: 2017-06-06
 summary: 任何一个复杂的系统，用户感知到的都只是冰山一角，数据库也不例外。前两篇文章介绍了 TiKV、TiDB 的基本概念以及一些核心功能的实现原理，这两个组件一个负责 KV 存储，一个负责 SQL 引擎，都是大家看得见的东西。在这两个组件的后面，还有一个叫做 PD（Placement Driver）的组件，虽然不直接和业务接触，但是这个组件是整个集群的核心，负责全局元信息的存储以及 TiKV 集群负载均衡调度。本篇文章介绍一下这个神秘的模块。这部分比较复杂，很多东西大家平时不会想到，也很少在其他文章中见到类似的东西的描述。我们还是按照前两篇的思路，先讲我们需要什么样的功能，再讲我们如何实现，大家带着需求去看实现，会更容易的理解我们做这些设计时背后的考量。
-tags: TiDB
+tags: ['TiDB']
 ---
 
 ## 为什么要进行调度
@@ -83,7 +83,7 @@ PD 不断的通过这两类心跳消息收集整个集群的信息，再以这�
 PD 收集了这些信息后，还需要一些策略来制定具体的调度计划。
 
 **一个 Region 的 Replica 数量正确**
-	
+
 当 PD 通过某个 Region Leader 的心跳包发现这个 Region 的 Replica 数量不满足要求时，需要通过 Add/Remove Replica 操作调整 Replica 数量。出现这种情况的可能原因是：
 
 - 某个节点掉线，上面的数据全部丢失，导致一些 Region 的 Replica 数量不足
@@ -99,11 +99,11 @@ PD 收集了这些信息后，还需要一些策略来制定具体的调度计�
 - TiKV 节点分布在多个 IDC 中，希望单个机房掉电时，也能保证系统可用
 
 这些需求本质上都是某一个节点具备共同的位置属性，构成一个最小的容错单元，我们希望这个单元内部不会存在一个 Region 的多个 Replica。这个时候，可以给节点配置 [lables](https://github.com/pingcap/tikv/blob/master/etc/config-template.toml#L16) 并且通过在 PD 上配置 [location-labels](https://github.com/pingcap/pd/blob/master/conf/config.toml#L59) 来指明哪些 lable 是位置标识，需要在 Replica 分配的时候尽量保证不会有一个 Region 的多个 Replica 所在结点有相同的位置标识。
-	
+
 **副本在 Store 之间的分布均匀分配**
-	
+
 前面说过，每个副本中存储的数据容量上限是固定的，所以我们维持每个节点上面，副本数量的均衡，会使得总体的负载更均衡。
-	
+
 **Leader 数量在 Store 之间均匀分配**
 
 Raft 协议要读取和写入都通过 Leader 进行，所以计算的负载主要在 Leader 上面，PD 会尽可能将 Leader 在节点间分散开。

@@ -1,9 +1,9 @@
 ---
 title: TiKV 源码解析系列 - 如何使用 Raft
-author: 唐刘
+author: ['唐刘']
 date: 2016-12-26
 summary: 本系列文章主要面向 TiKV 社区开发者，重点介绍 TiKV 的系统架构，源码结构，流程解析。目的是使得开发者阅读之后，能对 TiKV 项目有一个初步了解，更好的参与进入 TiKV 的开发中。需要注意，TiKV 使用 Rust 语言编写，用户需要对 Rust 语言有一个大概的了解。另外，本系列文章并不会涉及到 TiKV 中心控制服务 Placement Driver(PD) 的详细介绍，但是会说明一些重要流程 TiKV 是如何与 PD 交互的。TiKV 是一个分布式的 KV 系统，它采用 Raft 协议保证数据的强一致性，同时使用 MVCC + 2PC 的方式实现了分布式事务的支持。
-tags: TiKV Raft 
+tags: ['TiKV', 'Raft']
 ---
 
 > 本系列文章主要面向 TiKV 社区开发者，重点介绍 TiKV 的系统架构，源码结构，流程解析。目的是使得开发者阅读之后，能对 TiKV 项目有一个初步了解，更好的参与进入 TiKV 的开发中。
@@ -137,4 +137,3 @@ id: Raft 节点的唯一标识，在一个 Raft 集群里面，id 是不可能�
 7. 调用 advance 告知 Raft 已经处理完 ready。
 
 #####-第一部分完结-
-

@@ -9,18 +9,18 @@
 头部的 meta 信息必须包含一下内容：
 
 - title 文章标题
-- author 文章作者
+- author 文章作者 list(array) 格式: **['author-1', 'author-2']**
 - date 文章发布日期 *格式:yyyy-mm-dd*
 - summary 文章简介
-- tags 标签分类 多个tags之间用空格分开
+- tags 标签分类 list(array) 格式: **['tag-1', 'tag-2']**
 
 ```
 ---
 title: Blog Title
-author: Author
+author: ['Author']
 date: yyyy-mm-dd
 summary: Blog Summary
-tags: Tag1 Tag2
+tags: ['Tag1', 'Tag2']
 ---
 ```
 

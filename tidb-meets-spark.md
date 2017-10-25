@@ -1,9 +1,9 @@
 ---
 title: When TiDB Meets Spark
-author: 马晓宇
+author: ['马晓宇']
 date: 2017-09-01
 summary: 本文整理自 TiSpark 项目发起人马晓宇在 Strata Data Conference 上分享的《When TiDB Meets Spark》演讲实录。
-tags: TiDB TiSpark Spark
+tags: ['TiDB', 'TiSpark', 'Spark']
 ---
 
 > 本文整理自 TiSpark 项目发起人马晓宇在 Strata Data Conference 上分享的《When TiDB Meets Spark》演讲实录。

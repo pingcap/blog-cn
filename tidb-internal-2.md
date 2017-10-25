@@ -1,9 +1,9 @@
 ---
 title: 三篇文章了解 TiDB 技术内幕 - 说计算
-author: 申砾
+author: ['申砾']
 date: 2017-05-24
 summary: 上一篇介绍了 TiDB 如何存储数据，也就是 TiKV 的一些基本概念。本篇将介绍 TiDB 如何利用底层的 KV 存储，将关系模型映射为 Key-Value 模型，以及如何进行 SQL 计算。
-tags: TiDB 计算 SQL 架构 分布式SQL
+tags: ['TiDB', '计算', 'SQL', '架构', '分布式SQL']
 ---
 
 ## 关系模型到 Key-Value 模型的映射
@@ -24,7 +24,7 @@ SQL 和 KV 结构之间存在巨大的区别，那么如何能够方便高效地
 对于一个 Table 来说，需要存储的数据包括三部分：
 
 1. 表的元信息
-2. Table 中的 Row 
+2. Table 中的 Row
 3. 索引数据
 
 表的元信息我们暂时不讨论，会有专门的章节来介绍。

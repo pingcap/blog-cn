@@ -1,9 +1,9 @@
 ---
 title: Building a Reliable Large-Scale Distributed Database - Principles and Practice
-author: 申砾
+author: ['申砾']
 date: 2016-10-21
 summary: 日前，PingCAP Engineering VP 申砾受邀参加 2016 中国开源年会，并发表了《Building a Reliable Large-Scale Distributed Database - Principles and Practice》主题演讲。本文为演讲实录。
-tags: TiDB NewSQL Test 
+tags: ['TiDB', 'NewSQL', 'Test']
 ---
 
 大家好，我叫申砾，是 PingCAP Tech Leader，负责 TiDB 技术相关的工作。我曾就职网易有道、360 搜索，主要在做垂直搜索相关的事情，现在主要关注分布式计算/存储领域。过去的一年半时间我在 PingCAP 做分布式关系数据库 TiDB。目前我们的整个项目已经开源了大概一年时间，获得了不少关注。在 Github 上 Star 数量超过 5k，并且 Contributor 数量为 50+，拥有一个活跃的社区，在国内和国际上都有一定的知名度。

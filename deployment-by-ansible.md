@@ -1,9 +1,9 @@
 ---
 title: 使用 Ansible 安装部署 TiDB
-author: 刘博
+author: ['刘博']
 date: 2017-06-08
 summary: 作为一个分布式系统，在多个节点分别配置安装服务会相当繁琐。Ansible 是基于 Python 的自动化运维工具，糅合了众多老牌运维工具的优点实现了批量操作系统配置、批量程序的部署、批量运行命令等功能，而且使用简单，仅需在管理工作站上安装 Ansible 程序配置被管控主机的 IP 信息，被管控的主机无客户端。选用自动化工具 Ansible 来批量的安装、配置、部署 TiDB 。本文介绍如何通过 Ansible 工具来批量安装，使整个过程简单化。
-tags: Ansible TiDB
+tags: ['Ansible', 'TiDB']
 ---
 
 ## 背景知识
@@ -18,14 +18,14 @@ Ansible 是基于 Python 研发的自动化运维工具，糅合了众多老牌�
 
 > 说明：低版本的操作系统(例如 CentOS6.6 )和 XFS 文件系统会有一些内核 Bug，会影响性能，我们不推荐使用。
 
-| IP | Services |
-|----|----------|
+| IP            | Services                                        |
+|:--------------|:------------------------------------------------|
 | 192.168.1.101 | PD Prometheus Grafana Pushgateway Node_exporter |
-| 192.168.1.102 | PD TiDB Node_exporter |
-| 192.168.1.103 | PD TiDB Node_exporter |
-| 192.168.1.104 | TiKV Node_exporter |
-| 192.168.1.105 | Tikv Node_exporter |
-| 192.168.1.106 | TiKV Node_exporter |
+| 192.168.1.102 | PD TiDB Node_exporter                           |
+| 192.168.1.103 | PD TiDB Node_exporter                           |
+| 192.168.1.104 | TiKV Node_exporter                              |
+| 192.168.1.105 | Tikv Node_exporter                              |
+| 192.168.1.106 | TiKV Node_exporter                              |
 
 我们选择使用 3 个 PD、2 个 TiDB、3 个 TiKV，这里简单说一下为什么这样部署。
 
@@ -38,19 +38,19 @@ Ansible 是基于 Python 研发的自动化运维工具，糅合了众多老牌�
 
 ```
 #创建目录用来存放 ansible 安装包
-mkdir /root/workspace                 
+mkdir /root/workspace
 
 #切换目录
-cd /root/workspace                    
+cd /root/workspace
 
 #下载安装包
-wget https://github.com/pingcap/tidb-ansible/archive/master.zip     
+wget https://github.com/pingcap/tidb-ansible/archive/master.zip
 
 #解压压缩包到当前目录下
-unzip master.zip                      
+unzip master.zip
 
 #查看安装包结构，主要内容说明如下
-cd tidb-ansible-master && ls          
+cd tidb-ansible-master && ls
 ```
 
 **部分内容含义**
@@ -133,7 +133,7 @@ enable_firewalld = False
 enable_ntpd = False
 
 # binlog trigger
-#是否开启 pump，pump 生成 TiDB 的 binlog 
+#是否开启 pump，pump 生成 TiDB 的 binlog
 #如果有从此 TiDB 集群同步数据的需求，可以改为 True 开启
 enable_binlog = False
 ```
@@ -151,27 +151,27 @@ ansible-playbook -i inventory.ini local_prepare.yml
 
 + 初始化集群各个节点。会检查 inventory.ini 配置文件、Python 版本、网络状态、操作系统版本等，并修改一些内核参数，创建相应的目录。
     - 修改配置文件如下
-    
+
     ```
     ## Connection
     # ssh via root:
     ansible_user = root
     # ansible_become = true
     ansible_become_user = tidb
-    
+
     # ssh via normal user
     # ansible_user = tidb
     ```
 
     - 执行初始化命令
-        
+
     ```
     ansible-playbook -i inventory.ini bootstrap.yml -k   #ansible-playboo命令说明请见附录
     ```
-      
+
 + 安装服务。该步骤会在服务器上安装相应的服务，并自动设置好配置文件和所需脚本。
     - 修改配置文件如下
-    
+
     ```
     ## Connection
     # ssh via root:
@@ -205,7 +205,7 @@ ansible-playbook -i inventory.ini local_prepare.yml
     # ansible_user = root
     # ansible_become = true
     # ansible_become_user = tidb
-    
+
     # ssh via normal user
     ansible_user = tidb
     ```
@@ -230,7 +230,7 @@ ansible-playbook -i inventory.ini start.yml -k
 ```
 
 + 停止所有服务
- 
+
 ```
 ansible-playbook -i inventory.ini stop.yml
 ```
@@ -238,7 +238,7 @@ ansible-playbook -i inventory.ini stop.yml
 *附录*
 
 > **ansible-playbook -i inventory.ini xxx.yml -k -K**
-> 
+>
 >   -k 执行之后需要输入 ssh 连接用户的密码，如果做了中控机到所有节点的互信，则不需要此参数
->   
+>
 >   -K 执行之后需要输入 sudo 所需的密码，如果使用 root 用户或者 sudo 无需密码，则不需要此参数

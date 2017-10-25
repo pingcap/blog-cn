@@ -1,9 +1,9 @@
 ---
 title: gRPC-rs：从 C 到 Rust
-author: 沈泰宁
+author: ['沈泰宁']
 date: 2017-07-18
 summary: 上篇文章中，我们讲到 TiKV 为了支持 gRPC，我们造了个轮子 gRPC-rs，本篇文章会简要地介绍一下这个库。
-tags: [TiKV, gRPC, Rust]
+tags: ['TiKV', 'gRPC', 'Rust']
 ---
 
 ## 介绍

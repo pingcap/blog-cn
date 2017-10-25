@@ -1,13 +1,13 @@
 ---
 title: Spanner - CAP, TrueTime and Transaction
-author: 唐刘
+author: ['唐刘']
 date: 2017-02-21
 summary: 最近大家非常关注的一件事情就是 Google Spanner Cloud 的发布，这应该算是 NewSQL 又一个里程碑的事件。在本篇文章中，唐刘同学与大家分享了他自己对 Spanner 的理解，Spanner 的一些关键技术的实现以及与 TiDB 的相关对比。
-tags: Cloud Spanner CAP  
+tags:['Cloud', 'Spanner', 'CAP']
 ---
 
 
-最近非常关注的一件事情就是 Google Spanner Cloud 的发布，这应该算是 NewSQL 又一个里程碑的事件。NewSQL 的概念应该就是在 12 年 Google Spanner 以及 F1 的论文发表之后，才开始慢慢流行，然后就开始有企业尝试根据 paper 做自己的 NewSQL，譬如国外的 CockroachDB 以及国内我们 PingCAP。 
+最近非常关注的一件事情就是 Google Spanner Cloud 的发布，这应该算是 NewSQL 又一个里程碑的事件。NewSQL 的概念应该就是在 12 年 Google Spanner 以及 F1 的论文发表之后，才开始慢慢流行，然后就开始有企业尝试根据 paper 做自己的 NewSQL，譬如国外的 CockroachDB 以及国内我们 PingCAP。
 
 Spanner 的论文在很早就发布了，国内也有很多中文翻译，这里笔者只是想聊聊自己对 Spanner 的理解，以及 Spanner 的一些关键技术的实现，以及跟我们自己的 TiDB 的相关对比。
 
@@ -123,7 +123,7 @@ TiDB 在 Leader 上面的读大部分走的是 lease read，也就是只要 Lead
 
 ## 小结
 
-随着 Spanner Cloud 的发布，我们这边也会持续关注 Spanner  Cloud 的进展，TiDB 的原始模型就是基于 Spanner + F1 搭建起来，随着 Spanner Cloud 更多资料的公布，TiDB 也能有更多的参考。 
+随着 Spanner Cloud 的发布，我们这边也会持续关注 Spanner  Cloud 的进展，TiDB 的原始模型就是基于 Spanner + F1 搭建起来，随着 Spanner Cloud 更多资料的公布，TiDB 也能有更多的参考。
 
 另外，我们一直相信，我们走在正确的道路上面，如果你对我们的东西感兴趣，欢迎联系我。
 

@@ -1,9 +1,9 @@
 ---
 title: TiDB Best Practice
-author: 申砾
+author: ['申砾']
 date: 2017-07-05
 summary: 本文档用于总结在使用 TiDB 时候的一些最佳实践，主要涉及 SQL 使用、OLAP/OLTP 优化技巧，特别是一些 TiDB 专有的优化开关。建议先阅读讲解 TiDB 原理的三篇文章(讲存储，说计算，谈调度)，再来看这篇文章。
-tags: TiDB
+tags: ['TiDB']
 ---
 
 本文档用于总结在使用 TiDB 时候的一些最佳实践，主要涉及 SQL 使用、OLAP/OLTP 优化技巧，特别是一些 TiDB 专有的优化开关。
@@ -37,11 +37,11 @@ TiDB 提供完整的分布式事务，事务模型是在 [Google Percolator](htt
 + 事务大小限制
 
 	由于分布式事务要做两阶段提交，并且底层还需要做 Raft 复制，如果一个事务非常大，会使得提交过程非常慢，并且会卡住下面的 Raft 复制流程。为了避免系统出现被卡住的情况，我们对事务的大小做了限制：
-	
+
 	- 单条 KV entry 不超过 6MB
 	- KV entry 的总条数不超过 30w
 	- KV entry 的总大小不超过 100MB
-	
+
 	在 Google 的 Cloud Spanner 上面，也有[类似的限制](https://cloud.google.com/spanner/docs/limits)。
 
 ### 数据分片
@@ -72,20 +72,20 @@ TiDB 支持完整的二级索引，并且是全局索引，很多查询可以通
 + 对哪些列建索引比较合适
 
 	上面提到，索引很重要但不是越多越好，我们需要根据具体的业务特点创建合适的索引。原则上我们需要对查询中需要用到的列创建索引，目的是提高性能。下面几种情况适合创建索引：
-	
+
 	- 区分度比较大的列，通过索引能显著地减少过滤后的行数
 	- 有多个查询条件时，可以选择组合索引，注意需要把等值条件的列放在组合索引的前面
-	
+
 	这里举一个例子，假设常用的查询是 `select * from t where c1 = 10 and c2 = 100 and c3 > 10`, 那么可以考虑建立组合索引 `Index cidx (c1, c2, c3)`，这样可以用查询条件构造出一个索引前缀进行 Scan。
 
 + 通过索引查询和直接扫描 Table 的区别
 
 	TiDB 实现了全局索引，所以索引和 Table 中的数据并不一定在一个数据分片上，通过索引查询的时候，需要先扫描索引，得到对应的行 ID，然后通过行 ID 去取数据，所以可能会涉及到两次网络请求，会有一定的性能开销。
- 
+
 	如果查询涉及到大量的行，那么扫描索引是并发进行，只要第一批结果已经返回，就可以开始去取 Table 的数据，所以这里是一个并行 + Pipeline 的模式，虽然有两次访问的开销，但是延迟并不会很大。
 
 	有两种情况不会涉及到两次访问的问题：
-	
+
 	- 索引中的列已经满足了查询需求。比如 Table t 上面的列 c 有索引，查询是 `select c from t where c > 10`; 这个时候，只需要访问索引，就可以拿到所需要的全部数据。这种情况我们称之为覆盖索引(Covering Index)。所以如果很关注查询性能，可以将部分不需要过滤但是需要再查询结果中返回的列放入索引中，构造成组合索引，比如这个例子： `select c1, c2 from t where c1 > 10`; 要优化这个查询可以创建组合索引 `Index c12 (c1, c2)`。
 	- 表的 Primary Key 是整数类型。在这种情况下，TiDB 会将 Primary Key 的值当做行 ID，所以如果查询条件是在 PK 上面，那么可以直接构造出行 ID 的范围，直接扫描 Table 数据，获取结果。
 
@@ -93,25 +93,25 @@ TiDB 支持完整的二级索引，并且是全局索引，很多查询可以通
 
 	数据分散在很多 Region 上，所以 TiDB 在做查询的时候会并发进行，默认的并发度比较保守，因为过高的并发度会消耗大量的系统资源，且对于 OLTP 类型的查询，往往不会涉及到大量的数据，较低的并发度已经可以满足需求。对于 OLAP 类型的 Query，往往需要较高的并发度。所以 TiDB 支持通过 System Variable 来调整查询并发度。
 	- [tidb_distsql_scan_concurrency](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_distsql_scan_concurrency)
-	
+
 		在进行扫描数据的时候的并发度，这里包括扫描 Table 以及索引数据。
-		
+
 	- [tidb_index_lookup_size](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_index_lookup_size)
-		
+
 		如果是需要访问索引获取行 ID 之后再访问 Table 数据，那么每次会把一批行 ID 作为一次请求去访问 Table 数据，这个参数可以设置 Batch 的大小，较大的 Batch 会使得延迟增加，较小的 Batch 可能会造成更多的查询次数。这个参数的合适大小与查询涉及的数据量有关。一般不需要调整。
-	
+
 	- [tidb_index_lookup_concurrency](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_index_lookup_concurrency)
-	
+
 		如果是需要访问索引获取行 ID 之后再访问 Table 数据，每次通过行 ID 获取数据时候的并发度通过这个参数调节。
-	
+
 + 通过索引保证结果顺序
- 
+
 	索引除了可以用来过滤数据之外，还能用来对数据排序，首先按照索引的顺序获取行 ID，然后再按照行 ID 的返回顺序返回行的内容，这样可以保证返回结果按照索引列有序。前面提到了扫索引和获取 Row 之间是并行 + Pipeline 模式，如果要求按照索引的顺序返回 Row，那么这两次查询之间的并发度设置的太高并不会降低延迟，所以默认的并发度比较保守。可以通过 [tidb_index_serial_scan_concurrency](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_index_serial_scan_concurrency) 变量进行并发度调整。
-	
+
 + 逆序索引
 
 	目前 TiDB 支持对索引进行逆序 Scan，但是速度要比顺序 Scan 慢 5 倍左右，所以尽量避免对索引的逆序 Scan。
-	
+
 
 ## 场景与实践
 
@@ -121,7 +121,7 @@ TiDB 支持完整的二级索引，并且是全局索引，很多查询可以通
 
 在部署之前请务必阅读 [TiDB 部署建议以及对硬件的需求](https://github.com/pingcap/docs-cn/blob/master/op-guide/recommendation.md)。
 
-推荐通过 [TiDB-Ansible](https://github.com/pingcap/tidb-ansible "TiDB-Ansible") 
+推荐通过 [TiDB-Ansible](https://github.com/pingcap/tidb-ansible "TiDB-Ansible")
 部署 TiDB 集群，这个工具可以部署、停止、销毁、升级整个集群，非常方便易用。
 
 具体的使用文档在[这里](https://github.com/pingcap/docs-cn/blob/master/op-guide/ansible-deployment.md)。非常不推荐手动部署，后期的维护和升级会很麻烦。
@@ -152,7 +152,7 @@ sync-log = true
 另外注意，无论是大小限制还是行数限制，还要考虑 TiDB 做编码以及事务额外 Key 的开销，在使用的时候，建议每个事务的行数不要超过 1w 行，否则有可能会超过限制，或者是性能不佳。
 
 建议无论是 Insert，Update 还是 Delete 语句，都通过分 Batch 或者是加 Limit 的方式限制。
- 
+
 在删除大量数据的时候，建议使用 `Delete * from t where xx limit 5000;` 这样的方案，通过循环来删除，用 `Affected Rows == 0` 作为循环结束条件，这样避免遇到事务大小的限制。
 
 如果一次删除的数据量非常大，这种循环的方式会越来越慢，因为每次删除都是从前向后遍历，前面的删除之后，短时间内会残留不少删除标记(后续会被 gc 掉)，影响后面的 Delete 语句。如果有可能，建议把 Where 条件细化。举个例子，假设要删除 2017-05-26 当天的所有数据，那么可以这样做：
@@ -172,7 +172,7 @@ for i from 0 to 23:
 可以通过 SET 语句控制 SQL 执行的并发度，另外通过 Hint 控制 Join 物理算子选择。
 
 另外 MySQL 标准的索引选择 Hint 语法，也可以用，通过 `Use Index/Ignore Index hint` 控制优化器选择索引。
- 
+
 如果是个 OLTP 和 OLAP 混合类型的业务，可以把 TP 请求和 AP 请求发送到不同的 tidb-server 上，这样能够减小 AP 业务对于 TP 业务的影响。 承载 AP 业务的 tidb-server 推荐使用高配的机器，比如 CPU 核数比较多，内存比较大。
 
 ### 监控 & 日志
@@ -187,7 +187,7 @@ for i from 0 to 23:
 
 了解一个系统或者解决使用中的问题最好的方法是阅读文档，明白实现原理，TiDB 有大量的官方文档，希望大家在遇到问题的时候能先尝试通过文档或者搜索 Issue list 寻找解决方案。官方文档在[这里](https://github.com/pingcap/docs-cn)。如果希望阅读英文文档，可以看[这里](https://github.com/pingcap/docs)。
 
-其中的 [FAQ](https://github.com/pingcap/docs-cn/blob/master/FAQ.md) 
+其中的 [FAQ](https://github.com/pingcap/docs-cn/blob/master/FAQ.md)
 和[故障诊断](https://github.com/pingcap/docs-cn/blob/master/trouble-shooting.md)章节建议大家仔细阅读。另外 TiDB 还有一些不错的工具，也有配套的文档，具体的见各项工具的 GitHub 页面。
 
 除了文档之外，还有很多不错的文章介绍 TiDB 的各项技术细节内幕，大家可以关注下面这些文章发布渠道：
@@ -204,18 +204,3 @@ for i from 0 to 23:
 + 不希望做 Sharding 或者懒得做 Sharding
 + 访问模式上没有明显的热点
 + 需要事务、需要强一致、需要灾备
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

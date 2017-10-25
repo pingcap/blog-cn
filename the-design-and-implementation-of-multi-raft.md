@@ -1,9 +1,9 @@
 ---
 title: TiKV 源码解析系列 - multi-raft 设计与实现
-author: 唐刘
+author: ['唐刘']
 date: 2017-01-03
 summary: 本文档主要面向 TiKV 社区开发者，主要介绍 TiKV 的系统架构，源码结构，流程解析。目的是使得开发者阅读文档之后，能对 TiKV 项目有一个初步了解，更好的参与进入 TiKV 的开发中。
-tags: TiKV Placement-Driver PD Multi-raft Raft 源码分析
+tags: ['TiKV', 'Placement Driver', 'PD', 'Multi Raft', 'Raft', '源码分析']
 ---
 
 
@@ -77,9 +77,9 @@ HardState 和 ConfState 是 protobuf，定义：
 
 ```
 message HardState {
-    optional uint64 term   = 1; 
-    optional uint64 vote   = 2; 
-    optional uint64 commit = 3; 
+    optional uint64 term   = 1;
+    optional uint64 vote   = 2;
+    optional uint64 commit = 3;
 }
 
 message ConfState {
@@ -131,7 +131,7 @@ pub struct Config {
 我们通过 RawNode 来使用 Raft，RawNode 的构造函数如下：
 
 ```
-pub fn new(config: &Config, store: T, peers: &[Peer]) -> Result<RawNode<T>> 
+pub fn new(config: &Config, store: T, peers: &[Peer]) -> Result<RawNode<T>>
 ```
 
 我们需要定义 Raft 的 Config，然后传入一个实现好的 Storage，peers 这个参数只是用于测试，实际要传空。生成好 RawNode 对象之后，我们就可以使用 Raft 了。我们关注如下几个函数：
@@ -242,8 +242,8 @@ message RegionEpoch {
     optional uint64 version     = 2 [(gogoproto.nullable) = false];
 }
 
-message Peer {      
-    optional uint64 id          = 1 [(gogoproto.nullable) = false]; 
+message Peer {
+    optional uint64 id          = 1 [(gogoproto.nullable) = false];
     optional uint64 store_id    = 2 [(gogoproto.nullable) = false];
 }
 ```
@@ -268,15 +268,15 @@ message Peer {
 * 0x02：用来存储 Raft 一些信息，0x02 之后会紧跟该 Raft Region 的 ID（8字节大端序 ），然后在紧跟一个 Suffix 来标识不同的子类型：
 
     + 0x01：用于存放 Raft Log，后面紧跟 Log Index（8字节大端序）
-    
+
     + 0x02：用于存放 RaftLocalState
-    
+
     + 0x03：用于存放 RaftApplyState
-    
+
 * 0x03：用来存储 Region 本地的一些元信息，0x03 之后紧跟 Raft Region ID，随后在紧跟一个 Suffix 来表示不同的子类型：
 
     + 0x01：用于存放 RegionLocalState
-   
+
 对于上面提到的几个类型，都在 protobuf 里面定义：
 
 ```
@@ -403,7 +403,7 @@ Store 通过 mio 的 notify 机制，接受外面 Client 的请求处理，以�
 Server 层就是 TiKV 的网络层，现阶段，TiKV 使用 mio 来实现整个网络的处理，而网络协议则是使用自定义的，如下：
 
 ```
-message = header + body 
+message = header + body
 header:  | 0xdaf4(2 bytes magic value) | 0x01(version 2 bytes) | msg_len(4 bytes) | msg_id(8 bytes) |
 ```
 任何一个 message，我们都使用 header + body 的方式，body 就是实际的 message 数据，使用 protobuf 编码，而 header，首先就是两个字节的 magic value，0xdaf4，然后就是版本号，再就是 message 的整个长度，以及 message 的唯一 ID。
@@ -425,4 +425,3 @@ header:  | 0xdaf4(2 bytes magic value) | 0x01(version 2 bytes) | msg_len(4 bytes
 ###总结
 
 这里，我们解释了 TiKV 核心的 Raft 库，Multi Raft。在后续的章节，我们会介绍 Transaction，Coprocessor 以及 PD 是如何对整个集群进行变更的。
-
