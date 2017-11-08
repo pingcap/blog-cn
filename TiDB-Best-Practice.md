@@ -7,7 +7,7 @@ tags: ['TiDB']
 ---
 
 本文档用于总结在使用 TiDB 时候的一些最佳实践，主要涉及 SQL 使用、OLAP/OLTP 优化技巧，特别是一些 TiDB 专有的优化开关。
-建议先阅读讲解 TiDB 原理的三篇文章([讲存储](https://pingcap.com/blog-tidb-internal-1-zh)，[说计算](https://pingcap.com/blog-tidb-internal-2-zh)，[谈调度](https://pingcap.com/blog-tidb-internal-3-zh))，再来看这篇文章。
+建议先阅读讲解 TiDB 原理的三篇文章([讲存储](tidb-internal-1.md)，[说计算](tidb-internal-2.md)，[谈调度](tidb-internal-3.md))，再来看这篇文章。
 
 ## 前言
 数据库是一个通用的基础组件，在开发过程中会考虑到多种目标场景，在具体的业务场景中，需要根据业务的实际情况对数据的参数或者使用方式进行调整。
