@@ -27,7 +27,7 @@ Raft 是一种一致性协议，能提供强一致的数据复制保证，TiDB �
 
 
 ### 分布式事务
-TiDB 提供完整的分布式事务，事务模型是在 [Google Percolator](https://research.google.com/pubs/pub36726.html) 的基础上做了一些优化。具体的实现大家可以参考[这篇文章](https://pingcap.com/blog-percolator-and-txn-zh)。这里只说两点：
+TiDB 提供完整的分布式事务，事务模型是在 [Google Percolator](https://research.google.com/pubs/pub36726.html) 的基础上做了一些优化。具体的实现大家可以参考[这篇文章](./percolator-and-txn.md)。这里只说两点：
 
 + 乐观锁
 
@@ -54,7 +54,7 @@ PD 会根据整个 TiKV 集群的状态，对集群的负载进行调度。调�
 
 ### SQL on KV
 
-TiDB 自动将 SQL 结构映射为 KV 结构。具体的可以参考[这篇文档](https://pingcap.com/blog-tidb-internal-2-zh)。简单来说，TiDB 做了两件事：
+TiDB 自动将 SQL 结构映射为 KV 结构。具体的可以参考[这篇文档](./tidb-internal-2.md)。简单来说，TiDB 做了两件事：
 
 + 一行数据映射为一个 KV，Key 以 `TableID` 构造前缀，以行 ID 为后缀
 + 一条索引映射为一个 KV，Key 以 `TableID+IndexID` 构造前缀，以索引值构造后缀

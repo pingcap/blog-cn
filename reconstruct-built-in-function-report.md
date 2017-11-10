@@ -6,7 +6,7 @@ summary: 为了方便社区同学更好地参与 TiDB 项目，本文一方面�
 tags: ['TiDB', 'Contributor']
 ---
 
-6 月 22 日，TiDB 发布了一篇如何十分钟成为 TiDB Contributor 系列的[第二篇文章](https://pingcap.com/blog-reconstruct-built-in-function-zh)，向大家介绍如何为 TiDB 重构 built-in 函数。
+6 月 22 日，TiDB 发布了一篇如何十分钟成为 TiDB Contributor 系列的[第二篇文章](./reconstruct-built-in-function.md)，向大家介绍如何为 TiDB 重构 built-in 函数。
 
 截止到目前，得到了来自社区的积极支持与热情反馈，TiDB 参考社区 contributors 的建议，对计算框架进行了部分修改以降低社区同学参与的难度。
 
@@ -20,41 +20,41 @@ tags: ['TiDB', 'Contributor']
 共计 165 个
 在 expression 目录下运行 `grep -rn "^\tbaseBuiltinFunc$" -B 1 * | grep "Sig struct {" | awk -F "Sig" '{print $1}' | awk -F "builtin" '{print $3}' > ~/Desktop/func.txt` 命令可以获得所有未实现的 built-in 函数
 
-|       0       |            1             |       2       |        3        |       4        |
-|:-------------:|:------------------------:|:-------------:|:---------------:|:--------------:|
-|   Coalesce    |        Uncompress        |     Log10     |     Default     |    UnaryOp     |
-|   Greatest    |    UncompressedLength    |     Rand      |    InetAton     |     IsNull     |
-|     Least     | ValidatePasswordStrength |      Pow      |    InetNtoa     |       In       |
-|   Interval    |         Database         |     Round     |    Inet6Aton    |      Row       |
-|   CaseWhen    |        FoundRows         |     Conv      |    Inet6Ntoa    |     SetVar     |
-|      If       |       CurrentUser        |     CRC32     |   IsFreeLock    |     GetVar     |
-|    IfNull     |           User           |     Sqrt      |     IsIPv4      |     Values     |
-|    NullIf     |       ConnectionID       |  Arithmetic   | IsIPv4Prefixed  |    BitCount    |
-|  AesDecrypt   |       LastInsertID       |     Acos      |     IsIPv6      |    Reverse     |
-|  AesEncrypt   |         Version          |     Asin      |   IsUsedLock    |    Convert     |
-|   Compress    |        Benchmark         |     Atan      |  MasterPosWait  |   Substring    |
+|       0       |            1             |       2       |        3        | 4 |
+|:-------------:|:------------------------:|:-------------:|:---------------:|:-:|
+|   Coalesce    |        Uncompress        |     Log10     |     Default     | UnaryOp |
+|   Greatest    |    UncompressedLength    |     Rand      |    InetAton     | IsNull |
+|     Least     | ValidatePasswordStrength |      Pow      |    InetNtoa     | In |
+|   Interval    |         Database         |     Round     |    Inet6Aton    | Row |
+|   CaseWhen    |        FoundRows         |     Conv      |    Inet6Ntoa    | SetVar |
+|      If       |       CurrentUser        |     CRC32     |   IsFreeLock    | GetVar |
+|    IfNull     |           User           |     Sqrt      |     IsIPv4      | Values |
+|    NullIf     |       ConnectionID       |  Arithmetic   | IsIPv4Prefixed  | BitCount |
+|  AesDecrypt   |       LastInsertID       |     Acos      |     IsIPv6      | Reverse |
+|  AesEncrypt   |         Version          |     Asin      |   IsUsedLock    | Convert |
+|   Compress    |        Benchmark         |     Atan      |  MasterPosWait  | Substring |
 |    Decode     |         Charset          |      Cot      |    NameConst    | SubstringIndex |
-|  DesDecrypt   |       Coercibility       |      Exp      | ReleaseAllLocks |     Locate     |
-|  DesEncrypt   |        Collation         |      PI       |      UUID       |      Hex       |
-|    Encode     |         RowCount         |    Radians    |    UUIDShort    |     UnHex      |
-|    Encrypt    |          Regexp          |   Truncate    |     AndAnd      |      Trim      |
-|  OldPassword  |           Abs            |     Sleep     |      OrOr       |     LTrim      |
-|  RandomBytes  |           Ceil           |     Lock      |    LogicXor     |     RTrim      |
-|     SHA1      |          Floor           |  ReleaseLock  |      BitOp      |      Rpad      |
-|     SHA2      |           Log            |   AnyValue    |    IsTrueOp     |   BitLength    |
-|     Char      |          Format          |   FromDays    |    DayOfWeek    |   Timestamp    |
-|  CharLength   |        FromBase64        |     Hour      |    DayOfYear    |    AddTime     |
-|   FindInSet   |        InsertFunc        |    Minute     |      Week       |   ConvertTz    |
-|     Field     |          Instr           |    Second     |     WeekDay     |    MakeTime    |
-|    MakeSet    |         LoadFile         |  MicroSecond  |   WeekOfYear    |   PeriodAdd    |
-|      Oct      |           Lpad           |     Month     |      Year       |   PeriodDiff   |
-|     Quote     |           Date           |   MonthName   |    YearWeek     |    Quarter     |
-|      Bin      |         DateDiff         |      Now      |  FromUnixTime   |   SecToTime    |
-|      Elt      |         TimeDiff         |    DayName    |    GetFormat    |    SubTime     |
-|   ExportSet   |        DateFormat        |  DayOfMonth   |    StrToDate    |   TimeFormat   |
-|    UTCTim     |        ToSeconds         | TimestampDiff |    DateArith    |    Extract     |
-| UnixTimestamp |       UTCTimestamp       |    UTCDate    |      Time       |  CurrentTime   |
-|    ToDays     |       TimestampAdd       |   TimeToSec   |   CurrentDate   |    SysDate     |
+|  DesDecrypt   |       Coercibility       |      Exp      | ReleaseAllLocks | Locate |
+|  DesEncrypt   |        Collation         |      PI       |      UUID       | Hex |
+|    Encode     |         RowCount         |    Radians    |    UUIDShort    | UnHex |
+|    Encrypt    |          Regexp          |   Truncate    |     AndAnd      | Trim |
+|  OldPassword  |           Abs            |     Sleep     |      OrOr       | LTrim |
+|  RandomBytes  |           Ceil           |     Lock      |    LogicXor     | RTrim |
+|     SHA1      |          Floor           |  ReleaseLock  |      BitOp      | Rpad |
+|     SHA2      |           Log            |   AnyValue    |    IsTrueOp     | BitLength |
+|     Char      |          Format          |   FromDays    |    DayOfWeek    | Timestamp |
+|  CharLength   |        FromBase64        |     Hour      |    DayOfYear    | AddTime |
+|   FindInSet   |        InsertFunc        |    Minute     |      Week       | ConvertTz |
+|     Field     |          Instr           |    Second     |     WeekDay     | MakeTime |
+|    MakeSet    |         LoadFile         |  MicroSecond  |   WeekOfYear    | PeriodAdd |
+|      Oct      |           Lpad           |     Month     |      Year       | PeriodDiff |
+|     Quote     |           Date           |   MonthName   |    YearWeek     | Quarter |
+|      Bin      |         DateDiff         |      Now      |  FromUnixTime   | SecToTime |
+|      Elt      |         TimeDiff         |    DayName    |    GetFormat    | SubTime |
+|   ExportSet   |        DateFormat        |  DayOfMonth   |    StrToDate    | TimeFormat |
+|    UTCTim     |        ToSeconds         | TimestampDiff |    DateArith    | Extract |
+| UnixTimestamp |       UTCTimestamp       |    UTCDate    |      Time       | CurrentTime |
+|    ToDays     |       TimestampAdd       |   TimeToSec   |   CurrentDate   | SysDate |
 
 ### 二. 计算框架进行的修改:
 
