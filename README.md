@@ -1,8 +1,6 @@
 # blog-cn
 
-## website blog 规范
-
-### .md 文件要以英文命名
+## 文档规范
 
 ### meta 信息
 
