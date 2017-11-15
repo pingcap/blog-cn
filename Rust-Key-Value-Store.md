@@ -1,9 +1,9 @@
 ---
 title: 使用 Rust 构建分布式 Key-Value Store
-author: 唐刘
+author: ['唐刘']
 date: 2017-11-15
-summary: 构建一个分布式 Key-Value Store 并不是一件容易的事情，我们需要考虑很多的问题，首先就是我们的系统到底需要提供什么样的功能。本文将以我们开发的分布式 Key-Value [TiKV](https://github.com/pingcap/tikv) 作为实际例子，来说明下我们是如何取舍并实现的。
-tags: Rust TiKV 
+summary: 构建一个分布式 Key-Value Store 并不是一件容易的事情，我们需要考虑很多的问题，首先就是我们的系统到底需要提供什么样的功能。本文将以我们开发的分布式 Key-Value TiKV 作为实际例子，来说明下我们是如何取舍并实现的。
+tags: ['Rust', 'TiKV']
 ---
 
 ## 引子
@@ -195,6 +195,3 @@ TiKV 使用的是 Prometheus，一个非常强大的监控系统。Prometheus �
 上面仅仅列出了我们用 Rust 开发 TiKV 的过程中，一些核心模块的设计思路。这篇文章只是一个简单的介绍，后面我们会针对每一个模块详细的进行说明。还有一些功能我们现在是没有做的，譬如 open tracing，这些后面都会慢慢开始完善。
 
 我们的目标是通过 TiKV，在分布式系统领域，提供一套 Rust 解决方案，形成一个 Rust ecosystem。这个目标很远大，欢迎任何感兴趣的同学加入。
-
-
-
