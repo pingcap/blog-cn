@@ -91,7 +91,7 @@ Spark 的具体配置方式也请参考[官方说明](https://spark.apache.org/d
 
 ## 四、部署 TiSpark
 
-TiSpark 的 jar 包可以在[这里](https://download.pingcap.org/tispark-0.1.0-SNAPSHOT-jar-with-dependencies.jar)下载。
+TiSpark 的 jar 包可以在[这里](https://download.pingcap.org/tispark-0.1.0-beta-SNAPSHOT-jar-with-dependencies.jar)下载。
 
 ### 4.1 已有 Spark 集群的部署方式
 
