@@ -10,7 +10,7 @@ tags: ['TiDB', 'Percolator', '事务']
 本文先概括的讲一下 Google Percolator 的大致流程。Percolator 是 Google 的上一代分布式事务解决方案，构建在 BigTable 之上，在 Google 内部 用于网页索引更新的业务，原始的论文[在此](http://research.google.com/pubs/pub36726.html)。原理比较简单，总体来说就是一个经过优化的二阶段提交的实现，进行了一个二级锁的优化。TiDB 的事务模型沿用了 Percolator 的事务模型。
 总体的流程如下：
 
-###读写事务
+### 读写事务
 
 1) 事务提交前，在客户端 buffer 所有的 update/delete 操作。
 2) Prewrite 阶段:
@@ -40,7 +40,7 @@ PrewritePrimary: 对 primaryRow 写入 L 列(上锁)，L 列中记录本次事�
 
 如果 primary row 提交失败的话，全事务回滚，回滚逻辑同 prewrite。如果 commit primary 成功，则可以异步的 commit secondaries, 流程和 commit primary 一致， 失败了也无所谓。
 
-###事务中的读操作
+### 事务中的读操作
 
 1. 检查该行是否有 L 列，时间戳为 [0, startTs]，如果有，表示目前有其他事务正占用此行，如果这个锁已经超时则尝试清除，否则等待超时或者其他事务主动解锁。注意此时不能直接返回老版本的数据，否则会发生幻读的问题。
 2. 读取至 startTs 时该行最新的数据，方法是：读取 W 列，时间戳为 [0, startTs], 获取这一列的值，转化成时间戳 t, 然后读取此列于 t 版本的数据内容。

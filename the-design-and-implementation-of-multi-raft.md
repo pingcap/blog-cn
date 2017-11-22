@@ -7,7 +7,7 @@ tags: ['TiKV', 'Placement Driver', 'PD', 'Multi Raft', 'Raft', '源码分析']
 ---
 
 
-###概述
+### 概述
 
 本文档主要面向 TiKV 社区开发者，主要介绍 TiKV 的系统架构，源码结构，流程解析。目的是使得开发者阅读文档之后，能对 TiKV 项目有一个初步了解，更好的参与进入 TiKV 的开发中。
 
@@ -15,7 +15,7 @@ tags: ['TiKV', 'Placement Driver', 'PD', 'Multi Raft', 'Raft', '源码分析']
 
 TiKV 是一个分布式的 KV 系统，它采用 Raft 协议保证数据的强一致性，同时使用 MVCC + 2PC 的方式实现了分布式事务的支持。
 
-###架构
+### 架构
 
 TiKV 的整体架构比较简单，如下：
 
@@ -29,7 +29,7 @@ TiKV 的整体架构比较简单，如下：
 
 **Region** : Region 是数据移动的最小单元，对应的是 Store 里面一块实际的数据区间。每个 Region 会有多个副本（replica），每个副本位于不同的 Store ，而这些副本组成了一个 Raft group。
 
-###Raft
+### Raft
 
 TiKV 使用 Raft 算法实现了分布式环境下面数据的强一致性，关于 Raft，可以参考论文 “[In Search of an Understandable Consensus Algorithm](https://raft.github.io/raft.pdf)” 以及[官网](https://raft.github.io/)，这里不做详细的解释。简单理解，Raft 是一个 replication log + State Machine 的模型，我们只能通过 leader 进行写入，leader 会将 command 通过 log 的形式复制到 followers，当集群的大多数节点都收到了这个 log，我们就认为这个 log 是 committed，可以 apply 到 State Machine 里面。
 
@@ -47,7 +47,7 @@ TiKV 的 Raft 主要移植 [etcd Raft](https://github.com/coreos/etcd/tree/maste
 
 Raft 库是一个独立的库，用户也可以非常方便的将其直接嵌入到自己的应用程序，而仅仅只需要自行处理存储以及消息的发送。这里简单介绍一下如何使用 Raft，代码在 TiKV 源码目录的 /src/raft 下面。
 
-####Storage
+#### Storage
 
 首先，我们需要定义自己的 Storage，Storage 主要用来存储 Raft 相关数据，trait 定义如下：
 
@@ -98,7 +98,7 @@ term，first\_index 和 last\_index 分别是得到当前的 term，以及最小
 
 需要注意，上面的 Storage 接口只是 Raft 库需要的，实际我们还会用这个 Storage 存储 raft log 等数据，所以还需要单独提供其他的接口。在 Raft storage.rs 里面，我们提供了一个 MemStorage，用于测试，大家也可以参考 MemStorage 来实现自己的 Storage。
 
-####Config
+#### Config
 
 在使用 Raft 之前，我们需要知道 Raft 一些相关的配置，在 Config 里面定义，这里只列出需要注意的：
 
@@ -126,7 +126,7 @@ pub struct Config {
 
 这里详细解释一下 tick 的含义，TiKV 的 Raft 是定时驱动的，假设我们每隔 100ms 调用一次 Raft tick，那么当调用到 headtbeat_tick 的 tick 次数之后，leader 就会给 follower 发送心跳。
 
-####RawNode
+#### RawNode
 
 我们通过 RawNode 来使用 Raft，RawNode 的构造函数如下：
 
@@ -192,7 +192,7 @@ pub struct Ready {
 
 7. 调用 advance 告知 Raft 已经处理完 ready。
 
-###Placement Driver
+### Placement Driver
 
 在继续之前，我们先简单介绍一下 Placement Driver(PD)。PD 是 TiKV 的全局中央控制器，存储整个 TiKV 集群的元数据信息，负责整个 TiKV 集群的调度，全局 ID 的生成，以及全局 TSO 授时等。
 
@@ -212,11 +212,11 @@ ask\_split/report\_split：当 Region 发现自己需要 split 的时候，就 a
 
 注意，后面我们会让 PD 支持 gRPC 协议，所以 Client API 到时候可能会有变更。
 
-###Raftstore
+### Raftstore
 
 因为 TiKV 目标是支持 100 TB+ 以上的数据，一个 Raft 集群是铁定没法支持这么多数据的，所以我们需要使用多个 Raft 集群，也就是 Multi Raft。在 TiKV 里面，Multi Raft 的实现是在 Raftstore 完成的，代码在 raftstore/store 目录。
 
-####Region
+#### Region
 
 因为我们要支持 Multi Raft，所以我们需要将数据进行分片处理，让每个 Raft 单独负责一部分数据。
 
@@ -255,7 +255,7 @@ message Peer {
 
 **peers**：当前 Region 包含的节点信息。对于一个 Raft Group，我们通常有三个副本，每个副本我们使用 Peer 来表示，Peer 的 id 也是全局由 PD 分配，而 store_id 则表明这个 Peer 在哪一个 Store 上面。
 
-####RocksDB / Keys Prefix
+#### RocksDB / Keys Prefix
 
 对于实际数据存储，无论是 Raft Meta，Log，还是 State Machine 的 data，我们都存到一个 RocksDB 实例里面。关于 RocksDB，可以详细参考 [facebook/rocksdb](https://github.com/facebook/rocksdb)。
 
@@ -307,7 +307,7 @@ message RegionLocalState {
 
 **RegionLocalStaste**： 用于存放 Region 信息以及在该 Store 上面对应的 Peer 状态，Normal 表明是一个正常的 Peer，Applying 表明该 Peer 还没做完 apply snapshot 的操作，而 Tombstone 则表明该 Peer 已经被移除出了 Region，不能在参与到 Raft Group 里面。
 
-####Peer Storage
+#### Peer Storage
 
 前面已经知道，我们通过 RawNode 来使用 Raft。因为一个 Region 对应的一个 Raft Group，Region 里面的 Peer 就对应的是一个 Raft 副本。所以，我们在 Peer 里面封装了对 RawNode 的操作。
 
@@ -347,7 +347,7 @@ pub const JOB_STATUS_FAILED: usize = 5;
 ```
 譬如，如果状态是 JOB\_STATUS\_RUNNING，那么表明当前正在进行 applying snapshot 的操作。现阶段，我们是不允许 FAILED 的，也就是如果 apply snapshot 失败，我们会 panic。
 
-####Peer
+#### Peer
 
 Peer 封装了 Raft RawNode，我们对 Raft 的 Propose，ready 的处理都是在 Peer 里面完成的。
 
@@ -376,7 +376,7 @@ pub trait Transport: Send + Clone {
 ```
 它就只有一个函数 send，TiKV 实现的 Transport 会将需要 send 的 message 发到 Server 层，由 Server 层发给其他的节点。
 
-####Multi Raft
+#### Multi Raft
 
 Peer 只是单个 Region 的副本，因为 TiKV 是支持 Multi Raft，所以对于一个 Store 来说，我们需要管理多个 Region 的副本，这些都是在 Store 类里面统一进行管理的。
 
@@ -398,7 +398,7 @@ Store 通过 mio 的 notify 机制，接受外面 Client 的请求处理，以�
 
 3. 然后，Store 会依次调用 handle\_raft\_ready\_apply，apply 相关 committed entries，然后调用 on\_ready\_result 处理最后的结果。
 
-###Server
+### Server
 
 Server 层就是 TiKV 的网络层，现阶段，TiKV 使用 mio 来实现整个网络的处理，而网络协议则是使用自定义的，如下：
 
@@ -422,6 +422,6 @@ header:  | 0xdaf4(2 bytes magic value) | 0x01(version 2 bytes) | msg_len(4 bytes
 
 因为 Server 就是对网络 IO 的处理，逻辑比较简单，这里就不过多说明，但是，鉴于现阶段 TiKV 使用的是自定义的网络协议，并不利于跟外部其他客户端的对接，并且也没有 pipeline，stream 等优秀特性的 支持，所以后续我们会换成 gRPC。
 
-###总结
+### 总结
 
 这里，我们解释了 TiKV 核心的 Raft 库，Multi Raft。在后续的章节，我们会介绍 Transaction，Coprocessor 以及 PD 是如何对整个集群进行变更的。

@@ -10,7 +10,7 @@ tags: ['TiDB', '分布式系统测试', '自动化测试']
 
 今天主要是介绍分布式系统测试。对于 PingCAP 目前的现状来说，我们是觉得做好分布式系统测试比做一个分布式系统更难。就是你把它写出来不是最难的，把它测好才是最难的。大家肯定会觉得有这么夸张吗？那我们先从一个最简单的、每个人都会写的 Hello world  开始。
 
-###A simple “Hello world” is a miracle
+### A simple “Hello world” is a miracle
 
 We should walk through all of the bugs in:
 
@@ -23,7 +23,7 @@ We should walk through all of the bugs in:
 
 但是分布式系统里面呢，就更加复杂了。比如大家现在用的很典型的微服务。假设你提供了一个微服务，然后在微服务提供的功能就是输出一个 Hello world  ，然后让别人来 Call。
 
-###A RPC “Hello world” is a miracle
+### A RPC “Hello world” is a miracle
 
 We should walk through all of the bugs in:
 
@@ -39,7 +39,7 @@ We should walk through all of the bugs in:
 
 那先纠正几个观念，关于测试的。就是到底怎么样才能得到一个好的、高质量的程序，或者说得到一个高质量的系统？
 
-###Who is the tester ?
+### Who is the tester ?
 
 + Quality comes from solid engineering.
 + Stop talking and go build things.
@@ -50,7 +50,7 @@ We should walk through all of the bugs in:
 
 我们的观念是说先有 solid engineering 。我觉得这个几乎是勿庸置疑的吧，不知道大家的经验是什么？然后还有一个就是不扯淡，尽快去把东西 build 起来，然后让东西去运转起来。我前一段时间也写了一个段子，就是：“你是写 Rust 的，他是写 Java 的，你们这聊了这么久，人家 Rust （编译速度慢） 的程序已经编译过了，你 Java 还没开始写。”原版是这样的:“你是砍柴的，他是放羊的，你们聊了一天，他的羊吃饱了，你的柴呢？”然后最近还有一个特别有争议的话题：CTO 应该干嘛。就是 CTO 到底该不该写代码，这个也是众说纷纭。因为每一个人都受到自己环境的局限，所以每个人的看法都是不一样的。那我觉得有点像，就是同样是聊天，然后不同人有不同的看法。
 
-###Test automation
+### Test automation
 
 + Allow developers to get a unit test results immediately.
 + Allow developers to run all unit tests in one go.
@@ -68,7 +68,7 @@ Google Spanner 就用到这个特性，它会有专门的程序自动生成符�
 
 我刚才已经反复强调过自动化这个事情。不知道大家平时写代码 cover 已经到多少了？如果 cover 一直低于 50%，那就是说你有一半的代码没有被测到，那它在线上什么时候都有可能出现问题。当然我们还需要更好的方法去在上线之前能够把线上的 case 回放。理论上你对线上这个回放的越久你就越安全，但是前提是线上代码永远不更新，如果业务方更新了，那就又相当于埋下了一个定时炸弹。比如说你在上面跑两个月，然后业务现在有一点修改，然而那两个又没有 cover 住修改，那这时候可能有新的问题。所以要把所有的一切都自动化，包括刚才的监控。比如说你一个系统一过去，然后自动发现有哪些项需要监控，然后自动设置报警。大家觉得这事是不是很神奇？其实这在 Google 里面是司空见惯的事情，PingCAP 现在也正在做。
 
-###Well… still not enough ?
+### Well… still not enough ?
 
 + Each layer can be tested independently.
 + Make sure you are building the right tests.
@@ -83,7 +83,7 @@ Google Spanner 就用到这个特性，它会有专门的程序自动生成符�
 
 这个是目前主流开源社区都在坚持的做法，基本没有例外。就是如果有一个开源社区说我发现一个 bug，我没有 Test 去 cover 它，这个东西以后别人是不敢用的。
 
-###Code review
+### Code review
 
 + At least two LGTMs (Looks good to me) from the maintainers.
 + Address comments.
@@ -92,7 +92,7 @@ Google Spanner 就用到这个特性，它会有专门的程序自动生成符�
 
 简单说一下 code review 的事情，它和 Test 还是有一点关系，为什么？因为在 code review 的时候你会提一个新的 pr，然后这个 pr 一定要通过这个 Test。比如说典型的 Travis CI，或者 CircleCI 的这种 Test。为什么要这样做呢？因为要保证它被 merge 到 master 之前你一定要发现这个问题，如果已经 merge 到 master 了，首先这不好看，因为你要 revert 掉，这个在 commit 记录上是特别不好看的一个事情。另外一个就是它出现问题之前，你就先把它发现其实是最好的，因为有很多工具会根据 master 自动去 build。比如说我们会根据 master 去自动 build docker 镜像，一旦你代码被 commit 到 master，然后 docker 镜像就出来了。那你的用户就发现，你有新的更新，我要马上使用新的，但是如果你之前的 CI 没有过，这时候就麻烦了，所以 CI 没过，一定不能进入到 CD 阶段。
 
-###Who to blame in case of bugs?
+### Who to blame in case of bugs?
 
 The entire team.
 
@@ -100,7 +100,7 @@ The entire team.
 
 除了刚才说的发现一些 bug，还有一些你很难定义，说这是不是 bug，怎么系统跑的慢，这算不算 bug，怎么对 bug 做界定呢？我们现在的界定方式是用户说了算。虽然我们觉得这不是 bug，这不就慢一点吗，但是用户说了这个东西太慢了，我们不能忍，这就是 bug，你就是该优化的就优化。然后我们团队里面出现过这样的事情，说“我们这个已经跑的很快了，已经够快了”，对不起，用户说慢，用户说慢就得改，你就得去提升。总而言之，标准不能自己定，当然如果你自己去定这个标准，那这个事就变成“我这个很 OK 了，我不需要改了，可以了。”这样是不行的。
 
-###Profiling
+### Profiling
 
 + Profile everything, even on production
 	- once-in-a-lifetime chance
@@ -108,11 +108,11 @@ The entire team.
 
 另外，在 Profile 这个事情上面，我们强调一个，即使是在线上，也需要能做  Profile，其实  Profile 的开销是很小的。然后很有可能是这样的，有一次线上系统特别卡，如果你把那个重启了，你可能再也没有机会复现它了，那么对于这些情况它很可能是一辈子发生一次的，那一次你没有抓住它，你可能再也没有机会抓住它了。当然我们后面会介绍一些方法，可以让这个能复现，但是有一些确实是和业务相关性极强的，那么可能刚好又碰到一个特别的环境才能让它出现，那真的可能是一辈子就那么一次的，你一定要这次抓住它，这次抓不住，你可能永远就抓不住了。因为有些犯罪它一辈子只犯一次，它犯完之后你再也没有机会抓住它了。
 
-###Embed testing to your design
+### Embed testing to your design
 
 + Design for testing or Die without good tests
 + Tests may make your code less beautiful
 
 再说测试和设计的关系。测试是一定要融入到你的设计里面，就是在你设计的时候就一定要想这个东西到底应该怎么去测。如果在设计的时候想不到这个东西应该怎么测，那这个东西就是正确性实际上是没法验证的，这是非常恐怖的一件事情。我们把测试的重要程度看成这样的：你要么就设计好的测试，要么就挂了，就没什么其它的容你选择。就是说在这一块我们把它的重要性放到一个最高的程度。
 
-#####未完待续...
+##### 未完待续...
