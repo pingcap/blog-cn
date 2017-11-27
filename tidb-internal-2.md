@@ -96,6 +96,18 @@ Index 数据还需要考虑 Unique Index 和非 Unique Index 两种情况，对�
 
 ## 元信息管理
 上节介绍了表中的数据和索引是如何映射为 KV，本节介绍一下元信息的存储。Database/Table 都有元信息，也就是其定义以及各项属性，这些信息也需要持久化，我们也将这些信息存储在 TiKV 中。每个 Database/Table 都被分配了一个唯一的 ID，这个 ID 作为唯一标识，并且在编码为 Key-Value 时，这个 ID 都会编码到 Key 中，再加上 `m_` 前缀。这样可以构造出一个 Key，Value 中存储的是序列化后的元信息。
+
+这里有个问题，如果映射为 
+```
+key: metaPrefix_colPrefix_tableName
+value: colID
+
+key: m_c_DB
+value: 10
+
+```
+这样在做查找时，是不是可以直接从解析层的table名称得到tableID，然后用tableID再去查具体的文档数据
+
 除此之外，还有一个专门的 Key-Value 存储当前 Schema 信息的版本。TiDB 使用 Google F1 的 Online Schema 变更算法，有一个后台线程在不断的检查 TiKV 上面存储的 Schema 版本是否发生变化，并且保证在一定时间内一定能够获取版本的变化（如果确实发生了变化）。这部分的具体实现参见 [TiDB 的异步 schema 变更实现](https://github.com/ngaut/builddatabase/blob/master/f1/schema-change-implement.md)一文。
 
 ## SQL on KV 架构
