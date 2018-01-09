@@ -3,7 +3,7 @@ title: TiKV 源码解析系列 - multi-raft 设计与实现
 author: ['唐刘']
 date: 2017-01-03
 summary: 本文档主要面向 TiKV 社区开发者，主要介绍 TiKV 的系统架构，源码结构，流程解析。目的是使得开发者阅读文档之后，能对 TiKV 项目有一个初步了解，更好的参与进入 TiKV 的开发中。
-tags: ['TiKV', 'Placement Driver', 'PD', 'Multi Raft', 'Raft', '源码分析']
+tags: ['TiKV', 'PD', 'Multi-Raft', 'Raft', '源码分析']
 ---
 
 
