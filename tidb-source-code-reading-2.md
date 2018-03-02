@@ -173,7 +173,7 @@ TiDB 依赖于底层的存储引擎提供数据的存取功能，但是并不是
 
 * [Iterator](https://github.com/pingcap/tidb/blob/source-code/kv/kv.go#L255)：`Seek` 返回的结果，可以用于遍历数据
 
-有了上面这些接口，可以对数据做各种所需要的操作，完成全部 SQL 功能，但是为了更高效的进行运算，我们还定义了一个高级计算接口，可以关注这三个 Interfce/struct :
+有了上面这些接口，可以对数据做各种所需要的操作，完成全部 SQL 功能，但是为了更高效的进行运算，我们还定义了一个高级计算接口，可以关注这三个 Interface/struct :
 
 * [Client](https://github.com/pingcap/tidb/blob/source-code/kv/kv.go#L150)：向下层发送请求以及获取下层存储引擎的计算能力
 
