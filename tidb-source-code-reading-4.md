@@ -8,7 +8,7 @@ tags: ['TiDB','源码阅读']
 
 本文为 TiDB 源码阅读系列文章的第四篇。上一篇文章简单介绍了整体流程，无论什么语句，大体上是在这个框架下运行，DDL 语句也不例外。
 
-本篇文章会以 Insert 语句为例进行讲解，帮助读者理解前一篇文章，下一篇文章会介绍 Select 语句的执行流程。这两条是最常用的读、写语句，其他的语句相信读者能触类旁通，可以自行研究或者是等待后续的文章。对于这两类语句，目前也只会针对核心流程进行说明，更复杂的 Join、Insert-Into-OnDuplicate-Update 等会等到后面的文章进行讲解。另外本文会重点介绍每个语句在执行框架下面的具体执行逻辑，请读者阅读前先了解 Insert语句的行为。
+本篇文章会以 Insert 语句为例进行讲解，帮助读者理解前一篇文章，下一篇文章会介绍 Select 语句的执行流程。这两条是最常用的读、写语句，其他的语句相信读者能触类旁通，可以自行研究或者是等待后续的文章。对于这两类语句，目前也只会针对核心流程进行说明，更复杂的 Join、Insert-Into-OnDuplicate-Update 等会等到后面的文章进行讲解。另外本文会重点介绍每个语句在执行框架下面的具体执行逻辑，请读者阅读前先了解 Insert 语句的行为。
 
 ## 表结构
 
@@ -26,11 +26,11 @@ key id_idx (id)
 
 ## Insert 语句
 
-`INSERT INTO t VALUES ("pingcap001", "pingcap", 3);` 以这条语句为例，解释 Insert 是如何运行。
+`INSERT INTO t VALUES ("pingcap001", "pingcap", 3);` 以这条语句为例，解释 Insert 是如何运行的。
 
 ## 语句处理流程
 
-首先大家回忆一下上一篇文章介绍的框架，一条 SQL 语句经过协议层、Parser、Plan、Executor 这样几个模块处理后，变成可执行的结构，再通过 Next() 来驱动语句的真正执行。对于框架，每类语句都差不多；对于每个核心步骤的，每个语句会有自己的处理逻辑。
+首先大家回忆一下上一篇文章介绍的框架，一条 SQL 语句经过协议层、Parser、Plan、Executor 这样几个模块处理后，变成可执行的结构，再通过 Next() 来驱动语句的真正执行。对于框架，每类语句都差不多；对于每个核心步骤，每个语句会有自己的处理逻辑。
 
 ### 语法解析
 
@@ -148,7 +148,7 @@ writeBufs.RowValBuf, err = tablecodec.EncodeRow(ctx.GetSessionVars().StmtCtx, ro
 
 ## 小结
 
-Insert 语句在诸多 DML 语句中算是最简单的语句，本文也没有涉及 Insert 语句中国年更复杂的情况，所以相对比较好理解。上面讲了这么多代码，让我们用一幅图来再回顾一下整个流程。
+Insert 语句在诸多 DML 语句中算是最简单的语句，本文也没有涉及 Insert 语句中更复杂的情况，所以相对比较好理解。上面讲了这么多代码，让我们用一幅图来再回顾一下整个流程。
 
 ![Insert.png](https://upload-images.jianshu.io/upload_images/542677-276fce09300cecc6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
