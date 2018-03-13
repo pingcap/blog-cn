@@ -16,7 +16,7 @@ tags: ['TiDB','源码阅读']
 
 ```sql
 
-CREATE TABLE t 
+CREATE TABLE t {
 id      VARCHAR(31),
 name VARCHAR(50),
 age    int,
@@ -39,7 +39,7 @@ key id_idx (id)
 ```go
 // InsertStmt is a statement to insert new rows into an existing table.
 // See https://dev.mysql.com/doc/refman/5.7/en/insert.html
-type InsertStmt struct 
+type InsertStmt struct {
     dmlNode
 
     IsReplace   bool
@@ -74,7 +74,7 @@ type InsertStmt struct
 现在 ast.InsertStmt 已经被转换成为 [plan.Insert](https://github.com/pingcap/tidb/blob/source-code/plan/common_plans.go#L265) 结构，对于 Insert 语句并没有什么可以优化的地方，plan.Insert 这个结构只实现了 `Plan` 这个接口，所以在[下面这个判断](https://github.com/pingcap/tidb/blob/source-code/plan/optimizer.go#L81)中，不会走进 Optimize 流程：
 
 ```go
-    if logic, ok := p.(LogicalPlan); ok 
+    if logic, ok := p.(LogicalPlan); ok {
         return doOptimize(builder.optFlag, logic)
     }
 ```
@@ -88,9 +88,9 @@ type InsertStmt struct
 首先 plan.Insert 在[这里](https://github.com/pingcap/tidb/blob/source-code/executor/builder.go#L338)被转成 executor.InsertExec 结构，后续的执行都由这个结构进行。执行入口是 [Next 方法](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L1084)，第一步是要对待插入数据的每行进行表达式求值，具体的可以看 [getRows](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L1259) 这个函数，拿到数据后就进入最重要的逻辑— [InsertExec.exec()](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L880) 这个函数，这个函数有点长，不过只考虑我们文章中讲述得这条 SQL 的话，可以把代码简化成下面这段逻辑：
 
 ```sql
-    for _, row := range rows 
+    for _, row := range rows {
             h, err := e.Table.AddRecord(e.ctx, row, false)
-}
+	}
 ```
 
 接下来我们看一下 [AddRecord](https://github.com/pingcap/tidb/blob/source-code/table/tables/tables.go#L345) 这个函数是如何将一行数据写入存储引擎中。要理解这段代码，需要了解一下 TiDB 是如何将 SQL 的数据映射为 Key-Value，可以先读一下我们之前写的一些文章，比如[这一篇](https://pingcap.com/blog-cn/tidb-internal-2/)。这里假设读者已经了解了这一点背景知识，那么一定会知道这里需要将 Row 和 Index 的 Key-Value 构造出来的，写入存储引擎。
@@ -99,26 +99,26 @@ type InsertStmt struct
 
 ```go
 构造 Index Key：
-func (c *index) GenIndexKey(sc *stmtctx.StatementContext, indexedValues [](#)types.Datum, h int64, buf [](#)byte) (key [](#)byte, distinct bool, err error) 
+func (c *index) GenIndexKey(sc *stmtctx.StatementContext, indexedValues [](#)types.Datum, h int64, buf [](#)byte) (key [](#)byte, distinct bool, err error) {
 ......
     key = c.getIndexKeyBuf(buf, len(c.prefix)+len(indexedValues)*9+9)
     key = append(key, [](#)byte(c.prefix)...)
     key, err = codec.EncodeKey(sc, key, indexedValues...)
-    if !distinct && err == nil 
+    if !distinct && err == nil {
         key, err = codec.EncodeKey(sc, key, types.NewDatum(h))
     }
 ```
 
 ```go
 构造 Index Value：
-func (c *index) Create(ctx context.Context, rm kv.RetrieverMutator, indexedValues [](#)types.Datum, h int64) (int64, error) 
-    if !distinct 
+func (c *index) Create(ctx context.Context, rm kv.RetrieverMutator, indexedValues [](#)types.Datum, h int64) (int64, error) {
+    if !distinct {
         // non-unique index doesn't need store value, write a '0' to reduce space
         err = rm.Set(key, [](#)byte'0')
         return 0, errors.Trace(err)
     }
 ......
-    if skipCheck 
+    if skipCheck {
         err = rm.Set(key, encodeHandle(h))
         return 0, errors.Trace(err)
     }
@@ -139,7 +139,7 @@ writeBufs.RowValBuf, err = tablecodec.EncodeRow(ctx.GetSessionVars().StmtCtx, ro
 构造完成后，调用类似下面这端代码即可将 Key-Value 写到当前事务的缓存中：
 
 ```go
-    if err = txn.Set(key, value); err != nil 
+    if err = txn.Set(key, value); err != nil {
         return 0, errors.Trace(err)
     }
 ```
