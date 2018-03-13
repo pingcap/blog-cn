@@ -63,11 +63,11 @@ type InsertStmt struct {
 
 * 补全 Schema 信息
 
-包括 Database/Table/Column 信息，这个语句没有指定向那些列插入数据，所以会使用所有的列。
+    包括 Database/Table/Column 信息，这个语句没有指定向那些列插入数据，所以会使用所有的列。
 
 * 处理 Lists 中的数据
 
-[这里](https://github.com/pingcap/tidb/blob/source-code/plan/planbuilder.go#L821)会处理一遍所有的 Value，将 ast.ExprNode 转换成 expression.Expression，也就是纳入了我们的表达式框架，后面会在这个框架下求值。大多数情况下，这里的 Value 都是常量，也就是 expression.Constant。
+    [这里](https://github.com/pingcap/tidb/blob/source-code/plan/planbuilder.go#L821)会处理一遍所有的 Value，将 ast.ExprNode 转换成 expression.Expression，也就是纳入了我们的表达式框架，后面会在这个框架下求值。大多数情况下，这里的 Value 都是常量，也就是 expression.Constant。
 
 如果 Insert 语句比较复杂，比如要插入的数据来自于一个 Select，或者是 OnDuplicateUpdate 这种情况，还会做更多的处理，这里暂时不再深入描述，读者可以执行看 buildInsert() 中其他的代码。
 
