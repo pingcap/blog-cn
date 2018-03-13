@@ -14,7 +14,7 @@ tags: ['TiDB','源码阅读']
 
 这里先给一个表结构，下面介绍的 SQL 语句都是在这个表上的操作。
 
-```sql`
+```sql
 
 CREATE TABLE t 
 id      VARCHAR(31),
@@ -36,7 +36,7 @@ key id_idx (id)
 
 先看 Parser，对于 Insert 语句的解析逻辑在[这里](https://github.com/pingcap/tidb/blob/source-code/parser/parser.y#L2525)，可以看到这条语句会被解析成下面[这个结构](https://github.com/pingcap/tidb/blob/source-code/ast/dml.go#L706)：
 
-```go`
+```go
 // InsertStmt is a statement to insert new rows into an existing table.
 // See https://dev.mysql.com/doc/refman/5.7/en/insert.html
 type InsertStmt struct 
@@ -73,7 +73,7 @@ type InsertStmt struct
 
 现在 ast.InsertStmt 已经被转换成为 [plan.Insert](https://github.com/pingcap/tidb/blob/source-code/plan/common_plans.go#L265) 结构，对于 Insert 语句并没有什么可以优化的地方，plan.Insert 这个结构只实现了 `Plan` 这个接口，所以在[下面这个判断](https://github.com/pingcap/tidb/blob/source-code/plan/optimizer.go#L81)中，不会走进 Optimize 流程：
 
-```go`
+```go
     if logic, ok := p.(LogicalPlan); ok 
         return doOptimize(builder.optFlag, logic)
     }
@@ -87,7 +87,7 @@ type InsertStmt struct
 
 首先 plan.Insert 在[这里](https://github.com/pingcap/tidb/blob/source-code/executor/builder.go#L338)被转成 executor.InsertExec 结构，后续的执行都由这个结构进行。执行入口是 [Next 方法](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L1084)，第一步是要对待插入数据的每行进行表达式求值，具体的可以看 [getRows](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L1259) 这个函数，拿到数据后就进入最重要的逻辑— [InsertExec.exec()](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L880) 这个函数，这个函数有点长，不过只考虑我们文章中讲述得这条 SQL 的话，可以把代码简化成下面这段逻辑：
 
-```sql`
+```sql
     for _, row := range rows 
             h, err := e.Table.AddRecord(e.ctx, row, false)
 }
@@ -97,7 +97,7 @@ type InsertStmt struct
 
 构造 Index 数据的代码在 [addIndices()](https://github.com/pingcap/tidb/blob/source-code/table/tables/tables.go#L447) 函数中，会调用 [index.Create()](https://github.com/pingcap/tidb/blob/source-code/table/tables/index.go#L191) 这个方法：
 
-```go`
+```go
 构造 Index Key：
 func (c *index) GenIndexKey(sc *stmtctx.StatementContext, indexedValues [](#)types.Datum, h int64, buf [](#)byte) (key [](#)byte, distinct bool, err error) 
 ......
@@ -109,7 +109,7 @@ func (c *index) GenIndexKey(sc *stmtctx.StatementContext, indexedValues [](#)ty
     }
 ```
 
-```go`
+```go
 构造 Index Value：
 func (c *index) Create(ctx context.Context, rm kv.RetrieverMutator, indexedValues [](#)types.Datum, h int64) (int64, error) 
     if !distinct 
@@ -126,19 +126,19 @@ func (c *index) Create(ctx context.Context, rm kv.RetrieverMutator, indexedValue
 
 构造 Row 数据的代码比较简单，就在 tables.AddRecord 函数中：
 
-```go`
+```go
 构造 Row Key: 
 key := t.RecordKey(recordID)
 ```
 
-```go`
+```go
 构造 Row Value:
 writeBufs.RowValBuf, err = tablecodec.EncodeRow(ctx.GetSessionVars().StmtCtx, row, colIDs, writeBufs.RowValBuf, writeBufs.AddRowValues)
 ```
 
 构造完成后，调用类似下面这端代码即可将 Key-Value 写到当前事务的缓存中：
 
-```go`
+```go
     if err = txn.Set(key, value); err != nil 
         return 0, errors.Trace(err)
     }
