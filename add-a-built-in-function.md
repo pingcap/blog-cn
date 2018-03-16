@@ -89,7 +89,7 @@ SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST�
         {"foobar", "8843d7f92416211de9ebb963ff4ce28125932878"},
         {1024, "128351137a9c47206c4507dcf2e6fbeeca3a9079"},
         {123.45, "22f8b438ad7e89300b51d88684f3f0b9fa1d7a32"},
- }
+     }
 
      func (s *testEvaluatorSuite) TestShaEncrypt(c *C) {
         defer testleak.AfterTest(c)() // 监测 goroutine 泄漏的工具，可以直接照搬
