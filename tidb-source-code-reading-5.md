@@ -14,9 +14,9 @@ PingCAP 发布了 TiDB 的[源码阅读系列文章](https://pingcap.com/blog-cn
 
 ![](https://upload-images.jianshu.io/upload_images/542677-681f36030427da3e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-其中，`SQL Parser`的功能是把 SQL 语句按照 SQL 语法规则进行解析，将文本转换成抽象语法树（`AST`），这部分功能需要些背景知识才能比较容易理解，我尝试做下相关知识的介绍，希望能对读懂这部分代码有点帮助。
+其中，`SQL Parser` 的功能是把 SQL 语句按照 SQL 语法规则进行解析，将文本转换成抽象语法树（`AST`），这部分功能需要些背景知识才能比较容易理解，我尝试做下相关知识的介绍，希望能对读懂这部分代码有点帮助。
 
-TiDB 是使用[goyacc](https://github.com/cznic/goyacc)根据预定义的 SQL 语法规则文件[parser.y](https://github.com/pingcap/tidb/blob/master/parser/parser.y)生成 SQL 语法解析器。我们可以在 TiDB 的[Makefile](https://github.com/pingcap/tidb/blob/50e98f427e7943396dbe38d23178b9f9dc5398b7/Makefile#L50)文件中看到这个过程，先 build `goyacc`工具，然后使用`goyacc`根据`parser.y`生成解析器`parser.go`：
+TiDB 是使用 [goyacc](https://github.com/cznic/goyacc) 根据预定义的 SQL 语法规则文件 [parser.y](https://github.com/pingcap/tidb/blob/master/parser/parser.y) 生成 SQL 语法解析器。我们可以在 TiDB 的 [Makefile](https://github.com/pingcap/tidb/blob/50e98f427e7943396dbe38d23178b9f9dc5398b7/Makefile#L50) 文件中看到这个过程，先 build `goyacc` 工具，然后使用 `goyacc` 根据 `parser.y` 生成解析器 `parser.go`：
 
 ```
 goyacc:
@@ -27,18 +27,18 @@ parser: goyacc
 	bin/goyacc -o parser/parser.go parser/parser.y 2>&1 ...
 ```
 
-[goyacc](https://github.com/cznic/goyacc) 是 [yacc](http://dinosaur.compilertools.net/) 的 Golang 版，所以要想看懂语法规则定义文件[parser.y](https://github.com/pingcap/tidb/blob/master/parser/parser.y)，了解解析器是如何工作的，先要对 [Lex & Yacc](http://dinosaur.compilertools.net/) 有些了解。
+[goyacc](https://github.com/cznic/goyacc) 是 [yacc](http://dinosaur.compilertools.net/) 的 Golang 版，所以要想看懂语法规则定义文件 [parser.y](https://github.com/pingcap/tidb/blob/master/parser/parser.y)，了解解析器是如何工作的，先要对 [Lex & Yacc](http://dinosaur.compilertools.net/) 有些了解。
 
 ## Lex & Yacc 介绍
 
-[Lex & Yacc](http://dinosaur.compilertools.net/) 是用来生成词法分析器和语法分析器的工具，它们的出现简化了编译器的编写。`Lex & Yacc` 分别是由贝尔实验室的 [Mike Lesk](https://en.wikipedia.org/wiki/Mike_Lesk) 和 [Stephen C. Johnson](https://en.wikipedia.org/wiki/Stephen_C._Johnson) 在 1975 年发布。对于 Java 程序员来说，更熟悉的是 [ANTLR](http://www.antlr.org/)，`ANTLR 4` 提供了 `Listener`+`Visitor` 组合接口， 不需要在语法定义中嵌入`actions`，使应用代码和语法定义解耦。`Spark`的 SQL 解析就是使用了`ANTLR`。`Lex & Yacc` 相对显得有些古老，实现的不是那么优雅，不过我们也不需要非常深入的学习，只要能看懂语法定义文件，了解生成的解析器是如何工作的就够了。我们可以从一个简单的例子开始：
+[Lex & Yacc](http://dinosaur.compilertools.net/) 是用来生成词法分析器和语法分析器的工具，它们的出现简化了编译器的编写。`Lex & Yacc` 分别是由贝尔实验室的 [Mike Lesk](https://en.wikipedia.org/wiki/Mike_Lesk) 和 [Stephen C. Johnson](https://en.wikipedia.org/wiki/Stephen_C._Johnson) 在 1975 年发布。对于 Java 程序员来说，更熟悉的是 [ANTLR](http://www.antlr.org/)，`ANTLR 4` 提供了 `Listener`+`Visitor` 组合接口， 不需要在语法定义中嵌入`actions`，使应用代码和语法定义解耦。`Spark` 的 SQL 解析就是使用了 `ANTLR`。`Lex & Yacc` 相对显得有些古老，实现的不是那么优雅，不过我们也不需要非常深入的学习，只要能看懂语法定义文件，了解生成的解析器是如何工作的就够了。我们可以从一个简单的例子开始：
 
 ![](https://upload-images.jianshu.io/upload_images/542677-6f5c07124b51e618.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
-上图描述了使用`Lex & Yacc`构建编译器的流程。`Lex`根据用户定义的`patterns`生成词法分析器。词法分析器读取源代码，根据`patterns`将源代码转换成`tokens`输出。`Yacc`根据用户定义的语法规则生成语法分析器。语法分析器以词法分析器输出的`tokens`作为输入，根据语法规则创建出语法树。最后对语法树遍历生成输出结果，结果可以是产生机器代码，或者是边遍历 `AST` 边解释执行。
+上图描述了使用 `Lex & Yacc` 构建编译器的流程。`Lex` 根据用户定义的 `patterns` 生成词法分析器。词法分析器读取源代码，根据 `patterns` 将源代码转换成 `tokens` 输出。`Yacc` 根据用户定义的语法规则生成语法分析器。语法分析器以词法分析器输出的 `tokens` 作为输入，根据语法规则创建出语法树。最后对语法树遍历生成输出结果，结果可以是产生机器代码，或者是边遍历 `AST` 边解释执行。
 
-从上面的流程可以看出，用户需要分别为`Lex`提供`patterns`的定义，为 `Yacc` 提供语法规则文件，`Lex & Yacc` 根据用户提供的输入文件，生成符合他们需求的词法分析器和语法分析器。这两种配置都是文本文件，并且结构相同：
+从上面的流程可以看出，用户需要分别为 `Lex` 提供 `patterns` 的定义，为 `Yacc` 提供语法规则文件，`Lex & Yacc` 根据用户提供的输入文件，生成符合他们需求的词法分析器和语法分析器。这两种配置都是文本文件，并且结构相同：
 
 ```
 ... definitions ...
@@ -73,7 +73,7 @@ parser: goyacc
 ...
 ```
 
-上面只列出了规则定义部分，可以看出该规则使用正则表达式定义了变量、整数和操作符等几种`token`。例如整数`token`的定义如下：
+上面只列出了规则定义部分，可以看出该规则使用正则表达式定义了变量、整数和操作符等几种 `token`。例如整数 `token` 的定义如下：
 
 ```
 [0-9]+  {
@@ -119,7 +119,7 @@ expr:
 
 第一部分定义了 `token` 类型和运算符的结合性。四种运算符都是左结合，同一行的运算符优先级相同，不同行的运算符，后定义的行具有更高的优先级。
 
-语法规则使用了`BNF`定义。`BNF` 可以用来表达上下文无关（*context-free*）语言，大部分的现代编程语言都可以使用 `BNF` 表示。上面的规则定义了三个**产生式**。**产生式**冒号左边的项（例如 `statement`）被称为**非终结符**， `INTEGER` 和 `VARIABLE` 被称为**终结符**,它们是由 `Lex` 返回的 `token` 。**终结符**只能出现在**产生式**的右侧。可以使用**产生式**定义的语法生成表达式：
+语法规则使用了 `BNF` 定义。`BNF` 可以用来表达上下文无关（*context-free*）语言，大部分的现代编程语言都可以使用 `BNF` 表示。上面的规则定义了三个**产生式**。**产生式**冒号左边的项（例如 `statement`）被称为**非终结符**， `INTEGER` 和 `VARIABLE` 被称为**终结符**,它们是由 `Lex` 返回的 `token` 。**终结符**只能出现在**产生式**的右侧。可以使用**产生式**定义的语法生成表达式：
 
 ```
 expr -> expr * expr
@@ -147,7 +147,7 @@ expr -> expr * expr
 13   program  .
 ```
 
-点（`.`）表示当前的读取位置，随着 `.` 从左向右移动，我们将读取的`token`压入堆栈，当发现堆栈中的内容匹配了某个**产生式**的右侧，则将匹配的项从堆栈中弹出，将该**产生式**左侧的**非终结符**压入堆栈。这个过程持续进行，直到读取完所有的`tokens`，并且只有**启始非终结符**（本例为 `program`）保留在堆栈中。
+点（`.`）表示当前的读取位置，随着 `.` 从左向右移动，我们将读取的 `token` 压入堆栈，当发现堆栈中的内容匹配了某个**产生式**的右侧，则将匹配的项从堆栈中弹出，将该**产生式**左侧的**非终结符**压入堆栈。这个过程持续进行，直到读取完所有的 `tokens`，并且只有**启始非终结符**（本例为 `program`）保留在堆栈中。
 
 产生式右侧的大括号中定义了该规则关联的动作，例如：
 
@@ -190,7 +190,7 @@ nodeType *opr(int oper, int nops, ...) {
 
 ## goyacc 简介
 
-[goyacc](https://github.com/cznic/goyacc) 是 golang 版的 `Yacc`。和  `Yacc` 的功能一样，`goyacc` 根据输入的语法规则文件，生成该语法规则的go语言版解析器。`goyacc` 生成的解析器 `yyParse` 要求词法分析器符合下面的接口：
+[goyacc](https://github.com/cznic/goyacc) 是 golang 版的 `Yacc`。和 `Yacc` 的功能一样，`goyacc` 根据输入的语法规则文件，生成该语法规则的 go 语言版解析器。`goyacc` 生成的解析器 `yyParse` 要求词法分析器符合下面的接口：
 
 ```
 type yyLexer interface {
@@ -244,11 +244,11 @@ func (s *Scanner) Errors() []error {
 ```
 
 
-另外 `lexer` 使用了`字典树`技术进行 `token` 识别，具体的实现代码在 [parser/misc.go](https://github.com/pingcap/tidb/blob/master/parser/misc.go)
+另外 `lexer` 使用了 `字典树` 技术进行 `token` 识别，具体的实现代码在 [parser/misc.go](https://github.com/pingcap/tidb/blob/master/parser/misc.go)
 
 ## TiDB SQL Parser 的实现
 
-终于到了正题。有了上面的背景知识，对 TiDB 的 `SQL Parser` 模块会相对容易理解一些。先看SQL语法规则文件 [parser.y](https://github.com/pingcap/tidb/blob/master/parser/parser.y)，`goyacc` 就是根据这个文件生成SQL语法解析器的。
+终于到了正题。有了上面的背景知识，对 TiDB 的 `SQL Parser` 模块会相对容易理解一些。TiDB 的词法解析使用的 [手写的解析器](https://github.com/pingcap/tidb/blob/source-code/parser/lexer.go)（这是出于性能考虑），语法解析采用 `goyacc`。先看 SQL 语法规则文件 [parser.y](https://github.com/pingcap/tidb/blob/master/parser/parser.y)，`goyacc` 就是根据这个文件生成SQL语法解析器的。
 
 `parser.y` 有 6500 多行，第一次打开可能会被吓到，其实这个文件仍然符合我们上面介绍过的结构：
 
@@ -276,9 +276,9 @@ func (s *Scanner) Errors() []error {
 
 该联合体结构体定义了在语法解析过程中被压入堆栈的**项**的属性和类型。
 
-压入堆栈的**项**可能是`终结符`，也就是 `token`，它的类型可以是`item` 或 `ident`；
+压入堆栈的**项**可能是 `终结符`，也就是 `token`，它的类型可以是`item` 或 `ident`；
 
-这个**项**也可能是`非终结符`，即产生式的左侧，它的类型可以是 `expr` 、 `statement` 、 `item` 或 `ident`。
+这个**项**也可能是 `非终结符`，即产生式的左侧，它的类型可以是 `expr` 、 `statement` 、 `item` 或 `ident`。
 
 `goyacc` 根据这个 `union` 在解析器里生成对应的 `struct` 是：
 
@@ -293,7 +293,7 @@ type yySymType struct {
 }
 ```
 
-在语法解析过程中，`非终结符`会被构造成抽象语法树（`AST`）的节点 [ast.ExprNode](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L60) 或 [ast.StmtNode](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L94)。抽象语法树相关的数据结构都定义在 [ast](https://github.com/pingcap/tidb/tree/master/ast) 包中，它们大都实现了 [ast.Node](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L29) 接口：
+在语法解析过程中，`非终结符` 会被构造成抽象语法树（`AST`）的节点 [ast.ExprNode](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L60) 或 [ast.StmtNode](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L94)。抽象语法树相关的数据结构都定义在 [ast](https://github.com/pingcap/tidb/tree/master/ast) 包中，它们大都实现了 [ast.Node](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L29) 接口：
 
 ```
 // Node is the basic element of the AST.
@@ -481,7 +481,7 @@ type SelectStmt struct {
 
 可以看出，`ast.SelectStmt` 结构体内包含的内容和 `SELECT` 语法也是一一对应的。 
 
-其他的产生式也都是根据对应的 `SQL` 语法来编写的。从 `parser.y` 的注释看到，这个文件最初是用[工具](https://github.com/cznic/ebnf2y)从 `BNF` 转化生成的，从头手写这个规则文件，工作量会非常大。
+其他的产生式也都是根据对应的 `SQL` 语法来编写的。从 `parser.y` 的注释看到，这个文件最初是用 [工具](https://github.com/cznic/ebnf2y) 从 `BNF` 转化生成的，从头手写这个规则文件，工作量会非常大。
 
 完成了语法规则文件 `parser.y` 的定义，就可以使用 `goyacc` 生成语法解析器：
 
