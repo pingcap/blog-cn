@@ -4,9 +4,11 @@ author: ['唐刘']
 date: 2017-06-26
 summary: 本篇文章将介绍一下，我们在 TiKV 性能调优上面用的最多的工具 - 火焰图。
 tags: ['性能', '工具']
+aliases:
+  - /blog-cn/tangliu-tool-2/
 ---
 
-在[前一篇](./tangliu-tool-1.md)文章，我们简单提到了 perf，实际 perf 能做的事情远远不止这么少，这里就要好好介绍一下，我们在 TiKV 性能调优上面用的最多的工具 - 火焰图。
+在[前一篇](./iostat-perf-strace.md)文章，我们简单提到了 perf，实际 perf 能做的事情远远不止这么少，这里就要好好介绍一下，我们在 TiKV 性能调优上面用的最多的工具 - 火焰图。
 
 火焰图，也就是 [FlameGraph](https://github.com/brendangregg/FlameGraph)，是超级大牛 Brendan Gregg 捣鼓出来的东西，主要就是将 profile 工具生成的数据进行可视化处理，方便开发人员查看。我第一次知道火焰图，应该是来自 OpenResty 的章亦春介绍，大家可以详细去看看这篇文章[动态追踪技术漫谈](https://openresty.org/posts/dynamic-tracing/)。
 
