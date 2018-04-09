@@ -1,12 +1,19 @@
 ---
 title: 工欲性能调优，必先利其器（1）
-author: ['唐刘']
-date: 2017-05-31
-summary: 最近在排查 TiDB 性能问题的时候，通过工具发现了一些问题，觉得有必要记录一下，让自己继续深刻的去理解相关工具的使用，也同时让同学们对类似问题的时候别再踩坑。
-tags: ['性能', '工具']
+author:
+  - 唐刘
+date: 2017-05-31T00:00:00.000Z
+summary: >-
+  最近在排查 TiDB
+  性能问题的时候，通过工具发现了一些问题，觉得有必要记录一下，让自己继续深刻的去理解相关工具的使用，也同时让同学们对类似问题的时候别再踩坑。
+tags:
+  - 性能
+  - 工具
+aliases:
+  - /blog-cn/tangliu-tool-1/
 ---
 
-##  使用 iostat 定位磁盘问题
+# 使用 iostat 定位磁盘问题
 
 在一个性能测试集群，我们选择了 AWS c3.4xlarge 机型，主要是为了在一台机器的两块盘上面分别跑 TiKV。在测试一段时间之后，我们发现有一台 TiKV 响应很慢，但是 RocksDB 并没有相关的 Stall 日志，而且慢查询也没有。
 
@@ -23,13 +30,13 @@ xvdc              0.00     0.00  206.00 1190.00    10.58   148.62   233.56   106
 
 于是我继续用 fio 进行测试，
 
-`fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=write  -size=10G -filename=test -name="PingCAP max throughput" -iodepth=4 -runtime=60`
+`fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=write -size=10G -filename=test -name="PingCAP max throughput" -iodepth=4 -runtime=60`
 
 发现两个盘的写入有 2 倍的差距，xvdb 的写入竟然只有不到 70 MB，而 xvdc 有 150 MB，所以自然两个 TiKV 一个快，一个慢了。
 
 对于磁盘来说，通常我们使用的就是 iostat 来进行排查，另外也可以考虑使用 pidstat，iotop 等工具。
 
-## 使用 perf 定位性能问题
+# 使用 perf 定位性能问题
 
 RC3 最重要的一个功能就是引入 gRPC，但这个对于 rust 来说难度太大。最开始，我们使用的是 rust-grpc 库，但这个库并没有经过生产环境的验证，我们还是胆大的引入了，只是事后证明，这个冒险的决定还是傻逼了，一些试用的用户跟我们反映 TiKV 时不时 coredump，所以我们立刻决定直接封装 c gRPC。因为现在大部分语言 gRPC 实现都是基于 c gRPC 的，所以我们完全不用担心这个库的稳定性。
 
@@ -54,9 +61,9 @@ Performance counter stats for 'python2.7 tools/run_tests/run_performance_tests.p
 
 上面是 C Plus Plus 的结果，然后在 rust 测试的时候，我们发现 context-switch 是 C Plus Plus 的 10 倍，也就是我们进行了太多次的线程切换。刚好我们第一个版本的实现是用 rust futures 的 park 和 unpark task 机制，不停的在 gRPC 自己的 Event Loop 线程和逻辑线程之前切换，但 C Plus Plus 则是直接在一个 Event Loop 线程处理的。于是我们立刻改成类似 C Plus Plus 架构，没有了 task 的开销，然后性能一下子跟 C Plus Plus 的不相伯仲了。
 
-当然，perf  能做到的还远远不仅于此，我们通常会使用[火焰图](https://github.com/brendangregg/FlameGraph)工具，关于火焰图，网上已经有太多的介绍，我们也通过它来发现了很多性能问题，这个后面可以专门来说一下。
+当然，perf 能做到的还远远不仅于此，我们通常会使用[火焰图](https://github.com/brendangregg/FlameGraph)工具，关于火焰图，网上已经有太多的介绍，我们也通过它来发现了很多性能问题，这个后面可以专门来说一下。
 
-## 使用 strace 动态追踪
+# 使用 strace 动态追踪
 
 因为我们有一个记录线程 CPU 的统计，通常在 Grafana 展示的时候都是按照线程名字来 group 的，并没有按照线程 ID。但我们也可以强制发送 SIGUSR1 信号给 TiKV 在 log 里面 dump 相关的统计信息。在测试 TiKV 的时候，我发现 pd worker 这个 thread 出现了很多不同线程 ID 的 label，也就是说，这个线程在不停的创建和删除。
 
@@ -66,6 +73,6 @@ Performance counter stats for 'python2.7 tools/run_tests/run_performance_tests.p
 
 这里需要注意，strace 对性能影响比较大，但对于内部性能测试影响还不大，不到万不得已，不建议长时间用于生产环境。
 
-## 小结
+# 小结
 
 上面仅仅是三个最近用工具发现的问题，当然还远远不止于此，后续也会慢慢补上。其实对于性能调优来说，工具只是一个辅助工具，最重要的是要有一颗对问题敏锐的心，不然即使工具发现了问题，因为不敏锐直接就忽略了。我之前就是不敏锐栽过太多的坑，所以现在为了刻意提升自己这块的能力，直接给自己下了死规定，就是怀疑一切能能怀疑的东西，认为所有东西都是有问题的。即使真的是正常的，也需要找到充足的理由去验证。
