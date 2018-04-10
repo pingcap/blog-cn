@@ -10,7 +10,8 @@ tags: ['源码阅读'，'TiDB']
 
 本篇将主要关注逻辑优化。先介绍 TiDB 中的逻辑算子，然后介绍 TiDB 的逻辑优化规则，包括列裁剪、最大最小消除、投影消除、谓词下推、TopN 下推等等。
 
-##逻辑算子介绍
+## 逻辑算子介绍
+
 在写具体的优化规则之前，先简单介绍查询计划里面的一些逻辑算子。
 
 - DataSource 这个就是数据源，也就是表，`select * from t` 里面的 t
@@ -37,7 +38,8 @@ select b from t1, t2 where t1.c = t2.c and t1.a > 5
 
 - Apply 这个是用来做子查询的
 
-##列裁剪
+## 列裁剪
+
 列裁剪的思想是这样的：对于用不上的列，没有必要读取它们的数据，无谓的浪费 IO 资源。比如说表 t 里面有 a b c d 四列。
 
 ```
@@ -61,7 +63,7 @@ func (p *LogicalPlan) PruneColumns(parentUsedCols []*expression.Column)
 
 通过列裁剪这一步操作之后，查询计划里面各个算子，只会记录下它实际需要用到的那些列。
 
-##最大最小消除
+## 最大最小消除
 
 最大最小消除，会对 Min/Max 语句进行改写。
 
@@ -95,7 +97,7 @@ select max(id) from (select id from t order by id desc limit 1 where id is not n
 
 min 也是类似的语句替换。相应的代码是在 `max_min_eliminate.go` 文件里面。实现是一个纯粹的 AST 结构的修改。
 
-##投影消除
+## 投影消除
 
 投影消除可以把不必要的 Projection 算子消除掉。那么，什么情况下，投影算子是可消除的呢？
 
@@ -123,7 +125,7 @@ func eliminate(p Plan, canEliminate bool) {
 - 一方面由它父结点告诉它，它是否是一个冗余的 Projection 操作
 - 另一方面由它自己和孩子结点的输入列做比较，输出相同则可消除
 
-##谓词下推
+## 谓词下推
 
 谓词下推是非常重要的一个优化。比如
 
@@ -159,7 +161,7 @@ PredicatePushDown 函数处理当前的查询计划 p，参数 predicates 表示
 
 DataSource 算子很简单，会直接把过滤条件加入到 CopTask 里面。最后会被通过 coprocessor 推给 TiKV 去做。
 
-##构建节点属性
+## 构建节点属性
 
 在 `build_key_info.go` 文件里面，会构建 unique key 和 MaxOneRow 属性。这一步不是在做优化，但它是在构建优化过程需要用到的一些信息。
 
@@ -177,6 +179,6 @@ DataSource 算子很简单，会直接把过滤条件加入到 CopTask 里面。
 
 - Join 算子，如果它的左右孩子都是 MaxOneRow 属性
 
-##总结
+## 总结
 
 这是基于规则优化（RBO）的上篇。介绍了逻辑查询计划里面基本的算子，以及一部分的优化规则。后续我们还将介绍更多的优化规则，以及基于代价的优化（CBO）。
