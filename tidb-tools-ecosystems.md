@@ -4,6 +4,8 @@ author: ['刘寅']
 date: 2018-03-28
 summary: 本文为今年年初 PingCAP 商业产品团队负责人刘寅在 TiDB DevCon2018 上分享的 《 TiDB 工具链和生态》实录内容，文内详细介绍了 TiDB 的周边工具以及生态系统。enjoy~
 tags: ['TiDB','DevCon', '工具']
+aliases:
+  - /blog-cn/liuyin-tidb-devcon/
 ---
 
 > 本文为今年年初 PingCAP 商业产品团队负责人刘寅在 TiDB DevCon2018 上分享的 《 TiDB 工具链和生态》实录内容，文内详细介绍了 TiDB 的周边工具以及生态系统。enjoy~

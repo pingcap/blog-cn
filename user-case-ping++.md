@@ -4,6 +4,8 @@ author: ['宋涛']
 date: 2018-02-26
 summary: 目前数仓 TiDB 的数据是由订阅平台订阅 RDS、DRDS 数据而来，系统复杂度较高。TiDB 具备了出色的分布式事务能力，完全达到了 HTAP 的级别。
 tags: ['案例']
+aliases:
+  - /blog-cn/tidb-ping++/
 ---
 
 ## Ping++ 介绍
