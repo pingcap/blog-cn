@@ -63,7 +63,7 @@ type InsertStmt struct {
 
 * 补全 Schema 信息
 
-    包括 Database/Table/Column 信息，这个语句没有指定向那些列插入数据，所以会使用所有的列。
+    包括 Database/Table/Column 信息，这个语句没有指定向哪些列插入数据，所以会使用所有的列。
 
 * 处理 Lists 中的数据
 
@@ -85,7 +85,7 @@ type InsertStmt struct {
 
 拿到 plan.Insert 这个结构后，查询计划就算制定完成。最后我们看一下 Insert 是如何执行的。
 
-首先 plan.Insert 在[这里](https://github.com/pingcap/tidb/blob/source-code/executor/builder.go#L338)被转成 executor.InsertExec 结构，后续的执行都由这个结构进行。执行入口是 [Next 方法](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L1084)，第一步是要对待插入数据的每行进行表达式求值，具体的可以看 [getRows](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L1259) 这个函数，拿到数据后就进入最重要的逻辑— [InsertExec.exec()](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L880) 这个函数，这个函数有点长，不过只考虑我们文章中讲述得这条 SQL 的话，可以把代码简化成下面这段逻辑：
+首先 plan.Insert 在[这里](https://github.com/pingcap/tidb/blob/source-code/executor/builder.go#L338)被转成 executor.InsertExec 结构，后续的执行都由这个结构进行。执行入口是 [Next 方法](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L1084)，第一步是要对待插入数据的每行进行表达式求值，具体的可以看 [getRows](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L1259) 这个函数，拿到数据后就进入最重要的逻辑— [InsertExec.exec()](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L880) 这个函数，这个函数有点长，不过只考虑我们文章中讲述的这条 SQL 的话，可以把代码简化成下面这段逻辑：
 
 ```sql
     for _, row := range rows {
@@ -136,7 +136,7 @@ key := t.RecordKey(recordID)
 writeBufs.RowValBuf, err = tablecodec.EncodeRow(ctx.GetSessionVars().StmtCtx, row, colIDs, writeBufs.RowValBuf, writeBufs.AddRowValues)
 ```
 
-构造完成后，调用类似下面这端代码即可将 Key-Value 写到当前事务的缓存中：
+构造完成后，调用类似下面这段代码即可将 Key-Value 写到当前事务的缓存中：
 
 ```go
     if err = txn.Set(key, value); err != nil {
