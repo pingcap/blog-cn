@@ -34,7 +34,7 @@ key id_idx (id)
 
 ### 语法解析
 
-先看 Parser，对于 Insert 语句的解析逻辑在[这里](https://github.com/pingcap/tidb/blob/source-code/parser/parser.y#L2525)，可以看到这条语句会被解析成下面[这个结构](https://github.com/pingcap/tidb/blob/source-code/ast/dml.go#L706)：
+先看 Parser，对于 Insert 语句的解析逻辑在[这里](https://github.com/pingcap/tidb/blob/master/parser/parser.y#L2525)，可以看到这条语句会被解析成下面[这个结构](https://github.com/pingcap/tidb/blob/master/ast/dml.go#L706)：
 
 ```go
 // InsertStmt is a statement to insert new rows into an existing table.
@@ -59,19 +59,19 @@ type InsertStmt struct {
 
 ### 查询计划
 
-接下来是将 AST 转成 Plan 结构，这个操作是在 [planBuilder.buildInsert()](https://github.com/pingcap/tidb/blob/source-code/plan/planbuilder.go#L752) 中完成。对于这个简单的语句，主要涉及两个部分:
+接下来是将 AST 转成 Plan 结构，这个操作是在 [planBuilder.buildInsert()](https://github.com/pingcap/tidb/blob/master/plan/planbuilder.go#L752) 中完成。对于这个简单的语句，主要涉及两个部分:
 
 * 补全 Schema 信息
 
-    包括 Database/Table/Column 信息，这个语句没有指定向那些列插入数据，所以会使用所有的列。
+    包括 Database/Table/Column 信息，这个语句没有指定向哪些列插入数据，所以会使用所有的列。
 
 * 处理 Lists 中的数据
 
-    [这里](https://github.com/pingcap/tidb/blob/source-code/plan/planbuilder.go#L821)会处理一遍所有的 Value，将 ast.ExprNode 转换成 expression.Expression，也就是纳入了我们的表达式框架，后面会在这个框架下求值。大多数情况下，这里的 Value 都是常量，也就是 expression.Constant。
+    [这里](https://github.com/pingcap/tidb/blob/master/plan/planbuilder.go#L821)会处理一遍所有的 Value，将 ast.ExprNode 转换成 expression.Expression，也就是纳入了我们的表达式框架，后面会在这个框架下求值。大多数情况下，这里的 Value 都是常量，也就是 expression.Constant。
 
 如果 Insert 语句比较复杂，比如要插入的数据来自于一个 Select，或者是 OnDuplicateUpdate 这种情况，还会做更多的处理，这里暂时不再深入描述，读者可以执行看 buildInsert() 中其他的代码。
 
-现在 ast.InsertStmt 已经被转换成为 [plan.Insert](https://github.com/pingcap/tidb/blob/source-code/plan/common_plans.go#L265) 结构，对于 Insert 语句并没有什么可以优化的地方，plan.Insert 这个结构只实现了 `Plan` 这个接口，所以在[下面这个判断](https://github.com/pingcap/tidb/blob/source-code/plan/optimizer.go#L81)中，不会走进 Optimize 流程：
+现在 ast.InsertStmt 已经被转换成为 [plan.Insert](https://github.com/pingcap/tidb/blob/master/plan/common_plans.go#L265) 结构，对于 Insert 语句并没有什么可以优化的地方，plan.Insert 这个结构只实现了 `Plan` 这个接口，所以在[下面这个判断](https://github.com/pingcap/tidb/blob/master/plan/optimizer.go#L81)中，不会走进 Optimize 流程：
 
 ```go
     if logic, ok := p.(LogicalPlan); ok {
@@ -85,7 +85,7 @@ type InsertStmt struct {
 
 拿到 plan.Insert 这个结构后，查询计划就算制定完成。最后我们看一下 Insert 是如何执行的。
 
-首先 plan.Insert 在[这里](https://github.com/pingcap/tidb/blob/source-code/executor/builder.go#L338)被转成 executor.InsertExec 结构，后续的执行都由这个结构进行。执行入口是 [Next 方法](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L1084)，第一步是要对待插入数据的每行进行表达式求值，具体的可以看 [getRows](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L1259) 这个函数，拿到数据后就进入最重要的逻辑— [InsertExec.exec()](https://github.com/pingcap/tidb/blob/source-code/executor/write.go#L880) 这个函数，这个函数有点长，不过只考虑我们文章中讲述得这条 SQL 的话，可以把代码简化成下面这段逻辑：
+首先 plan.Insert 在[这里](https://github.com/pingcap/tidb/blob/master/executor/builder.go#L338)被转成 executor.InsertExec 结构，后续的执行都由这个结构进行。执行入口是 [Next 方法](https://github.com/pingcap/tidb/blob/master/executor/write.go#L1084)，第一步是要对待插入数据的每行进行表达式求值，具体的可以看 [getRows](https://github.com/pingcap/tidb/blob/master/executor/write.go#L1259) 这个函数，拿到数据后就进入最重要的逻辑— [InsertExec.exec()](https://github.com/pingcap/tidb/blob/master/executor/write.go#L880) 这个函数，这个函数有点长，不过只考虑我们文章中讲述的这条 SQL 的话，可以把代码简化成下面这段逻辑：
 
 ```sql
     for _, row := range rows {
@@ -93,9 +93,9 @@ type InsertStmt struct {
 	}
 ```
 
-接下来我们看一下 [AddRecord](https://github.com/pingcap/tidb/blob/source-code/table/tables/tables.go#L345) 这个函数是如何将一行数据写入存储引擎中。要理解这段代码，需要了解一下 TiDB 是如何将 SQL 的数据映射为 Key-Value，可以先读一下我们之前写的一些文章，比如[这一篇](https://pingcap.com/blog-cn/tidb-internal-2/)。这里假设读者已经了解了这一点背景知识，那么一定会知道这里需要将 Row 和 Index 的 Key-Value 构造出来的，写入存储引擎。
+接下来我们看一下 [AddRecord](https://github.com/pingcap/tidb/blob/master/table/tables/tables.go#L345) 这个函数是如何将一行数据写入存储引擎中。要理解这段代码，需要了解一下 TiDB 是如何将 SQL 的数据映射为 Key-Value，可以先读一下我们之前写的一些文章，比如[这一篇](https://pingcap.com/blog-cn/tidb-internal-2/)。这里假设读者已经了解了这一点背景知识，那么一定会知道这里需要将 Row 和 Index 的 Key-Value 构造出来的，写入存储引擎。
 
-构造 Index 数据的代码在 [addIndices()](https://github.com/pingcap/tidb/blob/source-code/table/tables/tables.go#L447) 函数中，会调用 [index.Create()](https://github.com/pingcap/tidb/blob/source-code/table/tables/index.go#L191) 这个方法：
+构造 Index 数据的代码在 [addIndices()](https://github.com/pingcap/tidb/blob/master/table/tables/tables.go#L447) 函数中，会调用 [index.Create()](https://github.com/pingcap/tidb/blob/master/table/tables/index.go#L191) 这个方法：
 
 ```go
 构造 Index Key：
@@ -136,7 +136,7 @@ key := t.RecordKey(recordID)
 writeBufs.RowValBuf, err = tablecodec.EncodeRow(ctx.GetSessionVars().StmtCtx, row, colIDs, writeBufs.RowValBuf, writeBufs.AddRowValues)
 ```
 
-构造完成后，调用类似下面这端代码即可将 Key-Value 写到当前事务的缓存中：
+构造完成后，调用类似下面这段代码即可将 Key-Value 写到当前事务的缓存中：
 
 ```go
     if err = txn.Set(key, value); err != nil {
