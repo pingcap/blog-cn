@@ -98,7 +98,8 @@ tags: ['TiDB']
 	* `Add Index` 操作变更为低优先级，降低对线上业务影响
 
 	* `Admin Show DDL Jobs` 输出更详细的 DDL 任务状态信息
-支持 `Admin Show DDL Job Queries JobID` 查询当前正在运行的 DDL 任务的原始语句
+
+	* 支持 `Admin Show DDL Job Queries JobID` 查询当前正在运行的 DDL 任务的原始语句
 
 	* 支持 `Admin Recover Index` 命令，用于灾难恢复情况下修复索引数据
 支持通过 `Alter` 语句修改 Table Options
@@ -126,6 +127,7 @@ tags: ['TiDB']
 	* 优化 hot-region scheduler 的执行效率
 
 * 运维接口及配置
+
 	* 增加 TLS 支持
 
 	* 支持设置 PD leader 优先级
@@ -155,6 +157,7 @@ tags: ['TiDB']
 	* 添加调度相关 metrics
 
 * 性能优化
+
 	* PD leader 尽量与 etcd leader 保持同步，提升写入性能
 
 	* 优化 Region heartbeat 性能，现可支持超过 100 万 Region
