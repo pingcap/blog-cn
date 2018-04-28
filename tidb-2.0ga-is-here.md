@@ -41,13 +41,14 @@ tags: ['TiDB']
 
 完成上述两项改动之后，TiDB 在 OLAP 场景下的性能有了大幅的质的提升，从 TPC-H 的对比结果[https://github.com/pingcap/docs-cn/blob/master/benchmark/tpch.md](https://github.com/pingcap/docs-cn/blob/master/benchmark/tpch.md) 来看，所有的 Query 在 2.0 中都运行得更快，一些 Query 大多数都有几倍甚至数量级的提升，特别是一些 1.0 中跑不出结果的 Query 在 2.0 中都能顺利执行。
 
-![tpch.png](https://upload-images.jianshu.io/upload_images/542677-6a17e01659fbcc62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](https://upload-images.jianshu.io/upload_images/542677-6a17e01659fbcc62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 ## 易用性和可运维性
 
 为了让 TiDB 更容易被安装和使用，监控、运维、工具方面我们也做了诸多优化。 
 
+在监控方面，增加了过百个监控项，同时通过 HTTP 接口、SQL 语句等方式暴露出一些运行时信息，用于系统调优或者是定位系统中存在的问题。
 
 在运维方面，我们运维工具做了优化，简化操作流程，降低操作复杂度及操作过程对于线上的影响。同时功能也更加丰富，支持自动部署 Binlog 组件、支持启用 TLS。
 
