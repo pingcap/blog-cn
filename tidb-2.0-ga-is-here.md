@@ -1,0 +1,1 @@
+>点击查看 [TiDB 2.0 GA Release Notes](https://pingcap.com/blog-cn/tidb-2.0-ga-release/)
