@@ -54,7 +54,7 @@ tags: ['TiDB']
 
 ## 版本升级
 
-从 TiDB 1.0 到 2.0 可以进行滚动升级，具体步骤可以参考 [这篇文档](https://github.com/pingcap/docs-cn/blob/master/op-guide/ansible-deployment.md#%E6%BB%9A%E5%8A%A8%E5%8D%87%E7%BA%A7)。
+从 TiDB 1.0 到 2.0 可以进行滚动升级，具体步骤可以参考 [这篇文档](https://pingcap.com/docs-cn/op-guide/upgrade-from-v1-to-v2/)。
 
 ## One more thing
 
