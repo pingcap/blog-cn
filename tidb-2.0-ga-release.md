@@ -5,6 +5,8 @@ author: ['PingCAP']
 date: 2018-04-27
 summary: 2018 年 4 月 27 日，TiDB 发布 2.0 GA 版。相比 1.0 版本，对 MySQL 兼容性、系统稳定性、优化器和执行器做了很多改进。
 tags: ['TiDB']
+aliases:
+  - /blog-cn/tidb-2.0ga-release/
 ---
 
 2018 年 4 月 27 日，TiDB 发布 2.0 GA 版。相比 1.0 版本，对 MySQL 兼容性、系统稳定性、优化器和执行器做了很多改进。
