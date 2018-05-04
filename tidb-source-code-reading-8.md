@@ -37,7 +37,7 @@ TiDB 一个查询语句的简单流程：一个语句经过 parser 后会得到�
 
 这里会简单介绍一些逻辑算子可选择的物理算子。例如语句：`select sum(*) from t join s on t.c = s.c group by a`。此语句中逻辑算子有 DataSource、Aggregation、Join 和 Projection，接下来会对其中几个典型的逻辑算子对应的物理算子进行一个简单介绍，如下表：
 
-![表 1](http://upload-images.jianshu.io/upload_images/542677-99c23d602a3f296c?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![表 1](https://upload-images.jianshu.io/upload_images/542677-e5281340c82cc499.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ## CBO 流程
 
