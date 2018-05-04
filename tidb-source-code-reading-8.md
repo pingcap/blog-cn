@@ -93,7 +93,7 @@ func dagPhysicalOptimize(logic LogicalPlan) (PhysicalPlan,  error) {
 select sum(s.a),count(t.b) from s join t on s.a = t.a and s.c < 100 and t.c > 10 group bys.a
 ```
 
-（其中 a 是索引，b 也是索引）
+<center>（其中 a 是索引，b 也是索引）</center>
 
 此语句就是基于此语句的 on 条件对表 s 和表 t 做 join，然后对 join 结果做聚合。将其用图表示如图 2（此处为了与图 3 对比，此处省略 Projection 算子）。
 
@@ -216,7 +216,7 @@ statsTable.count* distinctFactor
 N(join(s,t)) = N(s) * N(t) / (V(s.key) * V(t.key)) *Min(V(s.key), V(t.key))
 ```
 
-（其中 N 为表的行数，V 为 key 的 cardinality 值）
+<center>（其中 N 为表的行数，V 为 key 的 cardinality 值）</center>
 
 可以理解为表 s 与表 t 中不重复值的平均行数的乘积乘上小表的不重复值行数。
 
@@ -246,7 +246,7 @@ expected count 表示整个 SQL 结束前此算子期望读取的行数。例如
 select *from t where c < 1 and b < 1 and a = 1
 ```
 
-(其中 (a,b) 是索引, (b,a,c) 是索引，表 t 有 a、b 和 c 三列)
+<center>(其中 (a,b) 是索引, (b,a,c) 是索引，表 t 有 a、b 和 c 三列)</center>
 
 那么可以得到如下两种路径：
 
@@ -262,7 +262,7 @@ select *from t where c < 1 and b < 1 and a = 1
 Cost(p) = N(p)*FN+M(p)*FM+C(p)*FC
 ```
 
-（其中 N 表示网络开销，M 表示内存开销，C表示 CPU 开销，F 表示因子）
+<center>（其中 N 表示网络开销，M 表示内存开销，C 表示 CPU 开销，F 表示因子）</center>
 
 将 plan 与 task 关联，并加上此 plan 的 cost。
 
