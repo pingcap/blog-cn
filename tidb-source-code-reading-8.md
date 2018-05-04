@@ -30,6 +30,7 @@ TiDB 一个查询语句的简单流程：一个语句经过 parser 后会得到�
 
 ![图 1](http://upload-images.jianshu.io/upload_images/542677-4654aac61268e6e9?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+<center> 图 1 </center>
 
 ### 物理算子简介
 
@@ -98,6 +99,9 @@ select sum(s.a),count(t.b) from s join t on s.a = t.a and s.c < 100 and t.c > 10
 
 ![图 2](http://upload-images.jianshu.io/upload_images/542677-e233e570690f1d36?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+<center> 图 2 </center>
+
+
 
 得到了逻辑算子之后，我们怎么选择最优的物理算子呢？
 
@@ -126,6 +130,9 @@ for _, pp := range p.self.genPhysPlansByReqProp(prop) {
 篇幅有限这里只对左侧的路径做了描述。这个例子最后一层比较是 `HA + HJ + idx(c)` 和 `SA + MJ + idx(a)` 的比较，具体也是通过统计信息就算出代价，选取最优解。
 
 ![图 3](http://upload-images.jianshu.io/upload_images/542677-b593c8594c464e0c?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+<center> 图 3 </center>
+
 
 （图中黑色字体算子为逻辑算子，蓝色字体为物理算子，黄色箭头为已经计算过代价的算子，会获取已经缓存在哈希表中的结果，红色虚线箭头为不符合 prop 的算子。）
 
@@ -224,6 +231,8 @@ expected count 表示整个 SQL 结束前此算子期望读取的行数。例如
 *   后者在 TopN 的时候虽然知道它需要读取 3 行，但是它是按 id 列有序，所以它的 expected count 为 Max，在 IndexScan 的时候 expected count 是 `count * f (σ(c1<5)`。
 
 ![图 4](http://upload-images.jianshu.io/upload_images/542677-6d4170e93aa18123?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+<center> 图 4 </center>
 
 
 
