@@ -25,7 +25,7 @@ TiDB 的 Hash Join 是一个多线程版本的实现，主要任务有：
 
     - 启动 Outer Fetcher 和 Join Worker 开始后台工作，生成 Join 结果，各个 goroutine 的启动过程由 [fetchOuterAndProbeHashTable](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L1003) 这个函数完成；
 
-    - 将 Join Worker 计算出的 Join 结果返回给 NextChunk 接口的调用方。
+    - 将 Join Worker 计算出的 Join 结果返回给 `NextChunk` 接口的调用方法。
 
 + Outer Fetcher，一个，负责读取 Outer 表的数据并分发给各个 Join Worker；
 
@@ -35,7 +35,7 @@ TiDB 的 Hash Join 是一个多线程版本的实现，主要任务有：
 
 ### Main Thread 读 Inner 表数据
 
-读 Inner 表数据的过程由 [fetchInnerRows](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L329) 这个函数完成。这个过程会不断调用 Child 的 NextChunk 接口，把每次函数调用所获取的 Chunk 存储到 [innerResult](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L348) 这个 List 中供接下来的计算使用。
+读 Inner 表数据的过程由 [fetchInnerRows](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L329) 这个函数完成。这个过程会不断调用 Child 的 `NextChunk` 接口，把每次函数调用所获取的 Chunk 存储到 [innerResult](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L348) 这个 List 中供接下来的计算使用。
 
 ### Main Thread 构造哈希表
 
@@ -67,13 +67,13 @@ Outer Fetcher 是一个后台 goroutine，他的主要计算逻辑在 [fetchOute
 
     - 我提供了一个 Chunk 给你，你直接用这个 Chunk 去拉 Outer 数据吧，不用再重新申请内存了；
 
-    - 我的 Outer Chunk 已经用完了，你需要把拉取到的 Outer 数据直接传给我，不要给别人了；
+    - 我的 Outer Chunk 已经用完了，你需要把拉取到的 Outer 数据直接传给我，不要给别人了。
 
 **所以，整体上 Outer Fetcher 的计算逻辑是：**
 
 1. 从 [outerChkResourceCh](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L73) 中获取一个 [outerChkResource](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L84)，存储在变量 [outerResource](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L307) 中；
 
-2. 从 Child 那拉取数据，将数据写入到 [outerResource](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L307) 的 [chk](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L85) 字段中；
+2. 从 Child 拉取数据，将数据写入到 [outerResource](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L307) 的 [chk](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L85) 字段中；
 
 3. 将这个 [chk](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L85) 发给需要 Outer 表的数据的 Join Worker 的 `outerResultChs[i]` 中去，这个信息记录在了 [outerResource](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L307) 的 [dest](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L86) 字段中。
 
@@ -127,11 +127,11 @@ Outer Fetcher 是一个后台 goroutine，他的主要计算逻辑在 [fetchOute
 
 ### Join Key 中 NULL 值的问题
 
-NULL 和 NULL 不等，所以：
+`NULL` 和 `NULL` 不等，所以：
 
-*   在用 Inner 表建 NULL 值的时候会忽略掉 Join Key 中有 NULL 的数据（代码在  [这里](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L1022)）；
+*   在用 Inner 表建 `NULL` 值的时候会忽略掉 Join Key 中有 `NULL` 的数据（代码在  [这里](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L1022)）；
 
-*   当 Outer 表中某行数据的 Join Key 中有 NULL 值的时候我们不会去查哈希表（代码在 [这里](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L655)）。
+*   当 Outer 表中某行数据的 Join Key 中有 `NULL` 值的时候我们不会去查哈希表（代码在 [这里](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L655)）。
 
 ### Join 中的 4 种 Filter
 
@@ -145,7 +145,7 @@ NULL 和 NULL 不等，所以：
 
 ### Join 方式的实现
 
-目前 TiDB 支持的 Join 方式有 7 种，我们使用 [joinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L36) 这个接口来定义两行数据的 Join 方式，实现一种具体的 Join 方式需要特殊的去实现 joinResultGenerator 这个接口，目前有 7 种实现：
+目前 TiDB 支持的 Join 方式有 7 种，我们使用 [joinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L36) 这个接口来定义两行数据的 Join 方式，实现一种具体的 Join 方式需要特殊的去实现 `joinResultGenerator` 这个接口，目前有 7 种实现：
 
 +  [semiJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L212)：实现了 Semi Join 的链接方式，当一个 Outer Row 和至少一个 Inner Row 匹配时，输出这个 Outer Row。
 
