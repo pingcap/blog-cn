@@ -23,7 +23,7 @@ TiDB 的 Hash Join 是一个多线程版本的实现，主要任务有：
 
     - 根据 Inner 表数据构造哈希表；
 
-    - 启动 Outer Fetcher 和 Join Worker 开始后台工作，生成 Join 结果。各个 goroutine 的启动过程由 [fetchOuterAndProbeHashTable](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L1003) 这个函数完成；
+    - 启动 Outer Fetcher 和 Join Worker 开始后台工作，生成 Join 结果，各个 goroutine 的启动过程由 [fetchOuterAndProbeHashTable](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L1003) 这个函数完成；
 
     - 将 Join Worker 计算出的 Join 结果返回给 NextChunk 接口的调用方。
 
@@ -45,11 +45,11 @@ TiDB 的 Hash Join 是一个多线程版本的实现，主要任务有：
 
 构造哈希表的过程中，我们会遍历 Inner 表的每行数据（上文提到，此时所有的数据都已经存储在了 [innerResult](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L348) 中），对每行数据做如下操作：
 
-+ 计算该行数据的 Join Key，得到一个 []byte，它将作为 MVMap 的 Key；
++ 计算该行数据的 Join Key，得到一个 `[]byte`，它将作为 MVMap 的 Key；
 
-+ 计算该行数据的位置信息，得到另一个 []byte，它将作为 MVMap 的 Value；
++ 计算该行数据的位置信息，得到另一个 `[]byte`，它将作为 MVMap 的 Value；
 
-+ 将这个 (Key, Value) 放入 MVMap 中。
++ 将这个 `(Key, Value)` 放入 MVMap 中。
 
 ### Outer Fetcher
 
