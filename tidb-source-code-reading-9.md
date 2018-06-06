@@ -17,7 +17,7 @@ Hash Join 的基本定义可以参考维基百科：[Hash join](https://en.wikip
 
 TiDB 的 Hash Join 是一个多线程版本的实现，主要任务有：
 
-+ Main Thread：一个，执行下列任务：
++ Main Thread，一个，执行下列任务：
 
     - 读取所有的 Inner 表数据；
 
@@ -27,9 +27,9 @@ TiDB 的 Hash Join 是一个多线程版本的实现，主要任务有：
 
     - 将 Join Worker 计算出的 Join 结果返回给 NextChunk 接口的调用方。
 
-+ Outer Fetcher：一个，负责读取 Outer 表的数据并分发给各个 Join Worker；
++ Outer Fetcher，一个，负责读取 Outer 表的数据并分发给各个 Join Worker；
 
-+ Join Worker：多个，负责查哈希表、Join 匹配的 Inner 和 Outer 表的数据，并把结果传递给 Main Thread。
++ Join Worker，多个，负责查哈希表、Join 匹配的 Inner 和 Outer 表的数据，并把结果传递给 Main Thread。
 
 接下来我们细致的介绍 Hash Join 的各个阶段。
 
@@ -135,11 +135,11 @@ NULL 和 NULL 不等，所以：
 
 ### Join 中的 4 种 Filter
 
-+ **Inner 表上的 Filter**：这种 Filter 目前被优化器推到了 Hash Join Inner 表上面，在 Hash Join 实现的过程中不用考虑这种 Filter 了。推下去的原因是能够尽早的在 coprocessor 上就把不能匹配到的 Inner 表数据给过滤掉，给上层计算减压；
++ **Inner 表上的 Filter**：这种 Filter 目前被优化器推到了 Hash Join Inner 表上面，在 Hash Join 实现的过程中不用考虑这种 Filter 了。推下去的原因是能够尽早的在 coprocessor 上就把不能匹配到的 Inner 表数据给过滤掉，给上层计算减压。
 
-+ **Outer 表上的 Filter**：这种 Filter 的计算目前在 [join2Chunk](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L711) 中，由 Join Worker 进行。当 Join Worker 拿到一个 Outer Chunk 以后需要先计算 Outer Filter，如果通过了 Outer Filter 再去查哈希表；
++ **Outer 表上的 Filter**：这种 Filter 的计算目前在 [join2Chunk](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L711) 中，由 Join Worker 进行。当 Join Worker 拿到一个 Outer Chunk 以后需要先计算 Outer Filter，如果通过了 Outer Filter 再去查哈希表。
 
-+ **两个表上的等值条件**：这就是我们说的 Join Key。比如 A 表和 B 表的等值条件是：`A.col1=B.col2 and A.col3=B.col4`，那么 A 表和 B 表上的 Join Key 分别是 `(col1, col3)` 和 `(col2, col4)`；
++ **两个表上的等值条件**：这就是我们说的 Join Key。比如 A 表和 B 表的等值条件是：`A.col1=B.col2 and A.col3=B.col4`，那么 A 表和 B 表上的 Join Key 分别是 `(col1, col3)` 和 `(col2, col4)`。
 
 + **两个表上的非等值条件**：这种 Filter 需要在 Join 的结果集上计算，如果能够过这个 Filter 才认为两行数据能够匹配。这个 Filter 的计算过程交给了 [joinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L36)。
 
@@ -147,16 +147,16 @@ NULL 和 NULL 不等，所以：
 
 目前 TiDB 支持的 Join 方式有 7 种，我们使用 [joinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L36) 这个接口来定义两行数据的 Join 方式，实现一种具体的 Join 方式需要特殊的去实现 joinResultGenerator 这个接口，目前有 7 种实现：
 
-+  [semiJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L212)：实现了 Semi Join 的链接方式，当一个 Outer Row 和至少一个 Inner Row 匹配时，输出这个 Outer Row；
++  [semiJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L212)：实现了 Semi Join 的链接方式，当一个 Outer Row 和至少一个 Inner Row 匹配时，输出这个 Outer Row。
 
-+   [antiSemiJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L278)：实现了 Anti Semi Join 的链接方式，当 Outer Row 和所有的 Inner Row 都不能匹配时才输出这个 Outer Row；
++   [antiSemiJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L278)：实现了 Anti Semi Join 的链接方式，当 Outer Row 和所有的 Inner Row 都不能匹配时才输出这个 Outer Row。
 
-+   [leftOuterSemiJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L342)：实现了 Left Outer Semi Join 的链接方式，Join 的结果是 Outer Row + 一个布尔值，如果该 Outer Row 能和至少一个 Inner Row 匹配，则输出该 Outer Row + True，否则输出 Outer Row + False；
++   [leftOuterSemiJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L342)：实现了 Left Outer Semi Join 的链接方式，Join 的结果是 Outer Row + 一个布尔值，如果该 Outer Row 能和至少一个 Inner Row 匹配，则输出该 Outer Row + True，否则输出 Outer Row + False。
 
-+   [antiLeftOuterSemiJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L415)：实现了 Anti Left Outer Semi Join 的链接方式，Join 的结果也是 Outer Row + 一个布尔值，不同的是，如果该 Outer Row 不能和任何 Inner Row 匹配上，则输出 Outer Row + True，否则输出 Outer Row + False；
++   [antiLeftOuterSemiJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L415)：实现了 Anti Left Outer Semi Join 的链接方式，Join 的结果也是 Outer Row + 一个布尔值，不同的是，如果该 Outer Row 不能和任何 Inner Row 匹配上，则输出 Outer Row + True，否则输出 Outer Row + False。
 
-+   [leftOuterJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L490)：实现了 Left Outer Join 的链接方式，如果 Outer Row 不能和任何 Inner Row 匹配，则输出 Outer Row + NULL 填充的 Inner Row，否则输出每个匹配的 Outer Row + Inner Row；
++   [leftOuterJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L490)：实现了 Left Outer Join 的链接方式，如果 Outer Row 不能和任何 Inner Row 匹配，则输出 Outer Row + NULL 填充的 Inner Row，否则输出每个匹配的 Outer Row + Inner Row。
 
-+   [rightOuterJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L555)：实现了 Right Outer Join 的链接方式，如果 Outer Row 不能和 Inner Row 匹配，则输出 NULL 填充的 Inner Row + Outer Row，否则输出每个匹配的 Inner Row + Outer Row；
++   [rightOuterJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L555)：实现了 Right Outer Join 的链接方式，如果 Outer Row 不能和 Inner Row 匹配，则输出 NULL 填充的 Inner Row + Outer Row，否则输出每个匹配的 Inner Row + Outer Row。
 
 +   [innerJoinResultGenerator](https://github.com/pingcap/tidb/blob/source-code/executor/join_result_generators.go#L619)：实现了 Inner Join 的链接方式，如果 Outer Row 不能和 Inner Row 匹配，不输出任何数据，否则根据 Outer Row 是左表还是右表选择性的输出每个匹配的 Inner Row + Outer Row 或者 Outer Row + Inner Row。
