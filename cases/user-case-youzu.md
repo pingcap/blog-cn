@@ -3,7 +3,9 @@ title: TiDB 在游族网络平台部的深度应用
 author: ['陶政']
 date: 2018-02-08
 summary: 经过内部的实际使用后，后续已经有数个符合业务场景在评估或计划使用 TiDB 做为 OLTP 存储层的支撑。
-tags: ['案例']
+category: cases
+url: /cases-cn/user-case-youzu/
+aliases: ['/blog-cn/user-case-youzu/']
 ---
 
 ## 公司介绍  

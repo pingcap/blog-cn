@@ -3,7 +3,9 @@ title: TiDB 在二维火餐饮管理实时报表中的实践
 author: ['火烧']
 date: 2018-01-31
 summary: TiDB 让我们的业务开发回到了业务本质，让简单的再简单，开发不需要再拆东墙补西墙忙于数据爆发带来的各种手忙脚乱。
-tags: ['案例']
+category: cases
+url: /cases-cn/user-case-erwihuo/
+aliases: ['/blog-cn/user-case-erweihuo/']
 ---
 
 ## 二维火 SaaS 平台介绍
