@@ -3,7 +3,7 @@ title: TiDB 助力牛板金互联网金融营销平台
 author: ['沈晨波']
 date: 2018-01-25
 summary: “到目前为止，TiDB 稳定运行近半年，随着牛板金业务规模的逐渐放量，数据库数据处理能力稳定提升。”
-category: cases
+category: case
 url: /cases-cn/user-case-niubangold/
 aliases: ['/blog-cn/user-case-niubangold/']
 ---

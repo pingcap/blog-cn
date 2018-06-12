@@ -3,7 +3,7 @@ title: TiDB / TiSpark 在易果集团实时数仓中的创新实践
 author: ['罗瑞星']
 date: 2017-12-18
 summary: 经过综合的考虑，我们最终决定使用 TiDB 作为新的实时系统。同时，目前 TiDB 的社区活跃度非常好，这也是我们考虑的一个很重要的方面。
-category: cases
+category: case
 url: /cases-cn/user-case-yiguo/
 aliases: ['/blog-cn/user-case-yiguo/']
 ---

@@ -3,7 +3,7 @@ title: TiDB 在 G7 的实践和未来
 author: ['廖强']
 date: 2018-01-15
 summary: 在金融和支付这种复杂业务场景中，面临 CAP 中 C 和 P 的挑战。
-category: cases
+category: case
 url: /cases-cn/user-case-g7/
 aliases: ['/blog-cn/user-case-g7/']
 ---
