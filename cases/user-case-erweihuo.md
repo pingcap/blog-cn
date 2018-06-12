@@ -4,7 +4,7 @@ author: ['火烧']
 date: 2018-01-31
 summary: TiDB 让我们的业务开发回到了业务本质，让简单的再简单，开发不需要再拆东墙补西墙忙于数据爆发带来的各种手忙脚乱。
 category: case
-url: /cases-cn/user-case-erwihuo/
+url: /cases-cn/user-case-erweihuo/
 aliases: ['/blog-cn/user-case-erweihuo/']
 ---
 
