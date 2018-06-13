@@ -2,7 +2,7 @@
 title: TiDB 在摩拜单车在线数据业务的应用和实践
 author: ['丁宬杰','胡明']
 date: 2017-12-25
-summary: 未来，我们会联合 PingCAP 进一步丰富多集群的管理工具，进行更深入的研究和开发，持续提升 TiDB 的性能，将 TiDB 应用到更多的业务中。
+summary: “未来，我们会联合 PingCAP 进一步丰富多集群的管理工具，进行更深入的研究和开发，持续提升 TiDB 的性能，将 TiDB 应用到更多的业务中。”
 category: case
 url: /cases-cn/user-case-mobike/
 aliases: ['/blog-cn/user-case-mobike/']
