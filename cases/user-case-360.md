@@ -2,7 +2,7 @@
 title: TiDB 在 360 金融贷款实时风控场景应用
 author: ['金中浩']
 date: 2017-11-27
-summary: 最终上线时，我们为 TiDB 部署了 9 台服务器的集群。其中 3 台作为 PD 和 TiDB 的服务器，6 台作为 TiKV 的存储服务器。
+summary: 随着业务量的增大，TPS 指标提升至 5000 左右，整个数据库平台的峰值计算能力提升了 10 倍左右，但是平台整体的吞吐量和响应时间都没有特别的抖动，一直稳定在可接受范围内。
 category: case
 url: /cases-cn/user-case-360/
 aliases: ['/blog-cn/user-case-360/']

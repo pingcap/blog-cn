@@ -2,7 +2,7 @@
 title: TiKV 在饿了么的大规模应用实践
 author: ['陈东明']
 date: 2018-04-02
-summary: “目前，TiKV 的应用会影响饿了么全平台 80% 的流量，包括从用户选餐下单到订单配送整个饿了么流程。”
+summary: 目前，TiKV 的应用会影响饿了么全平台 80% 的流量，包括从用户选餐下单到订单配送整个饿了么流程。
 category: case
 url: /cases-cn/user-case-eleme-1/
 ---

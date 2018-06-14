@@ -2,7 +2,7 @@
 title: TiDB 助力牛板金互联网金融营销平台
 author: ['沈晨波']
 date: 2018-01-25
-summary: “到目前为止，TiDB 稳定运行近半年，随着牛板金业务规模的逐渐放量，数据库数据处理能力稳定提升。”
+summary: 在性能上，TiDB 有不俗的表现，在多表和上述单表大规模数据量规模下，TiDB（RC4 版本） 相比 MySQL + MyCAT 在性能上至少有 1.5 倍到 2 倍的优势。
 category: case
 url: /cases-cn/user-case-niubangold/
 aliases: ['/blog-cn/user-case-niubangold/']

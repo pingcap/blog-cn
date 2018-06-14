@@ -2,7 +2,7 @@
 title: TiDB 在零氪科技（LinkDoc）大数据医疗系统的实践
 author: ['杨浩']
 date: 2018-03-05
-summary: “目前 TiDB 在 LinkDoc 已承载数据量最大的两个业务。平时 QPS 6K，峰值 12K。后续将通过 TiDB 构造成一个兼容分析型和事务型的统一数据库 HTAP 平台。”
+summary: 目前 TiDB 在 LinkDoc 已承载数据量最大的两个业务。平时 QPS 6K，峰值 12K。后续将通过 TiDB 构造成一个兼容分析型和事务型的统一数据库 HTAP 平台。
 category: case
 url: /cases-cn/user-case-linkdoc/
 ---

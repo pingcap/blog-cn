@@ -2,7 +2,7 @@
 title: TiDB 在今日头条的实践
 author: ['吴镝']
 date: 2018-03-16
-summary: “TiDB 主要应用在今日头条核心 OLTP 系统 - 对象存储系统的部分元数据存储，支持头条图片和视频相关业务，比如抖音等。”
+summary: TiDB 主要应用在今日头条核心 OLTP 系统 - 对象存储系统的部分元数据存储，支持头条图片和视频相关业务，比如抖音等。
 category: case
 url: /cases-cn/user-case-toutiao/
 ---
