@@ -35,23 +35,23 @@ Column 里面的字段非常多，这里先简单介绍一下：
 
 * length
   
-  用来表示这个 Column 有多少行数据；
+  用来表示这个 Column 有多少行数据。
 
 * nullCount
 
-  用来表示这个 Column 中有多少 `NULL` 数据；
+  用来表示这个 Column 中有多少 `NULL` 数据。
 
 * nullBitmap
 
-  用来存储这个 Column 中每个元素是否是 `NULL`，需要特殊注意的是我们使用 0 表示 `NULL`，1 表示非 `NULL`，和 Apache Arrow 一样；
+  用来存储这个 Column 中每个元素是否是 `NULL`，需要特殊注意的是我们使用 0 表示 `NULL`，1 表示非 `NULL`，和 Apache Arrow 一样。
 
 * data
 
-  存储具体的数据，不管定长还是变长的 Column，所有的数据都存储在这个 byte slice 中；
+  存储具体的数据，不管定长还是变长的 Column，所有的数据都存储在这个 byte slice 中。
 
 * offsets
 
-  给变长的 Column 使用，存储每个数据在 data 这个 slice 中的偏移量；
+  给变长的 Column 使用，存储每个数据在 data 这个 slice 中的偏移量。
 
 * elemBuf
 
