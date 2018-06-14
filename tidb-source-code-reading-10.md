@@ -21,83 +21,78 @@ TiDB 2.0 中，我们引入了一个叫 [Chunk](https://github.com/pingcap/tidb/
 
 Chunk 本质上是 [Column](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L320) 的集合，它负责连续的在内存中存储同一列的数据，接下来我们看看 Column 的实现。
 
-### 1\. Column
+### 1. Column
 
-Column 的实现参考了Apache Arrow，Column 的代码在 [这里](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L320)。根据所存储的数据类型，我们有两种Column：
+Column 的实现参考了 Apache Arrow，Column 的代码在 [这里](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L320)。根据所存储的数据类型，我们有两种 Column：
 
-* 定长 Column：存储定长类型的数据，比如：Double、Bigint、Decimal 等
+* 定长 Column：存储定长类型的数据，比如 `Double`、`Bigint`、`Decimal` 等
 
-* 变长 Column：存储变长类型的数据，比如：Char、Varchar 等
+* 变长 Column：存储变长类型的数据，比如 `Char`、`Varchar` 等
 
 哪些数据类型用定长 Column，哪些数据类型用变长 Column 可以看函数 [addColumnByFieldType](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L90) 。
 
 Column 里面的字段非常多，这里先简单介绍一下：
 
-* length：用来表示这个 Column 有多少行数据
+* length：用来表示这个 Column 有多少行数据；
 
-* nullCount：用来表示这个 Column 中有多少 `NULL` 数据
+* nullCount：用来表示这个 Column 中有多少 `NULL` 数据；
 
-* nullBitmap：用来存储这个 Column 中每个元素是否是 `NULL`，需要特殊注意的是我们使用 0 表示 `NULL`，1 表示非 `NULL`，和 Apache Arrow 一样
+* nullBitmap：用来存储这个 Column 中每个元素是否是 `NULL`，需要特殊注意的是我们使用 0 表示 `NULL`，1 表示非 `NULL`，和 Apache Arrow 一样；
 
-* data：存储具体的数据，不管定长还是变长的 Column，所有的数据都存储在这个 byte slice 中
+* data：存储具体的数据，不管定长还是变长的 Column，所有的数据都存储在这个 byte slice 中；
 
-* offsets：给变长的 Column 使用，存储每个数据在 data 这个 slice 中的偏移量
+* offsets：给变长的 Column 使用，存储每个数据在 data 这个 slice 中的偏移量；
 
-* elemBuf：给定长的 Column 使用，当需要读或者写一个数据的时候，使用它来辅助 encode 和 decode
+* elemBuf：给定长的 Column 使用，当需要读或者写一个数据的时候，使用它来辅助 encode 和 decode。
 
-#### 1.1  追加一个定长的非NULL 值
+#### 1.1  追加一个定长的非 NULL 值
 
 追加一个元素需要根据具体的数据类型调用具体的 append 方法，比如： [appendInt64](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L378 )、[appendString](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L404 ) 等。
 
 一个定长类型的 Column 可以用如下图表示:
 
-<center>
-![image](http://upload-images.jianshu.io/upload_images/542677-3018640216f50994?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-</center>
+![](http://upload-images.jianshu.io/upload_images/542677-3018640216f50994?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 我们以 [appendInt64](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L378 ) 为例来看看如何追加一个定长类型的数据：
 
-*   使用 `unsafe.Pointer` 把要 append 的数据先复制到 [elemBuf](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L326) 中
+*   使用 `unsafe.Pointer` 把要 append 的数据先复制到 [elemBuf](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L326) 中；
 
-*   将 [elemBuf](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L326) 中的数据 append 到 [data](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L325) 中
+*   将 [elemBuf](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L326) 中的数据 append 到 [data](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L325) 中；
 
-*   往 [nullBitmap](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L323 ) 中 append 一个 1
+*   往 [nullBitmap](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L323 ) 中 append 一个 1。
 
 上面第 1 步在 `appendInt64` 这个函数中完成，第 2、3 步在 [finishAppendFixed](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L372) 这个函数中完成。其他定长类型元素的追加操作非常相似，感兴趣的同学可以接着看看 [appendFloat32](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L388)、[appendTime](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L414) 等函数。
 
-#### 1.2  追加一个变长的非NULL 值
+#### 1.2  追加一个变长的非 NULL 值
 
 而一个变长的 Column 可以用下图表示：
 
-<center>
-![image](http://upload-images.jianshu.io/upload_images/542677-5710e000f91e42a0?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-</center>
+![](http://upload-images.jianshu.io/upload_images/542677-5710e000f91e42a0?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 我们以 [appendString](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L404 ) 为例来看看如何追加一个变长类型的数据：
 
-* 把数据先 append 到 [data](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L325) 中
+* 把数据先 append 到 [data](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L325) 中；
 
-* 往 [nullBitmap](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L323 ) 中 append 一个 1
+* 往 [nullBitmap](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L323 ) 中 append 一个 1；
 
-* 往 [offsets](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L324) 中 append 当前 [data](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L325) 的 size 作为下一个元素在 data 中的起始点
+* 往 [offsets](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L324) 中 append 当前 [data](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L325) 的 size 作为下一个元素在 data 中的起始点。
 
-上面第 1 步在 [appendString](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L404) 这个函数中完成，第 2、3 步在 [finishAppendVar](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L398) 这个函数中完成。其他边长类型元素的追加操作也是非常相似，感兴趣的同学可以接着看看 [appendBytes](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L409)、[appendJSON](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L449) 等函数
+上面第 1 步在 [appendString](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L404) 这个函数中完成，第 2、3 步在 [finishAppendVar](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L398) 这个函数中完成。其他边长类型元素的追加操作也是非常相似，感兴趣的同学可以接着看看 [appendBytes](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L409)、[appendJSON](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L449) 等函数。
 
 #### 1.3  追加一个 NULL 值
 
 我们使用 [appendNull](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L362) 函数来向一个 Column 中追加一个 `NULL` 值：
 
-*   往 [nullBitmap](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L323 ) 中 append 一个 0
+*   往 [nullBitmap](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L323 ) 中 append 一个 0；
 
-*   如果是定长 Column，需要往 data 中 append 一个 [elemBuf](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L326) 长度的数据，用来占位
+*   如果是定长 Column，需要往 data 中 append 一个 [elemBuf](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L326) 长度的数据，用来占位；
 
-*   如果是变长 Column，不用往 data中 append 数据，而是往 [offsets](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L324) 中 append 当前 data 的 size 作为下一个元素在 data 中的起始点
+*   如果是变长 Column，不用往 data中 append 数据，而是往 [offsets](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L324) 中 append 当前 data 的 size 作为下一个元素在 data 中的起始点。
 
-### 2\. Row
+### 2. Row
 
-<center>
-![image](http://upload-images.jianshu.io/upload_images/542677-26cf4ca3ff336c51?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-</center>
+![](http://upload-images.jianshu.io/upload_images/542677-26cf4ca3ff336c51?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 如上图所示：Chunk 中的 [Row](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L456) 是一个逻辑上的概念：Row 中的数据存储在 Chunk 的各个 Column 中，同一个 Row 中的数据在内存中没有连续存储在一起，我们在获取一个 Row 对象的时候也不需要进行数据拷贝。提供 Row 的概念是因为算子运行过程中，大多数情况都是以 Row 为单位访问和操作数据，比如聚合，排序等。 
 
@@ -109,13 +104,12 @@ Row 提供了获取 Chunk 中数据的方法，比如 [GetInt64](https://github.
 
 ## 执行框架简介
 
-### 1\. 老执行框架简介
+### 1. 老执行框架简介
 
 在重构前，TiDB 1.0 中使用的执行框架会不断调用 Child 的 [Next](https://github.com/pingcap/tidb/blob/source-code/executor/executor.go#L191) 函数获取一个由 Datum 组成的 Row（和刚才介绍的 Chunk Row 是两个数据结构），这种执行方式的特点是：每次函数调用只返回一行数据，且不管是什么类型的数据都用 Datum 这个结构体来封装。
 
-<center>
+
 ![](http://upload-images.jianshu.io/upload_images/542677-681f227e520ea2e5?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-</center>
 
 这种方法的优点是：简单、易用。缺点是：
 
@@ -133,9 +127,7 @@ Row 提供了获取 Chunk 中数据的方法，比如 [GetInt64](https://github.
 
 在重构后，TiDB 2.0 中使用的执行框架会不断调用 Child 的 [NextChunk](https://github.com/pingcap/tidb/blob/source-code/executor/executor.go#L198) 函数，获取一个 [Chunk](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L32) 的数据。
 
-<center>
 ![](http://upload-images.jianshu.io/upload_images/542677-398aaac6970e0147?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-</center>
 
 这种执行方式的特点是：
 
