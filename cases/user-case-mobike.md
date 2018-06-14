@@ -138,13 +138,13 @@ PD 在设计之初考虑了这方面的问题（专门设计了 HotRegionBalance
 
 针对这个问题，我们和 PingCAP 技术团队合作，对 TiDB 做了以下优化。
 
-**优化一：基于 Table 的分裂**
+### 优化一：基于 Table 的分裂
 
 这个修改的目的是解决小表数据的相互影响的问题。
 
 当有新表数据插入某一 Region 时，TiKV 会根据当前 Region 的 Key Range 计算出 tableID，如果发现插入的 Key 不在这个 KeyRange 中，会对这个 Region 提前分裂，这就保证了每个 Region 只包含一个表的数据。
 
-**优化二：表级别的资源隔离**
+### 优化二：表级别的资源隔离
 
 与此同时，我们在 PD 增加了 TableID 和 Namespace 之间的映射关系以及 NameSpace 和 TiKV Store 的映射关系，通过把上述关系持久化到 eEtcd 里，保证该映射关系的安全。
 
@@ -152,7 +152,7 @@ PD 在设计之初考虑了这方面的问题（专门设计了 HotRegionBalance
 
 另外，我们还与 PingCAP 团队共同开发实现了一个 NameSpace 调度器，把未规整的 Region 调度回它应在的 TiKV 里，进而在表级别保证数据不会相互干扰。
 
-**优化三：管理工具**
+### 优化三：管理工具
 
 最后的问题是管理 NameSpace 的问题。
 
