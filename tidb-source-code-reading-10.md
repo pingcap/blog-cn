@@ -33,17 +33,29 @@ Column 的实现参考了 Apache Arrow，Column 的代码在 [这里](https://g
 
 Column 里面的字段非常多，这里先简单介绍一下：
 
-* length：用来表示这个 Column 有多少行数据；
+* length
+  
+  用来表示这个 Column 有多少行数据；
 
-* nullCount：用来表示这个 Column 中有多少 `NULL` 数据；
+* nullCount
 
-* nullBitmap：用来存储这个 Column 中每个元素是否是 `NULL`，需要特殊注意的是我们使用 0 表示 `NULL`，1 表示非 `NULL`，和 Apache Arrow 一样；
+  用来表示这个 Column 中有多少 `NULL` 数据；
 
-* data：存储具体的数据，不管定长还是变长的 Column，所有的数据都存储在这个 byte slice 中；
+* nullBitmap
 
-* offsets：给变长的 Column 使用，存储每个数据在 data 这个 slice 中的偏移量；
+  用来存储这个 Column 中每个元素是否是 `NULL`，需要特殊注意的是我们使用 0 表示 `NULL`，1 表示非 `NULL`，和 Apache Arrow 一样；
 
-* elemBuf：给定长的 Column 使用，当需要读或者写一个数据的时候，使用它来辅助 encode 和 decode。
+* data
+
+  存储具体的数据，不管定长还是变长的 Column，所有的数据都存储在这个 byte slice 中；
+
+* offsets
+
+  给变长的 Column 使用，存储每个数据在 data 这个 slice 中的偏移量；
+
+* elemBuf
+
+  给定长的 Column 使用，当需要读或者写一个数据的时候，使用它来辅助 encode 和 decode。
 
 #### 1.1  追加一个定长的非 NULL 值
 
