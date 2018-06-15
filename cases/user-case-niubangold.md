@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-niubangold/
 aliases: ['/blog-cn/user-case-niubangold/']
 customer: 牛板金
-logo: /images/blog-cn/cutomers/niubangold-logo.png
+logo: /images/blog-cn/customers/niubangold-logo.png
 ---
 
 ## 公司介绍

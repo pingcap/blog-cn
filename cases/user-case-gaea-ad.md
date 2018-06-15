@@ -7,7 +7,7 @@ tags: ['游戏']
 category: case
 url: /cases-cn/user-case-gaea-ad/
 customer: 盖娅互娱
-logo: /images/blog-cn/cutomers/gaea-ad-logo.png
+logo: /images/blog-cn/customers/gaea-ad-logo.png
 ---
 
 

@@ -7,7 +7,7 @@ tags: ['游戏']
 category: case
 url: /cases-cn/user-case-xishanju/
 customer: 西山居
-logo: /images/blog-cn/cutomers/xishanju-logo.png
+logo: /images/blog-cn/customers/xishanju-logo.png
 ---
 
 

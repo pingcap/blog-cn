@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-toutiao/
 customer: 今日头条
-logo: /images/blog-cn/cutomers/toutiao-logo.png
+logo: /images/blog-cn/customers/toutiao-logo.png
 ---
 
 ![](https://upload-images.jianshu.io/upload_images/542677-f5322f71353d7ee7.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)

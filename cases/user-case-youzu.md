@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-youzu/
 aliases: ['/blog-cn/user-case-youzu/']
 customer: 游族网络
-logo: /images/blog-cn/cutomers/youzu-logo.png
+logo: /images/blog-cn/customers/youzu-logo.png
 ---
 
 ## 公司介绍  

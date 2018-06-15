@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-eleme-1/
 customer: 饿了么
-logo: /images/blog-cn/cutomers/eleme-logo.png
+logo: /images/blog-cn/customers/eleme-logo.png
 ---
 
 ## 背景介绍

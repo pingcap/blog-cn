@@ -7,7 +7,7 @@ tags: ['大型企业']
 category: case
 url: /cases-cn/user-case-weiruida/
 customer: 威锐达测控
-logo: /images/blog-cn/cutomers/weiruida-logo.png
+logo: /images/blog-cn/customers/weiruida-logo.png
 ---
 
 

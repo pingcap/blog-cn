@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-erweihuo/
 aliases: ['/blog-cn/user-case-erweihuo/']
 customer: 二维火
-logo: /images/blog-cn/cutomers/erweihuo-logo.png
+logo: /images/blog-cn/customers/erweihuo-logo.png
 ---
 
 ## 二维火 SaaS 平台介绍

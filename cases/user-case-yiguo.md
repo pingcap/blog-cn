@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-yiguo/
 aliases: ['/blog-cn/user-case-yiguo/']
 customer: 易果生鲜
-logo: /images/blog-cn/cutomers/yiguo-logo.png
+logo: /images/blog-cn/customers/yiguo-logo.png
 ---
 
 ## 项目背景  

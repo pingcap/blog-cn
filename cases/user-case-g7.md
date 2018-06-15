@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-g7/
 aliases: ['/blog-cn/user-case-g7/']
 customer: G7
-logo: /images/blog-cn/cutomers/g7-logo.png
+logo: /images/blog-cn/customers/g7-logo.png
 ---
 
 ## 背景

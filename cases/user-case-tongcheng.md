@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-tongcheng/
 customer: 同程旅游
-logo: /images/blog-cn/cutomers/tongcheng-logo.png
+logo: /images/blog-cn/customers/tongcheng-logo.png
 ---
 
 
