@@ -2,7 +2,7 @@
 title: TiDB 在 Ping++ 金融聚合支付业务中的实践
 author: ['宋涛']
 date: 2018-02-26
-summary: 目前数仓 TiDB 的数据是由订阅平台订阅 RDS、DRDS 数据而来，系统复杂度较高。TiDB 具备了出色的分布式事务能力，完全达到了 HTAP 的级别。
+summary: TiDB 具备了出色的分布式事务能力，完全达到了 HTAP 的级别。TiKV 基于 Raft 协议做复制，保证多副本数据的一致性，可以秒杀当前主流的 MyCat、DRDS 分布式架构，且数据库的可用性更高。
 category: case
 url: /cases-cn/user-case-ping++/
 aliases: ['/blog-cn/user-case-ping++/','/blog-cn/tidb-ping++/']
