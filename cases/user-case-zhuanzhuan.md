@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-zhuanzhuan/
 customer: 转转
-logo: /images/blog-cn/cutomers/zhuanzhuan-logo.png
+logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 ---
 
 

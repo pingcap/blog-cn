@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-mobikok/
 customer: Mobikok
-logo: /images/blog-cn/cutomers/mobikok-logo.png
+logo: /images/blog-cn/customers/mobikok-logo.png
 ---
 
 

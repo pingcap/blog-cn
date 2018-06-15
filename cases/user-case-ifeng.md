@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-ifeng/
 aliases: ['/blog-cn/user-case-ifeng/']
 customer: 凤凰网
-logo: /images/blog-cn/cutomers/ifeng-logo.png
+logo: /images/blog-cn/customers/ifeng-logo.png
 ---
 
 ## 背景

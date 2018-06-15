@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-yimian/
 customer: 一面数据
-logo: /images/blog-cn/cutomers/yimian-logo.png
+logo: /images/blog-cn/customers/yimian-logo.png
 ---
 
 

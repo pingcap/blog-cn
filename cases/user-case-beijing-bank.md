@@ -7,7 +7,7 @@ tags: ['金融']
 category: case
 url: /cases-cn/user-case-beijing-bank/
 customer: 北京银行
-logo: /images/blog-cn/cutomers/beijing-bank-logo.png
+logo: /images/blog-cn/customers/beijing-bank-logo.png
 ---
 
 

@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-linkdoc/
 customer: 零氪科技
-logo: /images/blog-cn/cutomers/linkdoc-logo.png
+logo: /images/blog-cn/customers/linkdoc-logo.png
 ---
 
 

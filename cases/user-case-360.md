@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-360/
 aliases: ['/blog-cn/user-case-360/']
 customer: 360 金融
-logo: /images/blog-cn/cutomers/360-logo.png
+logo: /images/blog-cn/customers/360-logo.png
 ---
 
 ## 背景

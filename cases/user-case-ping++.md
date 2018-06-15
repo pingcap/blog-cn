@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-ping++/
 aliases: ['/blog-cn/user-case-ping++/','/blog-cn/tidb-ping++/']
 customer: Ping++
-logo: /images/blog-cn/cutomers/ping++-logo.png
+logo: /images/blog-cn/customers/ping++-logo.png
 ---
 
 ## Ping++ 介绍

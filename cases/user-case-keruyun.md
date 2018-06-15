@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-keruyun/
 customer: 客如云
-logo: /images/blog-cn/cutomers/keruyun-logo.png
+logo: /images/blog-cn/customers/keruyun-logo.png
 ---
 
 

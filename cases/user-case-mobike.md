@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-mobike/
 aliases: ['/blog-cn/user-case-mobike/']
 customer: 摩拜单车
-logo: /images/blog-cn/cutomers/mobike-logo.png
+logo: /images/blog-cn/customers/mobike-logo.png
 ---
 
 

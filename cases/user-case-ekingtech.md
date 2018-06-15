@@ -8,7 +8,7 @@ tags: ['大型企业']
 category: case
 url: /cases-cn/user-case-ekingtech/
 customer: 海航易建
-logo: /images/blog-cn/cutomers/ekingtech-logo.png
+logo: /images/blog-cn/customers/ekingtech-logo.png
 ---
 
 
