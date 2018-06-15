@@ -3,9 +3,12 @@ title: TiDB / TiSpark 在易果集团实时数仓中的创新实践
 author: ['罗瑞星']
 date: 2017-12-18
 summary: 同时解决 OLAP 和 OLTP 是一件相当困难的事情，TiDB 和 TiSpark 虽然推出不久，但是已经满足很多应用场景，同时在易用性和技术支持上也非常值得称赞。
+tags: ['互联网']
 category: case
 url: /cases-cn/user-case-yiguo/
 aliases: ['/blog-cn/user-case-yiguo/']
+customer: 易果生鲜
+logo: /images/blog-cn/cutomers/yiguo-logo.png
 ---
 
 ## 项目背景  

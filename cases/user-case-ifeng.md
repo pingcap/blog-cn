@@ -3,9 +3,12 @@ title: TiDB 在凤凰网新闻内容业务的创新实践
 author: ['卞新栋']
 date: 2018-01-04
 summary: TiDB 的出现，帮我们跳过了传统的 Sharding + proxy 的路线，给我们节省了巨大的技术成本，我们对 TiDB 非常的钟爱。
+tags: ['互联网']
 category: case
 url: /cases-cn/user-case-ifeng/
 aliases: ['/blog-cn/user-case-ifeng/']
+customer: 凤凰网
+logo: /images/blog-cn/cutomers/ifeng-logo.png
 ---
 
 ## 背景

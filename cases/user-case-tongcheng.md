@@ -3,8 +3,11 @@ title: 支撑百亿级应用的 NewSQL——TiDB 在同程旅游的应用
 author: ['瞿锴']
 date: 2018-04-12
 summary: 在同程内部，目前共有数套 TiDB 集群，部署服务器数量近百台，总数据量数十 TB。其中最大的一个集群 10 多个数据节点，近十 TB 数据，数据量过百亿，平均 QPS 在 5000，高峰 QPS 过万。
+tags: ['互联网']
 category: case
 url: /cases-cn/user-case-tongcheng/
+customer: 同程旅游
+logo: /images/blog-cn/cutomers/tongcheng-logo.png
 ---
 
 

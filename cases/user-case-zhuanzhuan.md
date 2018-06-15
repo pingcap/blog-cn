@@ -3,8 +3,11 @@ title: TiDB 分布式数据库在转转公司的应用实践
 author: ['孙玄','陈东','冀浩东']
 date: 2018-05-29
 summary: 目前 TiDB 在转转线上已经接入消息、风控两套 OLTP 以及一套风控 OLAP 集群。
+tags: ['互联网']
 category: case
 url: /cases-cn/user-case-zhuanzhuan/
+customer: 转转
+logo: /images/blog-cn/cutomers/zhuanzhuan-logo.png
 ---
 
 

@@ -3,8 +3,11 @@ title: TiDB 在威锐达 WindRDS 远程诊断及运维中心的应用
 author: ['郭凯乐']
 date: 2018-05-16
 summary: 从测试环境搭建完成到上线，TiDB 持续稳定运行中，平均 QPS 稳定在数千。TiDB 在性能、可用性、稳定性上完全超出了我们的预期。
+tags: ['大型企业']
 category: case
 url: /cases-cn/user-case-weiruida/
+customer: 威锐达测控
+logo: /images/blog-cn/cutomers/weiruida-logo.png
 ---
 
 

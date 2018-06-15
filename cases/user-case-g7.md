@@ -3,9 +3,12 @@ title: TiDB 在 G7 的实践和未来
 author: ['廖强']
 date: 2018-01-15
 summary: 2018 年初，运维团队和每一个业务方进行了一次需求沟通，业务方对 TiDB 的需求越来越强烈。我们准备让TiDB发挥应用到更多的场景中。
+tags: ['互联网']
 category: case
 url: /cases-cn/user-case-g7/
 aliases: ['/blog-cn/user-case-g7/']
+customer: G7
+logo: /images/blog-cn/cutomers/g7-logo.png
 ---
 
 ## 背景

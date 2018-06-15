@@ -3,8 +3,11 @@ title: TiDB 在 Mobikok 广告系统中的应用和实践
 author: ['rayi']
 date: 2018-04-18
 summary: TiDB 对于像我们这样可预期核心数据会暴增的场景，有非常大的意义。在后端支撑力量有限时，业务暴增时只需要增加机器，而不是频繁重构业务，让我们有更多精力在自己的业务上耕耘。
+tags: ['互联网']
 category: case
 url: /cases-cn/user-case-mobikok/
+customer: Mobikok
+logo: /images/blog-cn/cutomers/mobikok-logo.png
 ---
 
 

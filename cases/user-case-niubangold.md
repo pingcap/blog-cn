@@ -3,9 +3,12 @@ title: TiDB 助力牛板金互联网金融营销平台
 author: ['沈晨波']
 date: 2018-01-25
 summary: 在性能上，TiDB 有不俗的表现，在多表和上述单表大规模数据量规模下，TiDB（RC4 版本） 相比 MySQL + MyCAT 在性能上至少有 1.5 倍到 2 倍的优势。
+tags: ['金融']
 category: case
 url: /cases-cn/user-case-niubangold/
 aliases: ['/blog-cn/user-case-niubangold/']
+customer: 牛板金
+logo: /images/blog-cn/cutomers/niubangold-logo.png
 ---
 
 ## 公司介绍
