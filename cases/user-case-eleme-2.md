@@ -3,8 +3,11 @@ title: TiDB 在饿了么归档环境的应用
 author: ['张延召']
 date: 2018-04-25
 summary: 截至目前饿了么整个归档平台已部署归档作业千余个，涉及数百套源集群数百个库数百张表。其中 TiDB 上部署的归档作业占总归档作业量的 45%。
+tags: ['互联网']
 category: case
 url: /cases-cn/user-case-eleme-2/
+customer: 饿了么
+logo: /images/blog-cn/cutomers/eleme-logo.png
 ---
 
 

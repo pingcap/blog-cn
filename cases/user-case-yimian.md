@@ -1,10 +1,13 @@
 ---
-title: TiDB 在饿了么归档环境的应用
+title: TiDB 助力一面数据实现消费领域的决策分析平台
 author: ['刘畅']
 date: 2017-09-15
 summary: TiDB 水平扩展性、兼容 MySQL 是非常好的特性，对需要使用关系型数据库作为存储方案的业务有极大的诱惑力，避免了传统分表、分库方案带来的上层应用的复杂性，解决了我们目前迫切的关系型数据存储的需求。
+tags: ['互联网']
 category: case
 url: /cases-cn/user-case-yimian/
+customer: 一面数据
+logo: /images/blog-cn/cutomers/yimian-logo.png
 ---
 
 

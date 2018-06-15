@@ -3,8 +3,11 @@ title: TiDB 在株式会社 FUNYOURS JAPAN 的应用
 author: ['张明塘']
 date: 2018-03-23
 summary: 比较原本架构与 TiDB 架构，现在运营上最直接的效益就是硬体成本的节约。
+tags: ['游戏']
 category: case
 url: /cases-cn/user-case-funyours-japan/
+customer: 株式会社 FUNYOURS JAPAN
+logo: /images/blog-cn/cutomers/funyours-japan-youzu-logo.png
 ---
 
 ## 背景

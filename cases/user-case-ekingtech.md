@@ -4,8 +4,11 @@ title: TiDB 在海航易建科技与香港航空研发收益支持系统过程�
 author: ['王碧虹']
 date: 2018-03-01
 summary: 使用了 TiDB 后，我们不需要再考虑分表分库的问题，近10 亿行数据都可以复用以前的 MySQL 代码，进行 OLAP 分析也比上一代收益系统提速近20倍，同时，免去了数据同步的可能存在的问题。
+tags: ['大型企业']
 category: case
 url: /cases-cn/user-case-ekingtech/
+customer: 海航易建
+logo: /images/blog-cn/cutomers/ekingtech-logo.png
 ---
 
 

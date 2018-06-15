@@ -3,8 +3,11 @@ title: Qunar 高速发展下数据库的创新与发展 - TiDB篇
 author: ['蒲聪']
 date: 2017-12-14
 summary: 目前已经上线了两个 TiDB 集群。随着产品自身的完善，集群使用量和运维经验的积累，后续我们将逐步推广到更重要的集群中，解决业务上遇到的数据存储的痛点。
+tags: ['互联网']
 category: case
 url: /cases-cn/user-case-qunar/
+customer: 去哪儿
+logo: /images/blog-cn/cutomers/qunar-logo.png
 ---
 
 

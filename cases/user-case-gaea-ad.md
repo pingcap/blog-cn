@@ -3,8 +3,11 @@ title: 盖娅互娱 | 日均数据量千万级，MySQL、TiDB 两种存储方案
 author: ['刘玄']
 date: 2017-03-09
 summary: TiDB 在数据规模越大的情况下，对比 MySQL 的优势就越明显，应该是 TiDB 自研的分布式 SQL 优化器带来的优势。
+tags: ['游戏']
 category: case
 url: /cases-cn/user-case-gaea-ad/
+customer: 盖娅互娱
+logo: /images/blog-cn/cutomers/gaea-ad-logo.png
 ---
 
 
