@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-qunar/
 customer: 去哪儿
-logo: /images/blog-cn/cutomers/qunar-logo.png
+logo: /images/blog-cn/customers/qunar-logo.png
 ---
 
 
