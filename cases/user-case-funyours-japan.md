@@ -7,7 +7,7 @@ tags: ['游戏']
 category: case
 url: /cases-cn/user-case-funyours-japan/
 customer: 株式会社 FUNYOURS JAPAN
-logo: /images/blog-cn/customers/funyours-japan-youzu-logo.png
+logo: /images/blog-cn/customers/funyours-japan-logo.png
 ---
 
 ## 背景
