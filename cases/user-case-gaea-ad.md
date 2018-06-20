@@ -6,7 +6,7 @@ summary: TiDB 在数据规模越大的情况下，对比 MySQL 的优势就越�
 tags: ['游戏']
 category: case
 url: /cases-cn/user-case-gaea-ad/
-customer: 盖娅互娱
+weight: 3
 logo: /images/blog-cn/customers/gaea-ad-logo.png
 ---
 

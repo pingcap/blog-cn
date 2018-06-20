@@ -7,7 +7,7 @@ tags: ['金融']
 category: case
 url: /cases-cn/user-case-360/
 aliases: ['/blog-cn/user-case-360/']
-customer: 360 金融
+weight: 4
 logo: /images/blog-cn/customers/360-logo.png
 ---
 

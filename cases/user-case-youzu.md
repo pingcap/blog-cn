@@ -7,7 +7,7 @@ tags: ['游戏']
 category: case
 url: /cases-cn/user-case-youzu/
 aliases: ['/blog-cn/user-case-youzu/']
-customer: 游族网络
+weight: 1
 logo: /images/blog-cn/customers/youzu-logo.png
 ---
 

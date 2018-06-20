@@ -7,7 +7,7 @@ summary: 使用了 TiDB 后，我们不需要再考虑分表分库的问题，�
 tags: ['大型企业']
 category: case
 url: /cases-cn/user-case-ekingtech/
-customer: 海航易建
+weight: 1
 logo: /images/blog-cn/customers/ekingtech-logo.png
 ---
 

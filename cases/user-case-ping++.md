@@ -7,7 +7,7 @@ tags: ['金融']
 category: case
 url: /cases-cn/user-case-ping++/
 aliases: ['/blog-cn/user-case-ping++/','/blog-cn/tidb-ping++/']
-customer: Ping++
+weight: 2
 logo: /images/blog-cn/customers/ping++-logo.png
 ---
 

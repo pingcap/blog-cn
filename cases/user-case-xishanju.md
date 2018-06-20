@@ -6,7 +6,7 @@ summary: 舆情系统目前总数据量数 T，已正式上线三个月，期间
 tags: ['游戏']
 category: case
 url: /cases-cn/user-case-xishanju/
-customer: 西山居
+weight: 2
 logo: /images/blog-cn/customers/xishanju-logo.png
 ---
 

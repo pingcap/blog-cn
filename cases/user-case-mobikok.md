@@ -6,7 +6,7 @@ summary: TiDB 对于像我们这样可预期核心数据会暴增的场景，有
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-mobikok/
-customer: Mobikok
+weight: 15
 logo: /images/blog-cn/customers/mobikok-logo.png
 ---
 
@@ -14,7 +14,7 @@ logo: /images/blog-cn/customers/mobikok-logo.png
 ## 公司介绍
 Mobikok（可可网络）成立于 2013 年，是一家快速成长的移动互联网营销公司，专注于移动 eCPM 营销。总部在中国深圳，聚焦于订阅 offer 的海外流量变现业务。Mobikok 提供的接口方式支持各类手机端流量（API、SDK、Smartlink），RTB（实时竞价系统）对接海外的 DSP（Demand-Side Platform，需求方平台）高效优化客户的广告效果。截止目前，系统已对 2 亿用户进行广告优化，已接入上百家广告主以及上百家渠道，Mobikok 致力于高效，便捷，专业的帮助广告主以及渠道互惠共赢。
  
-## 场景介绍：SSP系统
+## 场景介绍：SSP 系统
 
 订阅 SSP（Sell-Side-Platform）平台当前业务主要分为：SDK、Smartlink、Online API 以及Offline API；在当前 SSP SDK 业务系统当中，累计用户已达到 2 亿，最初使用的是 MySQL 主从分表的方式存储用户数据，随着数据量的增加，MySQL 单机容量以及大数据量查询成为了瓶颈；当单表数据达到 2 千万以上时，单机 MySQL 的查询以及插入已经不能满足业务的需求，当访问量到一定阶段后，系统响应能力在数据库这一块是一个瓶颈。
 

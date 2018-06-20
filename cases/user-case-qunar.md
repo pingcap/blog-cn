@@ -6,7 +6,7 @@ summary: 目前已经上线了两个 TiDB 集群。随着产品自身的完善�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-qunar/
-customer: 去哪儿
+weight: 5
 logo: /images/blog-cn/customers/qunar-logo.png
 ---
 

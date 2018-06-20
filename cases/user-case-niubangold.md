@@ -7,7 +7,7 @@ tags: ['金融']
 category: case
 url: /cases-cn/user-case-niubangold/
 aliases: ['/blog-cn/user-case-niubangold/']
-customer: 牛板金
+weight: 3
 logo: /images/blog-cn/customers/niubangold-logo.png
 ---
 

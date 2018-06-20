@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-yiguo/
 aliases: ['/blog-cn/user-case-yiguo/']
-customer: 易果生鲜
+weight: 3
 logo: /images/blog-cn/customers/yiguo-logo.png
 ---
 
