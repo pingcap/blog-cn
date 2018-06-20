@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-g7/
 aliases: ['/blog-cn/user-case-g7/']
-customer: G7
+weight: 8
 logo: /images/blog-cn/customers/g7-logo.png
 ---
 

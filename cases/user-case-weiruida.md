@@ -6,7 +6,7 @@ summary: 从测试环境搭建完成到上线，TiDB 持续稳定运行中，平
 tags: ['大型企业']
 category: case
 url: /cases-cn/user-case-weiruida/
-customer: 威锐达测控
+weight: 2
 logo: /images/blog-cn/customers/weiruida-logo.png
 ---
 

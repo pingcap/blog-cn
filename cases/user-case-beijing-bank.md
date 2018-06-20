@@ -6,7 +6,7 @@ summary: 依托于 TiDB，2018 年 3 月 22 日，北京银行分布式 NewSQL �
 tags: ['金融']
 category: case
 url: /cases-cn/user-case-beijing-bank/
-customer: 北京银行
+weight: 1
 logo: /images/blog-cn/customers/beijing-bank-logo.png
 ---
 

@@ -7,7 +7,7 @@ tags: ['大型企业']
 category: case
 url: /cases-cn/user-case-wanda/
 aliases: ['/blog-cn/user-case-wanda/']
-customer: 万达网络科技集团
+weight: 3
 logo: /images/blog-cn/customers/wanda-logo.png
 ---
 

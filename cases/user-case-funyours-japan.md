@@ -6,7 +6,7 @@ summary: 比较原本架构与 TiDB 架构，现在运营上最直接的效益�
 tags: ['游戏']
 category: case
 url: /cases-cn/user-case-funyours-japan/
-customer: 株式会社 FUNYOURS JAPAN
+weight: 4
 logo: /images/blog-cn/customers/funyours-japan-logo.png
 ---
 
