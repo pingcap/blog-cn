@@ -2,8 +2,13 @@
 title: TiDB 帮助万达网络科技集团实现高性能高质量的实时风控平台
 author: ['陈新江']
 date: 2017-12-05
-summary: 万达的技术团队还考察了市场上用的比较多的 MySQL 主从复制以及通过 MySQL Proxy 中间件实现分库分表的方案。但这些方案，无论是高可用安全性，强一致性，还是对业务应用所需要的复杂事务／JOIN 操作以及横向扩展能力上，都无法满足实时风控平台的业务要求。
-tags: ['案例']
+summary: 借助 TiDB 的分布式计算和存储引擎，集群对外服务的处理能力大大增强，高并发实时的风控规则计算能够轻松的处理完，并且数据库集群获得了线性提升和扩展的能力。
+tags: ['大型企业']
+category: case
+url: /cases-cn/user-case-wanda/
+aliases: ['/blog-cn/user-case-wanda/']
+weight: 3
+logo: /images/blog-cn/customers/wanda-logo.png
 ---
 
 

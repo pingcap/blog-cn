@@ -2,8 +2,13 @@
 title: TiDB 在凤凰网新闻内容业务的创新实践
 author: ['卞新栋']
 date: 2018-01-04
-summary: 随着数据量的增加，MySQL 单机容量成为了瓶颈，传统的基于 MySQL 分片方案在实现及运维都需要比较昂贵的成本，同时 MySQL 主流主从切换方案由于机制问题，在判断“主库真死”，“新主库选举”及“新路由信息广播”上都存在一些不足，整体时间消耗比较大，并不能达到公司核心业务的高可用要求。于是，我们不得不寻找新的解决方案。
-tags: ['案例']
+summary: TiDB 的出现，帮我们跳过了传统的 Sharding + proxy 的路线，给我们节省了巨大的技术成本，我们对 TiDB 非常的钟爱。
+tags: ['互联网']
+category: case
+url: /cases-cn/user-case-ifeng/
+aliases: ['/blog-cn/user-case-ifeng/']
+weight: 12
+logo: /images/blog-cn/customers/ifeng-logo.png
 ---
 
 ## 背景
