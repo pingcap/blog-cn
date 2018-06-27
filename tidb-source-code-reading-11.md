@@ -91,7 +91,7 @@ TiDB 中 ILJ 的执行阶段可划分为如下图所示的 5 步：
 
 **3\. Outer Worker 将 task 发送给 Inner Worker 和 Main Thread**
 
-Inner Worker 需要根据 Outer 表每个 batch 的数据，构建 Inner 表的数据扫描范围并读取数据，因此 Outer Worker 需要将 task [发送给Inner Worker](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L304)。
+Inner Worker 需要根据 Outer 表每个 batch 的数据，构建 Inner 表的数据扫描范围并读取数据，因此 Outer Worker 需要将 task [发送给 Inner Worker](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L304)。
 
 如前文所述，ILJ 多线程并发执行，且 Join 结果的顺序与 Outer 表的数据顺序一致。 为了实现这一点，Outer Worker 通过管道将 task [发送给 Main Thread](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L299)，Main Thread 从管道中按序读取 task 并执行 Join 操作，这样便可以实现在多线程并发执行的情况下的保序需求。
 
@@ -113,7 +113,7 @@ Inner Worker 需要根据 Outer 表每个 batch 的数据，构建 Inner 表的�
 
 *   [getFinishedTask](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L216) 从 `resultCh` 中读取 task，并等待 `task.doneCh` 发送来的数据，若该 task 没有完成，则阻塞住；
 
-*   接下来的步骤与 Hash Join类似（参考 [TiDB 源码阅读系列文章（九）](https://pingcap.com/blog-cn/tidb-source-code-reading-9/)），[lookUpMatchedInners](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L273) 取一行 OuterRow 对应的 Join Key，从 `task.lookupMap` 中probe 对应的 Inner 表的数据；
+*   接下来的步骤与 Hash Join类似（参考 [TiDB 源码阅读系列文章（九）](https://pingcap.com/blog-cn/tidb-source-code-reading-9/)），[lookUpMatchedInners](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L273) 取一行 OuterRow 对应的 Join Key，从 `task.lookupMap` 中 probe 对应的 Inner 表的数据；
 
 *   主线程对该 OuterRow，与取出的对应的 InnerRows 执行 Join 操作，写满存储结果的 chk 后返回。
 
