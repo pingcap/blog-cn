@@ -87,7 +87,7 @@ TiDB 中 ILJ 的执行阶段可划分为如下图所示的 5 步：
 
 因此，我们通过指数递增的方式动态控制 batch 的大小（由函数 [increaseBatchSize](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L348) 完成），以避免上述问题，batch size 的最大值由 session 变量 `tidb_index_join_batch_size` 控制，默认是 25000。读取到的 batch 存储在 [lookUpJoinTask.outerResult](https://github.com/pingcap/tidb/blob/source-code/expression/chunk_executor.go#L225) 中。
 
-第二点，如果 Outer 表的过滤条件不为空，我们需要对 `outerResult` 中的数据进行过滤（由函数 [VectorizedFilter](https://github.com/pingcap/tidb/blob/source-code/expression/chunk_executor.go#L225) 完成）。`outerResult` 是 Chunk 类型（[Chunk 的介绍请参考 TiDB 源码阅读系列文章（十）](https://pingcap.com/blog-cn/tidb-source-code-reading-10/)），如果对满足过滤条件的行进行提取并重新构建对象进行存储，会带来不必要的时间和内存开销。`VectorizedFilter` 函数通过一个长度与 `outerResult` 实际数据行数相等的 bool slice 记录 `outerResult` 中的每一行是否满足过滤条件以避免上述开销。 该 bool slice 存储在 [lookUpJoinTask.outerMatch](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L81) 中。
+第二点，如果 Outer 表的过滤条件不为空，我们需要对 outerResult 中的数据进行过滤（由函数 [VectorizedFilter](https://github.com/pingcap/tidb/blob/source-code/expression/chunk_executor.go#L225) 完成）。outerResult 是 Chunk 类型（[Chunk 的介绍请参考 TiDB 源码阅读系列文章（十）](https://pingcap.com/blog-cn/tidb-source-code-reading-10/)），如果对满足过滤条件的行进行提取并重新构建对象进行存储，会带来不必要的时间和内存开销。`VectorizedFilter` 函数通过一个长度与 outerResult 实际数据行数相等的 bool slice 记录 outerResult 中的每一行是否满足过滤条件以避免上述开销。 该 bool slice 存储在 [lookUpJoinTask.outerMatch](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L81) 中。
 
 **3\. Outer Worker 将 task 发送给 Inner Worker 和 Main Thread**
 
@@ -109,11 +109,11 @@ Inner Worker 需要根据 Outer 表每个 batch 的数据，构建 Inner 表的�
 
 **5\. Main Thread 执行 Join 操作**
 
-这部分工作由 [prepareJoinResult](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L209) 函数完成。`prepareJoinResult` 有如下几个步骤：
+这部分工作由 [prepareJoinResult](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L209) 函数完成。prepareJoinResult 有如下几个步骤：
 
-*   [getFinishedTask](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L216) 从 `resultCh` 中读取 task，并等待 `task.doneCh` 发送来的数据，若该 task 没有完成，则阻塞住；
+*   [getFinishedTask](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L216) 从 resultCh 中读取 task，并等待 task.doneCh 发送来的数据，若该 task 没有完成，则阻塞住；
 
-*   接下来的步骤与 Hash Join类似（参考 [TiDB 源码阅读系列文章（九）](https://pingcap.com/blog-cn/tidb-source-code-reading-9/)），[lookUpMatchedInners](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L273) 取一行 OuterRow 对应的 Join Key，从 `task.lookupMap` 中 probe 对应的 Inner 表的数据；
+*   接下来的步骤与 Hash Join类似（参考 [TiDB 源码阅读系列文章（九）](https://pingcap.com/blog-cn/tidb-source-code-reading-9/)），[lookUpMatchedInners](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L273) 取一行 OuterRow 对应的 Join Key，从 task.lookupMap 中 probe 对应的 Inner 表的数据；
 
 *   主线程对该 OuterRow，与取出的对应的 InnerRows 执行 Join 操作，写满存储结果的 chk 后返回。
 
