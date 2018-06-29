@@ -1,5 +1,5 @@
 ---
-title: TTiDB 助力客如云餐饮 SaaS 服务
+title: TiDB 助力客如云餐饮 SaaS 服务
 author: ['客如云 BigData Infra Team']
 date: 2018-05-25
 summary: 目前 TiDB 线上已经存储超过 6 个月的数据，总数据量几 T，支持线上的查询和分析需求，很多一般复杂度 OLAP 查询都能够在秒级返回结果。
