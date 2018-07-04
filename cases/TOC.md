@@ -27,7 +27,6 @@
 + 金融
   - [北京银行](user-case-beijing-bank.md)
   - [Ping++](user-case-ping++.md)
-  - [牛板金](user-case-niubangold.md)
   - [360 金融](user-case-360.md)
 + 大型企业
   - [海航易建](user-case-ekingtech.md)
