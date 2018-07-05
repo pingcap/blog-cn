@@ -256,6 +256,7 @@ XID_EVENT
 ```
 
 所以在 Syncer 里面做的事情就比较容易了，就是把每个 `WRITE_ROWS_EVENT` 结合 `TABLE_MAP_EVENT`，去生成一个 replace into 的 SQL，为什么这里不用 insert 呢？主要是 replace into 是可重入的，重复执行多次，也不会对数据一致性产生破坏。
+
 另外一个比较麻烦的问题就是 DDL 的操作，TiDB 的 DDL 实现是完全无阻塞的，所以根据 TiDB Lease 的大小不同，会执行比较长的时间，所以 DDL 操作是一个代价很高的操作，在 Syncer 的处理中通过获取 DDL 返回的标准 MySQL 错误来判断 DDL 是否需要重复执行。
 
 
