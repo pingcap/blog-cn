@@ -62,7 +62,9 @@ Greenplum 是一套基于 PostgreSQL 分析为主的 MPP 引擎，大多用在�
 
 ## TiDB 前期测试
 
-在测试初期，我们采用 TiDB 的版本为 RC4，在测试过程中曾经在同时对一张表进行读写时，出现 Region is stale 的错误，在 GitHub 上提出 Issue 后，TiDB 官方很快在 Pre-GA 版本中进行了修复。在测试环境，我们是手动通过二进制包的形式来部署 TiDB ，虽然比较简单，但是当 TiDB 发布 GA 版本之后，版本升级却是一个比较大的问题，由于早期没有使用 TiDB-ansible 安装，官方制作的升级脚本无法使用，而手动进行滚动升级等操作非常麻烦。由于当时是测试环境，在听取了 TiDB 官方的建议之后，我们重新利用 TiDB 官方提供的 TiDB-ansible 部署了 TiDB 的 GA 版本。只需要下载官方提供的包，修改相应的配置，就能完成安装和部署。官方也提供了升级脚本，能够在相邻的 TiDB 版本之前完成无缝滚动升级。同时 TiDB-ansible 默认会提供 Prometheus + Grafana 的监控安装，官方提供了非常丰富完善的 Grafana 模板，省去了运维很多监控配置的工作量，借着 TiDB 部署监控的契机，我们也完成了诸如 Redis，RabbitMQ，Elasticsearch 等很多应用程序的监控由 Zabbix 往 Prometheus 的迁移。这里需要注意的是，如果是用官方提供的部署工具部署 Prometheus 和 Grafana，在执行官方的停止脚本时切记跳过相应的组件，以免干扰其他程序的监控。
+在测试初期，我们采用 TiDB 的版本为 RC4，在测试过程中曾经在同时对一张表进行读写时，出现 Region is stale 的错误，在 GitHub 上提出 Issue 后，TiDB 官方很快在 Pre-GA 版本中进行了修复。在测试环境，我们是手动通过二进制包的形式来部署 TiDB ，虽然比较简单，但是当 TiDB 发布 GA 版本之后，版本升级却是一个比较大的问题，由于早期没有使用 TiDB-ansible 安装，官方制作的升级脚本无法使用，而手动进行滚动升级等操作非常麻烦。
+
+由于当时是测试环境，在听取了 TiDB 官方的建议之后，我们重新利用 TiDB 官方提供的 TiDB-ansible 部署了 TiDB 的 GA 版本。只需要下载官方提供的包，修改相应的配置，就能完成安装和部署。官方也提供了升级脚本，能够在相邻的 TiDB 版本之前完成无缝滚动升级。同时 TiDB-ansible 默认会提供 Prometheus + Grafana 的监控安装，官方提供了非常丰富完善的 Grafana 模板，省去了运维很多监控配置的工作量，借着 TiDB 部署监控的契机，我们也完成了诸如 Redis，RabbitMQ，Elasticsearch 等很多应用程序的监控由 Zabbix 往 Prometheus 的迁移。这里需要注意的是，如果是用官方提供的部署工具部署 Prometheus 和 Grafana，在执行官方的停止脚本时切记跳过相应的组件，以免干扰其他程序的监控。
 
 ## TiDB 上线过程
 
@@ -116,11 +118,11 @@ TiSpark 的配置非常简单，只需要把 TiSprak 相关的 jar 包放入 Spa
 
 2.   T+1 的抽取能够从 TiDB 中利用 TiSpark 进行抽取。
 
-+ TiSpark 速度远远超过 Datax 和 Sqoop 读取关系型数据库的速度；
+    + TiSpark 速度远远超过 Datax 和 Sqoop 读取关系型数据库的速度；
 
-+ 抽取工具也不用维护多个系统库，只需要维护一个 TiDB 即可，大大方便了业务的统一使用，还节省了多次维护成本。
+    + 抽取工具也不用维护多个系统库，只需要维护一个 TiDB 即可，大大方便了业务的统一使用，还节省了多次维护成本。
 
-+ TiDB 天然分布式的设计也保证了系统的稳定、高可用。
+    + TiDB 天然分布式的设计也保证了系统的稳定、高可用。
 
 3.   TiDB 分布式特性可以很好的平衡热点数据，可以用它作为业务库热点数据的一个备份库，或者直接迁入 TiDB 。
 
