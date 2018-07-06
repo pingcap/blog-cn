@@ -66,6 +66,8 @@ TiDB 集群有三大组件构成：TiDB Server、PD Server、TiKV Server（图 1
 
 ![图 1 TiDB 架构](http://upload-images.jianshu.io/upload_images/542677-32e15a572b1b0a70.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+<center>图 1 TiDB 架构</center>
+
 其中各个组件的功能如下：
 
 *   TiDB Server，可以理解为 SQL Layer，负责接收 SQL 请求，处理 SQL 解析、SQL 优化等相关逻辑，并通过 PD 与底层 TiKV 交互来获取或变更数据；
@@ -122,6 +124,9 @@ Syncer 可以模拟成 MySQL Slave 节点从上游读取和解析 Binlog 并在�
 
 ![图 2 Syncer 架构](http://upload-images.jianshu.io/upload_images/542677-eb353345b316cc35.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+<center>图 2 Syncer 架构</center>
+
+
 ### 2. 应用
 
 即使利用 Syncer 同步数据的方案在 TiDB 集群模拟了归档期间的负载，但毕竟顺序应用 Binlog 时事务是单线程执行的，同直接在 TiDB 进行归档时的多线程并发执行的负载也还是有区别。所以，我们选择分批迁移归档作业至 TiDB 集群，每次一小批，运行一段时间无异常后迁移下一小批。
@@ -130,15 +135,22 @@ Syncer 可以模拟成 MySQL Slave 节点从上游读取和解析 Binlog 并在�
 
 ![图 3 归档架构](http://upload-images.jianshu.io/upload_images/542677-9557b7398acd3ab9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+<center>图 3 归档架构</center>
+
+
 TiDB 集群的部署情况和集群监控告警架构（如图 4、图 5）。
 
 ![图 4 TiDB 集群部署情况](http://upload-images.jianshu.io/upload_images/542677-32c6e078e80aa0e1.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+<center>图 4 TiDB 集群部署情况</center>
 
 对于归档表我们进行了分类处理，对于需要业务访问的表，在源和目标表结构不一致时会同步变更目标环境的表结构，对不需要业务访问的表，在遇到表结构不一致时或者每月月初会自动轮转一个新表，以便于后续的归档顺利进行和后期的过期数据处理。
 
 由于 DDL 在 TiDB 是串行执行的，且大部分表无需业务访问，所以在月初会有近五万张表的 rename、create 和 drop 操作在 TiDB 排队等待执行，造成较多的归档超时失败。对于这一部分的处理，我们计划将轮转表的逻辑从归档流程中解耦，在非归档时段提前将表慢慢轮转掉，到归档开始进行时便无需等待 DDL。
 
 ![图 5 TiDB 集群监控告警方案](http://upload-images.jianshu.io/upload_images/542677-c0144904fce910e1.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+<center>图 5 TiDB 集群监控告警方案</center>
 
 ### 3. 成果
 

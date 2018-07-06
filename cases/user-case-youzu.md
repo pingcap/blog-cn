@@ -2,7 +2,7 @@
 title: TiDB 在游族网络平台部的深度应用
 author: ['陶政']
 date: 2018-02-08
-summary: 经过内部的实际使用后，后续已经有数个符合业务场景在评估或计划使用 TiDB 做为 OLTP 存储层的支撑。
+summary: 经过内部的实际使用后，后续已经有数个符合业务场景在评估或计划使用 TiDB 作为 OLTP 存储层的支撑。
 tags: ['游戏']
 category: case
 url: /cases-cn/user-case-youzu/
@@ -20,6 +20,8 @@ logo: /images/blog-cn/customers/youzu-logo.png
 2017 年初的时候，游族的用户中心体系面临迭代和重构，当时数据库有数亿多的核心数据，通过hash key 分为了 1024 张表在 64 个数据库中来存储，使用自研的代码框架来进行对应 hash key 的 seek 操作。这时，非 hash key 的查询、DDL 变更等业务需求，分表分库逻辑代码框架的局限，让研发和运维都面临较高的数据库使用成本，数据库不能灵活高效的支撑业务需求。
 
 ![图1：分库分表方案架构图](http://upload-images.jianshu.io/upload_images/542677-db73a1e640bd1dd6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+<center>图 1：分库分表方案架构图</center>
 
 为了解决上述问题，游族的技术团队急需一套同时满足如下的条件的数据库分布式集群：
 
@@ -109,6 +111,8 @@ logo: /images/blog-cn/customers/youzu-logo.png
 
 ![图2：多套业务系统 TiDB 部署图](http://upload-images.jianshu.io/upload_images/542677-2cf390d0d0f3e6c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+<center>图 2：多套业务系统 TiDB 部署图</center>
+
 ## RC2.2 -> GA1.0 -> GA1.1
 
 从 RC2.2 版本到 GA1.0，游族平台部的生产环境已经有 3 套 TiDB 集群在运行，共计支撑了 6 个 OLTP 业务的稳定运行快一年的时间。 期间 PingCAP 团队提供了非常多的技术支持：集群部署策略、BUG 响应和修复、升级方案协助、迁移工具支持等，厂商和开源社区都非常活跃。
@@ -123,7 +127,7 @@ logo: /images/blog-cn/customers/youzu-logo.png
 
 同时我们与 TiDB 团队在交流的时候也得知分区表，视图等功能都已经在计划中，后续 TiDB 的数据存储方式将会越来越灵活。
 
-经过内部的实际使用后，后续已经有数个符合业务场景在评估或计划使用 TiDB 做为 OLTP 存储层的支撑。TiDB 给了大库大表业务的一个全新的选择方向，相信 TiDB 以后能在更多的业务选型和设计方案上给出新的方向和思路。
+经过内部的实际使用后，后续已经有数个符合业务场景在评估或计划使用 TiDB 作为 OLTP 存储层的支撑。TiDB 给了大库大表业务的一个全新的选择方向，相信 TiDB 以后能在更多的业务选型和设计方案上给出新的方向和思路。
 
 > 作者：陶政，游族网络平台部 MySQL DBA 负责人。曾任同程旅游系统架构组 DBA，现负责游族网络数据库整体的运维规划和设计。熟悉各类业务的数据库设计、缓存设计、离线数据分析等解决方案。
 

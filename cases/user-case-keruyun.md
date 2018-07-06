@@ -37,7 +37,11 @@ logo: /images/blog-cn/customers/keruyun-logo.png
 
 ![图：老的框架](http://upload-images.jianshu.io/upload_images/542677-a1df896622f704fb?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+<center>图：老的框架</center>
+
 ![图：新的框架](http://upload-images.jianshu.io/upload_images/542677-c458370c2f45d4a0?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+<center>图：新的框架</center>
 
 ## TiDB 测试应用
 
