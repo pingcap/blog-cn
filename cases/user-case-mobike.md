@@ -51,7 +51,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 *   数据要支持经常性的关联查询，支撑运营组的临时需求；
 *   要能支撑业务的快速增长或者一些特殊活动造成的临时流量。
 
-考虑到这些情况，MySQL 分库分表的方案就出现了一些问题，首先频繁变动表结构就比较麻烦，而 TiDB 可以进行在线 DDL。数据生命期比较长，可以设计之初做一个比较大的集群，但是弹性就比较差，针对这个问题，TiDB 可以根据需要，弹性的增加或者减少节点，这样的灵活性是 MySQL 分库分表没有的。另外，数据要支持频繁的复杂关联查询，MySQL 分库分表方案完全没办法做到这一点，，而这恰恰是 TiDB 的优势，通过以上的对比分析，我们选择了 TiDB 作为开关锁日志成功率统计项目的支撑数据库。
+考虑到这些情况，MySQL 分库分表的方案就出现了一些问题，首先频繁变动表结构就比较麻烦，而 TiDB 可以进行在线 DDL。数据生命期比较长，可以设计之初做一个比较大的集群，但是弹性就比较差，针对这个问题，TiDB 可以根据需要，弹性的增加或者减少节点，这样的灵活性是 MySQL 分库分表没有的。另外，数据要支持频繁的复杂关联查询，MySQL 分库分表方案完全没办法做到这一点，而这恰恰是 TiDB 的优势，通过以上的对比分析，我们选择了 TiDB 作为开关锁日志成功率统计项目的支撑数据库。
 
 ![](http://upload-images.jianshu.io/upload_images/542677-90ca4aa244d4ca5a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -145,7 +145,7 @@ PD 在设计之初考虑了这方面的问题（专门设计了 HotRegionBalance
 
 这个修改的目的是解决小表数据的相互影响的问题。
 
-当有新表数据插入某一 Region 时，TiKV 会根据当前 Region 的 Key Range 计算出 tableID，如果发现插入的 Key 不在这个 KeyRange 中，会对这个 Region 提前分裂，这就保证了每个 Region 只包含一个表的数据。
+当有新表数据插入某一 Region 时，TiKV 会根据当前 Region 的 Key Range 计算出 TableID，如果发现插入的 Key 不在这个 KeyRange 中，会对这个 Region 提前分裂，这就保证了每个 Region 只包含一个表的数据。
 
 ### 优化二：表级别的资源隔离
 
@@ -161,7 +161,7 @@ PD 在设计之初考虑了这方面的问题（专门设计了 HotRegionBalance
 
 好在 TiDB 在早期设计时保留了足够的灵活性，通过 TiDB 原有接口，我们只需要调用相关 API 即能通过表名拿到 TableID。
 
-同时我们在 PD 的命令行管理台 pc-ctl 中增加了 HTTP 接口，管理确认 Table Name 和 Table ID 之间的对应关系。
+同时我们在 PD 的命令行管理台 pc-ctl 中增加了 HTTP 接口，管理确认 Table Name 和 TableID 之间的对应关系。
 
 ## 后记
 
