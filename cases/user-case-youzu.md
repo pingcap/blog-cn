@@ -21,6 +21,8 @@ logo: /images/blog-cn/customers/youzu-logo.png
 
 ![图1：分库分表方案架构图](http://upload-images.jianshu.io/upload_images/542677-db73a1e640bd1dd6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+<center>图 1：分库分表方案架构图</center>
+
 为了解决上述问题，游族的技术团队急需一套同时满足如下的条件的数据库分布式集群：
 
 + 能够提供实时的 OLTP 的一致性数据存储服务；
@@ -108,6 +110,8 @@ logo: /images/blog-cn/customers/youzu-logo.png
 同时，在 kv 存储层没有瓶颈的时候，采用复用了集群的 kv 层的策略，在无状态的 Server 层做了业务隔离，间接的提升了整个集群的使用率，类似一个 DBaaS 的服务（图2）。
 
 ![图2：多套业务系统 TiDB 部署图](http://upload-images.jianshu.io/upload_images/542677-2cf390d0d0f3e6c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+<center>图 2：多套业务系统 TiDB 部署图</center>
 
 ## RC2.2 -> GA1.0 -> GA1.1
 
