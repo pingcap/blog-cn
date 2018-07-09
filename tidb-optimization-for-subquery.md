@@ -14,7 +14,7 @@ tags: ['TiDB', 'SQL']
 对于不在 `FROM` 子句出现的子查询，分为“关联子查询”(Correlated Subquery) 和“非关联子查询”。关联子查询是指子查询中存在外部引用的列，例如：
 
 ```sql
-ELECT * FROM SRC WHERE
+SELECT * FROM SRC WHERE
 EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 ```
 对于非关联子查询，我们可以在 plan 阶段进行预处理，将其改写成一个常量。因此，本文只考虑关联子查询的优化。
