@@ -1,5 +1,5 @@
 ---
-title: Qunar 高速发展下数据库的创新与发展 - TiDB篇
+title: Qunar 高速发展下数据库的创新与发展 - TiDB 篇
 author: ['蒲聪']
 date: 2017-12-14
 summary: 目前已经上线了两个 TiDB 集群。随着产品自身的完善，集群使用量和运维经验的积累，后续我们将逐步推广到更重要的集群中，解决业务上遇到的数据存储的痛点。
@@ -29,7 +29,7 @@ Auraro 主要思想是计算和存储分离架构，使用共享存储技术，�
 
 在去哪儿的 DBA 团队，主要有三种数据存储方案，分别是 MySQL、Redis 和 HBase。
 
-MySQL 是去哪儿的最主要的数据存储方案，绝大部分核心的数据都存储在 MySQL 中。MySQL 的优点不用多说，缺点是没法做到水平扩展。MySQL 要想能做到水平扩展，唯一的方法就业务层的分库分表或者使用中间件等方案。因此几年前就出现了各大公司重复造轮子，不断涌现出中间层分库分表解决方案，比如百度的 DDBS，淘宝的 TDDL，360 的 Atlas 等。但是，这些中间层方案也有很大局限性，执行计划不是最优，分布式事务，跨节点 join，扩容复杂（这个心酸 DBA 应该相当清楚）等。  Redis 主要作为缓存使用，针对读访问延时要求高的业务，使用场景有限。  
+MySQL 是去哪儿的最主要的数据存储方案，绝大部分核心的数据都存储在 MySQL 中。MySQL 的优点不用多说，缺点是没法做到水平扩展。MySQL 要想能做到水平扩展，唯一的方法就业务层的分库分表或者使用中间件等方案。因此几年前就出现了各大公司重复造轮子，不断涌现出中间层分库分表解决方案，比如百度的 DDBS，淘宝的 TDDL，360 的 Atlas 等。但是，这些中间层方案也有很大局限性，执行计划不是最优，分布式事务，跨节点 join，扩容复杂（这个心酸 DBA 应该相当清楚）等。Redis 主要作为缓存使用，针对读访问延时要求高的业务，使用场景有限。  
 
 HBase 因其分布式的特点，可以通过 RS 的增加线性提升系统的吞吐，HDFS 具有水平扩展容量的能力，主要用来进行大数据量的存储，如日志、历史数据、订单快照等。HBase 底层存储是 LSM-Tree 的数据结构，与 B+ Tree 比，LSM-Tree 牺牲了部分读性能，用来大幅提升写性能。 但在实际运维的过程中，HBase 也暴露了一些缺点：  
 
@@ -51,7 +51,7 @@ HBase 因其分布式的特点，可以通过 RS 的增加线性提升系统的�
 
 ![image](http://upload-images.jianshu.io/upload_images/542677-ccd260fff7451bdf?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-* **TiDB Server**：负责接收 SQL 请求，处理 SQL 相关逻辑，通过 PD 找到所需数据的 TiKV 地址。TiDB Server 是无状态的，本身不存储数据，只负责计算，可以无限水平扩展。TiDB 节点可以通过负载均衡组件 (如 LVS、HAProxy 或者 F5)对外提供统一入口，我个人觉得如果要能实现像 Elasticsearch 那样自己的客户端就更好。
+* **TiDB Server**：负责接收 SQL 请求，处理 SQL 相关逻辑，通过 PD 找到所需数据的 TiKV 地址。TiDB Server 是无状态的，本身不存储数据，只负责计算，可以无限水平扩展。TiDB 节点可以通过负载均衡组件 (如 LVS、HAProxy 或者 F5) 对外提供统一入口，我个人觉得如果要能实现像 Elasticsearch 那样自己的客户端就更好。
 
 * **PD Server**：Placement Driver (简称 PD) 是整个集群的管理模块，其主要工作有三个:
     * 存储集群元信息（某个 Key 存储在哪个 TiKV 节点）。
@@ -104,7 +104,7 @@ TiDB 节点和 PD 节点部署在同台服务器上，共 3 台，而 TiKV 节�
 
 ## 监控方案
 
-PingCAP 团队给 TiDB 提供了一整套监控的方案，他们使用开源时序数据库 Prometheus 作为监控和性能指标信息存储方案，使用 Grafana 作为可视化组件进行展示。具体如下图，在 client 端程序中定制需要的 Metric 。Push GateWay 来接收 Client Push 上来的数据，统一供 Prometheus 主服务器抓取。AlertManager 用来实现报警机制，使用 Grafana 来进行展示。
+PingCAP 团队给 TiDB 提供了一整套监控的方案，他们使用开源时序数据库 Prometheus 作为监控和性能指标信息存储方案，使用 Grafana 作为可视化组件进行展示。具体如下图，在 client 端程序中定制需要的 Metric。Push GateWay 来接收 Client Push 上来的数据，统一供 Prometheus 主服务器抓取。AlertManager 用来实现报警机制，使用 Grafana 来进行展示。
 
 ![image](http://upload-images.jianshu.io/upload_images/542677-4299162966ff4cb7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -122,4 +122,4 @@ PingCAP 团队给 TiDB 提供了一整套监控的方案，他们使用开源时
 
 目前的架构是用 syncer 从线上 MySQL 库做分库分表数据同步到 TiDB 中，然后开发可以在 TiDB 上进行 merge 单表查询、连表 join 或者 OLAP。
 
->作者：蒲聪，去哪儿平台事业部 DBA，拥有近 6 年的  MySQL 和 HBase 数据库运维管理经验，2014 年 6 月加入去哪儿网，工作期间负责支付平台事业部的 MySQL 和 HBase 整体运维工作，从无到有建立去哪儿网 HBase 运维体系，在 MySQL 和 Hbase  数据库上有丰富的架构、调优和故障处理等经验。目前专注于分布式数据库领域的研究和实践工作。
+>作者：蒲聪，去哪儿平台事业部 DBA，拥有近 6 年的  MySQL 和 HBase 数据库运维管理经验，2014 年 6 月加入去哪儿网，工作期间负责支付平台事业部的 MySQL 和 HBase 整体运维工作，从无到有建立去哪儿网 HBase 运维体系，在 MySQL 和 Hbase 数据库上有丰富的架构、调优和故障处理等经验。目前专注于分布式数据库领域的研究和实践工作。

@@ -12,7 +12,7 @@ logo: /images/blog-cn/customers/toutiao-logo.png
 
 ![](https://upload-images.jianshu.io/upload_images/542677-f5322f71353d7ee7.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-> 本文整理自今日头条数据库中间件/分布式数据库负责人吴镝（[知乎 ID：吴镝](http://www.zhihu.com/people/foxmailed)）在TiDB DevCon2018 上的分享内容。
+> 本文整理自今日头条数据库中间件/分布式数据库负责人吴镝（[知乎 ID：吴镝](http://www.zhihu.com/people/foxmailed)）在 TiDB DevCon2018 上的分享内容。
 
 TiDB 主要应用在今日头条核心 OLTP 系统 - 对象存储系统中，存储其中一部分元数据，支持头条图片和视频相关业务，比如抖音等。
 
@@ -64,11 +64,11 @@ TiDB 主要应用在今日头条核心 OLTP 系统 - 对象存储系统中，存
 
 **第一个就是直方图**。大家知道基于 CBO 的这种优化器，肯定要用一些统计信息，TiDB 在之前的版本里对直方图的统计信息的更新没有做到很及时，导致我拿了一个 SQL 选执行计划的时候我会选错。比如说我可以选一个索引，但是实际上，因为这个更新信息不实时，所以它可能会做全表扫描。
 
-大家以后发现这种你可以用 explain  这个命令看执行计划，如果有这样的问题就可以用 analyze 这个命令，他可以把一张表统计信息给更新，更新之后再一次执行 SQL 语句，你会发现他的执行计划已经变了。
+大家以后发现这种你可以用 explain 这个命令看执行计划，如果有这样的问题就可以用 analyze 这个命令，他可以把一张表统计信息给更新，更新之后再一次执行 SQL 语句，你会发现他的执行计划已经变了。
 
 **第二个就是 raft leader**。因为大家都知道，每个 region 是一个 raft ，TiDB 有一个监控指标，给出每个机器上有多少个 raft leader。当我们数据量跑到 10TB+，大概 20TB 的时候，会发现这个 raft leader 频繁掉线。掉线的原因主要是由于做 region 迁移的时候，比如你后边做迁移或者做负载均衡，会把 RocksDB 里面一个 range 的数据发到你要迁移的目标机器上面去。发过去了之后，目标端相当于要把 SST 文件 load 到 RocksDB 里，这个过程中，由于 RocksDB 实现的一个问题，导致把 SST 加到 RocksDB 的里面去的这个过程花费了大概 30 到 40 秒，正常情况下可能就毫秒级或者 1 秒。RocksDB 实现 ingest file 的时候，它打开了一些其实不需要打开的文件。因为 LevelDB、RocksDB 有很多层，把一个 file 给 ingest 进去的时候其实你要和一些 overlap 的数据做合并，因为它的实现问题，导致有一些没有必要去 touch 的 SST 它都会去 touch，会产生大量 IO 。因为我们数据量比较大， SST 就非常多，所以在数据量非常大的情况下就会踩到这个坑。
 
-然后，RocksDB  ingest 一个文件时间过长，导致 Raft 的心跳就断了。因为 Raft 协议要维持你的 lease，你要发心跳包，这个时候心跳包都给堵在后面，因为前面 ingest file 时间太长了。然后 Raft leader 就掉，掉了以后很多读写请求就会有问题。
+然后，RocksDB ingest 一个文件时间过长，导致 Raft 的心跳就断了。因为 Raft 协议要维持你的 lease，你要发心跳包，这个时候心跳包都给堵在后面，因为前面 ingest file 时间太长了。然后 Raft leader 就掉，掉了以后很多读写请求就会有问题。
 
 **第三个是大量的短链接**。我们的业务使用数据库的时候，经常建了非常多短链接。因为大部分业务都是不大会使用数据库的，它也不知道要设置连接池，idle connection 这种东西。所以经常用完一个连接后就关掉。这种大量的短链接最后打到 TiDB，TiDB 连接建立了之后要去查一个 System 的变量，这些变量在 TiDB 里面是存在某几个 TiKV 实例里面的，那如果有大量短链接，这些短链接一上来，就会去查这些系统变量，刚好这些系统变量就聚在几台机器上面，导致说这几台机器就负载特别大。然后就会报警读请求堆积。TiKV 使用的是线程模型，请求过来之后，丢到队列里面去。然后线程再拿出来处理。现在 PingCAP 也在做优化，把这些 Cache 在 TiDB 这个进程里面。
 
