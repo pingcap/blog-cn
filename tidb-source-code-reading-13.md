@@ -54,7 +54,7 @@ select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 
 
 2. OR 表达式中，每个子项会视为 AND 表达式分开考虑。与单列索引的情况一样，如果其中一个子项无法用来计算索引，那么该 OR 表达式便完全无法计算索引。
 
-多列索引处理的入口函数为 [DetachCondAndBuildRangeForIndex](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L270)，AND 表达式和 OR 表达式的处理入口分别为 [detachCNFCondAndBuildRangeForIndex](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L142) 和 [detachDNFCondAndBuildRangeForIndex](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L214)。（由于多列索引对 Range 的处理相对单列索引而言会复杂一些，所以没有拆分为 DetachCondition 和 BuildRange 两部分，而是由 DetachCondAndBuildRangeForIndex 处理。）
+多列索引处理的入口函数为 [DetachCondAndBuildRangeForIndex](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L270)，AND 表达式和 OR 表达式的处理入口分别为 [detachCNFCondAndBuildRangeForIndex](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L142) 和 [detachDNFCondAndBuildRangeForIndex](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L214)。（由于多列索引对 range 的处理相对单列索引而言会复杂一些，所以没有拆分为 DetachCondition 和 BuildRange 两部分，而是由 DetachCondAndBuildRangeForIndex 处理。）
 
 由于逻辑进行到了简化，因此目前 TiDB 的 ranger 存在无法正确处理的情况。比如：
 
@@ -101,7 +101,7 @@ merge 函数使用 inRangeCount 来记录当前位置被 a, b 两个区间序列
 
 当区间求交时，需要两个序列都覆盖到才是可以输出的端点，所以当 inRangeCount 为 2 时，即为需要输出的区间端点。
 
-在得到最后的区间端点序列后，由 [points2TableRanges](https://github.com/pingcap/tidb/blob/source-code/util/ranger/ranger.go#L174) 转化为对外暴露的 Range 结构，由 [BuildTableRange](https://github.com/pingcap/tidb/blob/source-code/util/ranger/ranger.go#L224) 输出到 plan package。
+在得到最后的区间端点序列后，由 [points2TableRanges](https://github.com/pingcap/tidb/blob/source-code/util/ranger/ranger.go#L174) 转化为对外暴露的 range 结构，由 [BuildTableRange](https://github.com/pingcap/tidb/blob/source-code/util/ranger/ranger.go#L224) 输出到 plan package。
 
 ```
 // NewRange represents a range generated in physical plan building phase.
