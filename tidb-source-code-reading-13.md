@@ -13,13 +13,12 @@ tags: ['源码阅读','TiDB']
 
 索引分为单列索引和多列索引（组合索引），筛选条件也往往不会是简单的一个等值条件，可能是非常复杂的条件组合。TiDB 是如何分析这些复杂条件，来得到这些条件在对应的索引上的逻辑区间范围（range），就是本文要介绍的内容。
 
-关于 TiDB 如何构建索引，如何存储索引数据，希望读者能够有基本的了解（参考阅读：[三篇文章了解 TiDB 技术内幕 - 说计算](https://pingcap.com/blog-cn/tidb-internal-2/) ）。
+**关于 TiDB 如何构建索引，如何存储索引数据，希望读者能够有基本的了解（参考阅读：[三篇文章了解 TiDB 技术内幕 - 说计算](https://pingcap.com/blog-cn/tidb-internal-2/) ）。**
 
 这里是一个例子，展示这里所说的索引范围计算是做什么的，建表语句和查询语句如下：
 
 ```
 CREATE TABLE t (a int primary key, b int, c int);
-
 select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 3)) and d = 5;
 ```
 
@@ -49,9 +48,9 @@ select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 
 
 1. AND 表达式中，只有当之前的列均为点查的情况下，才会考虑下一个列。
 
- e.g. 对于索引 (a, b, c)，有条件 `a > 1 and b = 1`，那么会被选中的只有 `a > 1`。对于条件 `a in (1, 2, 3) and b > 1`，两个条件均会被选到用来计算 range。
+	e.g. 对于索引 (a, b, c)，有条件 `a > 1 and b = 1`，那么会被选中的只有 `a > 1`。对于条件 `a in (1, 2, 3) and b > 1`，两个条件均会被选到用来计算 range。
 
- 由于非点查的部分只会涉及到一个列，所以可以直接复用 `detachColumnCNFConditions`。
+	由于非点查的部分只会涉及到一个列，所以可以直接复用 `detachColumnCNFConditions`。
 
 2. OR 表达式中，每个子项会视为 AND 表达式分开考虑。与单列索引的情况一样，如果其中一个子项无法用来计算索引，那么该 OR 表达式便完全无法计算索引。
 
@@ -78,10 +77,11 @@ select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 
 在这个阶段我们记录 range 时用 rangePoint 的结构来存储 range。
 
 ```
-// Point is the end point of range interval. type point struct {
-value types.Datum
-excl  bool // exclude
-start bool
+// Point is the end point of range interval.
+type point struct {
+	value types.Datum
+	excl  bool // exclude
+	start bool
 }
 ```
 
@@ -106,11 +106,11 @@ merge 函数使用 inRangeCount 来记录当前位置被 a, b 两个区间序列
 ```
 // NewRange represents a range generated in physical plan building phase.
 type NewRange struct {
-LowVal  []types.Datum
-HighVal []types.Datum
+	LowVal  []types.Datum
+	HighVal []types.Datum
 
-LowExclude  bool // Low value is exclusive.
-HighExclude bool // High value is exclusive.
+	LowExclude  bool // Low value is exclusive.
+	HighExclude bool // High value is exclusive.
 }
 ```
 
