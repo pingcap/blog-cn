@@ -6,6 +6,7 @@
   - [转转](user-case-zhuanzhuan.md)
   - [摩拜单车](user-case-mobike.md)
   - [易果集团](user-case-yiguo.md)
+  - [特来电](user-case-telaidian.md)
   - [同程旅游](user-case-tongcheng.md)
   - [去哪儿网](user-case-qunar.md)
   - [饿了么（一）](user-case-eleme-1.md)
@@ -19,7 +20,6 @@
   - [一面数据](user-case-yimian.md)
   - [Mobikok](user-case-mobikok.md)
   - [猿辅导](user-case-yuanfudao.md)
-  - [特来电](user-case-telaidian.md)
 + 游戏
   - [西山居](user-case-xishanju.md)
   - [游族网络](user-case-youzu.md)
