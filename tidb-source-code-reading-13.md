@@ -40,7 +40,7 @@ select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 
 
 2. OR 表达式中，每个子项都要可以用来计算 range，如果有不可以计算 range 的子项，那么这整个表达式都不可用来计算 range。以 `a = 1 or b = 2` 为例，`b = 2` 这一子项不可以用来计算 a 的 range，所以这个表达式整体上无法计算 a 的 range。而如果是 `a > 1 or ( a < 2 and b = 1)`，根据 1 中的规则，第二个子项会留下 `a < 2` 的部分，可以用来计算 a 的 range，因此整个表达式会返回 `a > 1 and a < 2` 来供接下来计算 range 的部分处理。
 
-这里补充说明一点，TiDB 的主键在实际方式上限定了只有整数类型的单列主键会把主键值当做 RowID，然后编码成 RowKey，和这行数据存储在一起。其他类型的单列主键会作为普通的 unique key 看待，当查询的列包含索引上没有的列时，需要一次查索引 + 一次扫表。所以我们将这种整数类型作为主键的索引处理逻辑单独抽取出来，其入口函数为 [DetachCondsForTableRange](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L329) 。其中对 AND 表达式和 OR 表达式的处理入口分别为 [detachColumnCNFConditions](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L28) 和 [detachColumnDNFConditions](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L61)。这两个函数也用来处理其他类型的主键或者索引的的 Range 计算。
+这里补充说明一点，TiDB 的主键在实现方式上限定了只有整数类型的单列主键会把主键值当做 RowID，然后编码成 RowKey，和这行数据存储在一起。其他类型的单列主键会作为普通的 unique key 看待，当查询的列包含索引上没有的列时，需要一次查索引 + 一次扫表。所以我们将这种整数类型作为主键的索引处理逻辑单独抽取出来，其入口函数为 [DetachCondsForTableRange](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L329) 。其中对 AND 表达式和 OR 表达式的处理入口分别为 [detachColumnCNFConditions](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L28) 和 [detachColumnDNFConditions](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L61)。这两个函数也用来处理其他类型的主键或者索引的的 range 计算。
 
 ### 多列索引
 
@@ -114,13 +114,13 @@ type NewRange struct {
 }
 ```
 
-在现在的 TiDB 中，单列索引和多列索引使用了相同的 Range 结构，所以这里的端点值为 slice 的形式。
+在现在的 TiDB 中，单列索引和多列索引使用了相同的 range 结构，所以这里的端点值为 slice 的形式。
 
 ### 多列索引
 
 对于多列索引，当其为 AND 表达式时，根据前述我们可以知道，其形式必为索引前缀列上的等值条件再加上关于前缀之后一个列的复杂条件组成。所以我们只需要按顺序处理点查的等值条件部分，将点查的区间依次 append 到 NewRange 中的 LowVal 和 HighVal 两个 Slice 中即可（[appendPoints2Ranges](https://github.com/pingcap/tidb/blob/master/util/ranger/ranger.go#L133)）。处理到最后一列时，将之前的 NewRange 按最后非点查列所计算得到的区间个数拷贝一下，再依次 append 即可。具体代码可见 [buildCNFIndexRange](https://github.com/pingcap/tidb/blob/master/util/ranger/ranger.go#L282)。
 
-对于 OR 表达式的情况，由于此时 Range 已经无法转回 point 的结构。所以这里重新实现了一下区间并的操作。实现的形式便是比较常见的将区间按左端点排序，在依次扫过区间的同时，记录当前所有重叠过的区间的最右右端点来进行做区间并的算法。区间并的具体的实现可见 [unionRanges](https://github.com/pingcap/tidb/blob/master/util/ranger/ranger.go#L357) 方法。
+对于 OR 表达式的情况，由于此时 range 已经无法转回 point 的结构。所以这里重新实现了一下区间并的操作。实现的形式便是比较常见的将区间按左端点排序，在依次扫过区间的同时，记录当前所有重叠过的区间的最右右端点来进行做区间并的算法。区间并的具体的实现可见 [unionRanges](https://github.com/pingcap/tidb/blob/master/util/ranger/ranger.go#L357) 方法。
 
 ## Future Plan
 
