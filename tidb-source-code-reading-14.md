@@ -7,9 +7,9 @@ tags: ['源码阅读','TiDB']
 ---
 
 
-在 [统计信息（上）](https://pingcap.com/blog-cn/tidb-source-code-reading-12/) 中，我们介绍了统计信息基本概念、TiDB 的统计信息收集/更新机制以及如何用统计信息来估计算子代价，这一篇会结合原理介绍 TiDB 的源码实现。
+在 [统计信息（上）](https://pingcap.com/blog-cn/tidb-source-code-reading-12/) 中，我们介绍了统计信息基本概念、TiDB 的统计信息收集/更新机制以及如何用统计信息来估计算子代价，本篇将会结合原理介绍 TiDB 的源码实现。
 
-本篇文章先介绍直方图和 Count-Min(CM) Sketch 的数据结构，然后介绍 TiDB 是如何实现统计信息的查询、收集以及更新的。
+文内会先介绍直方图和 Count-Min(CM) Sketch 的数据结构，然后介绍 TiDB 是如何实现统计信息的查询、收集以及更新的。
 
 ## 数据结构定义 
 
@@ -25,15 +25,15 @@ CM Sketch 的定义可以在 [cmsketch.go](https://github.com/lamxTyler/tidb/bl
 
 ### 列直方图的创建
 
-在上一篇文章提到，在建立列直方图的时候，会先进行抽样，然后再建立直方图。
+在统计信息（上）中提到，在建立列直方图的时候，会先进行抽样，然后再建立直方图。
 
 在 [collect](https://github.com/lamxTyler/tidb/blob/source-code/statistics/sample.go#L113) 函数中，我们实现了蓄水池抽样算法，用来生成均匀抽样集合。由于其原理和代码都比较简单，在这里不再介绍。
 
 采样完成后，在 [BuildColumn](https://github.com/lamxTyler/tidb/blob/source-code/statistics/builder.go#L97) 中，我们实现了列直方图的创建。首先将样本排序，确定每个桶的高度，然后顺序遍历每个值 V：
 
-* 如果 V 等于上一个值，那么把 V 放在与上一个值同一个桶里，无论桶是不是已经满，这样可以保证每个值只存在于一个桶中；
+* 如果 V 等于上一个值，那么把 V 放在与上一个值同一个桶里，无论桶是不是已经满，这样可以保证每个值只存在于一个桶中。
 
-* 如果不等于上一个值，那么判断当前桶是否已经满，就直接放入当前桶，并用 [updateLastBucket](https://github.com/lamxTyler/tidb/blob/source-code/statistics/builder.go#L146) 更改桶的上界和深度；
+* 如果不等于上一个值，那么判断当前桶是否已经满，就直接放入当前桶，并用 [updateLastBucket](https://github.com/lamxTyler/tidb/blob/source-code/statistics/builder.go#L146) 更改桶的上界和深度。
 
 * 否则的话，用 [AppendBucket](https://github.com/lamxTyler/tidb/blob/source-code/statistics/builder.go#L151) 放入一个新的桶。
 
@@ -77,7 +77,7 @@ CM Sketch 的定义可以在 [cmsketch.go](https://github.com/lamxTyler/tidb/bl
 
 * 首先，[getBoundaries](https://github.com/lamxTyler/tidb/blob/source-code/statistics/feedback.go#L312) 会每隔几个点取一个作为边界，得到新的桶。
 
-* 然后，对于每一个桶， [refineBucketCount](https://github.com/lamxTyler/tidb/blob/source-code/statistics/feedback.go#L32%201) 用与新生成的桶重合部分最多的反馈信息更新桶的深度。
+* 然后，对于每一个桶，[refineBucketCount](https://github.com/lamxTyler/tidb/blob/source-code/statistics/feedback.go#L32%201) 用与新生成的桶重合部分最多的反馈信息更新桶的深度。
 
 值得注意的是，在分裂的时候，如果一个桶过小，那么这个桶不会被分裂；如果一个分裂后生成的桶过小，那么它也不会被生成。
 
@@ -93,11 +93,11 @@ CM Sketch 的定义可以在 [cmsketch.go](https://github.com/lamxTyler/tidb/bl
 
 在查询语句中，我们常常会使用一些过滤条件，而统计信息估算的主要作用就是估计经过这些过滤条件后的数据条数，以便优化器选择最优的执行计划。
 
-由于在单列上的查询比较简单，这里不再赘述，代码基本是按照上一篇的原理实现，感兴趣可以参考 [histogram.go/lessRowCount](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L408)  以及 [cmsketch.go/queryValue](https://github.com/lamxTyler/tidb/blob/source-code/statistics/cmsketch.go#L69)。
+由于在单列上的查询比较简单，这里不再赘述，代码基本是按照 [统计信息（上）](https://pingcap.com/blog-cn/tidb-source-code-reading-12/) 中的原理实现，感兴趣可以参考 [histogram.go/lessRowCount](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L408)  以及 [cmsketch.go/queryValue](https://github.com/lamxTyler/tidb/blob/source-code/statistics/cmsketch.go#L69)。
 
 ### 多列查询
 
-上一篇提到，[Selectivity](https://github.com/lamxTyler/tidb/blob/source-code/statistics/selectivity.go#L148) 是统计信息模块对优化器提供的最重要的接口，处理了多列查询的情况。Selectivity 的一个最重要的任务就是将所有的查询条件分成尽量少的组，使得每一组中的条件都可以用某一列或者某一索引上的统计信息进行估计，这样我们就可以做尽量少的独立性假设。
+统计信息（上）中提到，[Selectivity](https://github.com/lamxTyler/tidb/blob/source-code/statistics/selectivity.go#L148) 是统计信息模块对优化器提供的最重要的接口，处理了多列查询的情况。Selectivity 的一个最重要的任务就是将所有的查询条件分成尽量少的组，使得每一组中的条件都可以用某一列或者某一索引上的统计信息进行估计，这样我们就可以做尽量少的独立性假设。
 
 需要注意的是，我们将单列的统计信息分为 3 类：[indexType](https://github.com/lamxTyler/tidb/blob/source-code/statistics/selectivity.go#L42) 即索引列，[pkType](https://github.com/lamxTyler/tidb/blob/source-code/statistics/selectivity.go#L43) 即 Int 类型的主键，[colType](https://github.com/lamxTyler/tidb/blob/source-code/statistics/selectivity.go#L44) 即普通的列类型，如果一个条件可以同时被多种类型的统计信息覆盖，那么我们优先会选择 pkType 或者 indexType。
 
@@ -107,7 +107,7 @@ CM Sketch 的定义可以在 [cmsketch.go](https://github.com/lamxTyler/tidb/bl
 
 * 接下来在 [getUsableSetsByGreedy](https://github.com/lamxTyler/tidb/blob/source-code/statistics/selectivity.go#L258) 中，选择尽量少的 bitset，来覆盖尽量多的过滤条件。每一次在还没有使用的 bitset 中，选择一个可以覆盖最多尚未覆盖的过滤条件。并且如果可以覆盖同样多的过滤条件，我们会优先选择 pkType 或者 indexType。
 
-* 用上一篇提到的方法对每一个列和每一个索引上的统计信息进行估计，并用独立性假设将它们组合起来当做最终的结果。
+* 用统计信息（上）提到的方法对每一个列和每一个索引上的统计信息进行估计，并用独立性假设将它们组合起来当做最终的结果。
 
 ## 总结
 
