@@ -8,7 +8,7 @@ tags: ['源码阅读','TiDB']
 
 在 TiDB 里面，SQL 优化的过程可以分为逻辑优化和物理优化两个部分。逻辑优化主要是基于规则的优化，简称 RBO（rule based optimization）。物理优化会为逻辑查询计划中的算子选择某个具体的实现，需要用到一些统计信息，决定哪一种方式代价最低，所以是基于代价的优化 CBO（cost based optimization）。
 
-本篇将主要关注逻辑优化。先介绍 TiDB 中的逻辑算子，然后介绍 TiDB 的逻辑优化规则，包括列裁剪、最大最小消除、投影消除、谓词下推、TopN 下推等等。
+本篇将主要关注逻辑优化。先介绍 TiDB 中的逻辑算子，然后介绍 TiDB 的逻辑优化规则，包括列裁剪、最大最小消除、投影消除、谓词下推等等。
 
 ## 逻辑算子介绍
 
@@ -48,13 +48,13 @@ select a from t where b > 5
 
 这个查询里面明显只有 a b 两列被用到了，所以 c d 的数据是不需要读取的。在查询计划里面，Selection 算子用到 b 列，下面接一个 DataSource 用到了 a b 两列，剩下 c 和 d 都可以裁剪掉，DataSource 读数据时不需要将它们读进来。
 
-列裁剪的算法实现是自顶向下地把算子过一遍。某个结点需要用到的列，等于它自己需要用到的列，加上它的父亲结点需要用到的列。可以发现，由上往下的结点，需要用到的列将越来越多。代码是在 `plan/column_pruning.go` 文件里面。
+列裁剪的算法实现是自顶向下地把算子过一遍。某个节点需要用到的列，等于它自己需要用到的列，加上它的父节点需要用到的列。可以发现，由上往下的节点，需要用到的列将越来越多。代码是在 `plan/column_pruning.go` 文件里面。
 
 列裁剪主要影响的算子是 Projection，DataSource，Aggregation，因为它们跟列直接相关。Projection 里面会裁掉用不上的列，DataSource 里面也会裁剪掉不需要使用的列。 
 
 Aggregation 算子会涉及哪些列？`group by` 用到的列，以及聚合函数里面引用到的列。比如 `select avg(a), sum(b) from t group by c d`，这里面 `group by` 用到的 c 和 d 列，聚合函数用到的 a 和 b 列。所以这个 Aggregation 使用到的就是 a b c d 四列。
 
-Selection 做列裁剪时，要看它父亲要哪些列，然后它自己的条件里面要用到哪些列。Sort 就看 `order by` 里面用到了哪些列。Join 则要把连接条件中用到的各种列都算进去。具体的代码里面，各个算子都是实现 PruneColumns 接口：
+Selection 做列裁剪时，要看它父节点要哪些列，然后它自己的条件里面要用到哪些列。Sort 就看 `order by` 里面用到了哪些列。Join 则要把连接条件中用到的各种列都算进去。具体的代码里面，各个算子都是实现 PruneColumns 接口：
 
 ```
 func (p *LogicalPlan) PruneColumns(parentUsedCols []*expression.Column) 
@@ -101,29 +101,29 @@ min 也是类似的语句替换。相应的代码是在 `max_min_eliminate.go` �
 
 投影消除可以把不必要的 Projection 算子消除掉。那么，什么情况下，投影算子是可消除的呢？
 
-首先，如果 Projection 算子要投影的列，跟它的孩子结点的输出列，是一模一样的，那么投影步骤就是一个无用操作，可以消除。比如 `select a,b from t` 在表 t 里面就正好就是 a b 两列，那就没必要 TableScan 上面再做一次 Projection。
+首先，如果 Projection 算子要投影的列，跟它的子节点的输出列，是一模一样的，那么投影步骤就是一个无用操作，可以消除。比如 `select a,b from t` 在表 t 里面就正好就是 a b 两列，那就没必要 TableScan 上面再做一次 Projection。
 
-然后，投影算子下面的孩子结点，又是另一个投影算子，那么孩子结点的投影操作就没有意义，可以消除。比如 `Projection(A) -> Projection(A,B,C)` 只需要保留 `Projection(A)` 就够了。
+然后，投影算子下面的子节点，又是另一个投影算子，那么子节点的投影操作就没有意义，可以消除。比如 `Projection(A) -> Projection(A,B,C)` 只需要保留 `Projection(A)` 就够了。
 
-类似的，在投影消除规则里面，Aggregation 跟 Projection 操作很类似。因为从 Aggregation 结点出来的都是具体的列，所以 `Aggregation(A) -> Projection(A,B,C)` 中，这个 Projection 也可以消除。
+类似的，在投影消除规则里面，Aggregation 跟 Projection 操作很类似。因为从 Aggregation 节点出来的都是具体的列，所以 `Aggregation(A) -> Projection(A,B,C)` 中，这个 Projection 也可以消除。
 
 代码是在 `eliminate_projection.go` 里面。
 
 ```
 func eliminate(p Plan, canEliminate bool) {
-          对 p 的每个孩子，递归地调用 eliminate
+          对 p 的每个子节点，递归地调用 eliminate
           如果 p 是 Project 
               如果 canEliminate 为真 消除 p
-              如果 p 的孩子的输出列，跟 p 的输出列相同，消除 p
+              如果 p 的子节点的输出列，跟 p 的输出列相同，消除 p
     }
 ```
 
-注意 `canEliminate` 参数，它是代表是否处于一个可被消除的“上下文”里面。比如 `Projection(A) -> Projection(A, B, C)` 或者 `Aggregation -> Projection` 递归调用到孩子结点 Projection 时，该 Projection 就处理一个 `canEliminate` 的上下文。
+注意 `canEliminate` 参数，它是代表是否处于一个可被消除的“上下文”里面。比如 `Projection(A) -> Projection(A, B, C)` 或者 `Aggregation -> Projection` 递归调用到子节点 Projection 时，该 Projection 就处于一个 `canEliminate` 的上下文。
 
-简单解释就是，一个 Projection 结点是否可消除：
+简单解释就是，一个 Projection 节点是否可消除：
 
-- 一方面由它父结点告诉它，它是否是一个冗余的 Projection 操作
-- 另一方面由它自己和孩子结点的输入列做比较，输出相同则可消除
+- 一方面由它父节点告诉它，它是否是一个冗余的 Projection 操作
+- 另一方面由它自己和子节点的输入列做比较，输出相同则可消除
 
 ## 谓词下推
 
@@ -133,7 +133,7 @@ func eliminate(p Plan, canEliminate bool) {
 select * from t1, t2 where t1.a > 3 and t2.b > 5
 ```
 
-假设 t1 和 t2 都是 100 条数据。如果把 t1 和 t2 两个表做笛卡尔集了再过滤，我们要处理 10000 条数据，而如果能先做过滤条件，那么数据量就会大量减少。谓词下推会尽量把过滤条件，推到靠近叶子节点，从而减少数据访问，节省计算开销。这就是谓词下推的作用。
+假设 t1 和 t2 都是 100 条数据。如果把 t1 和 t2 两个表做笛卡尔积了再过滤，我们要处理 10000 条数据，而如果能先做过滤条件，那么数据量就会大量减少。谓词下推会尽量把过滤条件，推到靠近叶子节点，从而减少数据访问，节省计算开销。这就是谓词下推的作用。
 
 谓词下推的接口函数类似是这样子的：
 
@@ -166,31 +166,31 @@ PredicatePushDown 函数处理当前的查询计划 p，参数 predicates 表示
    select * from t1 left outer join t2 on t1.id = t2.id where t2.id != null or t2.value > 3;
 ```
 
-接下来，把所有条件全收集起来，然后区分哪些是 Join 的等值条件，哪些是 Join 需要用到的条件，哪些全部来自于左孩子，哪些全部来自于右孩子。
+接下来，把所有条件全收集起来，然后区分哪些是 Join 的等值条件，哪些是 Join 需要用到的条件，哪些全部来自于左子节点，哪些全部来自于右子节点。
 
-区分之后，对于内连接，可以把左条件，和右条件，分别向左右孩子下推。等值条件和其它条件保留在当前的 Join 算子中，剩下的返回。
+区分之后，对于内连接，可以把左条件，和右条件，分别向左右子节点下推。等值条件和其它条件保留在当前的 Join 算子中，剩下的返回。
 
 谓词下推不能推过 MaxOneRow 和 Limit 节点。因为先 Limit N 行，然后再做 Selection 操作，跟先做 Selection 操作，再 Limit N 行得到的结果是不一样的。比如数据是 1 到 100，先 Limit 10 再 Select 大于 5，得到的是 5 到 10，而先做 Selection 再做 Limit 得到的是 5 到 15。MaxOneRow 也是同理，跟 Limit 1 效果一样。
 
-DataSource 算子很简单，会直接把过滤条件加入到 CopTask 里面。最后会被通过 coprocessor 推给 TiKV 去做。
+DataSource 算子很简单，会直接把过滤条件加入到 CopTask 里面。最后会通过 coprocessor 推给 TiKV 去做。
 
 ## 构建节点属性
 
 在 `build_key_info.go` 文件里面，会构建 unique key 和 MaxOneRow 属性。这一步不是在做优化，但它是在构建优化过程需要用到的一些信息。
 
-`build_key_info` 是在收集关于唯一索引的信息。我们知道某些列是主键或者唯一索引列，这种情况该列不会在多个相同的值。只有叶子节点知道这个信息。`build_key_info` 就是要将这个信息，从叶子节点，传递到 LogicalPlan 树上的所有节点，让每个节点都知道这些属性。
-对于 DataSource，对于主键列，和唯一索引列，都是 unique key。注意处理 NULL，需要列是带有 NotNull 标记的，以及考虑联合索引。
-对于 Projection，它的孩子中的唯一索引列信息，跟它的投影表达式的列取交集。比如 a b c 列都是唯一索引，投影其中的 b 列，输入的 b 列仍然具有值唯一的属性。
+`build_key_info` 是在收集关于唯一索引的信息。我们知道某些列是主键或者唯一索引列，这种情况该列不会存在多个相同的值。只有叶子节点记录这个信息。`build_key_info` 就是要将这个信息，从叶子节点，传递到 LogicalPlan 树上的所有节点，让每个节点都知道这些属性。
+对于 DataSource，对于主键列，和唯一索引列，都是 unique key。注意处理 NULL，需要列是带有 NotNull 标记的。
+对于 Projection，它的子节点中的唯一索引列信息，跟它的投影表达式的列取交集。比如 a b c 列都是唯一索引，投影其中的 b 列，输出的 b 列仍然具有值唯一的属性。
 
 如果一个节点输出肯定只有一行，这个节点会设置一个 MaxOneRow 属性。哪些情况节点输出只有一行呢？
 
-- 如果一个算子的孩子是 MaxOneRow 算子
+- 如果一个算子的子节点是 MaxOneRow 算子
 
 - 如果是 Limit 1，可以设置 MaxOneRow
 
 - 如果是 Selection，并且过滤条件是一个唯一索引列等于某常量
 
-- Join 算子，如果它的左右孩子都是 MaxOneRow 属性
+- Join 算子，如果它的左右子节点都是 MaxOneRow 属性
 
 ## 总结
 
