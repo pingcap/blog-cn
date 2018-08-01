@@ -44,15 +44,15 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 ## 手把手教你实现 built-in 函数
 
-### Step 1: 准备下推函数
+### Step 1：准备下推函数
 
 在 TiKV 的 [https://github.com/pingcap/tikv/issues/3275](https://github.com/pingcap/tikv/issues/3275) issue 中，找到未实现的函数签名列表，选一个您想要实现的函数。
 
-### Step 2: 获取 TiDB 中可参考的逻辑实现
+### Step 2：获取 TiDB 中可参考的逻辑实现
 
 在 TiDB 的 [expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下查找相关 builtinXXXSig 对象，这里 XXX 为您要实现的函数签名，本例中以 [MultiplyIntUnsigned](https://github.com/pingcap/tikv/pull/3277) 为例，可以在 TiDB 中找到其对应的函数签名（builtinArithmeticMultiplyIntUnsignedSig）及 [实现](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532)。
 
-### Step 3: 确定函数定义
+### Step 3：确定函数定义
 
 1. built-in 函数所在的文件名要求与 TiDB 的名称对应，如 TiDB 中，[expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下的下推文件统一以 builtin_XXX 命名，对应到 TiKV 这边，就是 `builtin_XXX.rs`。若同名对应的文件不存在，则需要自行在同级目录下新建。对于本例，当前函数存放于 TiDB 的 [builtin_arithmetic.go](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532) 文件里，对应到 TiKV 便是存放在 [builtin_arithmetic.rs](https://github.com/pingcap/tikv/blob/master/src/coprocessor/dag/expr/builtin_arithmetic.rs) 中。
 
@@ -85,7 +85,7 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 ```
 
 
-### Step 4: 实现函数逻辑
+### Step 4：实现函数逻辑
 
 这一块相对简单，直接对照 TiDB 的相关逻辑实现即可。这里，我们可以看到 TiDB 的 builtinArithmeticMultiplyIntUnsignedSig  的 具体实现如下：
 
@@ -154,7 +154,7 @@ pub fn multiply_int_unsigned(
   }
 ```
 
-### Step 5: 添加参数检查
+### Step 5：添加参数检查
 
 TiKV 在收到下推请求时，首先会对所有的表达式进行检查，表达式的参数个数检查就在这一步进行。
 
@@ -162,7 +162,7 @@ TiDB 中对每个 builtin 函数的参数个数有严格的限制，这一部分
 
 在 TiKV 同级目录的 `scalar_function.rs` 文件里，找到 ScalarFunc 的 `check_args` 函数，按照现有的模式，加入参数个数的检查即可。
 
-### Step 6: 添加下推支持
+### Step 6：添加下推支持
 
 TiKV 在对一行数据执行具体的 expression 时，会调用 eval 函数，eval 函数又会根据具体的返回类型，执行具体的子函数。这一部分工作在 `scalar_function.rs` 中以宏（dispatch_call）的形式完成。
 
@@ -170,7 +170,7 @@ TiKV 在对一行数据执行具体的 expression 时，会调用 eval 函数，
 
 至此 MultiplyIntUnsigned 下推逻辑已完全实现。
 
-### Step 7: 添加测试
+### Step 7：添加测试
 
 在函数 `multiply_int_unsigned` 所在文件 [builtin_arithmetic.rs](https://github.com/pingcap/tikv/blob/master/src/coprocessor/dag/expr/builtin_arithmetic.rs) 底部的 test 模块中加入对该函数签名的单元测试，要求覆盖到上述添加的所有代码，这一部分也可以参考 TiDB 中相关的测试代码。本例在 TiKV 中实现的测试代码如下：
 
@@ -268,7 +268,7 @@ TiKV 在对一行数据执行具体的 expression 时，会调用 eval 函数，
   }
 ```
 
-### Step 8: 运行测试
+### Step 8：运行测试
 
 运行 make expression，确保所有的 test case 都能跑过。
 
