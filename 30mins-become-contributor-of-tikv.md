@@ -18,13 +18,13 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 如图 1，当 TiDB 收到来自客户端的查询请求
 
-`Select count(*) from t where a + b > 5`
+`select count(*) from t where a + b > 5`
 
 时，执行顺序如下：
 
 1. TiDB 对 SQL 进行解析，组织成对应的表达式，下推给 TiKV
 
-2. TiKV 收到请求后，循环以下过程：
+2. TiKV 收到请求后，循环以下过程
 
 	* 获取下一行完整数据，并按列解析
 
@@ -46,15 +46,15 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 ### Step 1: 准备下推函数
 
-在 tikv 的 [https://github.com/pingcap/tikv/issues/3275](https://github.com/pingcap/tikv/issues/3275) issue 中，找到未实现的函数签名列表，选一个您想要实现的函数。
+在 TiKV 的 [https://github.com/pingcap/tikv/issues/3275](https://github.com/pingcap/tikv/issues/3275) issue 中，找到未实现的函数签名列表，选一个您想要实现的函数。
 
 ### Step 2: 获取 TiDB 中可参考的逻辑实现
 
-在 tidb 的 [expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下查找相关 builtinXXXSig 对象，这里 XXX 为您要实现的函数签名，本例中以 [MultiplyIntUnsigned](https://github.com/pingcap/tikv/pull/3277) 为例，可以在 tidb 中找到其对应的函数签名（builtinArithmeticMultiplyIntUnsignedSig）及 [实现](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532)。
+在 TiDB 的 [expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下查找相关 builtinXXXSig 对象，这里 XXX 为您要实现的函数签名，本例中以 [MultiplyIntUnsigned](https://github.com/pingcap/tikv/pull/3277) 为例，可以在 TiDB 中找到其对应的函数签名（builtinArithmeticMultiplyIntUnsignedSig）及 [实现](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532)。
 
 ### Step 3: 确定函数定义
 
-1. built-in 函数所在的文件名要求与 TiDB 的名称对应，如 TiDB 中，[expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下的下推文件统一以 builtin_XXX 命名，对应到 tikv 这边，就是 `builtin_XXX.rs`。若同名对应的文件不存在，则需要自行在同级目录下新建。对于本例，当前函数存放于 TiDB 的 [builtin_arithmetic.go](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532) 文件里，对应到 tikv 便是存放在 [builtin_arithmetic.rs](https://github.com/pingcap/tikv/blob/master/src/coprocessor/dag/expr/builtin_arithmetic.rs) 中。
+1. built-in 函数所在的文件名要求与 TiDB 的名称对应，如 TiDB 中，[expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下的下推文件统一以 builtin_XXX 命名，对应到 TiKV 这边，就是 `builtin_XXX.rs`。若同名对应的文件不存在，则需要自行在同级目录下新建。对于本例，当前函数存放于 TiDB 的 [builtin_arithmetic.go](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532) 文件里，对应到 TiKV 便是存放在 [builtin_arithmetic.rs](https://github.com/pingcap/tikv/blob/master/src/coprocessor/dag/expr/builtin_arithmetic.rs) 中。
 
 2. 函数名称：函数签名转为 rust 的函数名称规范，这里 MultiplyIntUnsigned 将会被定义为 `multiply_int_unsigned`。
 
@@ -62,7 +62,7 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 ![表 1.png](https://upload-images.jianshu.io/upload_images/542677-1a493001f3c401ba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-可以看到 TiDB 的 builtinArithmeticMultiplyIntUnsignedSig  对象实现了 evalInt 方法，故当前函数（`multiply_int_unsigned`）的返回类型应该为 `Result<Option<i64>>`
+可以看到 TiDB 的 builtinArithmeticMultiplyIntUnsignedSig  对象实现了 evalInt 方法，故当前函数（`multiply_int_unsigned`）的返回类型应该为 `Result<Option<i64>>`。
 
 4. 函数的参数, 所有 builtin-in 的参数都与 Expression 的 eval 函数一致，即：
 
@@ -158,7 +158,6 @@ pub fn multiply_int_unsigned(
 
 TiKV 在收到下推请求时，首先会对所有的表达式进行检查，表达式的参数个数检查就在这一步进行。
 
-TiDB 中对每个 builtin 函数的参数个数有严格的限制，这一部分检查可参考 TiDB 同目录下builtin.go 相关代码。
 TiDB 中对每个 builtin 函数的参数个数有严格的限制，这一部分检查可参考 TiDB 同目录下 builtin.go 相关代码。
 
 在 TiKV 同级目录的 `scalar_function.rs` 文件里，找到 ScalarFunc 的 `check_args` 函数，按照现有的模式，加入参数个数的检查即可。
