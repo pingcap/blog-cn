@@ -73,16 +73,13 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 综上，`multiply_int_unsigned` 的下推函数定义为：
 
 ```
-   pub fn multiply_int_unsigned(
+    pub fn multiply_int_unsigned(
+       &self,
+       ctx: &mut EvalContext,
+       row: &[Datum],
+   ) -> Result<Option<i64>>
 
-      &self,
-
-      ctx: &mut EvalContext,
-
-      row: &[Datum],
-
-  ) -> Result<Option<i64>>
-```
+```  
 
 
 ### Step 4：实现函数逻辑
@@ -91,37 +88,21 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 ```
 func (s *builtinArithmeticMultiplyIntUnsignedSig) evalInt(row types.Row) (val int64, isNull bool, err error) {
-
- a, isNull, err := s.args[0].EvalInt(s.ctx, row)
-
- if isNull || err != nil {
-
-    return 0, isNull, errors.Trace(err)
-
- }
-
- unsignedA := uint64(a)
-
- b, isNull, err := s.args[1].EvalInt(s.ctx, row)
-
- if isNull || err != nil {
-
-    return 0, isNull, errors.Trace(err)
-
- }
-
- unsignedB := uint64(b)
-
- result := unsignedA * unsignedB
-
- if unsignedA != 0 && result/unsignedA != unsignedB {
-
-    return 0, true, types.ErrOverflow.GenByArgs("BIGINT UNSIGNED", fmt.Sprintf("(%s * %s)", s.args[0].String(), s.args[1].String()))
-
- }
-
- return int64(result), false, nil
-
+  a, isNull, err := s.args[0].EvalInt(s.ctx, row)
+  if isNull || err != nil {
+     return 0, isNull, errors.Trace(err)
+  }
+  unsignedA := uint64(a)
+  b, isNull, err := s.args[1].EvalInt(s.ctx, row)
+  if isNull || err != nil {
+     return 0, isNull, errors.Trace(err)
+  }
+  unsignedB := uint64(b)
+  result := unsignedA * unsignedB
+  if unsignedA != 0 && result/unsignedA != unsignedB {
+     return 0, true, types.ErrOverflow.GenByArgs("BIGINT UNSIGNED", fmt.Sprintf("(%s * %s)", s.args[0].String(), s.args[1].String()))
+  }
+  return int64(result), false, nil
 }
 
 ```
@@ -129,29 +110,19 @@ func (s *builtinArithmeticMultiplyIntUnsignedSig) evalInt(row types.Row) (val in
 参考以上代码，翻译到 TiKV 即可，如下：
 
 ```
-pub fn multiply_int_unsigned(
+ pub fn multiply_int_unsigned(
+       &self,
+       ctx: &mut EvalContext,
+       row: &[Datum],
+   ) -> Result<Option<i64>> {
+       let lhs = try_opt!(self.children[0].eval_int(ctx, row));
+       let rhs = try_opt!(self.children[1].eval_int(ctx, row));
+       let res = (lhs as u64).checked_mul(rhs as u64).map(|t| t as i64);
+       // TODO: output expression in error when column's name pushed down.
+       res.ok_or_else(|| Error::overflow("BIGINT UNSIGNED", &format!("({} * {})", lhs, rhs)))
+           .map(Some)
+   }
 
-      &self,
-
-      ctx: &mut EvalContext,
-
-      row: &[Datum],
-
-  ) -> Result<Option<i64>> {
-
-      let lhs = try_opt!(self.children[0].eval_int(ctx, row));
-
-      let rhs = try_opt!(self.children[1].eval_int(ctx, row));
-
-      let res = (lhs as u64).checked_mul(rhs as u64).map(|t| t as i64);
-
-      // TODO: output expression in error when column's name pushed down.
-
-      res.ok_or_else(|| Error::overflow("BIGINT UNSIGNED", &format!("({} * {})", lhs, rhs)))
-
-          .map(Some)
-
-  }
 ```
 
 ### Step 5：添加参数检查
@@ -175,97 +146,60 @@ TiKV 在对一行数据执行具体的 expression 时，会调用 eval 函数，
 在函数 `multiply_int_unsigned` 所在文件 [builtin_arithmetic.rs](https://github.com/pingcap/tikv/blob/master/src/coprocessor/dag/expr/builtin_arithmetic.rs) 底部的 test 模块中加入对该函数签名的单元测试，要求覆盖到上述添加的所有代码，这一部分也可以参考 TiDB 中相关的测试代码。本例在 TiKV 中实现的测试代码如下：
 
 ```
-   #[test]
+    #[test]
+   fn test_multiply_int_unsigned() {
+       let cases = vec![
+           (Datum::I64(1), Datum::I64(2), Datum::U64(2)),
+           (
+               Datum::I64(i64::MIN),
+               Datum::I64(1),
+               Datum::U64(i64::MIN as u64),
+           ),
+           (
+               Datum::I64(i64::MAX),
+               Datum::I64(1),
+               Datum::U64(i64::MAX as u64),
+           ),
+           (Datum::U64(u64::MAX), Datum::I64(1), Datum::U64(u64::MAX)),
+       ];
 
-  fn test_multiply_int_unsigned() {
+       let mut ctx = EvalContext::default();
+       for (left, right, exp) in cases {
+           let lhs = datum_expr(left);
+           let rhs = datum_expr(right);
 
-      let cases = vec![
+           let mut op = Expression::build(
+               &mut ctx,
+               scalar_func_expr(ScalarFuncSig::MultiplyIntUnsigned, &[lhs, rhs]),
+           ).unwrap();
+           op.mut_tp().set_flag(types::UNSIGNED_FLAG as u32);
 
-          (Datum::I64(1), Datum::I64(2), Datum::U64(2)),
+           let got = op.eval(&mut ctx, &[]).unwrap();
+           assert_eq!(got, exp);
+       }
 
-          (
+       // test overflow
+       let cases = vec![
+           (Datum::I64(-1), Datum::I64(2)),
+           (Datum::I64(i64::MAX), Datum::I64(i64::MAX)),
+           (Datum::I64(i64::MIN), Datum::I64(i64::MIN)),
+       ];
 
-              Datum::I64(i64::MIN),
+       for (left, right) in cases {
+           let lhs = datum_expr(left);
+           let rhs = datum_expr(right);
 
-              Datum::I64(1),
+           let mut op = Expression::build(
+               &mut ctx,
+               scalar_func_expr(ScalarFuncSig::MultiplyIntUnsigned, &[lhs, rhs]),
+           ).unwrap();
+           op.mut_tp().set_flag(types::UNSIGNED_FLAG as u32);
 
-              Datum::U64(i64::MIN as u64),
+           let got = op.eval(&mut ctx, &[]).unwrap_err();
+           assert!(check_overflow(got).is_ok());
+       }
+   }
 
-          ),
-
-          (
-
-              Datum::I64(i64::MAX),
-
-              Datum::I64(1),
-
-              Datum::U64(i64::MAX as u64),
-
-          ),
-
-          (Datum::U64(u64::MAX), Datum::I64(1), Datum::U64(u64::MAX)),
-
-      ];
-
-      let mut ctx = EvalContext::default();
-
-      for (left, right, exp) in cases {
-
-          let lhs = datum_expr(left);
-
-          let rhs = datum_expr(right);
-
-          let mut op = Expression::build(
-
-              &mut ctx,
-
-              scalar_func_expr(ScalarFuncSig::MultiplyIntUnsigned, &[lhs, rhs]),
-
-          ).unwrap();
-
-          op.mut_tp().set_flag(types::UNSIGNED_FLAG as u32);
-
-          let got = op.eval(&mut ctx, &[]).unwrap();
-
-          assert_eq!(got, exp);
-
-      }
-
-      // test overflow
-
-      let cases = vec![
-
-          (Datum::I64(-1), Datum::I64(2)),
-
-          (Datum::I64(i64::MAX), Datum::I64(i64::MAX)),
-
-          (Datum::I64(i64::MIN), Datum::I64(i64::MIN)),
-
-      ];
-
-      for (left, right) in cases {
-
-          let lhs = datum_expr(left);
-
-          let rhs = datum_expr(right);
-
-          let mut op = Expression::build(
-
-              &mut ctx,
-
-              scalar_func_expr(ScalarFuncSig::MultiplyIntUnsigned, &[lhs, rhs]),
-
-          ).unwrap();
-
-          op.mut_tp().set_flag(types::UNSIGNED_FLAG as u32);
-
-          let got = op.eval(&mut ctx, &[]).unwrap_err();
-
-          assert!(check_overflow(got).is_ok());
-
-      }
-
-  }
 ```
 
 ### Step 8：运行测试
