@@ -38,7 +38,7 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 这里的 where 条件便是以表达式树的形式下推给 TiKV。在此之前 TiDB 只会向 TiKV 下推一小部分简单的表达式，比如取出某一个列的某个数据类型的值，简单数据类型的比较操作，算术运算等。为了充分利用分布式集群的资源，进一步提升 SQL 在整个集群的执行速度，我们需要将更多种类的表达式下推到 TiKV 来运行，其中的一大类就是 MySQL built-in 函数。
 
-目前，由于 TiKV 的 builtin 函数尚未全部实现，对于无法下推的表达式，TiDB 只能自行解决。这无疑将成为提升 TiDB 速度的最大绊脚石。好消息是，TiKV 在实现 builtin 函数时，可以直接参考 TiDB 的对应函数逻辑（顺便可以帮 TiDB 找找 Bug），为我们减少了不少工作量。
+目前，由于 TiKV 的 built-in 函数尚未全部实现，对于无法下推的表达式，TiDB 只能自行解决。这无疑将成为提升 TiDB 速度的最大绊脚石。好消息是，TiKV 在实现 built-in 函数时，可以直接参考 TiDB 的对应函数逻辑（顺便可以帮 TiDB 找找 Bug），为我们减少了不少工作量。
 
 **Built-in 函数无疑是 TiDB 和 TiKV 成长道路上不可替代的一步，如此艰巨又庞大的任务，我们需要广大社区朋友们的支持与鼓励。亲爱的朋友们，想玩 Rust 吗？想给 TiKV 提 PR 吗？想帮助 TiDB 跑得更快吗？动动您的小手指，拿 PR 来砸我们吧。您的 PR 一旦被采用，将会有小惊喜哦。**
 
@@ -50,21 +50,30 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 ### Step 2：获取 TiDB 中可参考的逻辑实现
 
-在 TiDB 的 [expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下查找相关 builtinXXXSig 对象，这里 XXX 为您要实现的函数签名，本例中以 [MultiplyIntUnsigned](https://github.com/pingcap/tikv/pull/3277) 为例，可以在 TiDB 中找到其对应的函数签名（builtinArithmeticMultiplyIntUnsignedSig）及 [实现](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532)。
+在 TiDB 的 [expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下查找相关 builtinXXXSig 对象，这里 XXX 为您要实现的函数签名，本例中以 [MultiplyIntUnsigned](https://github.com/pingcap/tikv/pull/3277) 为例，可以在 TiDB 中找到其对应的函数签名（`builtinArithmeticMultiplyIntUnsignedSig`）及 [实现](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532)。
 
 ### Step 3：确定函数定义
 
 1. built-in 函数所在的文件名要求与 TiDB 的名称对应，如 TiDB 中，[expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下的下推文件统一以 builtin_XXX 命名，对应到 TiKV 这边，就是 `builtin_XXX.rs`。若同名对应的文件不存在，则需要自行在同级目录下新建。对于本例，当前函数存放于 TiDB 的 [builtin_arithmetic.go](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532) 文件里，对应到 TiKV 便是存放在 [builtin_arithmetic.rs](https://github.com/pingcap/tikv/blob/master/src/coprocessor/dag/expr/builtin_arithmetic.rs) 中。
 
-2. 函数名称：函数签名转为 Rust 的函数名称规范，这里 MultiplyIntUnsigned 将会被定义为 `multiply_int_unsigned`。
+2. 函数名称：函数签名转为 Rust 的函数名称规范，这里 `MultiplyIntUnsigned` 将会被定义为 `multiply_int_unsigned`。
 
-3. 函数返回值，可以参考 TiDB 中实现的 Eval 函数，对应关系如下：
+3. 函数返回值，可以参考 TiDB 中实现的 `Eval` 函数，对应关系如下：
 
-![表 1.png](https://upload-images.jianshu.io/upload_images/542677-1a493001f3c401ba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+| TiDB 对应实现的 Eval 函数 | TiKV 对应函数的返回值类型 | 
+| ----------------------- | ---------------------- |
+| `evalInt` | `Result<Option<i64>>` |
+| `evalReal` | `Result<Option<f64>>` |
+| `evalString` | `Result<Option<Cow<'a, [u8]>>>` |
+| `evalDecimal` | `Result<Option<Cow<'a, Decimal>>>` |
+| `evalTime` | `Result<Option<Cow<'a, Time>>>` |
+| `evalDuration` | `Result<Option<Cow<'a, Duration>>>`|
+| `evalJSON` | `Result<Option<Cow<'a, Json>>>`|
 
-可以看到 TiDB 的 builtinArithmeticMultiplyIntUnsignedSig  对象实现了 evalInt 方法，故当前函数（`multiply_int_unsigned`）的返回类型应该为 `Result<Option<i64>>`。
 
-4. 函数的参数, 所有 builtin-in 的参数都与 Expression 的 eval 函数一致，即：
+可以看到 TiDB 的 `builtinArithmeticMultiplyIntUnsignedSig`  对象实现了 evalInt 方法，故当前函数（`multiply_int_unsigned`）的返回类型应该为 `Result<Option<i64>>`。
+
+4. 函数的参数, 所有 builtin-in 的参数都与 Expression 的 `eval` 函数一致，即：
 
 	* 环境配置量 (ctx:&StatementContext)
 
@@ -83,7 +92,7 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 ### Step 4：实现函数逻辑
 
-这一块相对简单，直接对照 TiDB 的相关逻辑实现即可。这里，我们可以看到 TiDB 的 builtinArithmeticMultiplyIntUnsignedSig  的 具体实现如下：
+这一块相对简单，直接对照 TiDB 的相关逻辑实现即可。这里，我们可以看到 TiDB 的 `builtinArithmeticMultiplyIntUnsignedSig` 的具体实现如下：
 
 ```
 func (s *builtinArithmeticMultiplyIntUnsignedSig) evalInt(row types.Row) (val int64, isNull bool, err error) {
@@ -126,17 +135,17 @@ func (s *builtinArithmeticMultiplyIntUnsignedSig) evalInt(row types.Row) (val in
 
 TiKV 在收到下推请求时，首先会对所有的表达式进行检查，表达式的参数个数检查就在这一步进行。
 
-TiDB 中对每个 builtin 函数的参数个数有严格的限制，这一部分检查可参考 TiDB 同目录下 builtin.go 相关代码。
+TiDB 中对每个 built-in 函数的参数个数有严格的限制，这一部分检查可参考 TiDB 同目录下 builtin.go 相关代码。
 
 在 TiKV 同级目录的 `scalar_function.rs` 文件里，找到 ScalarFunc 的 `check_args` 函数，按照现有的模式，加入参数个数的检查即可。
 
 ### Step 6：添加下推支持
 
-TiKV 在对一行数据执行具体的 expression 时，会调用 eval 函数，eval 函数又会根据具体的返回类型，执行具体的子函数。这一部分工作在 `scalar_function.rs` 中以宏（dispatch_call）的形式完成。
+TiKV 在对一行数据执行具体的 expression 时，会调用 `eval` 函数，`eval` 函数又会根据具体的返回类型，执行具体的子函数。这一部分工作在 `scalar_function.rs` 中以宏（dispatch_call）的形式完成。
 
-对于 MultiplyIntUnsigned, 我们最终返回的数据类型为 Int，所以可以在 dispatch_call 中找到 `INT_CALLS`，然后照着加入 `MultiplyIntUnsigned => multiply_int_unsigned` , 表示当解析到函数签名 MultiplyIntUnsigned 时，调用上述已实现的函数 `multiply_int_unsigned`。
+对于 `MultiplyIntUnsigned`, 我们最终返回的数据类型为 Int，所以可以在 dispatch_call 中找到 `INT_CALLS`，然后照着加入 `MultiplyIntUnsigned => multiply_int_unsigned` , 表示当解析到函数签名 `MultiplyIntUnsigned` 时，调用上述已实现的函数 `multiply_int_unsigned`。
 
-至此 MultiplyIntUnsigned 下推逻辑已完全实现。
+至此 `MultiplyIntUnsigned` 下推逻辑已完全实现。
 
 ### Step 7：添加测试
 
