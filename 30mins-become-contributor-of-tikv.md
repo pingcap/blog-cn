@@ -78,7 +78,6 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
        ctx: &mut EvalContext,
        row: &[Datum],
    ) -> Result<Option<i64>>
-
 ```  
 
 
@@ -104,7 +103,6 @@ func (s *builtinArithmeticMultiplyIntUnsignedSig) evalInt(row types.Row) (val in
   }
   return int64(result), false, nil
 }
-
 ```
 
 参考以上代码，翻译到 TiKV 即可，如下：
@@ -122,7 +120,6 @@ func (s *builtinArithmeticMultiplyIntUnsignedSig) evalInt(row types.Row) (val in
        res.ok_or_else(|| Error::overflow("BIGINT UNSIGNED", &format!("({} * {})", lhs, rhs)))
            .map(Some)
    }
-
 ```
 
 ### Step 5：添加参数检查
@@ -199,7 +196,6 @@ TiKV 在对一行数据执行具体的 expression 时，会调用 eval 函数，
            assert!(check_overflow(got).is_ok());
        }
    }
-
 ```
 
 ### Step 8：运行测试
