@@ -60,17 +60,17 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 3. 函数返回值，可以参考 TiDB 中实现的 `Eval` 函数，对应关系如下：
 
-	| TiDB 对应实现的 Eval 函数 | TiKV 对应函数的返回值类型 | 
-	| ----------------------- | ---------------------- |
-	| `evalInt` | `Result<Option<i64>>` |
-	| `evalReal` | `Result<Option<f64>>` |
-	| `evalString` | `Result<Option<Cow<'a, [u8]>>>` |
-	| `evalDecimal` | `Result<Option<Cow<'a, Decimal>>>` |
-	| `evalTime` | `Result<Option<Cow<'a, Time>>>` |
-	| `evalDuration` | `Result<Option<Cow<'a, Duration>>>`|
-	| `evalJSON` | `Result<Option<Cow<'a, Json>>>`|
+    | TiDB 对应实现的 Eval 函数 | TiKV 对应函数的返回值类型 |
+    | ----------------------- | ---------------------- |
+    | `evalInt` | `Result<Option<i64>>` |
+    | `evalReal` | `Result<Option<f64>>` |
+    | `evalString` | `Result<Option<Cow<'a, [u8]>>>` |
+    | `evalDecimal` | `Result<Option<Cow<'a, Decimal>>>` |
+    | `evalTime` | `Result<Option<Cow<'a, Time>>>` |
+    | `evalDuration` | `Result<Option<Cow<'a, Duration>>>`|
+    | `evalJSON` | `Result<Option<Cow<'a, Json>>>`|
 
-	可以看到 TiDB 的 `builtinArithmeticMultiplyIntUnsignedSig`  对象实现了 evalInt 方法，故当前函数（`multiply_int_unsigned`）的返回类型应该为 `Result<Option<i64>>`。
+    可以看到 TiDB 的 `builtinArithmeticMultiplyIntUnsignedSig`  对象实现了 evalInt 方法，故当前函数（`multiply_int_unsigned`）的返回类型应该为 `Result<Option<i64>>`。
 
 4. 函数的参数, 所有 builtin-in 的参数都与 Expression 的 `eval` 函数一致，即：
 
