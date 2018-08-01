@@ -40,7 +40,7 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 目前，由于 TiKV 的 builtin 函数尚未全部实现，对于无法下推的表达式，TiDB 只能自行解决。这无疑将成为提升 TiDB 速度的最大绊脚石。好消息是，TiKV 在实现 builtin 函数时，可以直接参考 TiDB 的对应函数逻辑（顺便可以帮 TiDB 找找 Bug），为我们减少了不少工作量。
 
-**Built-in 函数无疑是 TiDB 和 TiKV 成长道路上不可替代的一步，如此艰巨又庞大的任务，我们需要广大社区朋友们的支持与鼓励。亲爱的朋友们，想玩 rust 吗？想给 TiKV 提 PR 吗？想帮助 TiDB 跑得更快吗？动动您的小手指，拿 PR 来砸我们吧。您的 PR 一旦被采用，将会有小惊喜哦。**
+**Built-in 函数无疑是 TiDB 和 TiKV 成长道路上不可替代的一步，如此艰巨又庞大的任务，我们需要广大社区朋友们的支持与鼓励。亲爱的朋友们，想玩 Rust 吗？想给 TiKV 提 PR 吗？想帮助 TiDB 跑得更快吗？动动您的小手指，拿 PR 来砸我们吧。您的 PR 一旦被采用，将会有小惊喜哦。**
 
 ## 手把手教你实现 built-in 函数
 
@@ -56,7 +56,7 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 1. built-in 函数所在的文件名要求与 TiDB 的名称对应，如 TiDB 中，[expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下的下推文件统一以 builtin_XXX 命名，对应到 TiKV 这边，就是 `builtin_XXX.rs`。若同名对应的文件不存在，则需要自行在同级目录下新建。对于本例，当前函数存放于 TiDB 的 [builtin_arithmetic.go](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532) 文件里，对应到 TiKV 便是存放在 [builtin_arithmetic.rs](https://github.com/pingcap/tikv/blob/master/src/coprocessor/dag/expr/builtin_arithmetic.rs) 中。
 
-2. 函数名称：函数签名转为 rust 的函数名称规范，这里 MultiplyIntUnsigned 将会被定义为 `multiply_int_unsigned`。
+2. 函数名称：函数签名转为 Rust 的函数名称规范，这里 MultiplyIntUnsigned 将会被定义为 `multiply_int_unsigned`。
 
 3. 函数返回值，可以参考 TiDB 中实现的 Eval 函数，对应关系如下：
 
