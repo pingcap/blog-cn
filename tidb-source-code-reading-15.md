@@ -8,7 +8,7 @@ tags: ['源码阅读','TiDB']
 
 ## 什么是 Sort Merge Join
 
-在开始阅读源码之前, 我们来看看什么是 Sort-merge join (SMJ)，定义可以看 [wikipedia](https://en.wikipedia.org/wiki/Sort-merge_join)。简单说来就是将 Join 的两个表，首先根据连接属性进行排序，然后进行一次扫描归并, 进而就可以得出最后的结果。这个算法最大的消耗在于对内外表数据进行排序，而当连接列为索引列时，我们可以利用索引的有序性避免排序带来的消耗, 所以通常在查询优化器中，连接列为索引列的情况下可以考虑选择使用 SMJ。
+在开始阅读源码之前, 我们来看看什么是 Sort Merge Join (SMJ)，定义可以看 [wikipedia](https://en.wikipedia.org/wiki/Sort-merge_join)。简单说来就是将 Join 的两个表，首先根据连接属性进行排序，然后进行一次扫描归并, 进而就可以得出最后的结果。这个算法最大的消耗在于对内外表数据进行排序，而当连接列为索引列时，我们可以利用索引的有序性避免排序带来的消耗, 所以通常在查询优化器中，连接列为索引列的情况下可以考虑选择使用 SMJ。
 
 ## TiDB Sort Merge Join 实现
 
@@ -43,7 +43,7 @@ TiDB 的实现代码在 [tidb/executor/merge_join.go](https://github.com/pingcap
 
 这里值得注意的是，我们通过 `expression.VectorizedFilter` 对外表数据进行过滤，返回一个 curSelected 布尔数组，用于外表的每一行数据是否是满足 filter 过滤条件。以 `select * from t1 left outer join t2 on t1.a=100;` 为例, 这里的 filter 是 `t1.a=100`, 对于没有通过这个过滤条件的行，我们通过 `ri.joinResultGenerator.emitToChunk` 函数发送给 resultGenerator, 这个 resultGenerator 是一个 interface，具体是否输出这行数据，会由 join 的类型决定，比如外连接则会输出，内连接则会忽略。具体关于 resultGenerator, 可以参考之前的文章：[TiDB 源码阅读系列文章（九）Hash Join](https://pingcap.com/blog-cn/tidb-source-code-reading-9/)
 
-`rowsWithSameKey` 通过 `nextSelectedRow` 不断读取下一行数据，并通过对每行数据的 joinKeys 进行判断是不是属于同一个 joinKeys，如果是，会把相同 joinKeys 的行分别放入到 `innerChunkRows` 和 `outerIter4Row` 数组中。然后对其分别建立迭代器 innerIter4Row 和 outerIter4Row。在 SMJ 中的执行过程中，会利用这两个迭代器来获取数据进行真正的比较得出 join result。
+`rowsWithSameKey` 通过 `nextSelectedRow` 不断读取下一行数据，并通过对每行数据的 join-keys 进行判断是不是属于同一个 join-keys，如果是，会把相同 join-keys 的行分别放入到 `innerChunkRows` 和 `outerIter4Row` 数组中。然后对其分别建立迭代器 innerIter4Row 和 outerIter4Row。在 SMJ 中的执行过程中，会利用这两个迭代器来获取数据进行真正的比较得出 join result。
 
 ### Merge-Join
 
