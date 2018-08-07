@@ -2,7 +2,7 @@
 title: TiDB 源码阅读系列文章（十五）Sort Merge Join
 author: ['姚维']
 date: 2018-08-07
-summary: 
+summary: 本篇文章主要介绍 Sort Merge Join 在 TiDB 中的实现，enjoy~
 tags: ['源码阅读','TiDB']
 ---
 
@@ -30,7 +30,7 @@ TiDB 的实现代码在 [tidb/executor/merge_join.go](https://github.com/pingcap
 
 下面的图展示了 SMJ 的过程：
 
-![图 1.png](https://upload-images.jianshu.io/upload_images/542677-8d54d741fe901689.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1 SMJ 过程.png](https://upload-images.jianshu.io/upload_images/542677-ea4e6abb2d373ced.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 ### 读取内表 / 外表数据
