@@ -16,19 +16,20 @@ tags: ['TiKV', '可串行化', '多版本并发控制', '2PC', '隔离级别']
 1. 读锁和写锁会相互阻滞（block）。
 2. 大部分事务都是只读（read-only）的，所以从事务序列（transaction-ordering）的角度来看是无害的。如果使用基于锁的隔离机制，而且如果有一段很长的读事务的话，在这段时间内这个对象就无法被改写，后面的事务就会被阻塞直到这个事务完成。这种机制对于并发性能来说影响很大。
 
-*多版本并发控制（Multi-Version Concurrency Control, 以下简称 MVCC）*以一种优雅的方式来解决这个问题。在 MVCC 中，每当想要更改或者删除某个数据对象时，DBMS 不会在原地去删除或这修改这个已有的数据对象本身，而是创建一个该数据对象的新的版本，这样的话同时并发的读取操作仍旧可以读取老版本的数据，而写操作就可以同时进行。这个模式的好处在于，可以让读取操作不再阻塞，事实上根本就不需要锁。这是一种非常诱人的特型，以至于在很多主流的数据库中都采用了 MVCC 的实现，比如说 PostgreSQL，Oracle，Microsoft SQL Server 等。
+**多版本并发控制（Multi-Version Concurrency Control，以下简称 MVCC）** 以一种优雅的方式来解决这个问题。在 MVCC 中，每当想要更改或者删除某个数据对象时，DBMS 不会在原地去删除或这修改这个已有的数据对象本身，而是创建一个该数据对象的新的版本，这样的话同时并发的读取操作仍旧可以读取老版本的数据，而写操作就可以同时进行。这个模式的好处在于，可以让读取操作不再阻塞，事实上根本就不需要锁。这是一种非常诱人的特型，以至于在很多主流的数据库中都采用了 MVCC 的实现，比如说 PostgreSQL，Oracle，Microsoft SQL Server 等。
 
 
 ### TiKV 中的 MVCC
-让我们深入到 TiKV 中的 MVCC，了解 MVCC 在 TiKV 中是如何[实现](https://github.com/pingcap/tikv/tree/master/src/storage)的。
+让我们深入到 TiKV 中的 MVCC，了解 MVCC 在 TiKV 中是如何 [实现](https://github.com/pingcap/tikv/tree/master/src/storage) 的。
 
 
-#### Timestamp Oracle(TSO)
+#### 1. Timestamp Oracle(TSO)
 因为`TiKV` 是一个分布式的储存系统，它需要一个全球性的授时服务，下文都称作 TSO（Timestamp Oracle），来分配一个单调递增的时间戳。 这样的功能在 TiKV 中是由 PD 提供的，在 Google 的 [Spanner](http://static.googleusercontent.com/media/research.google.com/en//archive/spanner-osdi2012.pdf) 中是由多个原子钟和 GPS 来提供的。
 
 
-#### Storage
+#### 2. Storage
 从源码结构上来看，想要深入理解 TiKV 中的 MVCC 部分，[src/storage](https://github.com/pingcap/tikv/blob/master/src/storage/mod.rs) 是一个非常好的入手点。 `Storage` 是实际上接受外部命令的结构体。
+
 ```rust
 pub struct Storage {
     engine: Box<Engine>,
@@ -75,15 +76,17 @@ impl Storage {
         Ok(())
     }
 }
+
 ```
+
 `start` 这个函数很好的解释了一个 storage 是怎么跑起来的。
 
 
-#### Engine
+#### 3. Engine
 首先是 [Engine](https://github.com/pingcap/tikv/blob/master/src/storage/engine/mod.rs#L44)。 `Engine` 是一个描述了在储存系统中接入的的实际上的数据库的接口，[raftkv](https://github.com/pingcap/tikv/blob/master/src/storage/engine/raftkv.rs#L91) 和 [Enginerocksdb](https://github.com/pingcap/tikv/blob/master/src/storage/engine/rocksdb.rs#L66) 分别实现了这个接口。
 
 
-#### StorageHandle
+#### 4. StorageHandle
 `StorageHanle` 是处理从`sench` 接受到指令，通过 [mio](https://github.com/carllerche/mio) 来处理 IO。
 
 
@@ -96,7 +99,7 @@ Ok，了解完`Storage` 结构体是如何实现的之后，我们终于可以�
 当 storage 接收到从客户端来的指令后会将其传送到调度器中。然后调度器执行相应的过程或者调用相应的[异步函数](https://github.com/pingcap/tikv/blob/master/src/storage/txn/scheduler.rs#L643)。在调度器中有两种操作类型，读和写。读操作在 [MvccReader](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/reader.rs#L20) 中实现，这一部分很容易理解，暂且不表。写操作的部分是MVCC的核心。
 
 
-#### MVCC
+#### 5. MVCC
 Ok，两段提交（2-Phase Commit，2PC）是在 MVCC 中实现的，整个 TiKV 事务模型的核心。在一段事务中，由两个阶段组成。
 
 
@@ -111,11 +114,12 @@ Ok，两段提交（2-Phase Commit，2PC）是在 MVCC 中实现的，整个 TiK
 
 
 ##### Garbage Collector
-很容易发现，如果没有[垃圾收集器（Gabage Collector）](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/txn.rs#L143) 来移除无效的版本的话，数据库中就会存有越来越多的 MVCC 版本。但是我们又不能仅仅移除某个 safe point 之前的所有版本。因为对于某个 key 来说，有可能只存在一个版本，那么这个版本就必须被保存下来。在`TiKV`中，如果在 safe point 前存在`Put` 或者`Delete`，那么说明之后所有的 writes 都是可以被移除的，不然的话只有`Delete`，`Rollback`和`Lock` 会被删除。
+很容易发现，如果没有[垃圾收集器（Gabage Collector）](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/txn.rs#L143) 来移除无效的版本的话，数据库中就会存有越来越多的 MVCC 版本。但是我们又不能仅仅移除某个 safe point 之前的所有版本。因为对于某个 key 来说，有可能只存在一个版本，那么这个版本就必须被保存下来。在`TiKV`中，如果在 safe point 前存在 `Put` 或者 `Delete` 记录，那么比这条记录更旧的写入记录都是可以被移除的，不然的话只有`Delete`，`Rollback`和`Lock` 会被删除。
+
 
 
 ## TiKV-Ctl for MVCC
-在开发和 debug 的过程中，我们发现查询 MVCC 的版本信息是一件非常频繁并且重要的操作。因此我们开发了新的工具来查询 MVCC 信息。`TiKV` 将 Key-Value，Locks 和Writes 分别储存在`CF_DEFAULT`，`CF_LOCK`，`CF_WRITE`中。它们以这样的格式进行编码
+在开发和 debug 的过程中，我们发现查询 MVCC 的版本信息是一件非常频繁并且重要的操作。因此我们开发了新的工具来查询 MVCC 信息。`TiKV` 将 Key-Value，Locks 和 Writes 分别储存在`CF_DEFAULT`，`CF_LOCK`，`CF_WRITE`中。它们以这样的格式进行编码
 
 
 |           | default                        | lock                                  | write                           |
@@ -126,6 +130,6 @@ Ok，两段提交（2-Phase Commit，2PC）是在 MVCC 中实现的，整个 TiK
 Details can be found [here](https://github.com/pingcap/tikv/issues/1077).
 
 
-因为所有的 MVCC 信息在 Rocksdb 中都是储存在 CF Key-Value 中，所以想要查询一个 Key 的版本信息，我们只需要将这些信息以不同的方式编码，随后在对应的 CF 中查询即可。CF Key-Values 的[表示形式](https://github.com/pingcap/tikv/blob/master/src/bin/tikv-ctl.rs#L210)。
+因为所有的 MVCC 信息在 Rocksdb 中都是储存在 CF Key-Value 中，所以想要查询一个 Key 的版本信息，我们只需要将这些信息以不同的方式编码，随后在对应的 CF 中查询即可。CF Key-Values 的 [表示形式](https://github.com/pingcap/tikv/blob/master/src/bin/tikv-ctl.rs#L210)。
 
 [1]: https://en.wikipedia.org/wiki/Two-phase_locking
