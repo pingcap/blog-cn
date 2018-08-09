@@ -111,7 +111,8 @@ Ok，两段提交（2-Phase Commit，2PC）是在 MVCC 中实现的，整个 TiK
 
 
 ##### Garbage Collector
-很容易发现，如果没有[垃圾收集器（Gabage Collector）](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/txn.rs#L143) 来移除无效的版本的话，数据库中就会存有越来越多的 MVCC 版本。但是我们又不能仅仅移除某个 safe point 之前的所有版本。因为对于某个 key 来说，有可能只存在一个版本，那么这个版本就必须被保存下来。在`TiKV`中，如果在 safe point 前存在`Put` 或者`Delete`，那么说明之后所有的 writes 都是可以被移除的，不然的话只有`Delete`，`Rollback`和`Lock` 会被删除。
+很容易发现，如果没有[垃圾收集器（Gabage Collector）](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/txn.rs#L143) 来移除无效的版本的话，数据库中就会存有越来越多的 MVCC 版本。但是我们又不能仅仅移除某个 safe point 之前的所有版本。因为对于某个 key 来说，有可能只存在一个版本，那么这个版本就必须被保存下来。在`TiKV`中，如果在 safe point 前存在 `Put` 或者 `Delete` 记录，那么比这条记录更旧的写入记录都是可以被移除的，不然的话只有`Delete`，`Rollback`和`Lock` 会被删除。
+
 
 
 ## TiKV-Ctl for MVCC
