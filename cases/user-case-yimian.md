@@ -19,7 +19,7 @@ logo: /images/blog-cn/customers/yimian-logo.png
 
 一面数据的核心 IT 系统覆盖了从数据获取、数据清洗处理、数据建模到数据可视化的全套数据分析流程。核心系统每天有海量从互联网采集的公开数据和来自企业内部的数据，对数据存储的容量、扩展性和可用性都有很高的要求。
 
-起初，一面数据的核心系统采用的是多个 MySQL 实例和一个 Cassandra 集群。MySQL 多实例集群主要存储指定特征的爬虫数据，Cassandra 主要存储数据量大、不适合存储 MySQL 的全页面缓存的数据。在数据量/请求量小的时候系统运行正常。下图为：一面数据改造前系统构架图
+起初，一面数据的核心系统采用的是多个 MySQL 实例和一个 Cassandra 集群。MySQL 多实例集群主要存储指定特征的爬虫数据，Cassandra 主要存储数据量大、不适合存储 MySQL 的全页面缓存的数据。在数据量/请求量小的时候系统运行正常。下图为一面数据改造前系统构架图：
 
 ![](http://upload-images.jianshu.io/upload_images/542677-c716bb553daf9d41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -36,7 +36,7 @@ logo: /images/blog-cn/customers/yimian-logo.png
 
 为从根本上解决以上问题，一面数据的技术团队决定通过增加部署一套高性能的数据库系统，以解决当前业务的痛点。 在评估和验证了 MySQL Sharding 和 MongoDB 等传统技术手段之后，团队认识到：基于 MySQL Sharding (即利用 MySQL 中间件分库分表) 架构在高可用安全能力，业务和查询的灵活支持以及运维管理难度和成本上都不尽如人意，有着诸多架构上和技术上的缺陷；而 MongoDB 比较适合存储爬虫数据，但迁移成本高，不管是数据还是应用程序都需要做侵入性修改和调整，难度和开发成本骤升。另外，作为 NoSQL 数据库，MongoDB 不支持 SQL 和 JOIN ，对 BI 工具的支持也不完善，数据分析师们无法直接使用。 最终从满足业务需求、降低切换成本和减少运维成本等角度考虑，一面数据选择了分布式关系型数据库－TiDB 作为业务的首选事务型数据库。
 
-TiDB 支持包括跨行事务，JOIN 及子查询在内的绝大多数 MySQL 的语法，用户可以直接使用现有的 MySQL 客户端连接。如果现有的业务已经基于 MySQL 开发，大多数情况不需要修改代码即可直接替换单机的 MySQL。同时现有的大多数 MySQL 运维工具（如 PHPMyAdmin, Navicat, MySQL Workbench 等），以及备份恢复工具（如 mysqldump, mydumper / myloader）等都可以在 TiDB 直接使用，这也让开发运维人员不用关注数据库 scale 的细节问题，专注于业务开发，极大的提升研发的生产力。下图为：一面数据改造后系统构架图
+TiDB 支持包括跨行事务，JOIN 及子查询在内的绝大多数 MySQL 的语法，用户可以直接使用现有的 MySQL 客户端连接。如果现有的业务已经基于 MySQL 开发，大多数情况不需要修改代码即可直接替换单机的 MySQL。同时现有的大多数 MySQL 运维工具（如 PHPMyAdmin, Navicat, MySQL Workbench 等），以及备份恢复工具（如 mysqldump, mydumper / myloader）等都可以在 TiDB 直接使用，这也让开发运维人员不用关注数据库 scale 的细节问题，专注于业务开发，极大的提升研发的生产力。下图为一面数据改造后系统构架图：
 
 ![](http://upload-images.jianshu.io/upload_images/542677-93fc003caa1c83f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -46,7 +46,7 @@ TiDB 支持包括跨行事务，JOIN 及子查询在内的绝大多数 MySQL 的
 
 ## 未来的架构规划
 
-目前 TiDB 新增了 TiSpark 组件，并且在 TiKV 层实现了 Spark 的下推算子，使得可以直接在 TiDB 集群上跑 Spark 程序，这样可以省去 ETL 的步骤。后续一面数据也考虑深入使用 TiSpark 组件，让一面数据的整个系统增加一定的实时复杂查询的能力。长远来看，可以把现在 ElasticSearch，Impala，Hive 的业务都迁移到 Spark 集群上，这样一方面统一了分析侧的技术栈，另一方面连接了 Spark 丰富庞大的生态。下图为：一面数据未来系统构架图
+目前 TiDB 新增了 TiSpark 组件，并且在 TiKV 层实现了 Spark 的下推算子，使得可以直接在 TiDB 集群上跑 Spark 程序，这样可以省去 ETL 的步骤。后续一面数据也考虑深入使用 TiSpark 组件，让一面数据的整个系统增加一定的实时复杂查询的能力。长远来看，可以把现在 ElasticSearch，Impala，Hive 的业务都迁移到 Spark 集群上，这样一方面统一了分析侧的技术栈，另一方面连接了 Spark 丰富庞大的生态。下图为一面数据未来系统构架图：
 
 ![](http://upload-images.jianshu.io/upload_images/542677-815f23ed88ab0866.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -54,3 +54,4 @@ TiDB 支持包括跨行事务，JOIN 及子查询在内的绝大多数 MySQL 的
 在一面数据 CTO 张锦杰看来：“TiDB 水平扩展性、兼容 MySQL 是非常好的特性，对需要使用关系型数据库作为存储方案的业务有极大的诱惑力，避免了传统分表、分库方案带来的上层应用的复杂性，解决了我们目前迫切的关系型数据存储的需求。”
 
 
+>作者：刘畅，
