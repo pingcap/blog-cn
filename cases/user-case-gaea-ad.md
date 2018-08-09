@@ -20,7 +20,10 @@ logo: /images/blog-cn/customers/gaea-ad-logo.png
 
 在系统设计之初，基于对数据量的预估以及简化实现方案考虑，我们选用了高可用的 MySQL RDS 存储方案，当时的匹配逻辑主要通过 SQL 语句来实现，包含了很多联表查询和聚合操作。当数据量在千万级别左右，系统运行良好，基本响应还在一分钟内。
 
-![image](http://upload-images.jianshu.io/upload_images/542677-09b54aadb16c2f2c?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1 MySQL RDS 存储方案架构图](https://upload-images.jianshu.io/upload_images/542677-b1f4547eb1e05b6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+<center>图 1 MySQL RDS 存储方案架构图</center>
+
 
 ## 遭遇瓶颈，寻找解决方案
 
@@ -47,15 +50,17 @@ logo: /images/blog-cn/customers/gaea-ad-logo.png
 
 在部署测试的过程中，我们使用 TiDB 提供的 Syncer 工具将 TiDB 作为 MySQL Slave 接在原业务的 MySQL 主库后边观察，确保读写的兼容性以及稳定性，经过一段时间观察后，确认读写没有任何问题，业务层的读请求切换至 TiDB，随后把写的流量也切换至 TiDB 集群，完成平滑的上线。
 
-![image](http://upload-images.jianshu.io/upload_images/542677-2f404701ea17d5db?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 2 TiDB 方案架构图](https://upload-images.jianshu.io/upload_images/542677-c1afc37c2f93f590.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+<center>图 2 TiDB 方案架构图</center>
 
 GaeaAD 系统从 2016 年 10 月上线以来，已经稳定运行了一季度多，结合实际的使用体验，我们总结了 TiDB 带来的收益，主要有以下几点：
 
 * 用 3 个节点组成的 TiDB 集群替换了原先的高可用 MySQL RDS 后，同样数据量级下，单次匹配平均耗时从 2 分钟以上降到了 30 秒左右，后续随着 TiDB 工程师的持续优化，达到了10 秒左右。另外，我们发现，**TiDB 在数据规模越大的情况下，对比 MySQL 的优势就越明显，应该是 TiDB 自研的分布式 SQL 优化器带来的优势。**不过在数据量比较轻量的情况下，因内部通信成本，优势相比 MySQL 并不明显。
 
-![image](http://upload-images.jianshu.io/upload_images/542677-d9d3fdbb29c5a6da?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3 TiDB 与 MySQL 在不同数据量下的查询时间对比.png](https://upload-images.jianshu.io/upload_images/542677-3d6c68670b9e0ce1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-<center>（图为 TiDB 与 MySQL 在不同数据量下的查询时间对比）</center>
+<center>图 3 TiDB 与 MySQL 在不同数据量下的查询时间对比</center>
 
 * TiDB 支持自动 Sharding，业务端不用切表操作，TiDB 也不需要像传统的数据库中间件产品设定 Sharding key 或者分区表什么的，底层的存储会自动根据数据的分布，均匀的分散在集群中，存储空间和性能可以通过增加机器实现快速的水平扩展，极大地降低了运维成本。
 

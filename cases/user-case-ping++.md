@@ -130,7 +130,7 @@ TiDB 是 PingCAP 公司受 Google Spanner / F1 论文启发而设计的开源分
 最后，特此感谢 PingCAP 所有团队成员对 Ping++ 上线 TiDB 各方面的支持！
 
 
-✎ 作者：宋涛 Ping++ DBA
+✎ 作者：宋涛，Ping++ DBA
 
 
 

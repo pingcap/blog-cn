@@ -54,27 +54,27 @@ G7 的技术团队一直在寻找一种能解决上述问题的数据库。要�
 
 在使用的过程中，我们还是遇到了不少兼容性相关的问题。为了增加我们对 TiDB 的理解，我们和 TiDB 技术团队取得联系，积极参与到 TiDB 项目中，熟悉代码和修复部分兼容性和 BUG 相关的问题。以下是我们在实践过程中解决的问题：
 
-+ 修复 INFORMATION_SCHEMA.COLUMNS 中 ，COLUMN_TYPE 不支持 UNSIGNED 的兼容性问题。
++ 修复 `INFORMATION_SCHEMA.COLUMNS` 中 ，`COLUMN_TYPE` 不支持 UNSIGNED 的兼容性问题。
 
-[https://github.com/pingcap/tidb/pull/3818](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/3818)
+    [https://github.com/pingcap/tidb/pull/3818](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/3818)
 
 + 修复 IGNORE 关键字对 INSERT、UPDATE和DELETE 的兼容性问题。
 
-[https://github.com/pingcap/tidb/pull/4376](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4376)
+    [https://github.com/pingcap/tidb/pull/4376](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4376)
 
-[https://github.com/pingcap/tidb/pull/4397](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4397)
+    [https://github.com/pingcap/tidb/pull/4397](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4397)
 
-[https://github.com/pingcap/tidb/pull/4564](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4564)
+    [https://github.com/pingcap/tidb/pull/4564](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4564)
 
 + 修复 Set 和 Join 中存在的 PanicBUG。
 
-[https://github.com/pingcap/tidb/pull/4326](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4326)
+    [https://github.com/pingcap/tidb/pull/4326](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4326)
 
-[https://github.com/pingcap/tidb/pull/4613](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4613)
+    [https://github.com/pingcap/tidb/pull/4613](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4613)
 
 + 增加了对 SQL_MODE 支持 ONLY_FULL_GROUP_BY 的特性。
 
-[https://github.com/pingcap/tidb/pull/4613](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4613)
+    [https://github.com/pingcap/tidb/pull/4613](http://link.zhihu.com/?target=https%3A//github.com/pingcap/tidb/pull/4613)
 
 这里仍然存在一个与 MySQL 不兼容的地方。当开启事务后，如果 insert 的语句会导致主键或者唯一索引冲突时，TiDB 为了节省与 TiKV 之间的网络开销，并不会去 TiKV 查询，因此不会返回冲突错误，而是在 Commit 时才告知是不是冲突了。希望准备使用或关注 TiDB 的朋友能注意到这一点。后来我们咨询 TiDB 官方，官方的解释是：TiDB 采用乐观事务模型，冲突检测在执行 Commit 操作时才会进行。
 

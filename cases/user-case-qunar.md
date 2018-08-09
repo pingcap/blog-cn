@@ -108,7 +108,7 @@ PingCAP 团队给 TiDB 提供了一整套监控的方案，他们使用开源时
 
 ![image](http://upload-images.jianshu.io/upload_images/542677-4299162966ff4cb7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-下图是某个集群的 Grafana 展示图
+下图是某个集群的 Grafana 展示图。
 
 ![image](http://upload-images.jianshu.io/upload_images/542677-90d272a7ecf12e0e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
