@@ -122,11 +122,11 @@ ERROR 1062 (23000): Duplicate entry '1' for key 'i'
 
 这就需要在执行 `INSERT IGNORE` 的时候，及时检查数据的冲突情况。一个显而易见的做法是，把需要插入的数据试着读出来，当发现冲突后，记一个 warning，再继续下一行。但是对于一个语句插入多行的情况，就需要反复从 TiKV 读取数据来进行检测，显然，这样的效率并不高。于是，TiDB 实现了 [batchChecker](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L43:6)，代码在 `executor/batch_checker.go`。
 
-在 [batchChecker](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L43:6) 中，首先，拿待插入的数据，将其中可能冲突的唯一约束在 [getKeysNeedCheck](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L85:24) 中构造成 key（TiDB 是通过构造唯一的 key 来实现唯一约束的，详见 [《三篇文章了解 TiDB 技术内幕——说计算》](https://pingcap.com/blog-cn/tidb-internal-2/)）。
+在 [batchChecker](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L43:6) 中，首先，拿待插入的数据，将其中可能冲突的唯一约束在 [getKeysNeedCheck](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L85:24) 中构造成 Key（TiDB 是通过构造唯一的 Key 来实现唯一约束的，详见 [《三篇文章了解 TiDB 技术内幕——说计算》](https://pingcap.com/blog-cn/tidb-internal-2/)）。
 
-然后，将构造出来的 key 通过 [BatchGetValues](https://github.com/pingcap/tidb/blob/c84a71d666b8732593e7a1f0ec3d9b730e50d7bf/kv/txn.go#L97:6) 一次性读上来，得到一个 key-value map，能被读到的都是冲突的数据。
+然后，将构造出来的 Key 通过 [BatchGetValues](https://github.com/pingcap/tidb/blob/c84a71d666b8732593e7a1f0ec3d9b730e50d7bf/kv/txn.go#L97:6) 一次性读上来，得到一个 Key-Value map，能被读到的都是冲突的数据。
 
-最后，拿即将插入的数据的 key 到 [BatchGetValues](https://github.com/pingcap/tidb/blob/c84a71d666b8732593e7a1f0ec3d9b730e50d7bf/kv/txn.go#L97:6) 的结果中进行查询。如果查到了冲突的行，构造好 warning 信息，然后开始下一行，如果查不到冲突的行，就可以进行安全的 INSERT 了。这部分的实现在 [batchCheckAndInsert](https://github.com/pingcap/tidb/blob/ab332eba2a04bc0a996aa72e36190c779768d0f1/executor/insert_common.go#L490:24) 中。
+最后，拿即将插入的数据的 Key 到 [BatchGetValues](https://github.com/pingcap/tidb/blob/c84a71d666b8732593e7a1f0ec3d9b730e50d7bf/kv/txn.go#L97:6) 的结果中进行查询。如果查到了冲突的行，构造好 warning 信息，然后开始下一行，如果查不到冲突的行，就可以进行安全的 INSERT 了。这部分的实现在 [batchCheckAndInsert](https://github.com/pingcap/tidb/blob/ab332eba2a04bc0a996aa72e36190c779768d0f1/executor/insert_common.go#L490:24) 中。
 
 同样，在所有数据执行完插入后，设置返回信息，并将执行结果返回客户端。
 
@@ -136,7 +136,7 @@ ERROR 1062 (23000): Duplicate entry '1' for key 'i'
 
 在上一节中，介绍了 TiDB 中对于特殊的 INSERT 语句采用了 batch 的方式来实现其冲突检查。在处理 `INSERT ON DUPLICATE KEY UPDATE` 的时候我们采用了同样的方式，但由于语义的复杂性，实现步骤也复杂了不少。
 
-首先，与 `INSERT IGNORE` 相同，首先将待插入数据构造出来的 key，通过 [BatchGetValues](https://github.com/pingcap/tidb/blob/c84a71d666b8732593e7a1f0ec3d9b730e50d7bf/kv/txn.go#L97:6) 一次性地读出来，得到一个 key-value map。再把所有读出来的 key 对应的表上的记录也通过一次 [BatchGetValues](https://github.com/pingcap/tidb/blob/c84a71d666b8732593e7a1f0ec3d9b730e50d7bf/kv/txn.go#L97:6) 读出来，这部分数据是为了将来做 UPDATE 准备的，具体实现在 [initDupOldRowValue](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L225:24)。
+首先，与 `INSERT IGNORE` 相同，首先将待插入数据构造出来的 Key，通过 [BatchGetValues](https://github.com/pingcap/tidb/blob/c84a71d666b8732593e7a1f0ec3d9b730e50d7bf/kv/txn.go#L97:6) 一次性地读出来，得到一个 Key-Value map。再把所有读出来的 Key 对应的表上的记录也通过一次 [BatchGetValues](https://github.com/pingcap/tidb/blob/c84a71d666b8732593e7a1f0ec3d9b730e50d7bf/kv/txn.go#L97:6) 读出来，这部分数据是为了将来做 UPDATE 准备的，具体实现在 [initDupOldRowValue](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L225:24)。
 
 然后，在做冲突检查的时候，如果遇到冲突，则首先进行一次 UPDATE。我们在前面 Basic INSERT 小节中已经介绍了，TiDB 的 INSERT 是提交的时候才去 TiKV 真正执行。同样的，UPDATE 语句也是在事务提交的时候才真正去 TiKV 执行的。所以，这里的操作仅仅是在 TiDB 内部的处理，没有网络开销。在这次 UPDATE 中，可能还是会遇到唯一约束冲突的问题，如果遇到了，此时即报错返回，如果该语句是 `INSERT IGNORE ON DUPLICATE KEY UPDATE` 则会忽略这个错误，继续下一行。
 
@@ -147,7 +147,7 @@ CREATE TABLE t (i INT UNIQUE);
 INSERT INTO t VALUES (1), (1) ON DUPLICATE KEY UPDATE i = i;
 ```
 
-可以看到，这个 SQL 中，表中原来并没有数据，第二句的 INSERT 也就不可能读到可能冲突的数据，但是，这句 INSERT 本身要插入的两行数据之间冲突了。这里的正确执行应该是，第一个 1 正常插入，第二个 1 插入的时候发现有冲突，更新第一个 1。此时，就需要做如下处理。将上一步被 UPDATE 的数据对应的 key-value 从第一步的 key-value map 中删掉，将 UPDATE 出来的数据再根据其表信息构造出唯一约束的 key 和 value，把这个 key-value 对放回第一步读出来 key-value map 中，用于后续数据进行冲突检查。这个细节的实现在 `fillBackKeys`。这种场景同样出现在，其他 INSERT 语句中，如 `INSERT IGNORE`、`REPLACE`、`LOAD DATA`。之所以在这里介绍是因为，`INSERT ON DUPLICATE KEY UPDATE` 是最能完整展现 `batchChecker` 的各方面的语句。
+可以看到，这个 SQL 中，表中原来并没有数据，第二句的 INSERT 也就不可能读到可能冲突的数据，但是，这句 INSERT 本身要插入的两行数据之间冲突了。这里的正确执行应该是，第一个 1 正常插入，第二个 1 插入的时候发现有冲突，更新第一个 1。此时，就需要做如下处理。将上一步被 UPDATE 的数据对应的 Key-Value 从第一步的 Key-Value map 中删掉，将 UPDATE 出来的数据再根据其表信息构造出唯一约束的 Key 和 Value，把这个 Key-Value 对放回第一步读出来 Key-Value map 中，用于后续数据进行冲突检查。这个细节的实现在 `fillBackKeys`。这种场景同样出现在，其他 INSERT 语句中，如 `INSERT IGNORE`、`REPLACE`、`LOAD DATA`。之所以在这里介绍是因为，`INSERT ON DUPLICATE KEY UPDATE` 是最能完整展现 `batchChecker` 的各方面的语句。
 
 最后，同样在所有数据执行完插入/更新后，设置返回信息，并将执行结果返回客户端。
 
