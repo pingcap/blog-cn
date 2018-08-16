@@ -43,7 +43,7 @@ tags: ['源码阅读','TiDB']
 
 # Basic INSERT 语句
 
-几种 INSERT 语句的最大不同在于执行层面，这里接着 [《Insert 语句概览》](https://zhuanlan.zhihu.com/p/34512827) 来讲语句执行过程。不记得前面内容的同学可以返回去看原文章。
+几种 INSERT 语句的最大不同在于执行层面，这里接着 [《TiDB 源码阅读系列文章（四）Insert 语句概览》](https://pingcap.com/blog-cn/tidb-source-code-reading-4) 来讲语句执行过程。不记得前面内容的同学可以返回去看原文章。
 
 INSERT 的执行逻辑在 [executor/insert.go](https://github.com/pingcap/tidb/blob/ab332eba2a04bc0a996aa72e36190c779768d0f1/executor/insert.go) 中。其实前面讲的前四种 INSERT 的执行逻辑都在这个文件里。这里先讲最普通的 `Basic INSERT`。
 
