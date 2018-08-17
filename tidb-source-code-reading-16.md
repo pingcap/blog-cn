@@ -117,7 +117,7 @@ ERROR 1062 (23000): Duplicate entry '1' for key 'i'
 
 # INSERT IGNORE 语句
 
-`INSERT IGNORE` 的语义在前面已经介绍了。由于之前介绍了，普通 INSERT 在提交的时候才检查，那 `INSERT IGNORE` 是否可以呢？答案是不行的。因为：
+`INSERT IGNORE` 的语义在前面已经介绍了。之前介绍了普通 INSERT 在提交的时候才检查，那 `INSERT IGNORE` 是否可以呢？答案是不行的。因为：
 
 1. `INSERT IGNORE` 如果在提交时检测，那事务模块就需要知道哪些行需要忽略，哪些直接报错回滚，这无疑增加了模块间的耦合。
 
