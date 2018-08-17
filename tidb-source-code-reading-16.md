@@ -62,7 +62,7 @@ INSERT 的执行逻辑在 [executor/insert.go](https://github.com/pingcap/tidb/b
 
 `exec` 函数里处理了前四种 INSERT 语句，其中本节要讲的普通 INSERT 直接进入了 [insertOneRow](https://github.com/pingcap/tidb/blob/5bdf34b9bba3fc4d3e50a773fa8e14d5fca166d5/executor/insert.go#L42:22)。
 
-在讲 `insertOneRow` 之前，我们先看一段 SQL。
+在讲 [insertOneRow](https://github.com/pingcap/tidb/blob/5bdf34b9bba3fc4d3e50a773fa8e14d5fca166d5/executor/insert.go#L42:22) 之前，我们先看一段 SQL。
 
 ```
 CREATE TABLE t (i INT UNIQUE);
