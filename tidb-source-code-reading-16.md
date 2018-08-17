@@ -74,7 +74,7 @@ COMMIT;
 
 把这段 SQL 分别一行行地粘在 MySQL 和 TiDB 中看下结果。
 
-MySQL:
+MySQL：
 
 ```
 mysql> CREATE TABLE t (i INT UNIQUE);
