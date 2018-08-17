@@ -72,7 +72,7 @@ INSERT INTO t VALUES (1);
 COMMIT;
 ```
 
-把这段 SQL 分别一行行地粘在 TiDB 和 MySQL 中看下结果。
+把这段 SQL 分别一行行地粘在 MySQL 和 TiDB 中看下结果。
 
 MySQL:
 
@@ -141,7 +141,7 @@ ERROR 1062 (23000): Duplicate entry '1' for key 'i'
 
 首先，与 `INSERT IGNORE` 相同，首先将待插入数据构造出来的 Key，通过 [BatchGetValues](https://github.com/pingcap/tidb/blob/c84a71d666b8732593e7a1f0ec3d9b730e50d7bf/kv/txn.go#L97:6) 一次性地读出来，得到一个 Key-Value map。再把所有读出来的 Key 对应的表上的记录也通过一次 [BatchGetValues](https://github.com/pingcap/tidb/blob/c84a71d666b8732593e7a1f0ec3d9b730e50d7bf/kv/txn.go#L97:6) 读出来，这部分数据是为了将来做 UPDATE 准备的，具体实现在 [initDupOldRowValue](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L225:24)。
 
-然后，在做冲突检查的时候，如果遇到冲突，则首先进行一次 UPDATE。我们在前面 Basic INSERT 小节中已经介绍了，TiDB 的 INSERT 是提交的时候才去 TiKV 真正执行。同样的，UPDATE 语句也是在事务提交的时候才真正去 TiKV 执行的。所以，这里的操作仅仅是在 TiDB 内部的处理，没有网络开销。在这次 UPDATE 中，可能还是会遇到唯一约束冲突的问题，如果遇到了，此时即报错返回，如果该语句是 `INSERT IGNORE ON DUPLICATE KEY UPDATE` 则会忽略这个错误，继续下一行。
+然后，在做冲突检查的时候，如果遇到冲突，则首先进行一次 UPDATE。我们在前面 Basic INSERT 小节中已经介绍了，TiDB 的 INSERT 是提交的时候才去 TiKV 真正执行。同样的，UPDATE 语句也是在事务提交的时候才真正去 TiKV 执行的。在这次 UPDATE 中，可能还是会遇到唯一约束冲突的问题，如果遇到了，此时即报错返回，如果该语句是 `INSERT IGNORE ON DUPLICATE KEY UPDATE` 则会忽略这个错误，继续下一行。
 
 在上一步的 UPDATE 中，还需要处理以下场景，如下面这个 SQL：
 
@@ -150,7 +150,7 @@ CREATE TABLE t (i INT UNIQUE);
 INSERT INTO t VALUES (1), (1) ON DUPLICATE KEY UPDATE i = i;
 ```
 
-可以看到，这个 SQL 中，表中原来并没有数据，第二句的 INSERT 也就不可能读到可能冲突的数据，但是，这句 INSERT 本身要插入的两行数据之间冲突了。这里的正确执行应该是，第一个 1 正常插入，第二个 1 插入的时候发现有冲突，更新第一个 1。此时，就需要做如下处理。将上一步被 UPDATE 的数据对应的 Key-Value 从第一步的 Key-Value map 中删掉，将 UPDATE 出来的数据再根据其表信息构造出唯一约束的 Key 和 Value，把这个 Key-Value 对放回第一步读出来 Key-Value map 中，用于后续数据进行冲突检查。这个细节的实现在 `fillBackKeys`。这种场景同样出现在，其他 INSERT 语句中，如 `INSERT IGNORE`、`REPLACE`、`LOAD DATA`。之所以在这里介绍是因为，`INSERT ON DUPLICATE KEY UPDATE` 是最能完整展现 `batchChecker` 的各方面的语句。
+可以看到，这个 SQL 中，表中原来并没有数据，第二句的 INSERT 也就不可能读到可能冲突的数据，但是，这句 INSERT 本身要插入的两行数据之间冲突了。这里的正确执行应该是，第一个 1 正常插入，第二个 1 插入的时候发现有冲突，更新第一个 1。此时，就需要做如下处理。将上一步被 UPDATE 的数据对应的 Key-Value 从第一步的 Key-Value map 中删掉，将 UPDATE 出来的数据再根据其表信息构造出唯一约束的 Key 和 Value，把这个 Key-Value 对放回第一步读出来 Key-Value map 中，用于后续数据进行冲突检查。这个细节的实现在 [fillBackKeys](https://github.com/pingcap/tidb/blob/2fba9931c7ffbb6dd939d5b890508eaa21281b4f/executor/batch_checker.go#L232)。这种场景同样出现在，其他 INSERT 语句中，如 `INSERT IGNORE`、`REPLACE`、`LOAD DATA`。之所以在这里介绍是因为，`INSERT ON DUPLICATE KEY UPDATE` 是最能完整展现 `batchChecker` 的各方面的语句。
 
 最后，同样在所有数据执行完插入/更新后，设置返回信息，并将执行结果返回客户端。
 
@@ -199,4 +199,4 @@ i j k l m
 
 # 写在最后
 
-INSERT 语句是所有 DML 语句中最复杂，功能最强大多变的一个。其既有像 `INSERT ON DUPLICATE UPDATE` 这种能执行 INSERT 也能执行 UPDATE 的语句，也有像 REPLACE 这种一行数据能影响许多行数据的语句。INSERT 语句自身都可以连接一个 SELECT 语句作为待插入数据的输入，因此，其又受到了来自 planner 的影响（关于 planner 的部分详见相关的源码阅读文章 [（七）基于规则的优化](https://www.pingcap.com/blog-cn/tidb-source-code-reading-7/) 和 [（八）基于代价的优化](https://www.pingcap.com/blog-cn/tidb-source-code-reading-8/)）。熟悉 TiDB 的 INSERT 各个语句实现，可以帮助各位读者在将来使用这些语句时，更好地根据其特色使用最为合理、高效语句。另外，如果有兴趣向 TiDB 贡献代码的读者，也可以通过本文更快的理解这部分的实现。
+INSERT 语句是所有 DML 语句中最复杂，功能最强大多变的一个。其既有像 `INSERT ON DUPLICATE UPDATE` 这种能执行 INSERT 也能执行 UPDATE 的语句，也有像 REPLACE 这种一行数据能影响许多行数据的语句。INSERT 语句自身都可以连接一个 SELECT 语句作为待插入数据的输入，因此，其又受到了来自 planner 的影响（关于 planner 的部分详见相关的源码阅读文章： [（七）基于规则的优化](https://www.pingcap.com/blog-cn/tidb-source-code-reading-7/) 和 [（八）基于代价的优化](https://www.pingcap.com/blog-cn/tidb-source-code-reading-8/)）。熟悉 TiDB 的 INSERT 各个语句实现，可以帮助各位读者在将来使用这些语句时，更好地根据其特色使用最为合理、高效语句。另外，如果有兴趣向 TiDB 贡献代码的读者，也可以通过本文更快的理解这部分的实现。
