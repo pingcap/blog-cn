@@ -123,7 +123,7 @@ ERROR 1062 (23000): Duplicate entry '1' for key 'i'
 
 2. 用户希望立刻获取 `INSERT IGNORE` 有哪些行没有写入进去。即，立刻通过 `SHOW WARNINGS` 看到哪些行实际没有写入。
 
-这就需要在执行 `INSERT IGNORE` 的时候，及时检查数据的冲突情况。一个显而易见的做法是，把需要插入的数据试着读出来，当发现冲突后，记一个 warning，再继续下一行。但是对于一个语句插入多行的情况，就需要反复从 TiKV 读取数据来进行检测，显然，这样的效率并不高。于是，TiDB 实现了 [batchChecker](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L43:6)，代码在 `executor/batch_checker.go`。
+这就需要在执行 `INSERT IGNORE` 的时候，及时检查数据的冲突情况。一个显而易见的做法是，把需要插入的数据试着读出来，当发现冲突后，记一个 warning，再继续下一行。但是对于一个语句插入多行的情况，就需要反复从 TiKV 读取数据来进行检测，显然，这样的效率并不高。于是，TiDB 实现了 [batchChecker](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L43:6)，代码在 [executor/batch_checker.go](https://github.com/pingcap/tidb/blob/ab332eba2a04bc0a996aa72e36190c779768d0f1/executor/batch_checker.go)。
 
 在 [batchChecker](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L43:6) 中，首先，拿待插入的数据，将其中可能冲突的唯一约束在 [getKeysNeedCheck](https://github.com/pingcap/tidb/blob/3c0bfc19b252c129f918ab645c5e7d34d0c3d154/executor/batch_checker.go#L85:24) 中构造成 Key（TiDB 是通过构造唯一的 Key 来实现唯一约束的，详见 [《三篇文章了解 TiDB 技术内幕——说计算》](https://pingcap.com/blog-cn/tidb-internal-2/)）。
 
