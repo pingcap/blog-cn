@@ -9,7 +9,7 @@ tags: ['源码阅读','TiDB']
 
 在之前的一篇文章 [《TiDB 源码阅读系列文章（四）Insert 语句概览》](https://pingcap.com/blog-cn/tidb-source-code-reading-4) 中，我们已经介绍了 INSERT 语句的大体流程。为什么需要为 INSERT 单独再写一篇？因为在 TiDB 中，单纯插入一条数据是最简单的情况，也是最常用的情况；更为复杂的是在 INSERT 语句中设定各种行为，比如，对于 Unique Key 冲突的情况应如何处理：是报错？是忽略当前插入的数据？还是覆盖已有数据？所以，这篇会为大家继续深入介绍 INSERT 语句。
 
-本文将首先介绍在 TiDB 中的 INSERT 语句的分类，以及各语句的语法和语义，然后分别介绍五种 INSERT 语句的源码实现。（其中，`INSERT IGNORE ON DUPLICATE KEY UPDATE` 是在 `INSERT ON DUPLICATE KEY UPDATE` 上做了些特殊处理，将不再单独详细介绍，而是放在同一小节中介绍；`LOAD DATA` 由于其自身的特殊性，将留到其他篇章介绍。）
+本文将首先介绍在 TiDB 中的 INSERT 语句的分类，以及各语句的语法和语义，然后分别介绍五种 INSERT 语句的源码实现。
 
 # INSERT 语句的种类
 
@@ -40,6 +40,9 @@ tags: ['源码阅读','TiDB']
 第五种，语法 `REPLACE INTO VALUES ()`，是当冲突后，删除表上的冲突行，并继续尝试插入数据，如再次冲突，则继续删除标上冲突数据，直到表上没有与改行冲突的数据后，插入数据。
 
 最后一种，语法 `LOAD DATA INFILE INTO` 的语义与 `INSERT IGNORE` 相同，都是冲突即忽略，不同的是 `LOAD DATA` 的作用是将数据文件导入到表中，也就是其数据来源于 csv 数据文件。
+
+由于 `INSERT IGNORE ON DUPLICATE KEY UPDATE` 是在 `INSERT ON DUPLICATE KEY UPDATE` 上做了些特殊处理，将不再单独详细介绍，而是放在同一小节中介绍；`LOAD DATA` 由于其自身的特殊性，将留到其他篇章介绍。
+
 
 # Basic INSERT 语句
 
