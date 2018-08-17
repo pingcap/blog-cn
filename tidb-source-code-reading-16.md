@@ -7,7 +7,7 @@ tags: ['源码阅读','TiDB']
 ---
 
 
-在之前的一篇文章 [《TiDB 源码阅读系列文章（四）Insert 语句概览》](https://pingcap.com/blog-cn/tidb-source-code-reading-4) 中，我们已经介绍了 INSERT 语句的大体流程。为什么需要为 INSERT 单独再写一篇？因为在 TiDB 中，单纯插入一条数据是最简单的情况，也是最常用的情况；更为复杂的是在 INSERT 语句中设定各种行为，比如，对于 Unique Key 冲突的情况应如何处理：是报错？是忽略当前插入的数据？还是覆盖已有数据？所以，这篇会为大家继续深入介绍 INSERT 语句。
+在之前的一篇文章 [《TiDB 源码阅读系列文章（四）INSERT 语句概览》](https://pingcap.com/blog-cn/tidb-source-code-reading-4) 中，我们已经介绍了 INSERT 语句的大体流程。为什么需要为 INSERT 单独再写一篇？因为在 TiDB 中，单纯插入一条数据是最简单的情况，也是最常用的情况；更为复杂的是在 INSERT 语句中设定各种行为，比如，对于 Unique Key 冲突的情况应如何处理：是报错？是忽略当前插入的数据？还是覆盖已有数据？所以，这篇会为大家继续深入介绍 INSERT 语句。
 
 本文将首先介绍在 TiDB 中的 INSERT 语句的分类，以及各语句的语法和语义，然后分别介绍五种 INSERT 语句的源码实现。
 
@@ -46,7 +46,7 @@ tags: ['源码阅读','TiDB']
 
 # Basic INSERT 语句
 
-几种 INSERT 语句的最大不同在于执行层面，这里接着 [《TiDB 源码阅读系列文章（四）Insert 语句概览》](https://pingcap.com/blog-cn/tidb-source-code-reading-4) 来讲语句执行过程。不记得前面内容的同学可以返回去看原文章。
+几种 INSERT 语句的最大不同在于执行层面，这里接着 [《TiDB 源码阅读系列文章（四）INSERT 语句概览》](https://pingcap.com/blog-cn/tidb-source-code-reading-4) 来讲语句执行过程。不记得前面内容的同学可以返回去看原文章。
 
 INSERT 的执行逻辑在 [executor/insert.go](https://github.com/pingcap/tidb/blob/ab332eba2a04bc0a996aa72e36190c779768d0f1/executor/insert.go) 中。其实前面讲的前四种 INSERT 的执行逻辑都在这个文件里。这里先讲最普通的 `Basic INSERT`。
 
