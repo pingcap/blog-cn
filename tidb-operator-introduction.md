@@ -79,7 +79,7 @@ TiDB Operator 需要运行在 Kubernetes v1.10 及以上版本。TiDB Operator �
 ```
 git clone https://github.com/pingcap/tidb-operator
 cd tidb-operator
-NUM_NODES=3    # the default node numble is 2
+NUM_NODES=3    # the default node number is 2
 KUBE_REPO_PREFIX=uhub.ucloud.cn/pingcap manifests/local-dind/dind-cluster-v1.10.sh up
 ```
 
@@ -89,7 +89,7 @@ KUBE_REPO_PREFIX=uhub.ucloud.cn/pingcap manifests/local-dind/dind-cluster-v1.10.
 
 	```
 	kubectl apply -f manifests/crd.yaml
-	helm install charts/tidb-operator --name=tidb-operator --namespace=tidb-	admin
+	helm install charts/tidb-operator --name=tidb-operator --namespace=tidb-admin
 	```
 
 2. 部署 TiDB 集群
