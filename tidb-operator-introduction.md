@@ -7,7 +7,7 @@ summary: TiDB Operator 已经正式开源，本文将详细介绍 TiDB Operator 
 tags: ['Cloud-TiDB','TiDB Operator']
 ---
 
-TiDB Operator 是 TiDB 在 Kubernetes 平台上的自动化部署运维工具，借助 TiDB Operator，TiDB 可以无缝运行在公有云厂商提供的 Kubernetes 平台上，让 TiDB 成为真正的 Cloud-Native 数据库。
+TiDB Operator 是 TiDB 在 Kubernetes 平台上的自动化部署运维工具。目前，TiDB Operator 已正式开源（[pingcap/tidb-operator](https://github.com/pingcap/tidb-operator/)）。借助 TiDB Operator，TiDB 可以无缝运行在公有云厂商提供的 Kubernetes 平台上，让 TiDB 成为真正的 Cloud-Native 数据库。
 
 要了解 TiDB Operator，首先需要对 TiDB 和 Kubernetes 有一定了解，相信长期以来一直关注 TiDB 的同学可能对 TiDB 已经比较熟悉了。本文将首先简单介绍一下 TiDB 和 Kubernetes，聊一聊为什么我们要做 TiDB Operator，然后讲讲如何快速体验 TiDB Operator，以及如何参与到 TiDB Operator 项目中来成为 Contributor。
 
@@ -57,7 +57,7 @@ Kubernetes 直到 v1.7 才试验性引入本地 PV，在这之前只有网络 PV
 
 Operator 本质上是 Kubernetes 的控制器（Controller），其核心思想是用户给定一个 Spec 描述文件，Controller 根据 Spec 的变化，在 Kubernetes 集群中创建对应资源，并且不断调整资源使其状态满足用户预期的 Spec。
 
-![tidb-operator.png](https://upload-images.jianshu.io/upload_images/542677-bc69ec093f27ad80.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![TiDB-Operator.png](https://upload-images.jianshu.io/upload_images/542677-bc69ec093f27ad80.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 上图是 TiDB Operator 工作流程原理图，其中 TidbCluster 是通过 CRD（Custom Resource Definition）扩展的内置资源类型：
