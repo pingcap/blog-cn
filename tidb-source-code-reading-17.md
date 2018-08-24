@@ -30,18 +30,22 @@ TiDB 的 DDL 通过实现 Google F1 的在线异步 schema 变更算法，来完
 
 TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
-![](https://upload-images.jianshu.io/upload_images/542677-a8675f258a152691.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+| File | Introduction |
+| :------------- | :------------------------------------------ | 
+| `ddl.go` | 包含 DDL 接口定义和其实现。 |
+| `ddl_api.go` | 提供 create , drop , alter , truncate , rename 等操作的 API，供 Executor 调用。主要功能是封装 DDL 操作的 job 然后存入 DDL job queue，等待 job 执行完成后返回。| 
+| `ddl_worker.go` | DDL worker 的实现。owner 节点的 worker 从 job queue 中取 job，然后执行，执行完成后将 job 存入 job history queue 中。| 
+| `syncer.go` | 负责同步 ddl worker 的 owner 和 follower 间的 schema version。 每次 DDL 状态变更后 `schema version ID` 都会加 1。|
 
 `ddl owner` 相关的代码单独放在 `owner` 目录下，实现了 owner 选举等功能。
 
 另外，`ddl job queue` 和 `history ddl job queue` 这两个队列都是持久化到 TiKV 中的。`structure` 目录下有 list，`hash` 等数据结构在 TiKV 上的实现。
 
-本文接下来按照 TiDB 源码的 **origin/source-code** 分支讲解，最新的 master 分支和 source-code 分支代码会稍有一些差异。
+**本文接下来按照 TiDB 源码的 [origin/source-code](https://github.com/pingcap/tidb/tree/source-code) 分支讲解，最新的 master 分支和 source-code 分支代码会稍有一些差异。**
 
 ## Create table
 
-`create table` 需要把 `table` 的元信息（[TableInfo](https://github.com/pingcap/tidb/blob/source-code/model/model.go#L95)）从 SQL 中解析出来，做一些检查，然后把 table 的 元信息持久化保存到 TiKV 中。具体流程如下：
+`create table` 需要把 `table` 的元信息（[TableInfo](https://github.com/pingcap/tidb/blob/source-code/model/model.go#L95)）从 SQL 中解析出来，做一些检查，然后把 table 的元信息持久化保存到 TiKV 中。具体流程如下：
 
 1. 语法解析：[ParseSQL](https://github.com/pingcap/tidb/blob/source-code/session.go#L790) 解析成抽象语法树：[CreateTableStmt](https://github.com/pingcap/tidb/blob/source-code/ast/ddl.go#L393)。
 
@@ -49,7 +53,7 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 3. 生成执行器：[buildExecutor](https://github.com/pingcap/tidb/blob/source-code/executor/adapter.go#L227) 生成 [ DDLExec](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L33) 执行器。TiDB 的执行器是火山模型。
 
-4. 执行器调用 [e.Next](https://github.com/pingcap/tidb/blob/source-code/executor/adapter.go#L300) 开始执行，即 [DDLExec.Next](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L42) 方法，判断 DDL 类型后执行 [executeCreateTable](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L68) , 其实质是调用 ddl_api.go 的 [CreateTable](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_api.go#L739) 函数。
+4. 执行器调用 [e.Next](https://github.com/pingcap/tidb/blob/source-code/executor/adapter.go#L300) 开始执行，即 [DDLExec.Next](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L42) 方法，判断 DDL 类型后执行 [executeCreateTable](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L68) , 其实质是调用 `ddl_api.go` 的 [CreateTable](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_api.go#L739) 函数。
 
 5. [CreateTable](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_api.go#L739) 方法是主要流程如下：
 
