@@ -124,7 +124,7 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 目前 TiDB 最新的 Master 分支的 DDL 引入了并行 DDL，用来加速多个 DDL 语句的执行速度。因为串行执行 DDL 时，`add index` 操作需要把 table 中已有的数据回填到 `index record` 中，如果 table 中的数据较多，回填数据的耗时较长，就会阻塞后面 DDL 的操作。目前并行 DDL 的设计是将 `add index job` 放到新增的 `add index job queue` 中去，其它类型的 DDL job 还是放在原来的 `job queue`。相应的，也增加一个 `add index worker` 来处理 `add index job queue` 中的 `job`。
 
-![New Parallel DDL 流程图](https://upload-images.jianshu.io/upload_images/542677-4b5ec5edef0755a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 2：并行 DDL 处理流程](https://upload-images.jianshu.io/upload_images/542677-4b5ec5edef0755a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <center>图 2：并行 DDL 处理流程</center>
 
