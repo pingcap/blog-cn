@@ -157,7 +157,7 @@ Session 中最重要的函数是 [Execute](https://github.com/pingcap/tidb/blob/
 
 我们进入 [Compile 函数](https://github.com/pingcap/tidb/blob/source-code/executor/compiler.go#L37)，可以看到三个重要步骤：
 
-+ `plan.Prepprocess`: 做一些合法性检查以及名字绑定；
++ `plan.Preprocess`: 做一些合法性检查以及名字绑定；
 
 + `plan.Optimize`：制定查询计划，并优化，这个是最核心的步骤之一，后面的文章会重点介绍；
 
