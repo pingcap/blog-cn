@@ -72,7 +72,7 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 * 修改 table 的元信息，把 `indexInfo` 加入到 table 的元信息中去。
 
-* 把 table 中已有了的数据行，把 `index columns` 的值全部回填到 `ndex record` 中去。
+* 把 table 中已有了的数据行，把 `index columns` 的值全部回填到 `index record` 中去。
 
 具体执行流程的前部分的 SQL 解析、Compile 等流程，和 `create table` 一样，可以直接从 [DDLExec.Next](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L42) 开始看，然后调用 `alter` 语句的 [e.executeAlterTable(x)](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L78) 函数，其实质调 ddl 的 [AlterTable](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_api.go#L862) 函数，然后调用 [CreateIndex](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_api.go#L1536) 函数，开始执行 add index 的主要工作，具体流程如下：
 
@@ -82,7 +82,7 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 3. 给 job 获取一个 global job ID 然后放到 DDL job 队列中去。
 
-4. `owner ddl worker` 从 DDL job 队列中取出 job，根据 job 的类型调用。[onCreateIndex](https://github.com/pingcap/tidb/blob/source-code/ddl/index.go#L177) 函数。
+4. `owner ddl worker` 从 DDL job 队列中取出 job，根据 job 的类型调用 [onCreateIndex](https://github.com/pingcap/tidb/blob/source-code/ddl/index.go#L177) 函数。
     * `buildIndexInfo` 生成 `indexInfo`，然后更新 `tableInfo` 中的 `Indices`，持久化到 TiKV 中去。
     * 这里引入了 online schema change 的几个步骤，[需要留意 indexInfo 的状态变化](https://github.com/pingcap/tidb/blob/source-code/ddl/index.go#L237)：`none -> delete only -> write only -> reorganization ->  public`。在 `reorganization -> public` 时，首先调用 [getReorgInfo](https://github.com/pingcap/tidb/blob/source-code/ddl/reorg.go#L147) 获取 `reorgInfo`，主要包含需要 `reorganization` 的 range，即从表的第一行一直到最后一行数据都需要回填到 `index record` 中。然后调用 [runReorgJob](https://github.com/pingcap/tidb/blob/source-code/ddl/reorg.go#L72) , [addTableIndex](https://github.com/pingcap/tidb/blob/source-code/ddl/index.go#L554) 函数开始填充数据到 `index record`中去。[runReorgJob](https://github.com/pingcap/tidb/blob/source-code/ddl/reorg.go#L112) 函数会定期保存回填数据的进度到 TiKV。[addTableIndex](https://github.com/pingcap/tidb/blob/source-code/ddl/index.go#L566) 的流程如下：
         * 启动多个 `worker` 用于并发回填数据到 `index record`。
