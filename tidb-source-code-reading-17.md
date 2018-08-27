@@ -72,7 +72,7 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 * 修改 table 的元信息，把 `indexInfo` 加入到 table 的元信息中去。
 
-* 把 table 中已有了的数据行，把 `index columns` 的值全部回填到 `ndex record` 中去。
+* 把 table 中已有了的数据行，把 `index columns` 的值全部回填到 `index record` 中去。
 
 具体执行流程的前部分的 SQL 解析、Compile 等流程，和 `create table` 一样，可以直接从 [DDLExec.Next](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L42) 开始看，然后调用 `alter` 语句的 [e.executeAlterTable(x)](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L78) 函数，其实质调 ddl 的 [AlterTable](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_api.go#L862) 函数，然后调用 [CreateIndex](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_api.go#L1536) 函数，开始执行 add index 的主要工作，具体流程如下：
 
