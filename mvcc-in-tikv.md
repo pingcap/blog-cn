@@ -96,7 +96,7 @@ impl Storage {
 Ok，了解完`Storage` 结构体是如何实现的之后，我们终于可以接触到在`Scheduler` [被调用的 MVCC 层](https://github.com/pingcap/tikv/blob/master/src/storage/txn/scheduler.rs#L763)了。
 
 
-当 storage 接收到从客户端来的指令后会将其传送到调度器中。然后调度器执行相应的过程或者调用相应的[异步函数](https://github.com/pingcap/tikv/blob/master/src/storage/txn/scheduler.rs#L643)。在调度器中有两种操作类型，读和写。读操作在 [MvccReader](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/reader.rs#L20) 中实现，这一部分很容易理解，暂且不表。写操作的部分是MVCC的核心。
+当 storage 接收到从客户端来的指令后会将其传送到调度器中。然后调度器执行相应的过程或者调用相应的[异步函数](https://github.com/pingcap/tikv/blob/master/src/storage/txn/scheduler.rs#L643)。在调度器中有两种操作类型，读和写。读操作在 [MvccReader](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/mvcc/reader.rs#L20) 中实现，这一部分很容易理解，暂且不表。写操作的部分是MVCC的核心。
 
 
 #### 5. MVCC
