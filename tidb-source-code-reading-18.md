@@ -28,7 +28,7 @@ tags: ['源码阅读','TiDB']
 
 ## 如何定位 key 所在的 tikv-server
 
-我们需要回顾一下之前 [《三篇文章了解 TiDB 技术内幕——说存储》](https://pingcap.com/blog-cn/tidb-internal-1/) 。这篇文章中介绍过的一个重要的概念：Region。
+我们需要回顾一下之前 [《三篇文章了解 TiDB 技术内幕——说存储》](https://pingcap.com/blog-cn/tidb-internal-1/) 这篇文章中介绍过的一个重要的概念：Region。
 
 TiDB 的数据分布是以 Region 为单位的，一个 Region 包含了一个范围内的数据，通常是 96MB 的大小，Region 的 meta 信息包含了 StartKey 和 EndKey 这两个属性。当某个 key >= StartKey && key < EndKey 的时候，我们就知道了这个 key 所在的 Region，然后我们就可以通过查找该 Region 所在的 TiKV 地址，去这个地址读取这个 key 的数据。
 
