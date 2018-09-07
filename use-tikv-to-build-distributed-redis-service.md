@@ -1,9 +1,8 @@
-
 ---
 title: 使用 TiKV 构建分布式类 Redis 服务
 author: ['唐刘']
 date: 2018-09-07
-summary: 本文将介绍 Redis 的特性与不足，以及使用 TiKV 构建分布式类 Redis 服务的上手
+summary: 本文将介绍 Redis 的特性与不足，以及使用 TiKV 构建分布式类 Redis 服务的
 tags: ['Redis', 'TiKV']
 ---
 
