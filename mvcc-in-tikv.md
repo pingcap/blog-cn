@@ -28,7 +28,7 @@ tags: ['TiKV', '可串行化', '多版本并发控制', '2PC', '隔离级别']
 
 
 #### 2. Storage
-从源码结构上来看，想要深入理解 TiKV 中的 MVCC 部分，[src/storage](https://github.com/pingcap/tikv/blob/master/src/storage/mod.rs) 是一个非常好的入手点。 `Storage` 是实际上接受外部命令的结构体。
+从源码结构上来看，想要深入理解 TiKV 中的 MVCC 部分，[src/storage](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/mod.rs) 是一个非常好的入手点。 `Storage` 是实际上接受外部命令的结构体。
 
 ```rust
 pub struct Storage {
@@ -83,7 +83,7 @@ impl Storage {
 
 
 #### 3. Engine
-首先是 [Engine](https://github.com/pingcap/tikv/blob/master/src/storage/engine/mod.rs#L44)。 `Engine` 是一个描述了在储存系统中接入的的实际上的数据库的接口，[raftkv](https://github.com/pingcap/tikv/blob/master/src/storage/engine/raftkv.rs#L91) 和 [Enginerocksdb](https://github.com/pingcap/tikv/blob/master/src/storage/engine/rocksdb.rs#L66) 分别实现了这个接口。
+首先是 [Engine](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/engine/mod.rs#L44)。 `Engine` 是一个描述了在储存系统中接入的的实际上的数据库的接口，[raftkv](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/engine/raftkv.rs#L91) 和 [Enginerocksdb](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/engine/rocksdb.rs#L66) 分别实现了这个接口。
 
 
 #### 4. StorageHandle
@@ -93,10 +93,10 @@ impl Storage {
 接下来在`Storage`中实现了`async_get` 和`async_batch_get`等异步函数，这些函数中将对应的指令送到通道中，然后被调度器（scheduler）接收到并异步执行。
 
 
-Ok，了解完`Storage` 结构体是如何实现的之后，我们终于可以接触到在`Scheduler` [被调用的 MVCC 层](https://github.com/pingcap/tikv/blob/master/src/storage/txn/scheduler.rs#L763)了。
+Ok，了解完`Storage` 结构体是如何实现的之后，我们终于可以接触到在`Scheduler` [被调用的 MVCC 层](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/txn/scheduler.rs#L763)了。
 
 
-当 storage 接收到从客户端来的指令后会将其传送到调度器中。然后调度器执行相应的过程或者调用相应的[异步函数](https://github.com/pingcap/tikv/blob/master/src/storage/txn/scheduler.rs#L643)。在调度器中有两种操作类型，读和写。读操作在 [MvccReader](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/mvcc/reader.rs#L20) 中实现，这一部分很容易理解，暂且不表。写操作的部分是MVCC的核心。
+当 storage 接收到从客户端来的指令后会将其传送到调度器中。然后调度器执行相应的过程或者调用相应的[异步函数](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/txn/scheduler.rs#L643)。在调度器中有两种操作类型，读和写。读操作在 [MvccReader](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/mvcc/reader.rs#L20) 中实现，这一部分很容易理解，暂且不表。写操作的部分是MVCC的核心。
 
 
 #### 5. MVCC
@@ -105,16 +105,16 @@ Ok，两段提交（2-Phase Commit，2PC）是在 MVCC 中实现的，整个 TiK
 
 ##### Prewrite
 选择一个 row 作为 primary row， 余下的作为 secondary row。
-对primary row [上锁](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/txn.rs#L80). 在上锁之前，会检查[是否有其他同步的锁已经上到了这个 row 上](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/txn.rs#L71) 或者是是否经有在 startTS 之后的提交操作。这两种情况都会导致冲突，一旦都冲突发生，就会[回滚（rollback）](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/txn.rs#L115)。
+对primary row [上锁](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/mvcc/txn.rs#L80). 在上锁之前，会检查[是否有其他同步的锁已经上到了这个 row 上](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/mvcc/txn.rs#L71) 或者是是否经有在 startTS 之后的提交操作。这两种情况都会导致冲突，一旦都冲突发生，就会[回滚（rollback）](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/mvcc/txn.rs#L115)。
 对于 secondary row 重复以上操作。
 
 
 ##### Commit
-[Rollback](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/txn.rs#L115) 在`Prewrite` 过程中出现冲突的话就会被调用。
+[Rollback](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/mvcc/txn.rs#L115) 在`Prewrite` 过程中出现冲突的话就会被调用。
 
 
 ##### Garbage Collector
-很容易发现，如果没有[垃圾收集器（Gabage Collector）](https://github.com/pingcap/tikv/blob/master/src/storage/mvcc/txn.rs#L143) 来移除无效的版本的话，数据库中就会存有越来越多的 MVCC 版本。但是我们又不能仅仅移除某个 safe point 之前的所有版本。因为对于某个 key 来说，有可能只存在一个版本，那么这个版本就必须被保存下来。在`TiKV`中，如果在 safe point 前存在 `Put` 或者 `Delete` 记录，那么比这条记录更旧的写入记录都是可以被移除的，不然的话只有`Delete`，`Rollback`和`Lock` 会被删除。
+很容易发现，如果没有[垃圾收集器（Gabage Collector）](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/storage/mvcc/txn.rs#L143) 来移除无效的版本的话，数据库中就会存有越来越多的 MVCC 版本。但是我们又不能仅仅移除某个 safe point 之前的所有版本。因为对于某个 key 来说，有可能只存在一个版本，那么这个版本就必须被保存下来。在`TiKV`中，如果在 safe point 前存在 `Put` 或者 `Delete` 记录，那么比这条记录更旧的写入记录都是可以被移除的，不然的话只有`Delete`，`Rollback`和`Lock` 会被删除。
 
 
 
@@ -130,6 +130,6 @@ Ok，两段提交（2-Phase Commit，2PC）是在 MVCC 中实现的，整个 TiK
 Details can be found [here](https://github.com/pingcap/tikv/issues/1077).
 
 
-因为所有的 MVCC 信息在 Rocksdb 中都是储存在 CF Key-Value 中，所以想要查询一个 Key 的版本信息，我们只需要将这些信息以不同的方式编码，随后在对应的 CF 中查询即可。CF Key-Values 的 [表示形式](https://github.com/pingcap/tikv/blob/master/src/bin/tikv-ctl.rs#L210)。
+因为所有的 MVCC 信息在 Rocksdb 中都是储存在 CF Key-Value 中，所以想要查询一个 Key 的版本信息，我们只需要将这些信息以不同的方式编码，随后在对应的 CF 中查询即可。CF Key-Values 的 [表示形式](https://github.com/tikv/tikv/blob/1050931de5d9b47423f997d6fc456bd05bd234a7/src/bin/tikv-ctl.rs#L210)。
 
 [1]: https://en.wikipedia.org/wiki/Two-phase_locking
