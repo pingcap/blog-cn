@@ -1,9 +1,9 @@
 ---
 title: TiKV 集群版本的安全迁移
 author: ['陈书宁']
-date: 2018-09-20
+date: 2018-09-19
 summary: 本文会详细介绍 TiKV 集群版本迁移的实现步骤，enjoy～
-tags: ['TiKV', '版本迁移']
+tags: ['TiKV','版本迁移']
 ---
 
 
