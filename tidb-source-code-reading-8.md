@@ -14,7 +14,7 @@ tags: ['源码阅读','TiDB']
 
 ## 优化器框架 
 
-一般优化器分两个阶段进行优化，即基于规则的优化（Rule-Based-Opimization，简称 RBO）和基于代价的优化（CBO）。 
+一般优化器分两个阶段进行优化，即基于规则的优化（Rule-Based-Optimization，简称 RBO）和基于代价的优化（CBO）。 
 
 TiDB 主要分为两个模块对计划进行优化：
 
