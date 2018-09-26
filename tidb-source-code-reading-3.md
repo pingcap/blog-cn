@@ -184,7 +184,7 @@ Session 中最重要的函数是 [Execute](https://github.com/pingcap/tidb/blob/
 ```
 
 
-这个结构实现了 [`ast.RecordSet`](https://github.com/pingcap/tidb/blob/master/ast/ast.go#L136) 接口，从字面上大家可以看出，这个接口代表了查询结果集的抽象，我们看一下它的几个方法：
+这个结构实现了 [`ast.RecordSet`](https://github.com/pingcap/tidb/blob/master/ast/ast.go#L142) 接口，从字面上大家可以看出，这个接口代表了查询结果集的抽象，我们看一下它的几个方法：
 
 ```
 	// RecordSet is an abstract result set interface to help get data from Plan.
