@@ -30,7 +30,7 @@ distsql 是位于 SQL 层和 coprocessor 之间的一层抽象，它把下层的
 
 找到所有 KeyRange 包含的所有的 region 以后，我们需要按照 region 的 range 把 key range list 进行切分，让每个 coprocessor task 里的 key range list 不会超过 region 的范围。
 
-构造出了 所有 coprocessor task 之后，下一步就是执行这些 task 了。
+构造出了所有 coprocessor task 之后，下一步就是执行这些 task 了。
 
 ### copIterator 的执行模式
 
@@ -46,11 +46,11 @@ coprocessor 请求如果是由 `Next` 触发的，每次调用 `Next` 就必须�
 
 在 copIterator 创建的时候，我们启动一个后台 worker goroutine 来依次执行所有的 coprocessor task，并把执行结果发送到一个 response channel，这样前台 `Next` 方法只需要从这个 channel 里  receive 一个 coprocessor response 就可以了。如果这个 task 已经执行完成，`Next` 方法可以直接获取到结果，立即返回。
 
-当所有 coprocessor task 被  work 执行完成的时候，worker 把这个 response channel 关闭，`Next` 方法在 receive channel 的时候发现 channel 已经关闭，就可以返回 `nil response`，表示所有结果都处理完成了。
+当所有 coprocessor task 被 work 执行完成的时候，worker 把这个 response channel 关闭，`Next` 方法在 receive channel 的时候发现 channel 已经关闭，就可以返回 `nil response`，表示所有结果都处理完成了。
 
 以上的执行方案还是存在一个问题，就是 coprocessor task 只有一个 worker 在执行，没有并行，性能还是不理想。
 
-为了增大并行度，我们可以构造多个 worker 来执行 task，把所有的 task 发送到一个 task channel，多个 worker 从这个一个 channel 读取 task，执行完成后，把结果发到 response channel，通过设置 worker 的数量控制并发度。
+为了增大并行度，我们可以构造多个 worker 来执行 task，把所有的 task 发送到一个 task channel，多个 worker 从这一个 channel 读取 task，执行完成后，把结果发到 response channel，通过设置 worker 的数量控制并发度。
 
 这样改造以后，就可以充分的并行执行了，但是这样带来一个新的问题，task 是有序的，但是由于多个 worker 并行执行，返回的 response 顺序是乱序的。对于不要求结果有序的 distsql 请求，这个执行模式是可行的，我们使用这个模式来执行。对于要求结果有序的 distsql 请求，就不能满足要求了，我们需要另一种执行模式。
 
@@ -92,7 +92,7 @@ copIterator 在 `Next` 里会根据结果是否有序，选择相应的执行模
 
 * [从 `memBuffer` 和 `lockedKeys` 里收集所有的 key 和 mutation](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L91)
 
-    `memBuffer` 里的 key 是有序排列的，我们从头遍历 `memBuffer` 可以顺序的收集到事务里需要修改的 key，value 长度为 0 的 entry 表示 `DELETE` 操作，value 长度大于 0 表示 `PUT` 操作，`memBuffer` 里的第一个 key 做为事务的 primary key。`lockKeys` 里保存的是不需要修改，但需要加读锁的 key，也会做为 mutation 的 `LOCK `操作，写到 TiKV 上。
+    `memBuffer` 里的 key 是有序排列的，我们从头遍历 `memBuffer` 可以顺序的收集到事务里需要修改的 key，value 长度为 0 的 entry 表示 `DELETE` 操作，value 长度大于 0 表示 `PUT` 操作，`memBuffer` 里的第一个 key 做为事务的 primary key。`lockKeys` 里保存的是不需要修改，但需要加读锁的 key，也会做为 mutation 的 `LOCK ` 操作，写到 TiKV 上。
 
 * [计算事务的大小是否超过限制](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L132)
 
@@ -102,7 +102,7 @@ copIterator 在 `Next` 里会根据结果是否有序，选择相应的执行模
 
 * [计算事务的 TTL 时间](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L164)
 
-    如果一个事务的 key 通过 `prewrite` 加锁后，事务没有执行完，tidb-server 就挂掉了，这时候集群内其他 tidb-server 是无法读取这个 key 的，如果没有 TTL，就会死锁。设置了  TTL 之后，读请求就可以在 TTL 超时之后执行清锁，然后读取到数据。
+    如果一个事务的 key 通过 `prewrite` 加锁后，事务没有执行完，tidb-server 就挂掉了，这时候集群内其他 tidb-server 是无法读取这个 key 的，如果没有 TTL，就会死锁。设置了 TTL 之后，读请求就可以在 TTL 超时之后执行清锁，然后读取到数据。
 
     我们计算一个事务的超时时间需要考虑正常执行一个事务需要花费的时间，如果太短会出现大的事务无法正常执行完的问题，如果太长，会有异常退出导致某个 key 长时间无法访问的问题。所以使用了这样一个算法，TTL 和事务的大小的平方根成正比，并控制在一个最小值和一个最大值之间。
 
@@ -126,7 +126,7 @@ copIterator 在 `Next` 里会根据结果是否有序，选择相应的执行模
 
 [prewriteKeys](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L533),  [commitKeys](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L537) 和 [cleanupKeys](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L541) 有很多相同的逻辑，需要把 keys 根据 region 分成 batch，然后对每个 batch 执行一次 RPC。
 
-当 RPC  返回 region 过期的错误时，我们需要把这个 region 上的 keys 重新分成 batch，发送 RPC 请求。
+当 RPC 返回 region 过期的错误时，我们需要把这个 region 上的 keys 重新分成 batch，发送 RPC 请求。
 
 这部分逻辑我们把它抽出来，放在 [doActionOnKeys](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L191) 和 [doActionOnBatches](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L239) 里，并实现 [prewriteSinlgeBatch](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L319)，[commitSingleBatch](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L421)，[cleanupSingleBatch](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L497) 函数，用来执行单个 batch 的 RPC 请求。
 
