@@ -92,13 +92,13 @@ copIterator 在 `Next` 里会根据结果是否有序，选择相应的执行模
 
 * [从 `memBuffer` 和 `lockedKeys` 里收集所有的 key 和 mutation](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L91)
 
-    `memBuffer` 里的 key 是有序排列的，我们从头遍历 `memBuffer` 可以顺序的收集到事务里需要修改的 key，value 长度为 0 的 entry 表示 `DELETE` 操作，value 长度大于 0 表示 `PUT` 操作，`memBuffer` 里的第一个 key 做为事务的 primary key。`lockKeys` 里保存的是不需要修改，但需要加读锁的 key，也会做为 mutation 的 `LOCK `操作，写到 tikv 上。
+    `memBuffer` 里的 key 是有序排列的，我们从头遍历 `memBuffer` 可以顺序的收集到事务里需要修改的 key，value 长度为 0 的 entry 表示 `DELETE` 操作，value 长度大于 0 表示 `PUT` 操作，`memBuffer` 里的第一个 key 做为事务的 primary key。`lockKeys` 里保存的是不需要修改，但需要加读锁的 key，也会做为 mutation 的 `LOCK `操作，写到 TiKV 上。
 
 * [计算事务的大小是否超过限制](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L132)
 
     在收集 mutation 的时候，会统计整个事务的大小，如果超过了最大事务限制，会返回报错。
 
-    太大的事务可能会让 tikv 集群压力过大，执行失败并导致集群不可用，所以要对事务的大小做出硬性的限制。
+    太大的事务可能会让 TiKV 集群压力过大，执行失败并导致集群不可用，所以要对事务的大小做出硬性的限制。
 
 * [计算事务的 TTL 时间](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L164)
 
