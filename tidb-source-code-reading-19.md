@@ -2,12 +2,12 @@
 title: TiDB 源码阅读系列文章（十九）tikv-client（下）
 author: ['周昱行']
 date: 2018-09-26
-summary: 本文将继续介绍 tikv-client 里两个主要的模块——负责处理分布式计算的 copIterator 和执行二阶段提交的 twoPhaseCommitter。
+summary: 本文将继续介绍 tikv-client 里的两个主要的模块——负责处理分布式计算的 copIterator 和执行二阶段提交的 twoPhaseCommitter。
 tags: ['源码阅读','TiDB']
 ---
 
 
-[上篇文章](http://pingcap.com/blog-cn/tidb-source-code-reading-18/) 中，我们介绍了数据读写过程中 tikv-client 需要解决的几个具体问题，本文将继续介绍 tikv-client 里两个主要的模块——负责处理分布式计算的 copIterator 和执行二阶段提交的 twoPhaseCommitter。
+[上篇文章](http://pingcap.com/blog-cn/tidb-source-code-reading-18/) 中，我们介绍了数据读写过程中 tikv-client 需要解决的几个具体问题，本文将继续介绍 tikv-client 里的两个主要的模块——负责处理分布式计算的 copIterator 和执行二阶段提交的 twoPhaseCommitter。
 
 
 ## copIterator
@@ -18,7 +18,7 @@ tags: ['源码阅读','TiDB']
 
 tikv-server 通过 coprocessor 接口，支持部分 SQL 层的计算能力，大部分只涉及单表数据的常用的算子都可以下推到 tikv-server 上计算，计算下推以后，从存储引擎读取的数据虽然是一样的多，但是通过网络返回的数据会少很多，可以大幅节省序列化和网络传输的开销。
 
-distsql 是位于 SQL 层和 coprocessor 之间的一层抽象，它把下层的 coprocessor 请求封装起来对上层提供一个简单的 `Select` 方法。执行一个单表的计算任务。最上层的 SQL 语句可能会包含 JOIN，SUBQUERY 等复杂算子，涉及很多的表，而 distsql 只涉及到单个表的数据。一个 distsql 请求会涉及到多个 region，我们要对涉及到的每一个 region 执行一次 coprocessor 请求。
+distsql 是位于 SQL 层和 coprocessor 之间的一层抽象，它把下层的 coprocessor 请求封装起来对上层提供一个简单的 `Select` 方法。执行一个单表的计算任务。最上层的 SQL 语句可能会包含 `JOIN`，`SUBQUERY` 等复杂算子，涉及很多的表，而 distsql 只涉及到单个表的数据。一个 distsql 请求会涉及到多个 region，我们要对涉及到的每一个 region 执行一次 coprocessor 请求。
 
 所以它们的关系是这样的，一个 SQL 语句包含多个 distsql 请求，一个 distsql 请求包含多个 coprocessor 请求。
 
@@ -102,7 +102,7 @@ copIterator 在 `Next` 里会根据结果是否有序，选择相应的执行模
 
 * [计算事务的 TTL 时间](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L164)
 
-    如果一个事务的 key 通过 `preWrite` 加锁后，事务没有执行完，tidb-server 就挂掉了，这时候集群内其他 tidb-server 是无法读取这个 key 的，如果没有 TTL，就会死锁。设置了  TTL 之后，读请求就可以在 TTL 超时之后执行清锁，然后读取到数据。
+    如果一个事务的 key 通过 `prewrite` 加锁后，事务没有执行完，tidb-server 就挂掉了，这时候集群内其他 tidb-server 是无法读取这个 key 的，如果没有 TTL，就会死锁。设置了  TTL 之后，读请求就可以在 TTL 超时之后执行清锁，然后读取到数据。
 
     我们计算一个事务的超时时间需要考虑正常执行一个事务需要花费的时间，如果太短会出现大的事务无法正常执行完的问题，如果太长，会有异常退出导致某个 key 长时间无法访问的问题。所以使用了这样一个算法，TTL 和事务的大小的平方根成正比，并控制在一个最小值和一个最大值之间。
 
