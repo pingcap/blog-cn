@@ -44,10 +44,10 @@ TiDB 在设计的时候也是一个 CP + HA 系统，多数时候也是一个 CA
 2. 为什么要用时间？判断两个事件的先后顺序，时间是一个非常直观的度量方式，另外，如果用时间跟事件关联，那么我们就能知道某一个时间点整个系统的 snapshot。在 TiDB 的用户里面，一个非常典型的用法就是在游戏里面确认用户是否谎报因为回档丢失了数据，假设用户说在某个时间点得到某个装备，但后来又没有了，我们就可以直接在那个特定的时间点查询这个用户的数据，从而知道是否真的有问题。
 3. 我们不光可以用时间来确定以前的 snapshot，同样也可以用时间来约定集群会在未来达到某个状态。这个典型的应用就是 shema change。虽然笔者不清楚 Spanner schema change 的实现，但 Google F1 有一篇 [Online, Asynchronous Schema Change in F1](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41376.pdf) 论文提到了相关的方法，而 TiDB 也是采用的这种实现方式。简单来说，对于一个 schema change，通常都会分几个阶段来完成，如果集群某个节点在未来一个约定的时间没达到这个状态，这个节点就需要自杀下线，防止因为数据不一致损坏数据。
 
-使用 TrueTime，Spanner 可以非常方便的实现笔者提到的用法，但 TureTime 也并不是万能的：
+使用 TrueTime，Spanner 可以非常方便的实现笔者提到的用法，但 TrueTime 也并不是万能的：
 
-+ TureTime 需要依赖 atomic clock 和 GPS，这属于硬件方案，而 Google 并没有论文说明如果构造 TrueTime，对于其他用户的实际并没有太多参考意义。
-+ TureTime 也会有误差范围，虽然非常的小，在毫秒级别以下，所以我们需要等待一个最大的误差时间，才能确保事务的相关顺序。
++ TrueTime 需要依赖 atomic clock 和 GPS，这属于硬件方案，而 Google 并没有论文说明如果构造 TrueTime，对于其他用户的实际并没有太多参考意义。
++ TrueTime 也会有误差范围，虽然非常的小，在毫秒级别以下，所以我们需要等待一个最大的误差时间，才能确保事务的相关顺序。
 
 ## Transaction
 
@@ -112,7 +112,7 @@ TiDB 现在并没有使用 1PC 的方式，但不排除未来也针对单个 reg
 1. API Layer 发现 Row 1，Row 2，和 Row 3 在 Split1，Split 2 和 Split 3 上面。
 2. API Layer  通过 TrueTime 获取一个 read timestamp（如果我们能够接受 Stale Read 也可以直接选择一个以前的 timestamp 去读）。
 3. API Layer 将读的请求发给 Split 1，Split 2 和 Split 3 的一些副本上面，这里有几种情况：
-	+ 多数情况下面，各个副本能通过内部状态和 TureTime 知道自己有最新的数据，直接能提供 read。
+	+ 多数情况下面，各个副本能通过内部状态和 TrueTime 知道自己有最新的数据，直接能提供 read。
 	+ 如果一个副本不确定是否有最新的数据，就像 Leader 问一下最新提交的事务 timestamp 是啥，然后等到这个事务被 apply 了，就可以提供 read。
 	+ 如果副本本来就是 Leader，因为 Leader 一定有最新的数据，所以直接提供 read。
 4. 各个副本的结果汇总然会返回给 client。
