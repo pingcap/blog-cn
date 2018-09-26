@@ -14,7 +14,7 @@ tags: ['源码阅读','TiDB']
 
 ### copIterator 是什么
 
-在介绍 copIterator 的概念之前，我们需要简单回顾一下前面 [TiDB 源码阅读系列文章（六）](https://pingcap.com/blog-cn/tidb-source-code-reading-6/)中讲过的 `distsql` 和 coprocessor 的概念以及它们和 SQL 语句的关系。
+在介绍 copIterator 的概念之前，我们需要简单回顾一下前面 [TiDB 源码阅读系列文章（六）](https://pingcap.com/blog-cn/tidb-source-code-reading-6/)中讲过的 distsql 和 coprocessor 的概念以及它们和 SQL 语句的关系。
 
 tikv-server 通过 coprocessor 接口，支持部分 SQL 层的计算能力，大部分只涉及单表数据的常用的算子都可以下推到 tikv-server 上计算，计算下推以后，从存储引擎读取的数据虽然是一样的多，但是通过网络返回的数据会少很多，可以大幅节省序列化和网络传输的开销。
 
