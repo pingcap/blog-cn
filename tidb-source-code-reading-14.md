@@ -21,7 +21,7 @@ CM Sketch 的定义可以在 [cmsketch.go](https://github.com/lamxTyler/tidb/bl
 
 ## 统计信息创建
 
-在执行 analyze 语句时，TiDB 会收集直方图和 CM Sketch 的信息。在执行 analyze 命令时，会先将需要 analyze 的列和索引在 [builder.go](https://github.com/lamxTyler/tidb/blob/master/plan/planbuilder.go#L609) 中切分成不同的任务，然后在 [analyze.go](https://github.com/lamxTyler/tidb/blob/source-code/executor/analyze.go#L114) 中将任务下推至 TiKV 上执行。由于在 TiDB 中也包含了 TiKV 部分的实现，因此在这里还是会以 TiDB 的代码来介绍。在这个部分中，我们会着重介绍直方图的创建。
+在执行 analyze 语句时，TiDB 会收集直方图和 CM Sketch 的信息。在执行 analyze 命令时，会先将需要 analyze 的列和索引在 [builder.go](https://github.com/lamxTyler/tidb/blob/source-code/plan/planbuilder.go#L609) 中切分成不同的任务，然后在 [analyze.go](https://github.com/lamxTyler/tidb/blob/source-code/executor/analyze.go#L114) 中将任务下推至 TiKV 上执行。由于在 TiDB 中也包含了 TiKV 部分的实现，因此在这里还是会以 TiDB 的代码来介绍。在这个部分中，我们会着重介绍直方图的创建。
 
 ### 列直方图的创建
 
