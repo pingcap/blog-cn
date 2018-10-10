@@ -30,7 +30,7 @@ Leader 也会通过 Raft 算法将 entry 复制到其他的 Follower 上面，�
 
 ![Multi Raft](https://upload-images.jianshu.io/upload_images/542677-9fb5f3942a7d3d67.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-因为一个 Raft Group 处理的数据量有限，所以我们会将数据切分成多个 Raft Group，我们叫做 Region。切分的方式是按照 range 进行切分，也就是我们会将数据的 key 按照字节序进行排序，也就是一个无限的 sorted map，然后对某一段 key range 进行切分，当成一个 Region。
+因为一个 Raft Group 处理的数据量有限，所以我们会将数据切分成多个 Raft Group，我们叫做 Region。切分的方式是按照 range 进行切分，也就是我们会将数据的 key 按照字节序进行排序，也就是一个无限的 sorted map，然后将其切分成一段一段（连续）的 key range，每个 key range 当成一个 Region。
 
 两个相邻的 Region 之间不允许出现空洞，也就是前面一个 Region 的 end key 就是后一个 Region 的 start key。Region 的 range 使用的是前闭后开的模式  [start, end)，对于 key start 来说，它就属于这个 Region，但对于 end 来说，它其实属于下一个 Region。
 
@@ -42,7 +42,7 @@ TiKV 的 Region 会有最大 size 的限制，当超过这个阈值之后，就�
 
 譬如我们需要同时将 a = 1，b = 2 修改成功，而 a 和 b 属于不同的 Region，那么当操作结束之后，一定只能出现 a 和 b 要么都修改成功，要么都没有修改成功，不能出现 a 修改了，但 b 没有修改，或者 b 修改了，a 没有修改这样的情况。
 
-最通常的分布式事务的做法就是使用 two-phase commit，也就是俗称的 2PC，但传统的 2PC 需要有一个协调者，而我们也有机制来保证协调者的高可用。这里，TiKV 参考了 Google 的 Percolator，对 2PC 进行了优化，来提供分布式事务支持。
+最通常的分布式事务的做法就是使用 two-phase commit，也就是俗称的 2PC，但传统的 2PC 需要有一个协调者，而我们也需要有机制来保证协调者的高可用。这里，TiKV 参考了 Google 的 Percolator，对 2PC 进行了优化，来提供分布式事务支持。
 
 Percolator 的原理是比较复杂的，需要关注几点：
 
