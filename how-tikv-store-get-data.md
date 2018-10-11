@@ -1,7 +1,7 @@
 ---
 title: TiKV 是如何存取数据的
 author: ['唐刘']
-date: 2018-10-09
+date: 2018-10-11
 summary: 本文会详细的介绍 TiKV 是如何处理读写请求的。通过该文档，同学们会知道 TiKV 是如何将一个写请求包含的数据更改存储到系统，并且能读出对应的数据的。
 tags: ['TiKV','Raft','RocksDB']
 ---
@@ -96,19 +96,12 @@ TiKV 会将数据存储到 RocksDB，RocksDB 是一个 key-value 存储系统，
 
 ```
 1_1 -> Log {a = 1}
-
 1_2 -> Log {a = 2}
-
 …
-
 1_N -> Log {a = N}
-
 2_1 -> Log {b = 2}
-
 2_2 -> Log {b = 3}
-
 …
-
 2_N -> Log {b = N}
 ```
 
@@ -116,7 +109,6 @@ TiKV 会将数据存储到 RocksDB，RocksDB 是一个 key-value 存储系统，
 
 ```
 a -> N
-
 b -> N
 ```
 
@@ -177,13 +169,11 @@ PD 同时也提供全局的授时服务，在 Percolator 事务模型里面，�
 Write CF：
 
 a_12 -> 11
-
 a_10 -> 9
 
 Data CF:
 
 a_11 -> data_11
-
 a_9 -> data_9
 ```
 
@@ -195,9 +185,7 @@ PreWrite：
 Lock CF: W a -> Lock + Data
 
 Commit:
-
 Lock CF: R a -> Lock + 10 + Data
-
 Lock CF: D a
 
 Write CF: W a_11 -> 10 + Data
@@ -217,19 +205,12 @@ Read 的流程之前的 Percolator 已经有说明了，这里就不详细解释
 
 ```
 CREATE TABLE t1 {
-
-id BIGINT PRIMARY KEY,
-
-name VARCHAR(1024),
-
-age BIGINT,
-
-content BLOB,
-
-UNIQUE(name),
-
-INDEX(age),
-
+	id BIGINT PRIMARY KEY,
+	name VARCHAR(1024),
+	age BIGINT,
+	content BLOB,
+	UNIQUE(name),
+	INDEX(age),
 }
 ```
 
@@ -239,21 +220,15 @@ INDEX(age),
 
 ```
 PK
-
 t_11_1 -> (1, “a”, 10, “hello”)
-
 t_11_2 -> (2, “b”, 12, “world”)
 
 Unique Name
-
 i_12_a -> 1
-
 i_12_b -> 2
 
 Index Age
-
 i_13_10_1 -> nil
-
 i_13_12_2 -> nil
 ```
 
