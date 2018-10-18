@@ -121,7 +121,7 @@ LeaseRead 与 ReadIndex 类似，但更进一步，不仅省去了 Log，还省�
 
 2. 对于下图，它符合线性一致吗？（温馨提示：请使用游标卡尺。;-P）
 
-    ![](http://upload-images.jianshu.io/upload_images/542677-469913db96a665b2?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![](https://upload-images.jianshu.io/upload_images/542677-0aec44f67708c1ba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 3.  Leader 的状态机在什么时候没有最新状态？要线性一致性，Raft 该如何解决这问题？
 
