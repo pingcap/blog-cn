@@ -101,7 +101,7 @@ Client 将请求发送到 Leader 后，Leader 将请求作为一个 Proposal 通
 
 3. 等待状态机**至少**应用到 ReadIndex 记录的 Log
 
-4. 执行读请求，将结果返回给 client
+4. 执行读请求，将结果返回给 Client
 
 第 3 点中的“至少”是关键要求，它表明状态机应用到 ReadIndex 之后的状态都能使这个请求满足线性一致，不管过了多久，也不管 Leader 有没有飘走。为什么在 ReadIndex 只有就满足了线性一致性呢？之前 LogRead 的读发生点是 commit index，这个点能使 LogRead 满足线性一致，那显然发生这个点之后的 ReadIndex 也能满足。
 
