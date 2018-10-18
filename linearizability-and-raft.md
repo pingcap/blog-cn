@@ -3,7 +3,7 @@ title: 线性一致性和 Raft
 author: ['沈泰宁']
 date: 2018-10-18
 summary: 本篇文章会讨论一下线性一致性和 Raft，以及 TiKV 针对前者的一些优化。
-tags: ['Raft','线性一致']
+tags: ['Raft','线性一致','TiKV']
 ---
 
 在讨论分布式系统时，共识算法（Consensus algorithm）和一致性（Consistency）通常是讨论热点，两者的联系很微妙，很容易搞混。一些常见的误解：使用了 Raft [0] 或者 paxos 的系统都是线性一致的（Linearizability [1]，即强一致），其实不然，共识算法只能提供基础，要实现线性一致还需要在算法之上做出更多的努力。以 TiKV 为例，它的共识算法是 Raft，在 Raft 的保证下，TiKV 提供了满足线性一致性的服务。
