@@ -2,7 +2,7 @@
 title: TiDB 源码阅读系列文章（二十）Table Partition 
 author: ['肖亮亮']
 date: 2018-10-26
-summary: 本文将介绍 TiDB 中 Table Partition 的应用。Table Partition 是指根据一定规则，将数据库中的一张表分解成多个更小的容易管理的部分。
+summary: 本文将介绍 TiDB 中 Table Partition 的原理。Table Partition 是指根据一定规则，将数据库中的一张表分解成多个更小的容易管理的部分。
 tags: ['源码阅读','TiDB']
 ---
 
@@ -35,29 +35,21 @@ TiDB 正在支持分区表这一特性。在 TiDB 中分区表是一个独立的
 
 *   RANGE 分区：按照分区表达式的范围来划分分区。通常用于对分区键需要按照范围的查询，分区表达式可以为列名或者表达式 ，下面的 employees 表当中p0, p1, p2, p3 表示 range 的访问分别是  (min, 1991), [1991, 1996), [1996, 2001),  [2001, max) 这样一个范围
 
-```
-CREATE  TABLE employees (
-
-id INT  NOT  NULL,
-
-fname VARCHAR(30),
-
-separated DATE  NOT  NULL
-
-)
-
-PARTITION BY RANGE ( YEAR(separated) ) (
-
-PARTITION p0 VALUES LESS THAN (1991),
-
-PARTITION p1 VALUES LESS THAN (1996),
-
-PARTITION p2 VALUES LESS THAN (2001),
-
-PARTITION p3 VALUES LESS THAN MAXVALUE
-
-);
-```
+    ```
+    CREATE  TABLE employees (
+    id INT  NOT  NULL,
+    fname VARCHAR(30),
+    separated DATE  NOT  NULL
+    )
+    
+    PARTITION BY RANGE ( YEAR(separated) ) (
+    PARTITION p0 VALUES LESS THAN (1991),
+    PARTITION p1 VALUES LESS THAN (1996),
+    PARTITION p2 VALUES LESS THAN (2001),
+    PARTITION p3 VALUES LESS THAN MAXVALUE
+    );
+    
+    ```
 
 *   LIST 分区：按照 List 中的值分区，主要用于枚举类型， 与 RANGE 的区别：Range 分区的区间范围值是连续的。
 
@@ -77,39 +69,26 @@ create table 会重点讲构建 Partition 的这部分，更详细的可以看 [
 
 ```
 // PartitionOptions specifies the partition options.
-
-type  PartitionOptions  struct {
-
-Tp model.PartitionType
-
-Expr ExprNode
-
+type PartitionOptions struct {
+Tp          model.PartitionType
+Expr        ExprNode
 ColumnNames []*ColumnName
-
 Definitions []*PartitionDefinition
-
 }
-
-​
-
+	​
 // PartitionDefinition defines a single partition.
-
-type  PartitionDefinition  struct {
-
-Name model.CIStr
-
+type PartitionDefinition struct {
+Name     model.CIStr
 LessThan []ExprNode
-
-MaxValue  bool
-
-Comment string
-
+MaxValue bool
+Comment  string
 }
+	
 ```
 
-PartitionOptions 结构中 Tp 字段表示分区类型，Expr 字段表示分区键，ColumnNames 字段表示 Columns 分区，这种类型分区有分为 Range columns 分区和 List columns 分区，这种分区目前先不展开介绍。PartitionDefinition 其中 Name 字段表示分区名，LessThan 表示分区 Range 值，MaxValue 字段表示 Range 值是否为最大值，Comment 字段表示分区的描述。
+`PartitionOptions` 结构中 Tp 字段表示分区类型，Expr 字段表示分区键，`ColumnNames` 字段表示 Columns 分区，这种类型分区有分为 Range columns 分区和 List columns 分区，这种分区目前先不展开介绍。`PartitionDefinition` 其中 Name 字段表示分区名，`LessThan` 表示分区 Range 值，`MaxValue` 字段表示 Range 值是否为最大值，`Comment` 字段表示分区的描述。
 
-[CreateTable](https://github.com/pingcap/tidb/blob/release-2.1/ddl/ddl_api.go#L905) partition部分主要流程如下：
+[CreateTable](https://github.com/pingcap/tidb/blob/release-2.1/ddl/ddl_api.go#L905) Partition 部分主要流程如下：
 
 1. 把上文提到语法解析阶段会把 SQL语句中 Partition 相关信息转换成 ast.PartitionOptions , 然后 [buildTablePartitionInfo](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L41) 负责把 PartitionOptions 结构转换 PartitionInfo,  即 Partition 的元信息。
 
@@ -190,13 +169,13 @@ select * from p2 where id < 2001
 select * from p3 where id < MAXVALUE)
 ```
 
-通过观察  EXPLAIN 的结果可以证实上面的例子，如图1最终物理执行计划中有四个 Table Reader 因为 employees 表中有四个分区，Table Reader 表示在 TiDB 端从 TiKV 端读取，cop task 是指被下推到 tikv 端分布式执行的计算任务。
+通过观察 `EXPLAIN` 的结果可以证实上面的例子，如图1最终物理执行计划中有四个 Table Reader 因为 employees 表中有四个分区，`Table Reader` 表示在 TiDB 端从 TiKV 端读取，`cop task` 是指被下推到 tikv 端分布式执行的计算任务。
 
 ![EXPLAN 输出.png](https://upload-images.jianshu.io/upload_images/542677-79484bc60f7a3edc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-<center>图 1：EXPLAIN输出</center>
+<center>图 1：EXPLAIN 输出</center>
 
-用户在使用分区表时，往往只需要访问其中部分的分区, 就像程序局部性原理一样，优化器分析 FROM 和 WHERE 子句来消除不必要的分区，具体还要优化器根据实际的SQL语句中所带的条件，避免访问无关分区的优化过程我们称之为分区裁剪 Partition Pruning 具体实现在 [这里](https://github.com/pingcap/tidb/blob/release-2.1/planner/core/rule_partition_processor.go#L70)，分区裁剪是分区表提供的重要优化手段，通过分区的裁剪，避免访问无关数据，可以加速查询速度。当然用户可以刻意利用分区裁剪的特性在 SQL 加入定位分区的条件，优化查询性能。
+用户在使用分区表时，往往只需要访问其中部分的分区, 就像程序局部性原理一样，优化器分析 `FROM` 和 `WHERE` 子句来消除不必要的分区，具体还要优化器根据实际的 SQL 语句中所带的条件，避免访问无关分区的优化过程我们称之为分区裁剪（Partition Pruning），具体实现在 [这里](https://github.com/pingcap/tidb/blob/release-2.1/planner/core/rule_partition_processor.go#L70)，分区裁剪是分区表提供的重要优化手段，通过分区的裁剪，避免访问无关数据，可以加速查询速度。当然用户可以刻意利用分区裁剪的特性在 SQL 加入定位分区的条件，优化查询性能。
 
 ### Insert 语句
 
