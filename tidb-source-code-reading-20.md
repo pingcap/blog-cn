@@ -2,7 +2,7 @@
 title: TiDB 源码阅读系列文章（二十）Table Partition 
 author: ['肖亮亮']
 date: 2018-10-26
-summary: 本文将介绍 TiDB 中 Table Partition 的原理。Table Partition 是指根据一定规则，将数据库中的一张表分解成多个更小的容易管理的部分。
+summary: 本篇文章主要介绍 Table Partition 在 TiDB 中的实现。
 tags: ['源码阅读','TiDB']
 ---
 
@@ -33,9 +33,9 @@ TiDB 正在支持分区表这一特性。在 TiDB 中分区表是一个独立的
 
 ### 常见分区表的类型
 
-*   RANGE 分区：按照分区表达式的范围来划分分区。通常用于对分区键需要按照范围的查询，分区表达式可以为列名或者表达式 ，下面的 employees 表当中p0, p1, p2, p3 表示 range 的访问分别是  (min, 1991), [1991, 1996), [1996, 2001),  [2001, max) 这样一个范围
+*   RANGE 分区：按照分区表达式的范围来划分分区。通常用于对分区键需要按照范围的查询，分区表达式可以为列名或者表达式 ，下面的 employees 表当中p0, p1, p2, p3 表示 range 的访问分别是  (min, 1991), [1991, 1996), [1996, 2001),  [2001, max) 这样一个范围。
 
-    ```
+    ```sql
     CREATE  TABLE employees (
     id INT  NOT  NULL,
     fname VARCHAR(30),
@@ -67,7 +67,7 @@ create table 会重点讲构建 Partition 的这部分，更详细的可以看 [
 
 解释下分区键，在分区表中用于计算这一行数据属于哪一个分区的列的集合叫做分区键。分区键构成可能是一个字段或多个字段也可以是表达式。
 
-```
+```go
 // PartitionOptions specifies the partition options.
 type PartitionOptions struct {
 Tp          model.PartitionType
@@ -136,11 +136,11 @@ Drop Partition 和 Drop Table 类似，只不过需要先找到对应的 Partiti
 
 5. 编码规则：
 
-    Key： tablePrefix_rowPrefix_partitionID_rowID
+    Key： `tablePrefix_rowPrefix_partitionID_rowID`
 
-    startKey： tablePrefix_rowPrefix_partitionID
+    startKey： `tablePrefix_rowPrefix_partitionID`
 
-    endKey： tablePrefix_rowPrefix_partitionID + 1
+    endKey： `tablePrefix_rowPrefix_partitionID + 1`
 
 
 6.  删除了分区，同时也将删除该分区中的所有数据。如果删除了分区导致分区不能覆盖所有值，那么插入数据的时候会报错。
@@ -151,21 +151,17 @@ select 语句重点讲 Select Partition 如何查询的和分区裁剪（Partiti
 
 一条 SQL 语句的处理流程，从 Client 接收数据，MySQL 协议解析和转换，SQL 语法解析，逻辑查询计划和物理查询计划执行，到最后返回结果。那么对于分区表是如何查询的表里的数据的，其实最主要的的修改是 [逻辑查询计划](https://github.com/pingcap/tidb/blob/release-2.1/planner/core/rule_partition_processor.go#L39) 阶段，举个例子: 如果用上文中 employees 表作查询, 在 SQL 语句的处理流程前几个阶段没什么不同，但是在逻辑查询计划阶段，[rewriteDataSource](https://github.com/pingcap/tidb/blob/release-2.1/planner/core/rule_partition_processor.go#L46) 将 DataSource 重写了变成 Union All 。每个 Partition id 对应一个 Table Reader。
 
-```
+```sql
 select * from employees
 ```
 
 等价于：
 
-```
+```sql
 select * from (union all
-
 select * from p0 where id < 1991
-
 select * from p1 where id < 1996
-
 select * from p2 where id < 2001
-
 select * from p3 where id < MAXVALUE)
 ```
 
@@ -181,7 +177,7 @@ select * from p3 where id < MAXVALUE)
 
 [Insert 语句](https://pingcap.com/blog-cn/tidb-source-code-reading-4/) 是怎么样写入 Table Partition ?
 
-其实解释这些问题就可以了:
+其实解释这些问题就可以了：
 
 1.  普通表和分区表怎么区分？
 
