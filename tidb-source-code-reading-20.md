@@ -25,7 +25,7 @@ TiDB 正在支持分区表这一特性。在 TiDB 中分区表是一个独立的
 
 1.  TiDB 默认一个表最多只能有 1024 个分区 ，默认是不区分表名大小写的。
 
-2.  Rang, List, Hash 分区要求分区键必须是 INT 类型，或者通过表达式返回 INT 类型。但 Key 分区的时候，可以使用其他类型的列（BLOB，TEXT 类型除外）作为分区键。
+2.  Range, List, Hash 分区要求分区键必须是 INT 类型，或者通过表达式返回 INT 类型。但 Key 分区的时候，可以使用其他类型的列（BLOB，TEXT 类型除外）作为分区键。
 
 3.  如果分区字段中有主键或者唯一索引的列，那么有主键列和唯一索引的列都必须包含进来。即：分区字段要么不包含主键或者索引列，要么包含全部主键和索引列。
 
@@ -33,7 +33,7 @@ TiDB 正在支持分区表这一特性。在 TiDB 中分区表是一个独立的
 
 ### 常见分区表的类型
 
-*   Range 分区：按照分区表达式的范围来划分分区。通常用于对分区键需要按照范围的查询，分区表达式可以为列名或者表达式 ，下面的 employees 表当中 p0, p1, p2, p3 表示 range 的访问分别是  (min, 1991), [1991, 1996), [1996, 2001), [2001, max) 这样一个范围。
+*   Range 分区：按照分区表达式的范围来划分分区。通常用于对分区键需要按照范围的查询，分区表达式可以为列名或者表达式 ，下面的 employees 表当中 p0, p1, p2, p3 表示 Range 的访问分别是  (min, 1991), [1991, 1996), [1996, 2001), [2001, max) 这样一个范围。
 
     ```sql
     CREATE  TABLE employees (
@@ -53,7 +53,7 @@ TiDB 正在支持分区表这一特性。在 TiDB 中分区表是一个独立的
 
 *   List 分区：按照 List 中的值分区，主要用于枚举类型，与 Range 分区的区别在于 Range 分区的区间范围值是连续的。
 
-*   Hash 分区：Hash 分区需要指定分区键和分区个数。通过 hash 的分区表达式计算得到一个 INT 类型的结果，这个结果再跟分区个数取模得到具体这行数据属于那个分区。通常用于给定分区键的点查询， Hash 分区主要用来分散热点读，确保数据在预先确定个数的分区中尽可能平均分布。
+*   Hash 分区：Hash 分区需要指定分区键和分区个数。通过 Hash 的分区表达式计算得到一个 INT 类型的结果，这个结果再跟分区个数取模得到具体这行数据属于那个分区。通常用于给定分区键的点查询，Hash 分区主要用来分散热点读，确保数据在预先确定个数的分区中尽可能平均分布。
 
 *   Key 分区：类似 Hash 分区，Hash 分区允许使用用户自定义的表达式，但 Key 分区不允许使用用户自定义的表达式。Hash 仅支持整数分区，而 Key 分区支持除了 Blob 和 Text 的其他类型的列作为分区键。
 
@@ -96,7 +96,7 @@ Comment  string
 
 3. 对于每一分区 Range 值进行 Check，[checkAddPartitionValue](https://github.com/pingcap/tidb/blob/release-2.1/ddl/table.go#L469) 就是检查新增的 Partition 的 Range 需要比之前所有 Partition 的 Range 都更大。
 
-4. TiDB 单表最多只能有 [1024个分区](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L329)  ，超过最大分区的限制不会创建成功。
+4. TiDB 单表最多只能有 [1024 个分区](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L329)  ，超过最大分区的限制不会创建成功。
 
 5. 如果分区键构成是一个包含函数的表达式需要检查表达式里面是否是允许的函数 [checkPartitionFuncValid](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L107)。
 
@@ -114,7 +114,7 @@ add partition 首先需要从 SQL 中解析出来 Partition 的元信息，然�
 
 2. 用户的 SQL 语句被解析成将 [ast.PartitionDefinition](https://github.com/pingcap/tidb/blob/release-2.1/ast/ddl.go#L880) 然后 [buildPartitionInfo](https://github.com/pingcap/tidb/blob/release-2.1/ddl/ddl_api.go#L2123) 做的事就是保存表原来已存在的分区信息例如分区类型，分区键，分区具体信息，每个新分区分配一个独立的 ParitionID。
 
-3. TiDB 默认一个表最多只能有 [1024个分区](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L329)，超过最大分区的限制会报错
+3. TiDB 默认一个表最多只能有 [1024 个分区](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L329)，超过最大分区的限制会报错
 
 4. 对于每新增一个分区需要检查 Range 值进行 Check，[checkAddPartitionValue](https://github.com/pingcap/tidb/blob/release-2.1/ddl/table.go#L469) 简单说就是检查新增的 Partition 的 Range 需要比之前所有 Partition 的 Rrange 都更大。
 
@@ -219,6 +219,6 @@ select * from p3 where id < MAXVALUE)
 
 *  在 TiDB 分区表中分区字段插入的值不能大于表中 Range 值最大的上界，否则会报错
 
-### End
+## End
 
-TiDB 目前支持 RANGE 分区类型，具体以及更细节的可以看 [这里](https://github.com/pingcap/tidb/tree/source-code)。剩余其它类型的分区类型正在开发中，后面陆续会和大家见面，敬请期待。它们的源码实现读者届时可以自行阅读，流程和文中上述描述类似。
+TiDB 目前支持 Range 分区类型，具体以及更细节的可以看 [这里](https://github.com/pingcap/tidb/tree/source-code)。剩余其它类型的分区类型正在开发中，后面陆续会和大家见面，敬请期待。它们的源码实现读者届时可以自行阅读，流程和文中上述描述类似。
