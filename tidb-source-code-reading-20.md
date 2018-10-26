@@ -221,4 +221,4 @@ select * from p3 where id < MAXVALUE)
 
 ### End
 
-TiDB 目前支持 RANGE 分区类型分区，具体以及更细节的可以看 [这里](https://github.com/pingcap/tidb/tree/source-code)。剩余其它类型的分区类型正在开发中，后面陆续会和大家见面敬请期待。源码实现读者可以自行阅读，流程和文中上述描述类似。
+TiDB 目前支持 RANGE 分区类型分区，具体以及更细节的可以看 [这里](https://github.com/pingcap/tidb/tree/source-code)。剩余其它类型的分区类型正在开发中，后面陆续会和大家见面，敬请期待。它们的源码实现读者届时可以自行阅读，流程和文中上述描述类似。
