@@ -112,7 +112,7 @@ add partition 首先需要从 SQL 中解析出来 Partition 的元信息，然�
 
 1. 检查是否是分区表，若不是分区表则报错提示。
 
-2. 用户的 SQL 语句被解析成将 [ast.PartitionDefinition](https://github.com/pingcap/tidb/blob/release-2.1/ast/ddl.go#L880) 然后 [buildPartitionInfo](https://github.com/pingcap/tidb/blob/release-2.1/ddl/ddl_api.go#L2123) 做的事就是保存表原来已存在的分区信息例如分区类型，分区键，分区具体信息，每个新分区分配一个独立的 ParitionID。
+2. 用户的 SQL 语句被解析成将 [ast.PartitionDefinition](https://github.com/pingcap/tidb/blob/release-2.1/ast/ddl.go#L880) 然后 [buildPartitionInfo](https://github.com/pingcap/tidb/blob/release-2.1/ddl/ddl_api.go#L2123) 做的事就是保存表原来已存在的分区信息例如分区类型，分区键，分区具体信息，每个新分区分配一个独立的 PartitionID。
 
 3. TiDB 默认一个表最多只能有 [1024 个分区](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L329)，超过最大分区的限制会报错
 
