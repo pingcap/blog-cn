@@ -197,17 +197,17 @@ select * from p3 where id < MAXVALUE)
 
 *  下面是 [PartitionRecordKey](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/partition.go#L171) 和普通表 [RecordKey](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/tables.go#L261) 区别。
 
-*  分区表按照规则编码成 Key-Value pair：
+    *  分区表按照规则编码成 Key-Value pair：
 
-   Key: `tablePrefix_rowPrefix_partitionID_rowID`  
+       Key: `tablePrefix_rowPrefix_partitionID_rowID`  
     
-   Value: `[col1, col2, col3, col4]`
+       Value: `[col1, col2, col3, col4]`
 
-*  普通表按照规则编码成 Key-Value pair：
+    *  普通表按照规则编码成 Key-Value pair：
 
-   Key: `tablePrefix_rowPrefix_tableID_rowID`  
+       Key: `tablePrefix_rowPrefix_tableID_rowID`  
     
-   Value: `[col1, col2, col3, col4]`
+       Value: `[col1, col2, col3, col4]`
 
 *  通过 [locatePartition](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/partition.go#L177) 操作查询到应该插入哪个 Partition，目前支持 RANGE 分区插入到那个分区主要是通过范围来判断，例如在 employees 表中插入下面的 sql，通过计算范围该条记录会插入到 p3 分区中，接着调用对应 Partition 上面的 [AddRecord](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/tables.go#L406) 方法，将数据插入到相应的 Partition 里面。
 
@@ -215,11 +215,11 @@ select * from p3 where id < MAXVALUE)
 
 *  插入数据时，如果某行数据不属于任何 Partition，则该事务失败，所有操作回滚。如果 Partition 的 Key 算出来是一个 `NULL`，对于不同的 Partition 类型有不同的处理方式：
 
-*  对于 Range Partition：该行数据被插入到最小的那个 Partition
+    *  对于 Range Partition：该行数据被插入到最小的那个 Partition
 
-*  对于 List partition：如果某个 Partition 的 Value List 中有 `NULL`，该行数据被插入那个 Partition，否则插入失败
+    *  对于 List partition：如果某个 Partition 的 Value List 中有 `NULL`，该行数据被插入那个 Partition，否则插入失败
 
-*  对于 Hash 和 key Partition：`NULL` 值视为 0，计算 Partition ID 将数据插入到对应的 Partition
+    *  对于 Hash 和 key Partition：`NULL` 值视为 0，计算 Partition ID 将数据插入到对应的 Partition
 
 *  在 TiDB 分区表中分区字段插入的值不能大于表中 Range 值最大的上界，否则会报错
 
