@@ -87,7 +87,7 @@ impl Storage {
 
 
 #### 4. StorageHandle
-`StorageHanle` 是处理从`sench` 接受到指令，通过 [mio](https://github.com/carllerche/mio) 来处理 IO。
+`StorageHanle` 是处理从`sendch` 接受到指令，通过 [mio](https://github.com/carllerche/mio) 来处理 IO。
 
 
 接下来在`Storage`中实现了`async_get` 和`async_batch_get`等异步函数，这些函数中将对应的指令送到通道中，然后被调度器（scheduler）接收到并异步执行。
