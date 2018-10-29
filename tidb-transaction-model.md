@@ -35,7 +35,7 @@ MVCC 其实并不是一个老的概念了，在传统的单机关系型数据库
 暴露给上层的接口行为定义：
 > * MVCCGet(key, version), 返回某 key 小于等于 version 的最大版本的值
 > * MVCCScan(startKey, endKey, limit, version), 返回  [startKey,  endKey)  区间内的 key 小于等于 version 的最大版本的键和值，上限 limit 个
-> * MVCCPut(key, value, version) 插入某个键值对，如果 version 已经存在，则覆盖它。上层事物系统有责任维护自增version来避免[read-modify-write]
+> * MVCCPut(key, value, version) 插入某个键值对，如果 version 已经存在，则覆盖它。上层事务系统有责任维护自增version来避免[read-modify-write]
 (https://en.wikipedia.org/wiki/Read-modify-write)
 > * MVCCDelete(key, version) 删除某个特定版本的键值对, 这个需要与上层的事务删除接口区分，只有 GC 模块可以调用这个接口
 
