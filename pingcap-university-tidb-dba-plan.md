@@ -51,5 +51,5 @@ PingCAP University 是 PingCAP 官方设立的对企业和个人进行 TiDB 全�
 
 *  或发送邮件至 university-cn@pingcap.com 交流
 
-P.S. 2018 年 11 月 31 日前报名还有【官方技术支持服务礼包】赠送～
+P.S. 2018 年 11 月 30 日前报名还有【官方技术支持服务礼包】赠送～
 
