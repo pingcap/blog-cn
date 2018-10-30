@@ -244,7 +244,7 @@ func (s *Scanner) Errors() []error {
 ```
 
 
-另外 `lexer` 使用了 `字典树` 技术进行 `token` 识别，具体的实现代码在 [parser/misc.go](https://github.com/pingcap/tidb/blob/master/parser/misc.go)
+另外 `lexer` 使用了 `字典树` 技术进行 `token` 识别，具体的实现代码在 [parser/misc.go](https://github.com/pingcap/tidb/blob/source-code/parser/misc.go)
 
 ## TiDB SQL Parser 的实现
 
@@ -315,7 +315,7 @@ type Visitor interface {
 }
 ```
 
-例如 [plan.preprocess](https://github.com/pingcap/tidb/blob/master/plan/preprocess.go) 是对 `AST`  做预处理，包括合法性检查以及名字绑定。
+例如 [plan.preprocess](https://github.com/pingcap/tidb/blob/source-code/plan/preprocess.go) 是对 `AST` 做预处理，包括合法性检查以及名字绑定。
 
 `union` 后面是对 `token` 和 `非终结符` 按照类型分别定义：
 
@@ -489,7 +489,7 @@ type SelectStmt struct {
 bin/goyacc -o parser/parser.go parser/parser.y 2>&1
 ```
 
-TiDB 对 `lexer` 和 `parser.go` 进行了封装，对外提供 [parser.yy_parser](https://github.com/pingcap/tidb/blob/master/parser/yy_parser.go)  进行 SQL 语句的解析：
+TiDB 对 `lexer` 和 `parser.go` 进行了封装，对外提供 [parser.yy_parser](https://github.com/pingcap/tidb/blob/source-code/plan/preprocess.go) 进行 SQL 语句的解析：
 
 ```
 // Parse parses a query string to raw ast.StmtNode.

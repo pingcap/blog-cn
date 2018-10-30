@@ -30,7 +30,7 @@ SQL 有很多种，比如读、写、修改、删除以及管理类的 SQL，每
 
 + [Session](https://github.com/pingcap/tidb/blob/source-code/session.go#L62)
 
-+ [RecordSet](https://github.com/pingcap/tidb/blob/master/ast/ast.go#L136)
++ [RecordSet](https://github.com/pingcap/tidb/blob/source-code/ast/ast.go#L136)
 
 + [Plan](https://github.com/pingcap/tidb/blob/source-code/plan/plan.go#L30)
 
@@ -184,7 +184,7 @@ Session 中最重要的函数是 [Execute](https://github.com/pingcap/tidb/blob/
 ```
 
 
-这个结构实现了 [`ast.RecordSet`](https://github.com/pingcap/tidb/blob/master/ast/ast.go#L142) 接口，从字面上大家可以看出，这个接口代表了查询结果集的抽象，我们看一下它的几个方法：
+这个结构实现了 [`ast.RecordSet`](https://github.com/pingcap/tidb/blob/source-code/ast/ast.go#L136) 接口，从字面上大家可以看出，这个接口代表了查询结果集的抽象，我们看一下它的几个方法：
 
 ```
 	// RecordSet is an abstract result set interface to help get data from Plan.
