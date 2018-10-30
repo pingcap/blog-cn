@@ -86,7 +86,7 @@ TiDB 支持完整的二级索引，并且是全局索引，很多查询可以通
 
 	有两种情况不会涉及到两次访问的问题：
 
-	- 索引中的列已经满足了查询需求。比如 Table t 上面的列 c 有索引，查询是 `select c from t where c > 10`; 这个时候，只需要访问索引，就可以拿到所需要的全部数据。这种情况我们称之为覆盖索引(Covering Index)。所以如果很关注查询性能，可以将部分不需要过滤但是需要再查询结果中返回的列放入索引中，构造成组合索引，比如这个例子： `select c1, c2 from t where c1 > 10`; 要优化这个查询可以创建组合索引 `Index c12 (c1, c2)`。
+	- 索引中的列已经满足了查询需求。比如 Table t 上面的列 c 有索引，查询是 `select c from t where c > 10;`，这个时候，只需要访问索引，就可以拿到所需要的全部数据。这种情况我们称之为覆盖索引(Covering Index)。所以如果很关注查询性能，可以将部分不需要过滤但是需要在查询结果中返回的列放入索引中，构造成组合索引，比如这个例子： `select c1, c2 from t where c1 > 10;`，要优化这个查询可以创建组合索引 `Index c12 (c1, c2)`。
 	- 表的 Primary Key 是整数类型。在这种情况下，TiDB 会将 Primary Key 的值当做行 ID，所以如果查询条件是在 PK 上面，那么可以直接构造出行 ID 的范围，直接扫描 Table 数据，获取结果。
 
 + 查询并发度
@@ -160,8 +160,8 @@ sync-log = true
 ```
 for i from 0 to 23:
     while affected_rows > 0:
-	delete * from t where insert_time >= i:00:00 and insert_time < (i+1):00:00 limit 5000;
-	affected_rows = select affected_rows()
+        delete * from t where insert_time >= i:00:00 and insert_time < (i+1):00:00 limit 5000;
+        affected_rows = select affected_rows()
 ```
 
 上面是一段伪代码，意思就是要把大块的数据拆成小块删除，以避免删除过程中前面的 Delete 语句影响后面的 Delete 语句。
