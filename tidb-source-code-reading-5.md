@@ -16,7 +16,7 @@ PingCAP 发布了 TiDB 的[源码阅读系列文章](https://pingcap.com/blog-cn
 
 其中，`SQL Parser` 的功能是把 SQL 语句按照 SQL 语法规则进行解析，将文本转换成抽象语法树（`AST`），这部分功能需要些背景知识才能比较容易理解，我尝试做下相关知识的介绍，希望能对读懂这部分代码有点帮助。
 
-TiDB 是使用 [goyacc](https://github.com/cznic/goyacc) 根据预定义的 SQL 语法规则文件 [parser.y](https://github.com/pingcap/tidb/blob/master/parser/parser.y) 生成 SQL 语法解析器。我们可以在 TiDB 的 [Makefile](https://github.com/pingcap/tidb/blob/50e98f427e7943396dbe38d23178b9f9dc5398b7/Makefile#L50) 文件中看到这个过程，先 build `goyacc` 工具，然后使用 `goyacc` 根据 `parser.y` 生成解析器 `parser.go`：
+TiDB 是使用 [goyacc](https://github.com/cznic/goyacc) 根据预定义的 SQL 语法规则文件 [parser.y](https://github.com/pingcap/tidb/blob/source-code/parser/parser.y) 生成 SQL 语法解析器。我们可以在 TiDB 的 [Makefile](https://github.com/pingcap/tidb/blob/50e98f427e7943396dbe38d23178b9f9dc5398b7/Makefile#L50) 文件中看到这个过程，先 build `goyacc` 工具，然后使用 `goyacc` 根据 `parser.y` 生成解析器 `parser.go`：
 
 ```
 goyacc:
@@ -209,7 +209,7 @@ type yyLexerEx interface {
 }
 ```
 
-TiDB 没有使用类似 `Lex` 的工具生成词法分析器，而是纯手工打造，词法分析器对应的代码是 [parser/lexer.go](https://github.com/pingcap/tidb/blob/master/parser/lexer.go)， 它实现了 `goyacc` 要求的接口：
+TiDB 没有使用类似 `Lex` 的工具生成词法分析器，而是纯手工打造，词法分析器对应的代码是 [parser/lexer.go](https://github.com/pingcap/tidb/blob/source-code/parser/lexer.go)， 它实现了 `goyacc` 要求的接口：
 
 ```
 ...
