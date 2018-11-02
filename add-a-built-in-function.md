@@ -32,7 +32,7 @@ SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST�
 
 3. 在 typeinferer 中添加类型推导信息
 
-    在 plan/typeinferer.go 中的 handleFuncCallExpr() 里面添加这个函数的返回结果类型，请保持和 MySQL 的结果一致。全部类型定义参见 [MySQL Const](https://github.com/pingcap/tidb/blob/master/mysql/type.go#L17)。
+    在 plan/typeinferer.go 中的 handleFuncCallExpr() 里面添加这个函数的返回结果类型，请保持和 MySQL 的结果一致。全部类型定义参见 [MySQL Const](https://github.com/pingcap/tidb/blob/source-code/mysql/type.go#L17)。
 
     > **注意**：大多数函数除了需要填写返回值类型之外，还需要获取返回值的长度。
 
