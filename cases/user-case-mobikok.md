@@ -6,7 +6,7 @@ summary: TiDB 对于像我们这样可预期核心数据会暴增的场景，有
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-mobikok/
-weight: 15
+weight: 18
 logo: /images/blog-cn/customers/mobikok-logo.png
 ---
 

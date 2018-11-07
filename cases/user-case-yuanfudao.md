@@ -6,7 +6,7 @@ summary: TiDB 是一个很有野心的项目，从无到有的解决了 MySQL �
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-yuanfudao/
-weight: 16
+weight: 9
 logo: /images/blog-cn/customers/yuanfudao-logo.png
 ---
 

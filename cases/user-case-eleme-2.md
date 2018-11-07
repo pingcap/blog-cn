@@ -6,7 +6,7 @@ summary: 截至目前饿了么整个归档平台已部署归档作业千余个�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-eleme-2/
-weight: 10
+weight: 11
 logo: /images/blog-cn/customers/eleme-logo.png
 ---
 
