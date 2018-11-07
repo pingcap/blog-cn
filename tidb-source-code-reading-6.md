@@ -1,4 +1,3 @@
-
 ---
 title: TiDB 源码阅读系列文章（六）Select 语句概览
 author: ['申砾']
@@ -6,6 +5,7 @@ date: 2018-03-30
 summary: 在先前的 TiDB 源码阅读系列文章（四）中，我们介绍了 Insert 语句，想必大家已经了解了 TiDB 是如何写入数据，本篇文章介绍一下 Select 语句是如何执行的。Enjoy~
 tags: ['源码阅读', 'TiDB']
 ---
+
 
 在先前的 [TiDB 源码阅读系列文章（四）]( https://pingcap.com/blog-cn/tidb-source-code-reading-4/ ) 中，我们介绍了 Insert 语句，想必大家已经了解了 TiDB 是如何写入数据，本篇文章介绍一下 Select 语句是如何执行。相比 Insert，Select 语句的执行流程会更复杂，本篇文章会第一次进入优化器、Coprocessor 模块进行介绍。
 
@@ -89,7 +89,7 @@ type SelectStmt struct {
 ```go
     if sel.Where != nil {
         p = b.buildSelection(p, sel.Where, nil)
-        if b.err != nil 
+        if b.err != nil {
             return nil
         }
     }  
@@ -111,7 +111,7 @@ type LogicalSelection struct {
 
 其中最重要的就是这个 Conditions 字段，代表了 Where 语句需要计算的表达式，这个表达式求值结果为 True 的时候，表明这一行符合条件。
 
-其他字段的 AST 转 LogicalPlan 读者可以执行研究一下，经过个这个 buildSelect() 函数后，AST 变成一个 Plan 的树状结构树，下一步会在这个结构上进行优化。
+其他字段的 AST 转 LogicalPlan 读者可以自行研究一下，经过这个 buildSelect() 函数后，AST 变成一个 Plan 的树状结构树，下一步会在这个结构上进行优化。
 
 ## Optimizing
 
@@ -135,7 +135,7 @@ func doOptimize(flag uint64, logic LogicalPlan) (PhysicalPlan, error) {
 }
 ```
 
-大家可以关注来两个步骤：logicalOptimize 和 dagPhysicalOptimize，分别代表逻辑优化和物理优化，这两种优化的基本概念和区别本文不会描述，请大家自行研究（这个是数据库的基础知识）。下面分别介绍一下这两个函数做了什么事情。
+大家可以关注两个步骤：logicalOptimize 和 dagPhysicalOptimize，分别代表逻辑优化和物理优化，这两种优化的基本概念和区别本文不会描述，请大家自行研究（这个是数据库的基础知识）。下面分别介绍一下这两个函数做了什么事情。
 
 ### 逻辑优化
 
@@ -177,7 +177,7 @@ var optRuleList = []logicalOptRule{
 
 这些规则并不会考虑数据的分布，直接无脑的操作 Plan 树，因为大多数规则应用之后，一定会得到更好的 Plan（不过上面有一个规则并不一定会更好，读者可以想一下是哪个）。
 
-这里选一个规则介绍一下，其他优化规则请读者自行研究或者是等到后续文章。
+这里选一个规则介绍一下，其他优化规则请读者自行研究或者是等待后续文章。
 
 columnPruner（列裁剪） 规则，会将不需要的列裁剪掉，考虑这个 SQL: `select c from t;` 对于 `from t` 这个全表扫描算子（也可能是索引扫描）来说，只需要对外返回 c 这一列的数据即可，这里就是通过列裁剪这个规则实现，整个 Plan 树从树根到叶子节点递归调用这个规则，每层节点只保留上面节点所需要的列即可。
 
@@ -265,7 +265,7 @@ type task interface {
 }
 ```
 
-在 TiDB 中，Task 的定义是能在单个节点上不依赖于和其他节点进行数据交换即可进行的一些列操作，目前只实现了两种 Task：
+在 TiDB 中，Task 的定义是能在单个节点上不依赖于和其他节点进行数据交换即可进行的一系列操作，目前只实现了两种 Task：
 
 * CopTask 是需要下推到存储引擎（TiKV）上进行计算的物理计划，每个收到请求的 TiKV 节点都会做相同的操作
 
@@ -282,7 +282,7 @@ type task interface {
 
 ![simple-select.png](https://upload-images.jianshu.io/upload_images/542677-6c7c5fa4df2443c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-读者可能会比较奇怪，为什么只剩下这样一个这一个物理算子？`WHERR age > 10` 哪里去了？实际上 age > 10 这个过滤条件被合并进了 PhysicalTableScan，因为 `age > 10` 这个表达式可以下推到 TiKV 上进行计算，所以会把 TableScan 和 Filter 这样两个操作合在一起。哪些表达式会被下推到 TiKV 上的 Coprocessor 模块进行计算呢？对于这个 Query 是在下面 [这个地方](https://github.com/pingcap/tidb/blob/source-code/plan/predicate_push_down.go#L72) 进行识别：
+读者可能会比较奇怪，为什么只剩下这样一个物理算子？`WHERR age > 10` 哪里去了？实际上 age > 10 这个过滤条件被合并进了 PhysicalTableScan，因为 `age > 10` 这个表达式可以下推到 TiKV 上进行计算，所以会把 TableScan 和 Filter 这样两个操作合在一起。哪些表达式会被下推到 TiKV 上的 Coprocessor 模块进行计算呢？对于这个 Query 是在下面 [这个地方](https://github.com/pingcap/tidb/blob/source-code/plan/predicate_push_down.go#L72) 进行识别：
 
 ```go
 // PredicatePushDown implements LogicalPlan PredicatePushDown interface.
@@ -294,7 +294,7 @@ func (ds *DataSource) PredicatePushDown(predicates []expression.Expression) ([]e
 
 在 `expression.ExpressionsToPB` 这个方法中，会把能下推 TiKV 上的表达式识别出来（TiKV 还没有实现所有的表达式，特别是内建函数只实现了一部分），放到 DataSource.pushedDownConds 字段中。接下来我们看一下 DataSource 是如何转成 PhysicalTableScan，见 [DataSource.convertToTableScan()](https://github.com/pingcap/tidb/blob/source-code/plan/physical_plan_builder.go#L523) 方法。这个方法会构建出 PhysicalTableScan，并且调用 [addPushDownSelection()](https://github.com/pingcap/tidb/blob/source-code/plan/physical_plan_builder.go#L610) 方法，将一个 PhysicalSelection 加到 PhysicalTableScan 之上，一起放进 copTask 中。
 
-这个查询计划是一个非常简单计划，不过我们可以用这个计划来说明 TiDB 是如何执行查询操作。
+这个查询计划是一个非常简单的计划，不过我们可以用这个计划来说明 TiDB 是如何执行查询操作。
 
 ## Executing
 
