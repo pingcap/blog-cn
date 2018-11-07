@@ -185,10 +185,10 @@ columnPruner（列裁剪） 规则，会将不需要的列裁剪掉，考虑这�
 
 ![logical-select.png](https://upload-images.jianshu.io/upload_images/542677-b0925ace28091e54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-其中 `FROM t` 变成了 DataSource 算子，`WHERE age > 10` 变成了 Selection 算子，这里留一个思考题，`SELECT name` 中的列选择去哪里了？
+其中 `FROM t` 变成了 DataSource 算子，`WHERE age > 10` 变成了 Selection 算子，这里留一个思考题，`SELECT name` 中的列选择去哪里了？
 
 ### 物理优化
-在物理优化阶段，会考虑数据的分布，决定如何选择物理算子，比如对于 `FROM t WHERE age > 10` 这个语句，假设在 age 字段上有索引，需要考虑是通过 TableScan + Filter 的方式快还是通过 IndexScan 的方式比较快，这个选择取决于统计信息，也就是 age > 10 这个条件究竟能过滤掉多少数据。
+在物理优化阶段，会考虑数据的分布，决定如何选择物理算子，比如对于 `FROM t WHERE age > 10` 这个语句，假设在 age 字段上有索引，需要考虑是通过 TableScan + Filter 的方式快还是通过 IndexScan 的方式比较快，这个选择取决于统计信息，也就是 age > 10 这个条件究竟能过滤掉多少数据。
 
 我们看一下 [dagPhysicalOptimize](https://github.com/pingcap/tidb/blob/source-code/plan/optimizer.go#L148) 这个函数：
 
@@ -206,7 +206,7 @@ func dagPhysicalOptimize(logic LogicalPlan) (PhysicalPlan, error) {
 }
 ```
 
-这里的 convert2PhysicalPlan 会递归调用下层节点的 convert2PhysicalPlan 方法，生成物理算子并且估算其代价，然后从中选择代价最小的方案，这两个函数比较重要：
+这里的 convert2PhysicalPlan 会递归调用下层节点的 convert2PhysicalPlan 方法，生成物理算子并且估算其代价，然后从中选择代价最小的方案，这两个函数比较重要：
 
 ```go
 // convert2PhysicalPlan implements LogicalPlan interface.
@@ -278,7 +278,7 @@ type task interface {
 
 整个流程是一个树形动态规划的算法，大家有兴趣可以跟一下相关的代码自行研究或者等待后续的文章。
 
-经过整个优化过程，我们已经得到一个物理查询计划，这个 `SELECT name FROM t WHERE age > 10;` 语句能够指定出来的查询计划大概是这样子的：
+经过整个优化过程，我们已经得到一个物理查询计划，这个 `SELECT name FROM t WHERE age > 10;` 语句能够指定出来的查询计划大概是这样子的：
 
 ![simple-select.png](https://upload-images.jianshu.io/upload_images/542677-6c7c5fa4df2443c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -298,9 +298,9 @@ func (ds *DataSource) PredicatePushDown(predicates []expression.Expression) ([]e
 
 ## Executing
 
-一个查询计划如何变成一个可执行的结构以及如何驱动这个结构执行查询已经在前面的两篇文章中做了描述，这里不再敷述，这一节我会重点介绍如何具体的执行过程以及 TiDB 的分布式执行框架。
+一个查询计划如何变成一个可执行的结构以及如何驱动这个结构执行查询已经在前面的两篇文章中做了描述，这里不再敷述，这一节我会重点介绍具体的执行过程以及 TiDB 的分布式执行框架。
 
-### Coprocessor 框架
+### Coprocessor 框架
 
 Coprocessor 这个概念是从 HBase 中借鉴而来，简单来说是一段注入在存储引擎中的计算逻辑，等待 SQL 层发来的计算请求（序列化后的物理执行计划），处理本地数据并返回计算结果。在 TiDB 中，计算是以 Region 为单位进行，SQL 层会分析出要处理的数据的 Key Range，再将这些 Key Range 根据 PD 中拿到的 Region 信息划分成若干个 Key Range，最后将这些请求发往对应的 Region。
 
@@ -308,15 +308,15 @@ SQL 层会将多个 Region 返回的结果进行汇总，在经过所需的 Oper
 
 #### DistSQL
 
-请求的分发与汇总会有很多复杂的处理逻辑，比如出错重试、获取路由信息、控制并发度以及结果返回顺序，为了避免这些复杂的逻辑与 SQL 层耦合在一起，TiDB 抽象了一个统一的分布式查询接口，称为 DistSQL API，位于 [distsql](https://github.com/pingcap/tidb/blob/source-code/distsql/distsql.go) 这个包中。
+请求的分发与汇总会有很多复杂的处理逻辑，比如出错重试、获取路由信息、控制并发度以及结果返回顺序，为了避免这些复杂的逻辑与 SQL 层耦合在一起，TiDB 抽象了一个统一的分布式查询接口，称为 DistSQL API，位于 [distsql](https://github.com/pingcap/tidb/blob/source-code/distsql/distsql.go) 这个包中。
 
-其中最重要的方法是 [SelectDAG](https://github.com/pingcap/tidb/blob/source-code/distsql/distsql.go#L305) 这个函数：
+其中最重要的方法是 [SelectDAG](https://github.com/pingcap/tidb/blob/source-code/distsql/distsql.go#L305) 这个函数：
 
 ```go
 // SelectDAG sends a DAG request, returns SelectResult.
 // In kvReq, KeyRanges is required, Concurrency/KeepOrder/Desc/IsolationLevel/Priority are optional.
 func SelectDAG(goCtx goctx.Context, ctx context.Context, kvReq *kv.Request, fieldTypes []*types.FieldType) (SelectResult, error) {
-	// kvReq 中包含了计算所涉及的数据的 KeyRanges
+	// kvReq 中包含了计算所涉及的数据的 KeyRanges
 	// 这里通过 TiKV Client 向 TiKV 集群发送计算请求
 	resp := ctx.GetClient().Send(goCtx, kvReq)
 	if resp == nil {
@@ -345,7 +345,7 @@ func SelectDAG(goCtx goctx.Context, ctx context.Context, kvReq *kv.Request, fiel
 }
 ```
 
-TiKV Client 中的具体逻辑我们暂时跳过，这里只关注 SQL 层拿到了这个 `selectResult` 后如何读取数据，下面这个接口是关键。
+TiKV Client 中的具体逻辑我们暂时跳过，这里只关注 SQL 层拿到了这个 `selectResult` 后如何读取数据，下面这个接口是关键。
 
 ```go
 // SelectResult is an iterator of coprocessor partial results.
@@ -363,11 +363,11 @@ type SelectResult interface {
 	ScanKeys() int64
 ```
 
-selectResult 实现了 SelectResult 这个接口，代表了一次查询的所有结果的抽象，计算是以 Region 为单位进行，所以这里全部结果会包含所有涉及到的 Region 的结果。调用 Chunk 方法可以读到一个 Chunk 的数据，通过不断调用 NextChunk 方法，直到 Chunk 的 NumRows 返回 0 就能拿到所有结果。NextChunk 的实现会不断获取每个 Region 返回的 SelectResponse，把结果写入 Chunk。
+selectResult 实现了 SelectResult 这个接口，代表了一次查询的所有结果的抽象，计算是以 Region 为单位进行，所以这里全部结果会包含所有涉及到的 Region 的结果。调用 Chunk 方法可以读到一个 Chunk 的数据，通过不断调用 NextChunk 方法，直到 Chunk 的 NumRows 返回 0 就能拿到所有结果。NextChunk 的实现会不断获取每个 Region 返回的 SelectResponse，把结果写入 Chunk。
 
 #### Root Executor
-能推送到 TiKV 上的计算请求目前有 TableScan、IndexScan、Selection、TopN、Limit、PartialAggregation 这样几个，其他更复杂的算子，还是需要在单个 tidb-server 上进行处理。所以整个计算是一个多 tikv-server 并行处理 + 单个 tidb-server 进行汇总的模式。 
+能推送到 TiKV 上的计算请求目前有 TableScan、IndexScan、Selection、TopN、Limit、PartialAggregation 这样几个，其他更复杂的算子，还是需要在单个 tidb-server 上进行处理。所以整个计算是一个多 tikv-server 并行处理 + 单个 tidb-server 进行汇总的模式。 
 
 
 ## 总结
-Select 语句的处理过程中最复杂的地方有两点，一个是查询优化，一个是如何分布式地执行，这两部分后续都会有文章来更进一步介绍。下一篇文章会脱离具体的 SQL 逻辑，介绍一下如何看懂某一个特定的模块。
+Select 语句的处理过程中最复杂的地方有两点，一个是查询优化，一个是如何分布式地执行，这两部分后续都会有文章来更进一步介绍。下一篇文章会脱离具体的 SQL 逻辑，介绍一下如何看懂某一个特定的模块。
