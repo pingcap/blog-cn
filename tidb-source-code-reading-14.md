@@ -43,7 +43,7 @@ CM Sketch 的定义可以在 [cmsketch.go](https://github.com/lamxTyler/tidb/bl
 
 在收集了每一个 Region 上分别建立的直方图后，还需要用 [MergeHistogram](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L609) 把每个 Region 上的直方图进行合并。在这个函数中：
 
-* 为了保证每个值只在一个桶中，我们处理了处理一下交界处桶的问题，即如果交界处两个桶的上界和下界 [相等](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L623)，那么需要先合并这两个桶；
+* 为了保证每个值只在一个桶中，我们处理了一下交界处桶的问题，即如果交界处两个桶的上界和下界 [相等](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L623)，那么需要先合并这两个桶；
 
 * 在真正合并前，我们分别将两个直方图的平均桶深 [调整](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L642) 至大致相等；
 
@@ -117,7 +117,7 @@ CM Sketch 的定义可以在 [cmsketch.go](https://github.com/lamxTyler/tidb/bl
 
 * 对于每一次增删，都去更新对应的桶深。在一个桶的桶深过高的时候分裂桶，一般是把桶的宽度等分，不过这样很难准确的确定分界点，引起误差。
 
-* 使用查询得到的真实数去反馈调整直方图，假定所有桶贡献的误差都是均匀的，用连续值假设去调整所有涉及到的桶。然而误差均匀的假设常常会引起问题，比如当当新插入的值大于直方图的最大值时，就会把新插入的值引起的误差分摊到直方图中，从而引起误差。
+* 使用查询得到的真实数去反馈调整直方图，假定所有桶贡献的误差都是均匀的，用连续值假设去调整所有涉及到的桶。然而误差均匀的假设常常会引起问题，比如当新插入的值大于直方图的最大值时，就会把新插入的值引起的误差分摊到直方图中，从而引起误差。
 
 目前 TiDB 的统计信息还是以单列的统计信息为主，为了减少独立性假设的使用，在将来 TiDB 会探索多列统计信息的收集和维护，为优化器提供更准确的统计信息。
 

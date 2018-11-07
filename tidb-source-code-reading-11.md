@@ -73,7 +73,7 @@ TiDB 中 ILJ 的执行阶段可划分为如下图所示的 5 步：
 
 **1\. 启动 Outer Worker 及 Inner Workers**
 
-这部分工作由 [startWorkers](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L130) 函数完成。该函数会 [启动一个 Outer Worker](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L138) 和[多个 Inner Worker](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L141) 和 [多个 Inner Worker](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L141)。Inner Woker 的数量可以通过 `tidb_index_lookup_concurrency` 这个系统变量进行设置，默认为 4。
+这部分工作由 [startWorkers](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L130) 函数完成。该函数会 [启动一个 Outer Worker](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L138) 和 [多个 Inner Worker](https://github.com/pingcap/tidb/blob/source-code/executor/index_lookup_join.go#L141)。Inner Woker 的数量可以通过 `tidb_index_lookup_concurrency` 这个系统变量进行设置，默认为 4。
 
 **2\. 读取 Outer 表数据**
 

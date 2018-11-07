@@ -26,7 +26,7 @@ NSM 会将 record 依次在磁盘 page 里面存放，每个 page 的末尾会�
 
 ## PAX
 
-可以看到，NSM 和 DSM 都有各自的优劣，所以如何将它们和优点结合起来，就是现在很多 hybrid storage 包括 PAX 考虑的问题。
+可以看到，NSM 和 DSM 都有各自的优劣，所以如何将它们的优点结合起来，就是现在很多 hybrid storage 包括 PAX 考虑的问题。
 
 PAX 全称是 Partition Attributes Across，它在 page 里面使用了一种 mini page 的方式，将 record 切到不同的 mini page 里面。
 

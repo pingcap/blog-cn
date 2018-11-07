@@ -46,7 +46,7 @@ coprocessor 请求如果是由 `Next` 触发的，每次调用 `Next` 就必须�
 
 在 copIterator 创建的时候，我们启动一个后台 worker goroutine 来依次执行所有的 coprocessor task，并把执行结果发送到一个 response channel，这样前台 `Next` 方法只需要从这个 channel 里  receive 一个 coprocessor response 就可以了。如果这个 task 已经执行完成，`Next` 方法可以直接获取到结果，立即返回。
 
-当所有 coprocessor task 被 work 执行完成的时候，worker 把这个 response channel 关闭，`Next` 方法在 receive channel 的时候发现 channel 已经关闭，就可以返回 `nil response`，表示所有结果都处理完成了。
+当所有 coprocessor task 被 worker 执行完成的时候，worker 把这个 response channel 关闭，`Next` 方法在 receive channel 的时候发现 channel 已经关闭，就可以返回 `nil response`，表示所有结果都处理完成了。
 
 以上的执行方案还是存在一个问题，就是 coprocessor task 只有一个 worker 在执行，没有并行，性能还是不理想。
 
@@ -122,7 +122,7 @@ copIterator 在 `Next` 里会根据结果是否有序，选择相应的执行模
 
 通过检查之后，执行最后一步 [commitKeys](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L620)，如果没有错误，事务就提交完成了。
 
-当 `commitKeys` 请求遇到了网络超时，那么这个事务是否已经提交是不确定的，这时候不能执行 `cleanupKeys` 操作，否则就破坏了事务的一致性。我们对这种情况返回一个特殊的 [undetermined error](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L625)，让上层来处理。上层会在遇到这种 error 的时候，把连接断开，而不是返回给用一个执行失败的错误。
+当 `commitKeys` 请求遇到了网络超时，那么这个事务是否已经提交是不确定的，这时候不能执行 `cleanupKeys` 操作，否则就破坏了事务的一致性。我们对这种情况返回一个特殊的 [undetermined error](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L625)，让上层来处理。上层会在遇到这种 error 的时候，把连接断开，而不是返回给用户一个执行失败的错误。
 
 [prewriteKeys](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L533),  [commitKeys](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L537) 和 [cleanupKeys](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L541) 有很多相同的逻辑，需要把 keys 根据 region 分成 batch，然后对每个 batch 执行一次 RPC。
 
@@ -130,7 +130,7 @@ copIterator 在 `Next` 里会根据结果是否有序，选择相应的执行模
 
 这部分逻辑我们把它抽出来，放在 [doActionOnKeys](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L191) 和 [doActionOnBatches](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L239) 里，并实现 [prewriteSinlgeBatch](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L319)，[commitSingleBatch](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L421)，[cleanupSingleBatch](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L497) 函数，用来执行单个 batch 的 RPC 请求。
 
-虽大部分逻辑是相同的，但是不同的请求在执行顺序上有一些不同，在 `doActionOnKeys` 里需要特殊的判断和处理。
+虽然大部分逻辑是相同的，但是不同的请求在执行顺序上有一些不同，在 `doActionOnKeys` 里需要特殊的判断和处理。
 
 * `prewrite` 分成的多个 batch 需要同步并行的执行。
 
