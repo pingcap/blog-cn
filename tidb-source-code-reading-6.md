@@ -1,4 +1,3 @@
-
 ---
 title: TiDB 源码阅读系列文章（六）Select 语句概览
 author: ['申砾']
@@ -6,6 +5,7 @@ date: 2018-03-30
 summary: 在先前的 TiDB 源码阅读系列文章（四）中，我们介绍了 Insert 语句，想必大家已经了解了 TiDB 是如何写入数据，本篇文章介绍一下 Select 语句是如何执行的。Enjoy~
 tags: ['源码阅读', 'TiDB']
 ---
+
 
 在先前的 [TiDB 源码阅读系列文章（四）]( https://pingcap.com/blog-cn/tidb-source-code-reading-4/ ) 中，我们介绍了 Insert 语句，想必大家已经了解了 TiDB 是如何写入数据，本篇文章介绍一下 Select 语句是如何执行。相比 Insert，Select 语句的执行流程会更复杂，本篇文章会第一次进入优化器、Coprocessor 模块进行介绍。
 
@@ -282,7 +282,7 @@ type task interface {
 
 ![simple-select.png](https://upload-images.jianshu.io/upload_images/542677-6c7c5fa4df2443c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-读者可能会比较奇怪，为什么只剩下这一个物理算子？`WHERR age > 10` 哪里去了？实际上 age > 10 这个过滤条件被合并进了 PhysicalTableScan，因为 `age > 10` 这个表达式可以下推到 TiKV 上进行计算，所以会把 TableScan 和 Filter 这样两个操作合在一起。哪些表达式会被下推到 TiKV 上的 Coprocessor 模块进行计算呢？对于这个 Query 是在下面 [这个地方](https://github.com/pingcap/tidb/blob/source-code/plan/predicate_push_down.go#L72) 进行识别：
+读者可能会比较奇怪，为什么只剩下这样一个物理算子？`WHERR age > 10` 哪里去了？实际上 age > 10 这个过滤条件被合并进了 PhysicalTableScan，因为 `age > 10` 这个表达式可以下推到 TiKV 上进行计算，所以会把 TableScan 和 Filter 这样两个操作合在一起。哪些表达式会被下推到 TiKV 上的 Coprocessor 模块进行计算呢？对于这个 Query 是在下面 [这个地方](https://github.com/pingcap/tidb/blob/source-code/plan/predicate_push_down.go#L72) 进行识别：
 
 ```go
 // PredicatePushDown implements LogicalPlan PredicatePushDown interface.
