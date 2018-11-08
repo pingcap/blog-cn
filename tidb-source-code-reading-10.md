@@ -90,7 +90,7 @@ Column 里面的字段非常多，这里先简单介绍一下：
 
 * 往 [offsets](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L324) 中 append 当前 [data](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L325) 的 size 作为下一个元素在 data 中的起始点。
 
-上面第 1 步在 [appendString](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L404) 这个函数中完成，第 2、3 步在 [finishAppendVar](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L398) 这个函数中完成。其他边长类型元素的追加操作也是非常相似，感兴趣的同学可以接着看看 [appendBytes](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L409)、[appendJSON](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L449) 等函数。
+上面第 1 步在 [appendString](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L404) 这个函数中完成，第 2、3 步在 [finishAppendVar](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L398) 这个函数中完成。其他变长类型元素的追加操作也是非常相似，感兴趣的同学可以接着看看 [appendBytes](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L409)、[appendJSON](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L449) 等函数。
 
 #### 1.3  追加一个 NULL 值
 

@@ -2,13 +2,13 @@
 title: 深入了解 gRPC：协议
 author: ['唐刘']
 date: 2017-06-18
-summary: 经过很长一段时间的开发，TiDB 终于发了 RC3。RC3 版本对于 TiKV 来说最重要的功能就是支持了 gRPC，也就意味着后面大家可以非常方便的使用自己喜欢的语言对接 TiKV 了。gRPC 是基于 HTTP/2 协议的，要深刻理解 gRPC，理解下 HTTP/2 是必要的，这里先简单介绍一下 HTTP/2 相关的知识，然后在介绍下 gRPC 是如何基于 HTTP/2 构建的。
+summary: 经过很长一段时间的开发，TiDB 终于发了 RC3。RC3 版本对于 TiKV 来说最重要的功能就是支持了 gRPC，也就意味着后面大家可以非常方便的使用自己喜欢的语言对接 TiKV 了。gRPC 是基于 HTTP/2 协议的，要深刻理解 gRPC，理解下 HTTP/2 是必要的，这里先简单介绍一下 HTTP/2 相关的知识，然后再介绍下 gRPC 是如何基于 HTTP/2 构建的。
 tags: ['TiKV', 'gRPC']
 ---
 
 经过很长一段时间的开发，TiDB 终于发了 RC3。RC3 版本对于 TiKV 来说最重要的功能就是支持了 gRPC，也就意味着后面大家可以非常方便的使用自己喜欢的语言对接 TiKV 了。
 
-gRPC 是基于 HTTP/2 协议的，要深刻理解 gRPC，理解下 HTTP/2 是必要的，这里先简单介绍一下 HTTP/2 相关的知识，然后在介绍下 gRPC 是如何基于 HTTP/2 构建的。
+gRPC 是基于 HTTP/2 协议的，要深刻理解 gRPC，理解下 HTTP/2 是必要的，这里先简单介绍一下 HTTP/2 相关的知识，然后再介绍下 gRPC 是如何基于 HTTP/2 构建的。
 
 ## HTTP/1.x
 
@@ -38,7 +38,7 @@ HTTP/1.x 另一个问题就在于它的交互模式，一个连接每次只能�
 用 HTTP/1.x 做过推送的同学，大概就知道有多么的痛苦，因为 HTTP/1.x 并没有推送机制。所以通常两种做法：
 
 + Long polling 方式，也就是直接给 server 挂一个连接，等待一段时间（譬如 1 分钟），如果 server 有返回或者超时，则再次重新 poll。
-+ Web-socket，通过 upgrade 机制显示的将这条 HTTP 连接变成裸的 TCP，进行双向交互。
++ Web-socket，通过 upgrade 机制显式地将这条 HTTP 连接变成裸的 TCP，进行双向交互。
 
 相比 Long polling，笔者还是更喜欢 web-socket 一点，毕竟更加高效，只是 web-socket 后面的交互并不是传统意义上面的 HTTP 了。
 
@@ -52,7 +52,7 @@ HTTP/2 是一个二进制协议，这也就意味着它的可读性几乎为 0�
 
 + Stream： 一个双向流，一条连接可以有多个 streams。
 + Message： 也就是逻辑上面的 request，response。
-+ Frame:：数据传输的最小单位。每个 Frame 都属于一个特定的 stream 或者整个连接。一个 message 可能有多个 frame 组成。
++ Frame:：数据传输的最小单位。每个 Frame 都属于一个特定的 stream 或者整个连接。一个 message 可能由多个 frame 组成。
 
 ### Frame Format
 
@@ -70,7 +70,7 @@ Frame 是 HTTP/2 里面最小的数据传输单位，一个 Frame 定义如下�
 +---------------------------------------------------------------+
 ```
 
-Length：也就是 Frame 的长度，默认最大长度是 16KB，如果要发送更大的 Frame，需要显示的设置 max frame size。
+Length：也就是 Frame 的长度，默认最大长度是 16KB，如果要发送更大的 Frame，需要显式地设置 max frame size。
 Type：Frame 的类型，譬如有 DATA，HEADERS，PRIORITY 等。
 Flag 和 R：保留位，可以先不管。
 Stream Identifier：标识所属的 stream，如果为 0，则表示这个 frame 属于整条连接。

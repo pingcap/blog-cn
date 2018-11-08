@@ -2,12 +2,12 @@
 title: TiDB 源码阅读系列文章（十七）DDL 源码解析
 author: ['陈霜']
 date: 2018-08-27
-summary: 本文首先会介绍 TiDB DDL 组件的总体设计，以及如何在分布式场景下支持无锁 shema 变更，并描述这套算法的大致流程，然后详细介绍一些常见的 DDL 语句的源码实现。Enjoy～
+summary: 本文首先会介绍 TiDB DDL 组件的总体设计，以及如何在分布式场景下支持无锁 schema 变更，并描述这套算法的大致流程，然后详细介绍一些常见的 DDL 语句的源码实现。Enjoy～
 tags: ['源码阅读','TiDB']
 ---
 
 
-DDL 是数据库非常核心的组件，其正确性和稳定性是整个 SQL 引擎的基石，在分布式数据库中，如何在保证数据一致性的前提下实现无锁的 DDL 操作是一件有挑战的事情。本文首先会介绍 TiDB DDL 组件的总体设计，介绍如何在分布式场景下支持无锁 shema 变更，描述这套算法的大致流程，然后详细介绍一些常见的 DDL 语句的源码实现，包括 `create table`、`add index`、`drop column`、`drop table` 这四种。
+DDL 是数据库非常核心的组件，其正确性和稳定性是整个 SQL 引擎的基石，在分布式数据库中，如何在保证数据一致性的前提下实现无锁的 DDL 操作是一件有挑战的事情。本文首先会介绍 TiDB DDL 组件的总体设计，介绍如何在分布式场景下支持无锁 schema 变更，描述这套算法的大致流程，然后详细介绍一些常见的 DDL 语句的源码实现，包括 `create table`、`add index`、`drop column`、`drop table` 这四种。
 
 ## DDL in TiDB
 
@@ -60,7 +60,7 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
     * 会先 check 一些限制，比如 table name 是否已经存在，table 名是否太长，是否有重复定义的列等等限制。
     * [buildTableInfo](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_api.go#L775) 获取 global table ID，生成 `tableInfo` , 即 table 的元信息，然后封装成一个 DDL job，这个 job 包含了 `table ID` 和 `tableInfo`，并将这个 job 的 type 标记为 `ActionCreateTable`。
     * [d.doDDLJob(ctx, job)](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_api.go#L793) 函数中的 [d.addDDLJob(ctx, job)](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl.go#L423) 会先给 job 获取一个 global job ID 然后放到 job queue 中去。
-    * DDL 组件启动后，在 [start](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl.go#L318) 函数中会启动一个 `ddl_worker` 协程运行 [onDDLWorker](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L37) 函数（最新 Master 分支函数名已重命名为 start），每隔一段时间调用 [handleDDLJobQueu](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L193) 函数去尝试处理 DDL job 队列里的 job，`ddl_worker` 会先 check 自己是不是 owner，如果不是 owner，就什么也不做，然后返回；如果是 owner，就调用 [getFirstDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L212) 函数获取 DDL 队列中的第一个 job，然后调 [runDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L236) 函数执行 job。
+    * DDL 组件启动后，在 [start](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl.go#L318) 函数中会启动一个 `ddl_worker` 协程运行 [onDDLWorker](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L37) 函数（最新 Master 分支函数名已重命名为 start），每隔一段时间调用 [handleDDLJobQueue](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L193) 函数去尝试处理 DDL job 队列里的 job，`ddl_worker` 会先 check 自己是不是 owner，如果不是 owner，就什么也不做，然后返回；如果是 owner，就调用 [getFirstDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L212) 函数获取 DDL 队列中的第一个 job，然后调 [runDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L236) 函数执行 job。
         * [runDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L275) 函数里面会根据 job 的类型，然后调用对应的执行函数，对于 `create table` 类型的 job，会调用 [onCreateTable](https://github.com/pingcap/tidb/blob/source-code/ddl/table.go#L31) 函数，然后做一些 check 后，会调用 [t.CreateTable](https://github.com/pingcap/tidb/blob/source-code/ddl/table.go#L56) 函数，将 `db_ID` 和 `table_ID` 映射为 `key`，`tableInfo` 作为 value 存到 TiKV 里面去，并更新 job 的状态。
     * [finishDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L152) 函数将 job 从 DDL job 队列中移除，然后加入 history ddl job 队列中去。
     * [doDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl.go#L451) 函数中检测到 history DDL job 队列中有对应的 job 后，返回。

@@ -42,18 +42,18 @@ TiDB 在设计的时候也是一个 CP + HA 系统，多数时候也是一个 CA
 
 1. 全局序列号生成器是一个典型的单点，即使会做一些 failover 的处理，但它仍然是整个系统的一个瓶颈。同时也避免不了网络开销。但全局序列号的实现非常简单，Google 之前的 Percolator 以及现在 TiDB 都是采用这种方式。
 2. 为什么要用时间？判断两个事件的先后顺序，时间是一个非常直观的度量方式，另外，如果用时间跟事件关联，那么我们就能知道某一个时间点整个系统的 snapshot。在 TiDB 的用户里面，一个非常典型的用法就是在游戏里面确认用户是否谎报因为回档丢失了数据，假设用户说在某个时间点得到某个装备，但后来又没有了，我们就可以直接在那个特定的时间点查询这个用户的数据，从而知道是否真的有问题。
-3. 我们不光可以用时间来确定以前的 snapshot，同样也可以用时间来约定集群会在未来达到某个状态。这个典型的应用就是 shema change。虽然笔者不清楚 Spanner schema change 的实现，但 Google F1 有一篇 [Online, Asynchronous Schema Change in F1](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41376.pdf) 论文提到了相关的方法，而 TiDB 也是采用的这种实现方式。简单来说，对于一个 schema change，通常都会分几个阶段来完成，如果集群某个节点在未来一个约定的时间没达到这个状态，这个节点就需要自杀下线，防止因为数据不一致损坏数据。
+3. 我们不光可以用时间来确定以前的 snapshot，同样也可以用时间来约定集群会在未来达到某个状态。这个典型的应用就是 schema change。虽然笔者不清楚 Spanner schema change 的实现，但 Google F1 有一篇 [Online, Asynchronous Schema Change in F1](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41376.pdf) 论文提到了相关的方法，而 TiDB 也是采用的这种实现方式。简单来说，对于一个 schema change，通常都会分几个阶段来完成，如果集群某个节点在未来一个约定的时间没达到这个状态，这个节点就需要自杀下线，防止因为数据不一致损坏数据。
 
 使用 TrueTime，Spanner 可以非常方便的实现笔者提到的用法，但 TrueTime 也并不是万能的：
 
-+ TrueTime 需要依赖 atomic clock 和 GPS，这属于硬件方案，而 Google 并没有论文说明如果构造 TrueTime，对于其他用户的实际并没有太多参考意义。
++ TrueTime 需要依赖 atomic clock 和 GPS，这属于硬件方案，而 Google 并没有论文说明如何构造 TrueTime，对于其他用户的实际并没有太多参考意义。
 + TrueTime 也会有误差范围，虽然非常的小，在毫秒级别以下，所以我们需要等待一个最大的误差时间，才能确保事务的相关顺序。
 
 ## Transaction
 
 Spanner 默认将数据使用 range 的方式切分成不同的 splits，就跟 TiKV 里面 region 的概念比较类似。每一个 Split 都会有多个副本，分布在不同的 node 上面，各个副本之间使用 Paxos 协议保证数据的一致性。
 
-Spanner 对外提供了 read-only transaction 和 read-write transaction 两种事物，这里简单的介绍一下，主要参考 Spanner 的[白皮书](https://cloud.google.com/spanner/docs/whitepapers/LifeCloudSpannerReadWrite.pdf)。
+Spanner 对外提供了 read-only transaction 和 read-write transaction 两种事务，这里简单的介绍一下，主要参考 Spanner 的[白皮书](https://cloud.google.com/spanner/docs/whitepapers/LifeCloudSpannerReadWrite.pdf)。
 
 ### Single Split Write
 
@@ -113,7 +113,7 @@ TiDB 现在并没有使用 1PC 的方式，但不排除未来也针对单个 reg
 2. API Layer  通过 TrueTime 获取一个 read timestamp（如果我们能够接受 Stale Read 也可以直接选择一个以前的 timestamp 去读）。
 3. API Layer 将读的请求发给 Split 1，Split 2 和 Split 3 的一些副本上面，这里有几种情况：
 	+ 多数情况下面，各个副本能通过内部状态和 TrueTime 知道自己有最新的数据，直接能提供 read。
-	+ 如果一个副本不确定是否有最新的数据，就像 Leader 问一下最新提交的事务 timestamp 是啥，然后等到这个事务被 apply 了，就可以提供 read。
+	+ 如果一个副本不确定是否有最新的数据，就向 Leader 问一下最新提交的事务 timestamp 是啥，然后等到这个事务被 apply 了，就可以提供 read。
 	+ 如果副本本来就是 Leader，因为 Leader 一定有最新的数据，所以直接提供 read。
 4. 各个副本的结果汇总然会返回给 client。
 
@@ -121,7 +121,7 @@ TiDB 现在并没有使用 1PC 的方式，但不排除未来也针对单个 reg
 
 现在 TiDB 只能支持从 Leader 读取数据，还没有支持 follower read，这个功能已经实现，但还有一些优化需要进行，现阶段并没有发布。
 
-TiDB 在 Leader 上面的读大部分走的是 lease read，也就是只要 Leader 能够确定自己仍然在 lease 有效范围里面，就可以直接读，如果不能确认，我们就会走 Raft 的 ReadIndex 机制，让 Leader 跟其他节点进行 heartbeat 交互，确认自己仍然是 Leader 之后在进行读操作。
+TiDB 在 Leader 上面的读大部分走的是 lease read，也就是只要 Leader 能够确定自己仍然在 lease 有效范围里面，就可以直接读，如果不能确认，我们就会走 Raft 的 ReadIndex 机制，让 Leader 跟其他节点进行 heartbeat 交互，确认自己仍然是 Leader 之后再进行读操作。
 
 ## 小结
 
