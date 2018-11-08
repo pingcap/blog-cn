@@ -21,7 +21,7 @@ tags: ['源码阅读','TiDB']
 
 * [Overview](https://github.com/pingcap/docs#tidb-introduction)
 * [How we build TiDB](https://pingcap.com/blog/2016-10-17-how-we-build-tidb/)
-* [TiDB 源码阅读系列](https://pingcap.com/blog-cn/#%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)
+* [TiDB 源码阅读系列文章](https://pingcap.com/blog-cn/#%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)
 * [Deep Dive TiKV (Work-In-Process)](https://tikv.github.io/deep-dive-tikv/book/)
 
 当然，最高效地熟悉 TiDB 的方式还是使用它，在某些场景下遇到了问题或者是想要新的 feature，去跟踪代码，找到相关的代码逻辑，在这个过程中很容易对相关模块有了解，不少 Contributor 就是这样完成了第一次贡献。 
