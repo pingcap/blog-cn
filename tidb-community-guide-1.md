@@ -1,9 +1,9 @@
 ---
 title: TiDB 开源社区指南（上）
 author: ['申砾']
-date: 2018-11-08
+date: 2018-11-09
 summary: 本系列文章旨在帮助社区开发者了解 TiDB 项目的全貌，更好的参与 TiDB 项目开发。上篇会聚焦在社区参与者的角度，描述如何更好的参与 TiDB 项目开发。
-tags: ['源码阅读','TiDB']
+tags: ['TiDB','社区']
 ---
 
 
@@ -64,23 +64,23 @@ tags: ['源码阅读','TiDB']
 
 对于 PR 我们有一些要求：
 
-1. 需要能通过 `make dev` 的测试，跑过基本的单元测试
+1. 需要能通过 `make dev` 的测试，跑过基本的单元测试；
 
-2. 必须有测试，除非只是改动文档或者是依赖包，其他情况需要有充足的理由说明没有测试的原因
+2. 必须有测试，除非只是改动文档或者是依赖包，其他情况需要有充足的理由说明没有测试的原因；
 
-3. 代码以及注释的质量需要足够高，[这里](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#code-style) 有一些关于编码风格和 commit message 的 guide
+3. 代码以及注释的质量需要足够高，[这里](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#code-style) 有一些关于编码风格和 commit message 的 guide；
 
-4. 请尽可能详细的填写 PR 的描述，并打上合适的 label
+4. 请尽可能详细的填写 PR 的描述，并打上合适的 label。
 
 **对于 PR 的描述，我们提供了一个模板，希望大家能够认真填写，一个好的描述能够加速 PR 的 review 过程。通过这个模板能够向 reviewers 以及社区讲明白：**
 
-* 这个PR 解决什么问题：相关的问题描述或者是 issue 链接
+* 这个PR 解决什么问题：相关的问题描述或者是 issue 链接；
 
-* 如何解决：具体的解决方法，reviewers 会根据这里的描述去看代码变动，所以请将这一段写的尽可能详细且有帮助
+* 如何解决：具体的解决方法，reviewers 会根据这里的描述去看代码变动，所以请将这一段写的尽可能详细且有帮助；
 
-* 测试的情况
+* 测试的情况；
 
-* 其他相关信息（如果需要）：benchmark 结果、兼容性问题、是否需要更新文档
+* 其他相关信息（如果需要）：benchmark 结果、兼容性问题、是否需要更新文档。
 
 最后再说几句测试，正确性是数据库安身立命之本，怎么强调测试都不为过。PR 中的测试不但需要充足，覆盖到所做的变动，还需要足够清晰，通过代码或者注释来表达测试的目的，帮助 reviewer 以及今后可能变动/破坏相关逻辑的人能够容易的理解这段测试。一段完善且清晰的测试也有利于让 reviewer 相信这个 Patch 是正确的。
 
@@ -92,7 +92,7 @@ PR review 的过程就是 reviewer 不断地提出 comment，PR 作者持续解�
 
 #### Tips：
 
-* 提了PR 之后，可以 at 一下相关的同学来 review
+* 提了PR 之后，可以 at 一下相关的同学来 review；
 
 * Address comment 之后可以 at 一下之前提过 comment 的同学，标准做法是 comment 一下 “**PTAL @xxx**”，这样我们内部的 Slack 中可以得到通知，相关的同学会受到提醒，让整个流程更紧凑高效。
 
