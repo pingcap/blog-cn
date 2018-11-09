@@ -21,15 +21,15 @@ logo: /images/blog-cn/customers/fengchao-logo.png
 
 为此，我们需要有个数据库帮我们解决以上问题，它的特性应该是：
 
-* 数据强一致：支持完整的 ACID
+* 数据强一致：支持完整的 ACID；
 
-* 不分表分库：无论多少数据我们只管插入不需要关心啥时候扩容，会不会 有瓶颈
+* 不分表分库：无论多少数据我们只管插入不需要关心啥时候扩容，会不会有瓶颈；
 
-* 数据高可用：当我们某台数据库的少部分机器磁盘或者其他挂了的时候，我们业务上可以无感知，甚至某个城市机房发生灾难的时候还可以持续提供服务，数据不丢失
+* 数据高可用：当我们某台数据库的少部分机器磁盘或者其他挂了的时候，我们业务上可以无感知，甚至某个城市机房发生灾难的时候还可以持续提供服务，数据不丢失；
 
-* 复杂 SQL 功能：基本上单库的 SQL，都可以在这个数据库上运行，不需要修改或者些许修改
+* 复杂 SQL 功能：基本上单库的 SQL，都可以在这个数据库上运行，不需要修改或者些许修改；
 
-* 高性能：在满足高 QPS 的同时，保证比较低的延时
+* 高性能：在满足高 QPS 的同时，保证比较低的延时。
 
 ## 选型
 
@@ -41,8 +41,8 @@ logo: /images/blog-cn/customers/fengchao-logo.png
 **在综合考虑了开源协议，成熟度，可控度，性能，服务支撑等综合因素之后，我们选择了 TiDB，它主要优势如下：**
 
 * 高度兼容 MySQL
-    
-    大多数情况下，无需修改代码即可从 MySQL 轻松迁移至 TiDB，分库分表后的 MySQL 集群亦可通过 TiDB 工具进行实时迁移。    
+
+  大多数情况下，无需修改代码即可从 MySQL 轻松迁移至 TiDB，分库分表后的 MySQL 集群亦可通过 TiDB 工具进行实时迁移。    
 
 * 水平弹性扩展
 
@@ -67,8 +67,6 @@ TiDB 的基准测试，使用的工具是 sysbanch 进行测试，使用了 8 �
 核心服务器配置：
 
 ![](https://upload-images.jianshu.io/upload_images/542677-995e5b7f363a02df.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-
 
 测试结果：
 
@@ -118,7 +116,7 @@ TiDB 的基准测试，使用的工具是 sysbanch 进行测试，使用了 8 �
 
 ### 2. 监控能力
 
-TiDB 拥有很完善的监控平台，可以直观的看到容量，以及节点状态。 
+TiDB 拥有很完善的监控平台，可以直观的看到容量，以及节点状态：
 
 ![](https://upload-images.jianshu.io/upload_images/542677-9f06fd3b88effdc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -134,7 +132,7 @@ TiDB 拥有很完善的监控平台，可以直观的看到容量，以及节点
 
 ![](https://upload-images.jianshu.io/upload_images/542677-6de5bfaa854bf2f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-所有这些能让团队能分析出来有问题的 sql，以及数据库本身的问题。 
+所有这些能让团队能分析出来有问题的 sql，以及数据库本身的问题。
 
 ## 小结
 
