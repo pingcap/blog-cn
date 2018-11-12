@@ -76,7 +76,7 @@ Flag 和 R：保留位，可以先不管。
 Stream Identifier：标识所属的 stream，如果为 0，则表示这个 frame 属于整条连接。
 Frame Payload：根据不同 Type 有不同的格式。
 
-可以看到，Frame 的格式定义还是非常的简单，按照官方协议，赞成可以非常方便的写一个出来。
+可以看到，Frame 的格式定义还是非常的简单，按照官方协议，可以非常方便的写一个出来。
 
 ### Multiplexing
 
