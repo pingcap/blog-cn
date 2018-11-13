@@ -35,8 +35,7 @@ logo: /images/blog-cn/customers/fengchao-logo.png
 
 根据以上期望进行分析，我们分析了目前市面上存在的 NewSQL 分布式数据库，列表如下： 
 
-![](https://upload-images.jianshu.io/upload_images/542677-deab1ced8fa5782c.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](https://upload-images.jianshu.io/upload_images/542677-5a820d66fe6d1a99.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 **在综合考虑了开源协议，成熟度，可控度，性能，服务支撑等综合因素之后，我们选择了 TiDB，它主要优势如下：**
 
