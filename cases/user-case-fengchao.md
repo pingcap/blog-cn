@@ -2,7 +2,7 @@
 title: TiDB at 丰巢：尝鲜分布式数据库
 author: ['丰巢技术团队']
 date: 2018-11-09
-summary: 因为 TiDB 是完全兼容 MySQL 语法的，所以在这个项目的接入过程中，我们对代码的修改是很细微的。
+summary: TiDB 的改造完成之后，丰巢推送服务对大部分消息进行了落地和查询，截止目前为止，推送服务最大的日落地量已经达到了 5 千万。
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-fengchao/
@@ -35,8 +35,7 @@ logo: /images/blog-cn/customers/fengchao-logo.png
 
 根据以上期望进行分析，我们分析了目前市面上存在的 NewSQL 分布式数据库，列表如下： 
 
-![](https://upload-images.jianshu.io/upload_images/542677-deab1ced8fa5782c.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](https://upload-images.jianshu.io/upload_images/542677-5a820d66fe6d1a99.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 **在综合考虑了开源协议，成熟度，可控度，性能，服务支撑等综合因素之后，我们选择了 TiDB，它主要优势如下：**
 
@@ -96,7 +95,7 @@ TiDB 的基准测试，使用的工具是 sysbanch 进行测试，使用了 8 �
 
 ### 2. 代码修改
 
-**因为 TiDB 是完全兼容 MySQL 语法的，所以在这个项目的接入过程中，我们对代码的修改是很细微的。**SQL 基本零改动，主要是外围代码，包括：
+因为 TiDB 是完全兼容 MySQL 语法的，所以在这个项目的接入过程中，我们对代码的修改是很细微的。SQL 基本零改动，主要是外围代码，包括：
 
 * 异步接口修改，数据异步化入库
 
