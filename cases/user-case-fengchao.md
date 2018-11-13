@@ -2,7 +2,7 @@
 title: TiDB at 丰巢：尝鲜分布式数据库
 author: ['丰巢技术团队']
 date: 2018-11-09
-summary: 因为 TiDB 是完全兼容 MySQL 语法的，所以在这个项目的接入过程中，我们对代码的修改是很细微的。
+summary: TiDB 的改造完成之后，丰巢推送服务对大部分消息进行了落地和查询，截止目前为止，推送服务最大的日落地量已经达到了 5 千万。
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-fengchao/
