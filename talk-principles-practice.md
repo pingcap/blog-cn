@@ -33,7 +33,7 @@ tags: ['TiDB', 'NewSQL', 'Test']
 
 **第四是 Auto-failover / Self recovery / Survivability。**
 
-Spanner 能够做到任何一个数据中心宕机，底层可以完全的 Auto-Failover，上层的业务甚至是完全无感知的。这个 Failover 的过程是完全不需要人工介入的。国内很多互联网公司也都在做这个，但是还没有那一家能做的特别好，比如光纤被挖断之后，大家发现支付工具无法支付了。除了业务不被中断这一好处之外，Auto-failover 还会极大地降低运维的成本，如 Google 这么牛的公司，在维护一百多个节点的 MySQL Sharding 的数据库的时候，都已经非常痛苦，宁可重新去写一个数据库，也不想去维护这个 datebase cluster。
+Spanner 能够做到任何一个数据中心宕机，底层可以完全的 Auto-Failover，上层的业务甚至是完全无感知的。这个 Failover 的过程是完全不需要人工介入的。国内很多互联网公司也都在做这个，但是还没有那一家能做的特别好，比如光纤被挖断之后，大家发现支付工具无法支付了。除了业务不被中断这一好处之外，Auto-failover 还会极大地降低运维的成本，如 Google 这么牛的公司，在维护一百多个节点的 MySQL Sharding 的数据库的时候，都已经非常痛苦，宁可重新去写一个数据库，也不想去维护这个 database cluster。
 
 为了给业界提供 NewSQL 数据库，我们开发了 TiDB，提供如下特性：
 
