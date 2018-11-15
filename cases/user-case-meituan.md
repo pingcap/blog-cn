@@ -84,7 +84,7 @@ TiDB 架构分层清晰，服务平稳流畅，但在美团当前的数据量规
 
 美团目前使用 Mt-Falcon 平台负责监控报警，通过在 Mt-Falcon 上配置不同的插件，可以实现对多种组件的自定义监控。另外也会结合 Puppet 识别不同用户的权限、文件的下发。这样，只要我们编写好插件脚本、需要的文件，装机和权限控制就可以完成了。监控架构如图 3。
 
-![](https://upload-images.jianshu.io/upload_images/542677-4a649fff11279bd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3 监控架构图](https://upload-images.jianshu.io/upload_images/542677-4a649fff11279bd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <center>图 3 监控架构图</center>
 
@@ -159,7 +159,7 @@ TiKV 底层有 2 个 RocksDB 作为存储。新写的数据写入 L0 层，当 R
 * 写入量大，Compact 完不成。
 * Snapshot 一直创建不完，导致堆积的副本一下释放，rocksdb-raft 创建大量的 L0 文件，监控展示如图 6。
 
-![](https://upload-images.jianshu.io/upload_images/542677-3498c34ccec97c8b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 6 TiKV 发生 Write Stall 监控展示图](https://upload-images.jianshu.io/upload_images/542677-3498c34ccec97c8b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <center>图 6 TiKV 发生 Write Stall 监控展示图</center>
 
