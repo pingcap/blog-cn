@@ -92,7 +92,7 @@ Kudu 的 heartbeat 是 500 毫秒，election timeout 是 1500 毫秒，这个时
 
 可以看到，这个流程跟 TiKV 的做法类似，这个其实有一个缺陷的。假设我们有三个节点，加入第四个之后，如果新的节点还没 apply 完 snapshot，这时候挂掉了一个节点，那么整个集群其实是没法工作的。
 
-为了解决这个问题，Kudu 引入了 `PRR_VOTER` 概念。当新的节点加入的时候，它是 `PRE_VOTE` 状态，这个节点不会参与到 Raft Vote 里面，只有当这个节点接受成功 snapshot 之后，才会变成 `VOTER`。
+为了解决这个问题，Kudu 引入了 `PRE_VOTER` 概念。当新的节点加入的时候，它是 `PRE_VOTE` 状态，这个节点不会参与到 Raft Vote 里面，只有当这个节点接受成功 snapshot 之后，才会变成 `VOTER`。
 
 当删除一个节点的时候，Leader 直接提交一个新的 configuration，删除这个节点，当这个 log 被 committed 之后，这个节点就把删除了。被删除的节点有可能不知道自己已经被删除了，如果它长时间没有收到其他的节点发过来的消息，就会问下 Master 自己还在不在，如果不在了，就自己干掉自己。这个做法跟 TiKV 也是类似的。
 
