@@ -27,7 +27,7 @@ parser: goyacc
 	bin/goyacc -o parser/parser.go parser/parser.y 2>&1 ...
 ```
 
-[goyacc](https://github.com/cznic/goyacc) 是 [yacc](http://dinosaur.compilertools.net/) 的 Golang 版，所以要想看懂语法规则定义文件 [parser.y](https://github.com/pingcap/tidb/blob/master/parser/parser.y)，了解解析器是如何工作的，先要对 [Lex & Yacc](http://dinosaur.compilertools.net/) 有些了解。
+[goyacc](https://github.com/cznic/goyacc) 是 [yacc](http://dinosaur.compilertools.net/) 的 Golang 版，所以要想看懂语法规则定义文件 [parser.y](https://github.com/pingcap/tidb/blob/source-code/parser/parser.y)，了解解析器是如何工作的，先要对 [Lex & Yacc](http://dinosaur.compilertools.net/) 有些了解。
 
 ## Lex & Yacc 介绍
 
@@ -293,7 +293,7 @@ type yySymType struct {
 }
 ```
 
-在语法解析过程中，`非终结符` 会被构造成抽象语法树（`AST`）的节点 [ast.ExprNode](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L60) 或 [ast.StmtNode](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L94)。抽象语法树相关的数据结构都定义在 [ast](https://github.com/pingcap/tidb/tree/master/ast) 包中，它们大都实现了 [ast.Node](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L29) 接口：
+在语法解析过程中，`非终结符` 会被构造成抽象语法树（`AST`）的节点 [ast.ExprNode](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L60) 或 [ast.StmtNode](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L94)。抽象语法树相关的数据结构都定义在 [ast](https://github.com/pingcap/tidb/tree/source-code/ast) 包中，它们大都实现了 [ast.Node](https://github.com/pingcap/tidb/blob/73900c4890dc9708fe4de39021001ca554bc8374/ast/ast.go#L29) 接口：
 
 ```
 // Node is the basic element of the AST.
