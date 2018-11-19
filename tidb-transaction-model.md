@@ -33,6 +33,7 @@ MVCC 其实并不是一个新的概念了，在传统的单机关系型数据库
     DataKey(key+version_1)-->Value_v1
     DataKey(key+version_2)-->Value_v2
 暴露给上层的接口行为定义：
+
 > * MVCCGet(key, version), 返回某 key 小于等于 version 的最大版本的值
 > * MVCCScan(startKey, endKey, limit, version), 返回  [startKey,  endKey)  区间内的 key 小于等于 version 的最大版本的键和值，上限 limit 个
 > * MVCCPut(key, value, version) 插入某个键值对，如果 version 已经存在，则覆盖它。上层事务系统有责任维护自增version来避免[read-modify-write]
