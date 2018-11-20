@@ -53,7 +53,7 @@ tags: ['开源', '社区', 'TiDB', 'TiKV', 'GitHub']
   文件里也可以包含需要写哪些测试，代码风格，或者是哪些地方需要增加补丁之类的内容。
   - TiDB Contributing 文档 https://github.com/pingcap/tidb/blob/master/CONTRIBUTING.md
 
-- **License**：LICENSE 文件就是这个开源项目的许可证。一个开源项目会告知用户他们可以做什么，不可做什么(比如：使用，修改，重新分发)，以及贡献者允许其他人做哪些事。开源许可证有多种，你可以在[认识各种开源协议及其关系](http://blog.jasonding.top/2015/05/11/Git/%E3%80%90Git%E3%80%91%E8%AE%A4%E8%AF%86%E5%90%84%E7%A7%8D%E5%BC%80%E6%BA%90%E5%8D%8F%E8%AE%AE%E5%8F%8A%E5%85%B6%E5%85%B3%E7%B3%BB/)了解更多关于开源许可证的信息。
+- **License**：LICENSE 文件就是这个开源项目的许可证。一个开源项目会告知用户他们可以做什么，不可做什么(比如：使用，修改，重新分发)，以及贡献者允许其他人做哪些事。开源许可证有多种，你可以在[认识各种开源协议及其关系](http://www.ruanyifeng.com/blog/2011/05/how_to_choose_free_software_licenses.html)了解更多关于开源许可证的信息。
   - TiDB 遵循 Apache-2.0 Lincense
 https://github.com/pingcap/tidb/blob/master/LICENSE
   - TiKV 遵循 Apache-2.0 Lincense https://github.com/pingcap/tikv/blob/master/LICENSE
