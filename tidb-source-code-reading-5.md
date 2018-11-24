@@ -248,7 +248,7 @@ func (s *Scanner) Errors() []error {
 
 ## TiDB SQL Parser 的实现
 
-终于到了正题。有了上面的背景知识，对 TiDB 的 `SQL Parser` 模块会相对容易理解一些。TiDB 的词法解析使用的 [手写的解析器](https://github.com/pingcap/tidb/blob/source-code/parser/lexer.go)（这是出于性能考虑），语法解析采用 `goyacc`。先看 SQL 语法规则文件 [parser.y](https://github.com/pingcap/tidb/blob/master/parser/parser.y)，`goyacc` 就是根据这个文件生成SQL语法解析器的。
+终于到了正题。有了上面的背景知识，对 TiDB 的 `SQL Parser` 模块会相对容易理解一些。TiDB 的词法解析使用的 [手写的解析器](https://github.com/pingcap/tidb/blob/source-code/parser/lexer.go)（这是出于性能考虑），语法解析采用 `goyacc`。先看 SQL 语法规则文件 [parser.y](https://github.com/pingcap/tidb/blob/source-code/parser/parser.y)，`goyacc` 就是根据这个文件生成SQL语法解析器的。
 
 `parser.y` 有 6500 多行，第一次打开可能会被吓到，其实这个文件仍然符合我们上面介绍过的结构：
 
