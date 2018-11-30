@@ -59,10 +59,10 @@ tags: ['TiDB']
 * 支持在单个 tidb-server 实例内部对冲突事务排队，优化事务间冲突频繁的场景下的性能
 * 支持 Server Side Cursor
 * 新增 [HTTP 管理接口](https://github.com/pingcap/tidb/blob/master/docs/tidb_http_api.md)
-* 打散 table 的 regions 在 TiKV 集群中的分布
-* 控制是否打开 `general log`
-* 在线修改日志级别
-* 查询 TiDB 集群信息
+    * 打散 table 的 regions 在 TiKV 集群中的分布
+    * 控制是否打开 `general log`
+    * 在线修改日志级别
+    * 查询 TiDB 集群信息
 * [添加 `auto_analyze_ratio` 系统变量控制自动 Analyze 的阈值](https://pingcap.com/docs-cn/FAQ/#3-3-11-%E5%9C%A8-tidb-%E4%B8%AD-auto-analyze-%E7%9A%84%E8%A7%A6%E5%8F%91%E7%AD%96%E7%95%A5%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84)
 * [添加 `tidb_retry_limit` 系统变量控制事务自动重试的次数](https://pingcap.com/docs-cn/sql/tidb-specific/#tidb-retry-limit)
 * [添加 `tidb_disable_txn_auto_retry` 系统变量控制事务是否自动重试](https://pingcap.com/docs-cn/sql/tidb-specific/#tidb-disable-txn-auto-retry)
