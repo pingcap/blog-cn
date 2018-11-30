@@ -1,5 +1,5 @@
 ---
-title: TiDB 2.1：Battle-Tested to Handle an Unpredictable World
+title: TiDB 2.1：Battle-Tested for an Unpredictable World
 author: ['申砾']
 date: 2018-11-30
 summary: TiDB 是由 PingCAP 开发的分布式关系型数据库，今天我们很高兴地推出 TiDB 2.1 正式版，提供更丰富的功能、更好的性能以及更高的可靠性。
