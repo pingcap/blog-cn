@@ -17,7 +17,7 @@ logo: /images/blog-cn/customers/xiaomi-logo.png
 
 MIUI 是小米公司旗下基于 Android 系统深度优化、定制、开发的第三方手机操作系统，也是小米的第一个产品。MIUI 在 Android 系统基础上，针对中国用户进行了深度定制，在此之上孕育出了一系列的应用，比如主题商店、小米音乐、应用商店、小米阅读等。 
 
-![图 1  MIUI Android 系统界面图](http://upload-images.jianshu.io/upload_images/542677-63e8029c0a6b4ed7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1  MIUI Android 系统界面图](https://upload-images.jianshu.io/upload_images/542677-15956a96f7280cc8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <center>图 1  MIUI Android 系统界面图</center>
 
@@ -42,9 +42,9 @@ TiDB 结合了传统的 RDBMS 和 NoSQL 的最佳特性，兼容 MySQL 协议，
 
 * 真正金融级高可用，相比于传统主从（M-S）复制方案，基于 Raft 的多数派选举协议可以提供金融级的 100% 数据强一致性保证，且在不丢失大多数副本的前提下，可以实现故障的自动恢复（auto-failover），无需人工介入。
 
-TiDB 的架构及原理官网有详细介绍（https://pingcap.com/），这里不再赘述。
+TiDB 的架构及原理在 [官网](https://pingcap.com/) 里有详细介绍，这里不再赘述。
 
-![图 2  TiDB 基础架构图](http://upload-images.jianshu.io/upload_images/542677-49a9a0e21c4522f7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 2  TiDB 基础架构图](https://upload-images.jianshu.io/upload_images/542677-ce71e09598287643.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <center>图 2  TiDB 基础架构图</center>
 
@@ -107,7 +107,7 @@ TiDB 的架构及原理官网有详细介绍（https://pingcap.com/），这里�
 | 128 | 39943.05 | 3.20 / 8.43 / 58.60 |
 | 256 | 40920.64 | 6.25 / 13.70 / 95.13 |
 
-![图 3  标准 Select 压测图](http://upload-images.jianshu.io/upload_images/542677-26daf44797b7d286?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3  标准 Select 压测图](https://upload-images.jianshu.io/upload_images/542677-b62e39005d1cba43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <center>图 3  标准 Select 压测图</center>
 
@@ -122,7 +122,8 @@ TiDB 的架构及原理官网有详细介绍（https://pingcap.com/），这里�
 | 128 | 1121.55 | 22431 | 114.12 / 161.51 / 459.03 | 
 | 256 | 941.26 | 18825.1 | 271.94 / 369.77 / 572.88 |
 
-![图 4  标准 OLTP  压测图](http://upload-images.jianshu.io/upload_images/542677-faf6409862a80a81?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 4  标准 OLTP  压测图](https://upload-images.jianshu.io/upload_images/542677-1de382310ddd11f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 <center>图 4  标准 OLTP  压测图</center>
 
@@ -138,7 +139,7 @@ TiDB 的架构及原理官网有详细介绍（https://pingcap.com/），这里�
 | 128 | 15100.44 | 8.47 / 16.41 / 278.23 |
 | 256 | 17286.86 | 14.81 / 25.74 / 3146.52 |
 
-![图 5  标准 Insert 压测图](http://upload-images.jianshu.io/upload_images/542677-670c170420ee4d26?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 5  标准 Insert 压测图](https://upload-images.jianshu.io/upload_images/542677-915867f73058919b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <center>图 5  标准 Insert 压测图</center>
 
@@ -158,7 +159,7 @@ TiDB 的架构及原理官网有详细介绍（https://pingcap.com/），这里�
 
 Syncer 结构如图 6，主要依靠各种 Rule 来实现不同的过滤、合并效果，一个同步源对应一个 Syncer 进程，同步 Sharding 数据时则要多个 Syncer 进程。
 
-![图 6  Syncer 结构图](http://upload-images.jianshu.io/upload_images/542677-1f4a4d18c27486c6?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 6  Syncer 结构图](https://upload-images.jianshu.io/upload_images/542677-54ae1c70aa6a580c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <center>图 6  Syncer 结构图</center>
 
@@ -190,7 +191,7 @@ Syncer 结构如图 6，主要依靠各种 Rule 来实现不同的过滤、合�
 
 监控采用了 TiDB 的提供的监控方案，并且也接入了公司开源的 Falcon，目前整个集群运行比较稳定，监控如图 7。      
 
-![图 7  监控图](http://upload-images.jianshu.io/upload_images/542677-fbedd07beb2cfa57?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 7  监控图](https://upload-images.jianshu.io/upload_images/542677-c098367d5021c1bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <center>图 7  监控图</center>
 
