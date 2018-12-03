@@ -13,7 +13,7 @@ tags: ['TiKV']
 
 Google 2012 年在 OSDI 上发表了 Spanner，作为 BigTable 的下一代产品，最主要的特性就是支持跨行事务和在分布式场景上实现 Serializable 的事务隔离级别。我们在2015年底从零开始按照论文做 Spanner 的开源实现 TiKV，于近期[开源](https://github.com/pingcap/tikv)，和 Spanner 一样，也是一个支持分布式事务和水平扩展的 KV 数据库。一个分布式数据库涉及的技术面非常广泛，**今天我们主要探讨的是 TiKV 的 MVCC（多版本并发控制） 和 Transaction 实现。**
 
-MVCC 其实并不是一个老的概念了，在传统的单机关系型数据库使用 MVCC 技术来规避大量的悲观锁的使用，提高并发事务的读写性能。**值得注意的是 MVCC 只是一个思想，并不是某个特定的实现，它表示每条记录都有多个版本的，互相不影响，**以一个 kv 数据库为例从逻辑上的一行的表示就并不是
+MVCC 其实并不是一个新的概念了，在传统的单机关系型数据库使用 MVCC 技术来规避大量的悲观锁的使用，提高并发事务的读写性能。**值得注意的是 MVCC 只是一个思想，并不是某个特定的实现，它表示每条记录都有多个版本的，互相不影响，**以一个 kv 数据库为例从逻辑上的一行的表示就并不是
 
     Record := {key, value}
 
@@ -33,6 +33,7 @@ MVCC 其实并不是一个老的概念了，在传统的单机关系型数据库
     DataKey(key+version_1)-->Value_v1
     DataKey(key+version_2)-->Value_v2
 暴露给上层的接口行为定义：
+
 > * MVCCGet(key, version), 返回某 key 小于等于 version 的最大版本的值
 > * MVCCScan(startKey, endKey, limit, version), 返回  [startKey,  endKey)  区间内的 key 小于等于 version 的最大版本的键和值，上限 limit 个
 > * MVCCPut(key, value, version) 插入某个键值对，如果 version 已经存在，则覆盖它。上层事务系统有责任维护自增version来避免[read-modify-write]
