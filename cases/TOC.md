@@ -3,6 +3,7 @@
 ## 目录
 
 + 互联网
+  - [小米](user-case-xiaomi.md)
   - [美团点评](user-case-meituan.md)
   - [丰巢](user-case-fengchao.md)
   - [转转](user-case-zhuanzhuan.md)
