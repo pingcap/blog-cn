@@ -122,7 +122,9 @@ TiDB 的架构及原理在 [官网](https://pingcap.com/) 里有详细介绍，�
 | 128 | 1121.55 | 22431 | 114.12 / 161.51 / 459.03 | 
 | 256 | 941.26 | 18825.1 | 271.94 / 369.77 / 572.88 |
 
-![图 4  标准 OLTP  压测图](https://upload-images.jianshu.io/upload_images/542677-1de382310ddd11f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图 4  标准 OLTP  压测图](https://upload-images.jianshu.io/upload_images/542677-48112ed85acc1e0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 
 <center>图 4  标准 OLTP  压测图</center>
