@@ -69,6 +69,8 @@ type Node interface {
 
 这里以[实现 ColumnNameExpr 的 Restore 函数 PR](https://github.com/pingcap/parser/pull/63/files) 为例，进行详细说明
 
+0. 最好先看看 [Proposal](https://github.com/pingcap/tidb/tree/master/docs/design/2018-11-29-ast-to-sql-text.md)、[Issue](https://github.com/pingcap/tidb/issues/8532)
+
 1. 首先看 `ast/expressions.go`：
 
     我们要实现一个 ast.Node 结构的 Restore 函数，首先清楚该结构代表什么短语，例如 ColumnNameExpr 代表列名；
@@ -92,7 +94,7 @@ type Node interface {
     我们发现我们需要先实现 ColumnName 的 Restore 函数：
     
     ```
-    // Restore implements Recoverable interface.
+    // Restore implements Node interface.
     // ColumnName 表示列名
 	func (n *ColumnName) Restore(sb *strings.Builder) error {
 	    // 如果 Schema 非空则写入 Schema 名
@@ -115,7 +117,7 @@ type Node interface {
 	然后我们实现 ColumnNameExpr 的 Restore 函数：
 	
 	```
-	// Restore implements Recoverable interface.
+	// Restore implements Node interface.
     func (n *ColumnNameExpr) Restore(sb *strings.Builder) error {
         err := n.Name.Restore(sb)
     	if err != nil {
