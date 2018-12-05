@@ -38,6 +38,8 @@ type Node interface {
 
 ## **实现 `Restore()` 函数的整体流程**
 
+0. 最好先看看 [Proposal](https://github.com/pingcap/tidb/tree/master/docs/design/2018-11-29-ast-to-sql-text.md)、[Issue](https://github.com/pingcap/tidb/issues/8532)
+
 1. 找到未实现的函数
 
     在 [Issue-pingcap/tidb#8532](https://github.com/pingcap/tidb/issues/8532) 中找到一个没有被其他贡献者认领的任务，例如 `ast/expressions.go: BetweenExpr`。
@@ -68,8 +70,6 @@ type Node interface {
 ## **示例**
 
 这里以[实现 ColumnNameExpr 的 Restore 函数 PR](https://github.com/pingcap/parser/pull/63/files) 为例，进行详细说明
-
-0. 最好先看看 [Proposal](https://github.com/pingcap/tidb/tree/master/docs/design/2018-11-29-ast-to-sql-text.md)、[Issue](https://github.com/pingcap/tidb/issues/8532)
 
 1. 首先看 `ast/expressions.go`：
 
