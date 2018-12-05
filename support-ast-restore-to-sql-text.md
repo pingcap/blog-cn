@@ -27,7 +27,7 @@ type Node interface {
 }
 ```
 
-以 SQL 语句 `` 为例，如下图所示，我们通过遍历整个 AST 树，递归调用每个节点的 `Restore()` 方法，即可拼接成一个完整的 SQL 文本。
+以 SQL 语句 `SELECT column0 FROM table0 UNION SELECT column1 FROM table1 WHERE a = 1` 为例，如下图所示，我们通过遍历整个 AST 树，递归调用每个节点的 `Restore()` 方法，即可拼接成一个完整的 SQL 文本。
 
 ![ast-tree](media/ast-tree.png)
 
@@ -174,7 +174,8 @@ type Node interface {
     }
     ```
     
-> 对于 `ast.StmtNode`(例如：`ast.SelectStmt`)，由于这类节点可以还原为一个完整的，因此直接在 `parser_test.go` 中测试，详见：[pingcap/parser#62](https://github.com/pingcap/parser/pull/62)
+> 对于 `ast.StmtNode`（例如：`ast.SelectStmt`），由于这类节点可以还原为一个完整的 SQL，因此直接在 `parser_test.go` 中测试，
+详见：[pingcap/parser#62](https://github.com/pingcap/parser/pull/62)
 
 编辑按：添加 TiDB Robot 微信，加入 TiDB Contributor Club，无门槛参与开源项目，改变世界从这里开始吧（萌萌哒）。
 
