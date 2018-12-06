@@ -211,7 +211,7 @@ type Node interface {
     }
     ```
     
-    测试代码会判断原 SQL 产生的 AST 再还原为 SQL 时是否与预期的 restore SQL相等，具体的测试逻辑在 `parser_test.go` 中 `RunTest()`、`RunRestoreTest()` 函数，逻辑与前例类似，此处不再赘述。
+    测试代码会判断原 SQL parse 出 AST 后再还原的 SQL 是否与预期的 restore SQL 相等，具体的测试逻辑在 `parser_test.go` 中 `RunTest()`、`RunRestoreTest()` 函数，逻辑与前例类似，此处不再赘述。
 
 编辑按：添加 TiDB Robot 微信，加入 TiDB Contributor Club，无门槛参与开源项目，改变世界从这里开始吧（萌萌哒）。
 
