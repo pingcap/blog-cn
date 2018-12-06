@@ -11,6 +11,8 @@ tags: ['TiDB', 'Contributor', 'SQL', '社区']
 
 SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST（抽象语法树），AST 节点与 SQL 文本结构是一一对应的，我们通过遍历整个 AST 树就可以拼接出一个与 AST 语义相同的 SQL 文本。
 
+对 parser 不熟悉的小伙伴们可以看 [TiDB 源码阅读系列文章（五）TiDB SQL Parser 的实现](https://www.pingcap.com/blog-cn/tidb-source-code-reading-5/)。
+
 我们当前 AST 结构定义如下（以 `ast.CreateUserStmt` 为例）：
 
 ![create-user-stmt](media/create-user-stmt.png)
@@ -69,7 +71,7 @@ type Node interface {
 
 ## **示例**
 
-这里以[实现 ColumnNameExpr 的 Restore 函数 PR](https://github.com/pingcap/parser/pull/63/files) 为例，进行详细说明
+这里以[实现 ColumnNameExpr 的 Restore 函数 PR](https://github.com/pingcap/parser/pull/63/files) 为例，进行详细说明：
 
 1. 首先看 `ast/expressions.go`：
 
@@ -83,15 +85,17 @@ type Node interface {
     	exprNode
     
     	// Name is the referenced column name.
+    	// 我们发现要先实现 ColumnName 的 Restore 函数
     	Name *ColumnName
     
     	// Refer is the result field the column name refers to.
     	// The value of Refer.Expr is used as the value of the expression.
+    	// 观察 parser.y (3373~3401 行) 发现 parser 过程并没有对 Refer 赋值，因此忽略这个字段
     	Refer *ResultField
     }
     ```
     
-    我们发现我们需要先实现 ColumnName 的 Restore 函数：
+    实现 ColumnName 的 Restore 函数：
     
     ```
     // Restore implements Node interface.
