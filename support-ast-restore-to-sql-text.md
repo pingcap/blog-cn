@@ -21,11 +21,11 @@ SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST�
 
 ```
 type Node interface {
-	// Restore AST to SQL text and append them to `sb`.
-	// return error when the AST is invalid.
-	Restore(sb *strings.Builder) error
-	
-	...
+    // Restore AST to SQL text and append them to `sb`.
+    // return error when the AST is invalid.
+    Restore(sb *strings.Builder) error
+    
+    ...
 }
 ```
 
@@ -53,7 +53,7 @@ type Node interface {
     ```
     // Restore implements Recoverable interface.
     func (n *BetweenExpr) Restore(sb *strings.Builder) error {
-    	return errors.New("Not implemented")
+        return errors.New("Not implemented")
     }
     ```
 
@@ -82,16 +82,16 @@ type Node interface {
     ```
     // ColumnNameExpr represents a column name expression.
     type ColumnNameExpr struct {
-    	exprNode
+        exprNode
     
-    	// Name is the referenced column name.
-    	// 我们发现要先实现 ColumnName 的 Restore 函数
-    	Name *ColumnName
+        // Name is the referenced column name.
+        // 我们发现要先实现 ColumnName 的 Restore 函数
+        Name *ColumnName
     
-    	// Refer is the result field the column name refers to.
-    	// The value of Refer.Expr is used as the value of the expression.
-    	// 观察 parser.y (3373~3401 行) 发现 parser 过程并没有对 Refer 赋值，因此忽略这个字段
-    	Refer *ResultField
+        // Refer is the result field the column name refers to.
+        // The value of Refer.Expr is used as the value of the expression.
+        // 观察 parser.y (3373~3401 行) 发现 parser 过程并没有对 Refer 赋值，因此忽略这个字段
+        Refer *ResultField
     }
     ```
     
@@ -100,8 +100,8 @@ type Node interface {
     ```
     // Restore implements Node interface.
     // ColumnName 表示列名
-	func (n *ColumnName) Restore(sb *strings.Builder) error {
-	    // 如果 Schema 非空则写入 Schema 名
+    func (n *ColumnName) Restore(sb *strings.Builder) error {
+        // 如果 Schema 非空则写入 Schema 名
         if n.Schema.O != "" {
             // 调用 WriteName 函数追加 Name，自动添加反引号
             WriteName(sb, n.Schema.O)
@@ -115,19 +115,19 @@ type Node interface {
         // 写入列名
         WriteName(sb, n.Name.O)
         return nil
-	}
-	```
-	
-	然后我们实现 ColumnNameExpr 的 Restore 函数：
-	
-	```
-	// Restore implements Node interface.
+    }
+    ```
+    
+    然后我们实现 ColumnNameExpr 的 Restore 函数：
+    
+    ```
+    // Restore implements Node interface.
     func (n *ColumnNameExpr) Restore(sb *strings.Builder) error {
         err := n.Name.Restore(sb)
-    	if err != nil {
-    		return errors.Trace(err)
-    	}
-    	return nil
+        if err != nil {
+            return errors.Trace(err)
+        }
+        return nil
     }
     ```
 
@@ -148,40 +148,70 @@ type Node interface {
     }
     
     func (tc *testExpressionsSuite) TestExpresionsRestore(c *C) {
-    	parser := parser.New()
-    	var testNodes []exprTestCase
-    	testNodes = append(testNodes, tc.createTestCase4UnaryOperationExpr()...)
-    	// 将测试数据 append 到 testNodes
-    	testNodes = append(testNodes, tc.createTestCase4ColumnNameExpr()...)
+        parser := parser.New()
+        var testNodes []exprTestCase
+        testNodes = append(testNodes, tc.createTestCase4UnaryOperationExpr()...)
+        // 将测试数据 append 到 testNodes
+        testNodes = append(testNodes, tc.createTestCase4ColumnNameExpr()...)
         
         // 下面是测试逻辑，已经实现好了，不需要贡献者实现
-    	for _, node := range testNodes {
-    	    // 解析原 SQL
-    		stmt, err := parser.ParseOneStmt(node.sourceSQL, "", "")
-    		comment := Commentf("source %#v", node)
-    		c.Assert(err, IsNil, comment)
-    		var sb strings.Builder
-    		// 因为不能还原为完整的 SQL，因此拼接 SELECT 部分
-    		sb.WriteString("SELECT ")
-    		// 调用指定 ExprNode 的 Restore 函数
-    		err = stmt.(*SelectStmt).Fields.Fields[0].Expr.Restore(&sb)
-    		c.Assert(err, IsNil, comment)
-    		restoreSql := sb.String()
-    		comment = Commentf("source %#v; restore %v", node, restoreSql)
-    		// 对比 Restore 产生的 SQL 与预期 SQL 是否一致
-    		c.Assert(restoreSql, Equals, node.expectSQL, comment)
-    		stmt2, err := parser.ParseOneStmt(restoreSql, "", "")
-    		c.Assert(err, IsNil, comment)
-    		CleanNodeText(stmt)
-    		CleanNodeText(stmt2)
-    		// 对比 Restore 产生的 SQL 与原 SQL 解析后的 AST 是否一致
-    		c.Assert(stmt2, DeepEquals, stmt, comment)
-    	}
+        for _, node := range testNodes {
+            // 解析原 SQL
+            stmt, err := parser.ParseOneStmt(node.sourceSQL, "", "")
+            comment := Commentf("source %#v", node)
+            c.Assert(err, IsNil, comment)
+            var sb strings.Builder
+            // 因为不能还原为完整的 SQL，因此拼接 SELECT 部分
+            sb.WriteString("SELECT ")
+            // 调用指定 ExprNode 的 Restore 函数
+            err = stmt.(*SelectStmt).Fields.Fields[0].Expr.Restore(&sb)
+            c.Assert(err, IsNil, comment)
+            restoreSql := sb.String()
+            comment = Commentf("source %#v; restore %v", node, restoreSql)
+            // 对比 Restore 产生的 SQL 与预期 SQL 是否一致
+            c.Assert(restoreSql, Equals, node.expectSQL, comment)
+            stmt2, err := parser.ParseOneStmt(restoreSql, "", "")
+            c.Assert(err, IsNil, comment)
+            CleanNodeText(stmt)
+            CleanNodeText(stmt2)
+            // 对比 Restore 产生的 SQL 与原 SQL 解析后的 AST 是否一致
+            c.Assert(stmt2, DeepEquals, stmt, comment)
+        }
     }
     ```
     
-> 对于 `ast.StmtNode`（例如：`ast.SelectStmt`），由于这类节点可以还原为一个完整的 SQL，因此直接在 `parser_test.go` 中测试，
-详见：[pingcap/parser#62](https://github.com/pingcap/parser/pull/62)
+**至此 `ColumnNameExpr` 的 `Restore` 函数实现完成，可以提交 PR 了。不过对于 `ast.StmtNode`（例如：`ast.SelectStmt`）测试方法有些不一样，
+由于这类节点可以还原为一个完整的 SQL，因此直接在 `parser_test.go` 中测试。**
+
+下面以[实现 UseStmt 的 Restore 函数 PR](https://github.com/pingcap/parser/pull/62/files) 为例，对测试进行说明：
+
+1. Restore 函数实现过程略。
+
+2. 给函数实现添加单元测试，参见 `parser_test.go`：
+    
+    在这个示例中，只添加了几行测试数据就完成了测试：
+    
+    ```
+    // 添加 testCase 结构的测试数据
+    {"use `select`", true, "USE `select`"},
+    {"use `sel``ect`", true, "USE `sel``ect`"},
+    {"use select", false, "USE `select`"},
+    ```
+    
+    我们看 testCase 结构声明：
+    
+    ```
+    type testCase struct {
+        // 原 SQL
+        src     string
+        // 是否能被正确 parse
+        ok      bool
+        // 预期的 restore SQL
+        restore string
+    }
+    ```
+    
+    测试代码会判断原 SQL 产生的 AST 再还原为 SQL 时是否与预期的 restore SQL相等，具体的测试逻辑在 `parser_test.go` 中 `RunTest()`、`RunRestoreTest()` 函数，逻辑与前例类似，此处不再赘述。
 
 编辑按：添加 TiDB Robot 微信，加入 TiDB Contributor Club，无门槛参与开源项目，改变世界从这里开始吧（萌萌哒）。
 
