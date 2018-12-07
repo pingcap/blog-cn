@@ -52,7 +52,7 @@ TiKV 提供了基本的  KV API 支持，也就是通常的 Get，Set，Delete�
 
 + 高效的 C 绑定，因为我们还可能使用一些 C library，所以跟 C 交互不能有开销。
 
-综上，我们决定使用 [Rust](https://www.rust-lang.org/zh-CN/)，Rust 是一门系统编程语言，它提供了我们上面想要的语言特性，但选择 Rust 对我们来说也是很有风险的，主要有两点：
+综上，我们决定使用 [Rust](https://www.rust-lang.org/)，Rust 是一门系统编程语言，它提供了我们上面想要的语言特性，但选择 Rust 对我们来说也是很有风险的，主要有两点：
 
 1. 我们团队没有任何 Rust 开发经验，全部都需要花时间学习 Rust，而偏偏 Rust 有一个非常陡峭的学习曲线。
 
