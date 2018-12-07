@@ -1,4 +1,3 @@
-
 ---
 title: TiDB EcoSystem Tools 原理解读（一）：TiDB-Binlog 架构演进与实现原理
 author: ['王相']
@@ -78,7 +77,7 @@ message Binlog {
 	   // Binlog 的类型，包括 Prewrite、Commit、Rollback 等
     	   optional BinlogType  tp = 1 [(gogoproto.nullable) = false];
 	
-       // Prewrite, Commit 和 Rollback 类型的 binlog 的 start_ts，记录事务开始的 ts
+        // Prewrite, Commit 和 Rollback 类型的 binlog 的 start_ts，记录事务开始的 ts
 	    optional int64  start_ts = 2 [(gogoproto.nullable) = false];
 	
 	    // commit_ts 记录事务结束的 ts，只记录在 commit 类型的 binlog 中
@@ -111,7 +110,7 @@ message TableMutation {
 	    // 表的 id，唯一标识一个表
 	    optional int64 table_id = 1 [(gogoproto.nullable) = false];
 	    
-        // 保存插入的每行数据
+       // 保存插入的每行数据
 	    repeated bytes inserted_rows = 2;
  
 	    // 保存修改前和修改后的每行的数据
@@ -197,12 +196,12 @@ type Status struct {
 	// Pump/Drainer 是否 alive（目前没有使用该字段）
 	IsAlive bool `json:"isAlive"`
  
-   // Pump的分数，该分数是由节点的负载、磁盘使用率、存储的数据量大小等因素计算得来的，
-   // 这样 Pump Client 可以根据分数来选取合适的 Pump 发送 binlog（待实现）
+    // Pump的分数，该分数是由节点的负载、磁盘使用率、存储的数据量大小等因素计算得来的，
+    // 这样 Pump Client 可以根据分数来选取合适的 Pump 发送 binlog（待实现）
 	Score int64 `json:"score"`
  
-   // Pump 的标签，可以通过 label 对 TiDB 和 Pump 进行分组，
-   // TiDB 只能将 binlog 发送到相同 label 的 Pump（待实现）
+    // Pump 的标签，可以通过 label 对 TiDB 和 Pump 进行分组，
+    // TiDB 只能将 binlog 发送到相同 label 的 Pump（待实现）
 	Label *Label `json:"label"`
  
 	// Pump： 保存的 binlog 的最大的 commit_ts
