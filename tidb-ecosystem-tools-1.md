@@ -11,7 +11,7 @@ tags: ['TiDB-Binlog','TiDB Ecosystem Tools']
 
 TiDB-Binlog 组件用于收集 TiDB 的 binlog，并提供实时备份和同步功能。该组件在功能上类似于 MySQL 的主从复制，MySQL 的主从复制依赖于记录的 binlog 文件，TiDB-Binlog 组件也是如此，主要的不同点是 TiDB 是分布式的，因此需要收集各个 TiDB 实例产生的 binlog，并按照事务提交的时间排序后才能同步到下游。如果你需要部署 TiDB 集群的从库，或者想订阅 TiDB 数据的变更输出到其他的系统中，TiDB-Binlog 则是必不可少的工具。
 
-## 架构演化
+## 架构演进
 
 TiDB-Binlog 这个组件已经发布了 2 年多时间，经历过几次架构演进，去年十月到现在大规模使用的是 Kafka 版本，架构图如下：
 
