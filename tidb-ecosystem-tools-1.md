@@ -174,7 +174,7 @@ Drainer 在把 binlog 数据同步到下游前，就需要把上面的这些数�
 
 另外需要说明的是，TiDB 在写 binlog 时，会同时向 TiKV 发起写数据请求和向 Pump 发送 Prewrite binlog，如果 TiKV 和 Pump 其中一个请求失败，则该事务失败。当 Prewrite 成功后，TiDB 向 TiKV 发起 Commit 消息，并异步地向 Pump 发送一条 Commit binlog。由于 TiDB 是同时向 TiKV 和 Pump 发送请求的，所以只要保证 Pump 处理 Prewrite binlog 请求的时间小于等于 TiKV 执行 Prewrite 的时间，开启 binlog 就不会对事务的延迟造成影响。
 
-## Pump Client
+### Pump Client
 
 从上面的介绍中我们知道由多个 Pump 组成一个集群，共同承担写 binlog 的请求，那么就需要保证 TiDB 能够将写 binlog 的请求尽可能均匀地分发到各个 Pump，并且需要识别不可用的 Pump，及时获取到新加入集群中 Pump 信息。这部分的工作是在 Pump Client 中实现的。
 
