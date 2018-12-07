@@ -74,25 +74,25 @@ binlog 的结构定义为：
 ```
 // Binlog 记录事务中所有的变更，可以用 Binlog 构建 SQL
 message Binlog {
-	    // Binlog 的类型，包括 Prewrite、Commit、Rollback 等
-    	 optional BinlogType  tp = 1 [(gogoproto.nullable) = false];
-    	 
-    	 // Prewrite, Commit 和 Rollback 类型的 binlog 的 start_ts，记录事务开始的 ts
+        // Binlog 的类型，包括 Prewrite、Commit、Rollback 等
+        optional BinlogType  tp = 1 [(gogoproto.nullable) = false];
+        
+        // Prewrite, Commit 和 Rollback 类型的 binlog 的 start_ts，记录事务开始的 ts
 	    optional int64  start_ts = 2 [(gogoproto.nullable) = false];
-	
+	    
 	    // commit_ts 记录事务结束的 ts，只记录在 commit 类型的 binlog 中
 	    optional int64  commit_ts = 3 [(gogoproto.nullable) = false];
- 
+	    
 	    // prewrite key 只记录在 Prewrite 类型的 binlog 中，
 	    // 是一个事务的主键，用于查询该事务是否提交
 	    optional bytes  prewrite_key = 4;
- 
+	    
 	    // prewrite_value 记录在 Prewrite 类型的 binlog 中，用于记录每一行数据的改变
 	    optional bytes  prewrite_value = 5;
- 
+	    
 	    // ddl_query 记录 ddl 语句
 	    optional bytes  ddl_query = 6;
- 
+	    
 	    // ddl_job_id 记录 ddl 的 job id
 	    optional int64  ddl_job_id  = 7 [(gogoproto.nullable) = false];
 	}
@@ -107,21 +107,21 @@ TiDB 的 binlog 记录为 row 模式，即保存每一行数据的改变。数�
 ```
 // TableMutation 存储表中数据的变化
 message TableMutation {
-	    // 表的 id，唯一标识一个表
-	    optional int64 table_id = 1 [(gogoproto.nullable) = false];
+        // 表的 id，唯一标识一个表
+        optional int64 table_id = 1 [(gogoproto.nullable) = false];
+        
+        // 保存插入的每行数据
+        repeated bytes inserted_rows = 2;
 	    
-	    // 保存插入的每行数据
-	    repeated bytes inserted_rows = 2;
- 
 	    // 保存修改前和修改后的每行的数据
 	    repeated bytes updated_rows = 3;
- 
+	    
 	    // 已废弃
 	    repeated int64 deleted_ids = 4;
- 
+	    
 	    // 已废弃
 	    repeated bytes deleted_pks = 5;
- 
+	    
 	    // 删除行的数据
 	    repeated bytes deleted_rows  = 6;
 	    
@@ -172,7 +172,7 @@ Insert, Insert, Update, Update, DeleteRow, Insert
 
 Drainer 在把 binlog 数据同步到下游前，就需要把上面的这些数据还原成 SQL，再同步到下游。
 
-另外需要说明的是，TiDB 在写 binlog 时，会同时向 TiKV 发起写数据请求和向 Pump 发送 Prewrite binlog，如果 TiKV 和 Pump 其中一个请求失败，则该事务失败。当 Prewrite 成功后，TiDB 向 TiKV 发起 Commit 消息，并异步地向 Pump 发送一条 Commit binlog。由于 TiDB 是同时向 TiKV 和 Pump 发送请求的，所以只要保证 Pump 处理 Prewrite binlog 请求的时间小于等于 TiKV 执行 Prewrite的时间，开启 binlog 就不会对事务的延迟造成影响。
+另外需要说明的是，TiDB 在写 binlog 时，会同时向 TiKV 发起写数据请求和向 Pump 发送 Prewrite binlog，如果 TiKV 和 Pump 其中一个请求失败，则该事务失败。当 Prewrite 成功后，TiDB 向 TiKV 发起 Commit 消息，并异步地向 Pump 发送一条 Commit binlog。由于 TiDB 是同时向 TiKV 和 Pump 发送请求的，所以只要保证 Pump 处理 Prewrite binlog 请求的时间小于等于 TiKV 执行 Prewrite 的时间，开启 binlog 就不会对事务的延迟造成影响。
 
 ## Pump Client
 
