@@ -261,7 +261,7 @@ Drainer 从各个 Pump 中获取 binlog，归并后按照顺序解析 binlog、�
 
 ![](https://upload-images.jianshu.io/upload_images/542677-5c05b3412c340aa6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-Pump1 存储的 binlog 为｛ 1，3，5，7，9 ｝，Pump2 存储的 binlog 为｛2，4，6，10｝。Drainer 从两个 Pump 获取 binlog，假设当前已经读取到了｛1，2，3，4，5，6，7｝这些 binlog，已处理的 binlog 的位置为 7。此时 Pump3 加入集群，从 Pump3 上报自己的上线信息到 PD，到 Drainer 从 PD 中获取到 Pump3 信息需要一定的时间，如果 Pump3 没有通知 Drainer 就直接提供写 binlog 服务，写入了binlog｛8，12｝，Drainer 在此期间继续读取 Pump1 和 Pump2 的 binlog，假设读取到了 9，之后才识别到了 Pump3 并将 Pump3 加入到归并排序中，此时 Pump3 的 binlog 8 就丢失了。为了避免这种情况，需要让 Pump3 通知 Drainer 自己已经上线，Drainer 收到通知后将 Pump3 加入到归并排序，并返回成功给 Pump3，然后 Pump3 才能提供写 binlog 的服务。
+Pump1 存储的 binlog 为｛ 1，3，5，7，9 ｝，Pump2 存储的 binlog 为｛2，4，6，10｝。Drainer 从两个 Pump 获取 binlog，假设当前已经读取到了｛1，2，3，4，5，6，7｝这些 binlog，已处理的 binlog 的位置为 7。此时 Pump3 加入集群，从 Pump3 上报自己的上线信息到 PD，到 Drainer 从 PD 中获取到 Pump3 信息需要一定的时间，如果 Pump3 没有通知 Drainer 就直接提供写 binlog 服务，写入了 binlog｛8，12｝，Drainer 在此期间继续读取 Pump1 和 Pump2 的 binlog，假设读取到了 9，之后才识别到了 Pump3 并将 Pump3 加入到归并排序中，此时 Pump3 的 binlog 8 就丢失了。为了避免这种情况，需要让 Pump3 通知 Drainer 自己已经上线，Drainer 收到通知后将 Pump3 加入到归并排序，并返回成功给 Pump3，然后 Pump3 才能提供写 binlog 的服务。
 
 Drainer 通过如上所示的方式对 binlog 进行归并排序，并推进同步的位置。那么可能会存在这种情况：某个 Pump 由于一些特殊的原因一直没有收到 binlog 数据，那么 Drainer 中的归并排序就无法继续下去，正如我们用两条腿走路，其中一只腿不动就不能继续前进。我们使用 Pump 一节中提到的 fake binlog 的机制来避免这种问题，Pump 每隔指定的时间就生成一条 fake binlog，即使某些 Pump 一直没有数据写入，也可以保证归并排序正常向前推进。
 
@@ -277,7 +277,7 @@ SQL1: delete from test.test where id = 1;
 SQL2: replace into test.test (id, name ) values(1, "a");
 ```
 
-按照顺序执行后表中存在 id ＝ 1 该行数据，如果这两条 SQL 分别分配到了协程1和协程2中，并且协程 2 先执行了 SQL，则表中不再存在 id ＝ 1 的数据。为了避免这种情况的发生，Drainer 中加入了冲突检测的机制，如果检测出来两条 SQL 存在冲突（修改了同一行数据），则暂时不将后面的 SQL 发送到协程，而是生成一个 Flush 类型的 job 发送到所有的协程， 每个协程在遇到 Flush job 时就会马上执行所缓存的 SQL。接着才会把该条有冲突的 SQL 发送到对应的协程中。下面给出一个例子说明一下冲突检测的机制：
+按照顺序执行后表中存在 id ＝ 1 该行数据，如果这两条 SQL 分别分配到了协程 1 和协程 2 中，并且协程 2 先执行了 SQL，则表中不再存在 id ＝ 1 的数据。为了避免这种情况的发生，Drainer 中加入了冲突检测的机制，如果检测出来两条 SQL 存在冲突（修改了同一行数据），则暂时不将后面的 SQL 发送到协程，而是生成一个 Flush 类型的 job 发送到所有的协程， 每个协程在遇到 Flush job 时就会马上执行所缓存的 SQL。接着才会把该条有冲突的 SQL 发送到对应的协程中。下面给出一个例子说明一下冲突检测的机制：
 
 有以下这些 SQL，其中 id 为表的主键：
 
