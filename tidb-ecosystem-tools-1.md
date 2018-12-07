@@ -184,32 +184,32 @@ Pump Client 维护 Pump 集群的信息，Pump 的信息主要来自于 PD 中�
 
 ```
 type Status struct {
-	// Pump/Drainer 实例的唯一标识
-	NodeID string `json:"nodeId"`
- 
-	// Pump/Drainer 的服务地址
-	Addr string `json:"host"`
- 
-	// Pump/Drainer 的状态，值可以为 online、pausing、paused、closing、offline
-	State string `json:"state"`
- 
-	// Pump/Drainer 是否 alive（目前没有使用该字段）
-	IsAlive bool `json:"isAlive"`
-	
-	// Pump的分数，该分数是由节点的负载、磁盘使用率、存储的数据量大小等因素计算得来的，
-	// 这样 Pump Client 可以根据分数来选取合适的 Pump 发送 binlog（待实现）
-	Score int64 `json:"score"`
- 
+    // Pump/Drainer 实例的唯一标识
+    NodeID string `json:"nodeId"`
+    
+    // Pump/Drainer 的服务地址
+    Addr string `json:"host"`
+    
+    // Pump/Drainer 的状态，值可以为 online、pausing、paused、closing、offline
+    State string `json:"state"`
+    
+    // Pump/Drainer 是否 alive（目前没有使用该字段）
+    IsAlive bool `json:"isAlive"`
+    
+    // Pump的分数，该分数是由节点的负载、磁盘使用率、存储的数据量大小等因素计算得来的，
+    // 这样 Pump Client 可以根据分数来选取合适的 Pump 发送 binlog（待实现）
+    Score int64 `json:"score"`
+    
     // Pump 的标签，可以通过 label 对 TiDB 和 Pump 进行分组，
     // TiDB 只能将 binlog 发送到相同 label 的 Pump（待实现）
-	Label *Label `json:"label"`
- 
-	// Pump： 保存的 binlog 的最大的 commit_ts
-	// Drainer：已消费的 binlog 的最大的 commit_ts
-	MaxCommitTS int64 `json:"maxCommitTS"`
- 
-	// 该状态信息的更新时间对应的 ts.
-	UpdateTS int64 `json:"updateTS"`
+    Label *Label `json:"label"`
+    
+    // Pump： 保存的 binlog 的最大的 commit_ts
+    // Drainer：已消费的 binlog 的最大的 commit_ts
+    MaxCommitTS int64 `json:"maxCommitTS"`
+    
+    // 该状态信息的更新时间对应的 ts.
+    UpdateTS int64 `json:"updateTS"`
 }
 ```
 
