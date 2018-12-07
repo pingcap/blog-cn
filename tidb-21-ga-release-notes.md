@@ -176,7 +176,7 @@ tags: ['TiDB']
 
 ## Tools
 
-* 全量数据快速导入工具 [TiDB-Lightning](https://pingcap.github.io/docs-cn/tools/lightning-overview-architecture)
+* 全量数据快速导入工具 [TiDB-Lightning](https://pingcap.com/docs-cn/tools/lightning/overview-architecture/)
 * 支持新版本 [TiDB-Binlog](https://pingcap.github.io/docs-cn/tools/tidb-binlog-cluster/)
 
 ## 升级兼容性说明
