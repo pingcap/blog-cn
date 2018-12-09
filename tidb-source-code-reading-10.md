@@ -112,7 +112,7 @@ Row 提供了获取 Chunk 中数据的方法，比如 [GetInt64](https://github.
 
 ### 3. 使用
 
-目前 Chunk 这个包只对外暴露了 Chunk, Row 等接口，而没有暴露 Column，所以，写数据调用的是在 Chunk 上实现的对 Column 具体函数的 warpper，比如 [AppendInt64](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L230)；读数据调用的是在 Row 上实现的 Getxxx 函数，比如 [GetInt64](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L472)。
+目前 Chunk 这个包只对外暴露了 Chunk, Row 等接口，而没有暴露 Column，所以，写数据调用的是在 Chunk 上实现的对 Column 具体函数的 wrapper，比如 [AppendInt64](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L230)；读数据调用的是在 Row 上实现的 Getxxx 函数，比如 [GetInt64](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L472)。
 
 ## 执行框架简介
 

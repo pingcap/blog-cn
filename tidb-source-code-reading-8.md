@@ -44,7 +44,7 @@ TiDB 一个查询语句的简单流程：一个语句经过 parser 后会得到�
 
 基于代价优化的的主要思路是计算所有可能的执行计划的代价，并挑选代价最小的执行计划的路径。那么可以倒推出，首先得到需要采集对应表的统计信息，那么就可以用来计算出每个算子的执行代价，最后将得到每条路径上算子的代价按路径各自累加获取代价最小的路径。具体的代码实现在 `plan/optimizer.go` 中 dagPhysicalOptimize 函数，本文介绍的流程基本上也都由此函数完成，代码如下： 
 
-```
+```go
 func dagPhysicalOptimize(logic LogicalPlan) (PhysicalPlan,  error) {
 
      logic.preparePossibleProperties()
@@ -89,7 +89,7 @@ func dagPhysicalOptimize(logic LogicalPlan) (PhysicalPlan,  error) {
 
 那么，现在我们举个例子，SQL 如下：
 
-```
+```sql
 select sum(s.a),count(t.b) from s join t on s.a = t.a and s.c < 100 and t.c > 10 group bys.a
 ```
 
@@ -109,7 +109,7 @@ TiDB 是用记忆化搜索来处理的。由下往上和由上往下搜索的区
 
 接下来我们来具体介绍一下这个例子中的算子生成及选取流程。一开始的 prop 是空的，不会对 Agg 这个算子有要求。接下来就根据当前逻辑算子所有可能的 prop 构建对应的物理算子，Agg 则可以生成 Stream Agg 和 Hash Agg（此逻辑在如下面代码段的 genPhysPlansByReqProp 实现）。前者要求按 group bykey 有序，即按 a 列有序，所以他孩子的 prop 里面会带有 a 列。后者没有要求，则 prop 为空。此逻辑代码段在 `plan/physical_plan_builder.go` 中的：
 
-```
+```go
 for _, pp := range p.self.genPhysPlansByReqProp(prop) {
 
      t, err = p.getBestTask(t, pp)
@@ -140,7 +140,7 @@ for _, pp := range p.self.genPhysPlansByReqProp(prop) {
 
 代价评估的调用逻辑在 `plan/physical_plan_builder.go` 中，代码如下：
 
-``` 
+```go
 func (p  *baseLogicalPlan)  getBestTask(bestTask task, pp PhysicalPlan) (task, error) {
 
      tasks  := make([]task, 0, len(p.children))
@@ -178,7 +178,7 @@ func (p  *baseLogicalPlan)  getBestTask(bestTask task, pp PhysicalPlan) (task,
 
 一个 statesInfo 的结构有两个字段： 
 
-```
+```go
 // statsInfo stores the  basic information of statistics for the plan's output. It is used for cost  estimation.
 
 type statsInfo struct {
@@ -203,7 +203,7 @@ statsTable.count/ histogram.count * hist.NDV
 *   方式二，使用一个估计值，由于统计数据在某些情况下还没有收集完成，此时没有统计数据，具体公式如下：
 
 ```
-statsTable.count* distinctFactor
+statsTable.count * distinctFactor
 ```
 
 那么接下来我们举两个例子介绍通过统计数据获取算子的 statsInfo。
@@ -242,7 +242,7 @@ expected count 表示整个 SQL 结束前此算子期望读取的行数。例如
 
 这里我们举个例子，SQL 如下：
 
-```
+```sql
 select *from t where c < 1 and b < 1 and a = 1
 ```
 
@@ -272,7 +272,7 @@ task 处理的代码主要在文件 `plan/task.go` 中。
 
 引入预处理 property 函数的原因是为了减少一些没有必要考虑的 properties，从而尽可能早的裁减掉成物理计划搜索路径上的分支，例如：
 
-```
+```sql
 select *from t join s on t.A = s.A and t.B = s.B
 ```
 

@@ -304,7 +304,7 @@ func (ds *DataSource) PredicatePushDown(predicates []expression.Expression) ([]e
 
 Coprocessor 这个概念是从 HBase 中借鉴而来，简单来说是一段注入在存储引擎中的计算逻辑，等待 SQL 层发来的计算请求（序列化后的物理执行计划），处理本地数据并返回计算结果。在 TiDB 中，计算是以 Region 为单位进行，SQL 层会分析出要处理的数据的 Key Range，再将这些 Key Range 根据 PD 中拿到的 Region 信息划分成若干个 Key Range，最后将这些请求发往对应的 Region。
 
-SQL 层会将多个 Region 返回的结果进行汇总，在经过所需的 Operator 处理，生成最终的结果集。
+SQL 层会将多个 Region 返回的结果进行汇总，再经过所需的 Operator 处理，生成最终的结果集。
 
 #### DistSQL
 
