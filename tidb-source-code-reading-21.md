@@ -80,7 +80,7 @@ select distinct(t1.a) from t1 left join t2 on t1.b = t2.b;
 
 可以被改写成：
 
-```
+```sql
 select distinct(t1.a) from t1;
 ```
 
