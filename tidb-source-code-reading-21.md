@@ -45,7 +45,7 @@ select if(isnull(a), 0, 1) from t;
 
 另外提一点，对于大部分聚合函数，参数的类型和返回结果的类型一般是不同的，所以在展开聚合函数的时候一般会在参数列上构造 cast 函数做类型转换，展开后的表达式会保存在作为替换 `LogicalAggregation` 算子的 `LogicalProjection` 算子中。
 
-这个优化过程中，有一点非常关键，就是如何知道 `Group By` 使用的列是否满足唯一性属性，尤其是当聚合算子的下层节点不是 DataSource 的时候？我们在 [基于规则的优化](https://pingcap.com/blog-cn/tidb-source-code-reading-7/) 一文中的“构建节点属性”章节提到过，执行计划中每个算子节点会维护这样一个信息：当前算子的输出会按照哪一列或者哪几列满足唯一性属性。因此，在聚合消除中，我们可以通过查看下层算子保存的这个信息，再结合 `Group By` 用到的列判断当前聚合算子是否可以被消除。
+这个优化过程中，有一点非常关键，就是如何知道 `Group By` 使用的列是否满足唯一性属性，尤其是当聚合算子的下层节点不是 `DataSource` 的时候？我们在 [基于规则的优化](https://pingcap.com/blog-cn/tidb-source-code-reading-7/) 一文中的“构建节点属性”章节提到过，执行计划中每个算子节点会维护这样一个信息：当前算子的输出会按照哪一列或者哪几列满足唯一性属性。因此，在聚合消除中，我们可以通过查看下层算子保存的这个信息，再结合 `Group By` 用到的列判断当前聚合算子是否可以被消除。
 
 ## 外连接消除
 
@@ -169,7 +169,7 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
     select *, (select t2.a from t2 where t2.pk = t1.a) from t1;
     ```
 
-    因为子查询出现在整个查询的投影项里，所以 `expressionRewriter` 在处理子查询时会对其生成的执行计划在根节点上加一个 `LogicalMaxOneRow` 限制最多产生一行记录，如果在执行时发现下层输出多于一行记录，则会报错。在这个例子中，子查询的过滤条件是 `t2` 表的主键上的等值条件，所以子查询肯定最多只会输出一行记录，而这个信息在“构建节点属性”这一步时会被发掘出来并记录在算子节点的 MaxOneRow 属性中，所以这里的 `LogicalMaxOneRow` 节点实际上是冗余的，于是我们可以将其从 inner plan 中移除，然后再递归地对 inner plan 做算子提升。
+    因为子查询出现在整个查询的投影项里，所以 `expressionRewriter` 在处理子查询时会对其生成的执行计划在根节点上加一个 `LogicalMaxOneRow` 限制最多产生一行记录，如果在执行时发现下层输出多于一行记录，则会报错。在这个例子中，子查询的过滤条件是 `t2` 表的主键上的等值条件，所以子查询肯定最多只会输出一行记录，而这个信息在“构建节点属性”这一步时会被发掘出来并记录在算子节点的 `MaxOneRow` 属性中，所以这里的 `LogicalMaxOneRow` 节点实际上是冗余的，于是我们可以将其从 inner plan 中移除，然后再递归地对 inner plan 做算子提升。
 
 * **inner plan 的根节点是 `LogicalProjection`**
 
@@ -191,7 +191,7 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
 
     ![5.png](https://upload-images.jianshu.io/upload_images/542677-400e0ce5a3d138ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-    即先对 `t1` 和 `t2` 做连接，再在连接结果上按照 `t1.pk` 分组后做聚合。这里有两个关键变化：第一是不管提升前 `LogicalApply` 的连接类型是 inner join 还是 left join ，提升后必须被改为 left join ；第二是提升后的聚合新增了 group by 的列，即要按照 outer plan 传进 inner plan 中的相关列做分组。这两个变化背后的原因都会在后面进行阐述。因为提升后 inner plan 不再包含相关列，去相关后最终生成的执行计划片段会是：
+    即先对 `t1` 和 `t2` 做连接，再在连接结果上按照 `t1.pk` 分组后做聚合。这里有两个关键变化：第一是不管提升前 `LogicalApply` 的连接类型是 inner join 还是 left join ，提升后必须被改为 left join ；第二是提升后的聚合新增了 `Group By` 的列，即要按照 outer plan 传进 inner plan 中的相关列做分组。这两个变化背后的原因都会在后面进行阐述。因为提升后 inner plan 不再包含相关列，去相关后最终生成的执行计划片段会是：
 
     ![6.png](https://upload-images.jianshu.io/upload_images/542677-9d4e39e7aed7422e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
