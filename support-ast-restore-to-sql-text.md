@@ -69,6 +69,11 @@ type Node interface {
 
 4. 运行 `make test`，确保所有的 test case 都能跑过。
 
+5. 提交 PR
+
+     PR 标题统一为：`parser: implement Restore for XXX`  
+     请在 PR 中关联 Issue: pingcap/tidb#8532
+
 ## **示例**
 
 这里以[实现 ColumnNameExpr 的 Restore 函数 PR](https://github.com/pingcap/parser/pull/63/files) 为例，进行详细说明：
@@ -131,7 +136,7 @@ type Node interface {
     }
     ```
 
-2. 接下来给函数实现添加单元测试，参见 [pingcap/parser#75](https://github.com/pingcap/parser/pull/75), `ast/expressions_test.go`：
+2. 接下来给函数实现添加单元测试，参见 [pingcap/parser#75](https://github.com/pingcap/parser/pull/75/files), `ast/expressions_test.go`：
 
     ```
     // 添加测试函数
@@ -154,6 +159,7 @@ type Node interface {
         RunNodeRestoreTest(c, testCases, "select %s", extractNodeFunc)
     }
     ```
+    
     **至此 `ColumnNameExpr` 的 `Restore` 函数实现完成，可以提交 PR 了。为了更好的理解测试逻辑，下面我们看 `RunNodeRestoreTest`**
     
     ```
