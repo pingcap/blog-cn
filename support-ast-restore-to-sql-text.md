@@ -13,11 +13,7 @@ SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST�
 
 对 parser 不熟悉的小伙伴们可以看 [TiDB 源码阅读系列文章（五）TiDB SQL Parser 的实现](https://www.pingcap.com/blog-cn/tidb-source-code-reading-5/)。
 
-我们当前 AST 结构定义如下（以 `ast.CreateUserStmt` 为例）：
-
-![create-user-stmt](media/create-user-stmt.png)
-
-我们在 `ast.Node` 接口中添加了一个 `Restore(sb *strings.Builder) error` 函数，这个函数将当前节点对应的 SQL 文本追加至参数 `sb` 中，如果节点结构无效则返回 `error`。
+我们在 `ast.Node` 接口中添加了一个 `Restore(sb *strings.Builder) error` 函数，这个函数将当前节点对应的 SQL 文本追加至参数 `sb` 中，如果节点无效则返回 `error`。
 
 ```
 type Node interface {
@@ -40,9 +36,9 @@ type Node interface {
 
 ## **实现 `Restore()` 函数的整体流程**
 
-0. 最好先看看 [Proposal](https://github.com/pingcap/tidb/tree/master/docs/design/2018-11-29-ast-to-sql-text.md)、[Issue](https://github.com/pingcap/tidb/issues/8532)
+0. 请先阅读 [Proposal](https://github.com/pingcap/tidb/tree/master/docs/design/2018-11-29-ast-to-sql-text.md)、[Issue](https://github.com/pingcap/tidb/issues/8532)
 
-1. 找到未实现的函数
+1. 在 [Issue](https://github.com/pingcap/tidb/issues/8532) 中找到未实现的函数
 
     在 [Issue-pingcap/tidb#8532](https://github.com/pingcap/tidb/issues/8532) 中找到一个没有被其他贡献者认领的任务，例如 `ast/expressions.go: BetweenExpr`。
     
