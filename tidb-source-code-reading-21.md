@@ -139,7 +139,7 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
 
 具体的算子提升方式分为以下几种情况：
 
-* **inner plan 的根节点是 LogicalSelection**
+* **inner plan 的根节点是 `LogicalSelection`**
 
     则将其过滤条件添加到 `LogicalApply` 的 join condition 中，然后将该 `LogicalSelection` 从 inner plan 中删除，再递归地对 inner plan 提升算子。
 
@@ -161,7 +161,7 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
 
     ![3.png](https://upload-images.jianshu.io/upload_images/542677-9b7df1ed09ba348d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-* **inner plan 的根节点是 LogicalMaxOneRow**
+* **inner plan 的根节点是 `LogicalMaxOneRow`**
 
     即要求子查询最多输出一行记录，比如这个例子：
 
@@ -171,11 +171,11 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
 
     因为子查询出现在整个查询的投影项里，所以 `expressionRewriter` 在处理子查询时会对其生成的执行计划在根节点上加一个 `LogicalMaxOneRow` 限制最多产生一行记录，如果在执行时发现下层输出多于一行记录，则会报错。在这个例子中，子查询的过滤条件是 `t2` 表的主键上的等值条件，所以子查询肯定最多只会输出一行记录，而这个信息在“构建节点属性”这一步时会被发掘出来并记录在算子节点的 MaxOneRow 属性中，所以这里的 `LogicalMaxOneRow` 节点实际上是冗余的，于是我们可以将其从 inner plan 中移除，然后再递归地对 inner plan 做算子提升。
 
-* **inner plan 的根节点是 LogicalProjection**
+* **inner plan 的根节点是 `LogicalProjection`**
 
     则首先将这个投影算子从 inner plan 中移除，再根据 `LogicalApply` 的连接类型判断是否需要在 `LogicalApply` 之上再加上一个 `LogicalProjection` ，具体来说是：对于非 semi-join 这一类的连接（包括 inner join 和 left join ），inner plan 的输出列会保留在 `LogicalApply` 的结果中，所以这个投影操作需要保留，反之则不需要。最后，再递归地对删除投影后的 inner plan 提升下层算子。
 
-* **inner plan 的根节点是 LogicalAggregation**
+* **inner plan 的根节点是 `LogicalAggregation`**
 
 1. 首先我们会检查这个聚合算子是否可以被提升到 `LogicalApply` 之上再执行。以如下查询为例：
 
