@@ -131,56 +131,62 @@ type Node interface {
     }
     ```
 
-2. 接下来给函数实现添加单元测试，参见 `ast/expressions_test.go`：
+2. 接下来给函数实现添加单元测试，参见 [pingcap/parser#75](https://github.com/pingcap/parser/pull/75), `ast/expressions_test.go`：
 
     ```
-    // 添加测试数据
-    func (tc *testExpressionsSuite) createTestCase4ColumnNameExpr() []exprTestCase {
-        return []exprTestCase{
-            {"select abc", "SELECT `abc`"},
-            {"select `abc`", "SELECT `abc`"},
-            {"select `ab``c`", "SELECT `ab``c`"},
-            {"select sabc.tABC", "SELECT `sabc`.`tABC`"},
-            {"select dabc.sabc.tabc", "SELECT `dabc`.`sabc`.`tabc`"},
-            {"select dabc.`sabc`.tabc", "SELECT `dabc`.`sabc`.`tabc`"},
-            {"select `dABC`.`sabc`.tabc", "SELECT `dABC`.`sabc`.`tabc`"},
+    // 添加测试函数
+    func (tc *testExpressionsSuite) TestColumnNameExprRestore(c *C) {
+        // 测试用例
+        testCases := []NodeRestoreTestCase{
+            {"abc", "`abc`"},
+            {"`abc`", "`abc`"},
+            {"`ab``c`", "`ab``c`"},
+            {"sabc.tABC", "`sabc`.`tABC`"},
+            {"dabc.sabc.tabc", "`dabc`.`sabc`.`tabc`"},
+            {"dabc.`sabc`.tabc", "`dabc`.`sabc`.`tabc`"},
+            {"`dABC`.`sabc`.tabc", "`dABC`.`sabc`.`tabc`"},
         }
+        // 为了不依赖父节点实现，通过 extractNodeFunc 抽取待测节点
+        extractNodeFunc := func(node Node) Node {
+            return node.(*SelectStmt).Fields.Fields[0].Expr
+        }
+        // Run Test
+        RunNodeRestoreTest(c, testCases, "select %s", extractNodeFunc)
     }
+    ```
+    **至此 `ColumnNameExpr` 的 `Restore` 函数实现完成，可以提交 PR 了。为了更好的理解测试逻辑，下面我们看 `RunNodeRestoreTest`**
     
-    func (tc *testExpressionsSuite) TestExpresionsRestore(c *C) {
+    ```
+    // 下面是测试逻辑，已经实现好了，不需要贡献者实现
+    func RunNodeRestoreTest(c *C, nodeTestCases []NodeRestoreTestCase, template string, extractNodeFunc func(node Node) Node) {
         parser := parser.New()
-        var testNodes []exprTestCase
-        testNodes = append(testNodes, tc.createTestCase4UnaryOperationExpr()...)
-        // 将测试数据 append 到 testNodes
-        testNodes = append(testNodes, tc.createTestCase4ColumnNameExpr()...)
-        
-        // 下面是测试逻辑，已经实现好了，不需要贡献者实现
-        for _, node := range testNodes {
-            // 解析原 SQL
-            stmt, err := parser.ParseOneStmt(node.sourceSQL, "", "")
-            comment := Commentf("source %#v", node)
+        for _, testCase := range nodeTestCases {
+            // 通过 template 将测试用例拼接为完整的 SQL
+            sourceSQL := fmt.Sprintf(template, testCase.sourceSQL)
+            expectSQL := fmt.Sprintf(template, testCase.expectSQL)
+            stmt, err := parser.ParseOneStmt(sourceSQL, "", "")
+            comment := Commentf("source %#v", testCase)
             c.Assert(err, IsNil, comment)
             var sb strings.Builder
-            // 因为不能还原为完整的 SQL，因此拼接 SELECT 部分
-            sb.WriteString("SELECT ")
-            // 调用指定 ExprNode 的 Restore 函数
-            err = stmt.(*SelectStmt).Fields.Fields[0].Expr.Restore(&sb)
+            // 抽取指定节点并调用其 Restore 函数
+            err = extractNodeFunc(stmt).Restore(&sb)
             c.Assert(err, IsNil, comment)
-            restoreSql := sb.String()
-            comment = Commentf("source %#v; restore %v", node, restoreSql)
-            // 对比 Restore 产生的 SQL 与预期 SQL 是否一致
-            c.Assert(restoreSql, Equals, node.expectSQL, comment)
+            // 通过 template 将 restore 结果拼接为完整的 SQL
+            restoreSql := fmt.Sprintf(template, sb.String())
+            comment = Commentf("source %#v; restore %v", testCase, restoreSql)
+            // 测试 restore 结果与预期一致
+            c.Assert(restoreSql, Equals, expectSQL, comment)
             stmt2, err := parser.ParseOneStmt(restoreSql, "", "")
             c.Assert(err, IsNil, comment)
             CleanNodeText(stmt)
             CleanNodeText(stmt2)
-            // 对比 Restore 产生的 SQL 与原 SQL 解析后的 AST 是否一致
+            // 测试解析的 stmt 与原 stmt 一致
             c.Assert(stmt2, DeepEquals, stmt, comment)
         }
     }
     ```
     
-**至此 `ColumnNameExpr` 的 `Restore` 函数实现完成，可以提交 PR 了。不过对于 `ast.StmtNode`（例如：`ast.SelectStmt`）测试方法有些不一样，
+**不过对于 `ast.StmtNode`（例如：`ast.SelectStmt`）测试方法有些不一样，
 由于这类节点可以还原为一个完整的 SQL，因此直接在 `parser_test.go` 中测试。**
 
 下面以[实现 UseStmt 的 Restore 函数 PR](https://github.com/pingcap/parser/pull/62/files) 为例，对测试进行说明：
