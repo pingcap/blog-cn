@@ -13,13 +13,60 @@ SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST�
 
 对 parser 不熟悉的小伙伴们可以看 [TiDB 源码阅读系列文章（五）TiDB SQL Parser 的实现](https://www.pingcap.com/blog-cn/tidb-source-code-reading-5/)。
 
-我们在 `ast.Node` 接口中添加了一个 `Restore(sb *strings.Builder) error` 函数，这个函数将当前节点对应的 SQL 文本追加至参数 `sb` 中，如果节点无效则返回 `error`。
+为了控制 SQL 文本的输出格式以并且为方便未来新功能的加入（例如在 SQL 文本中用 “*” 替代密码），我们引入了 `RestoreFlags` 并封装了 `RestoreCtx` 结构（[相关源码](https://github.com/pingcap/parser/blob/9339d225378fa9b50e1bf8373c2040524b96c6af/ast/util.go#L78)）：
+
+```
+// `RestoreFlags` 中的互斥组:
+// [RestoreStringSingleQuotes, RestoreStringDoubleQuotes]
+// [RestoreKeyWordUppercase, RestoreKeyWordLowercase]
+// [RestoreNameUppercase, RestoreNameLowercase]
+// [RestoreNameDoubleQuotes, RestoreNameBackQuotes]
+// 靠前的 flag 拥有更高的优先级。
+const (
+	RestoreStringSingleQuotes RestoreFlags = 1 << iota
+	
+	...
+)
+
+// RestoreCtx is `Restore` context to hold flags and writer.
+type RestoreCtx struct {
+	Flags RestoreFlags
+	In    io.Writer
+}
+
+// WriteKeyWord 用于向 `ctx` 中写入关键字（例如：SELECT）。
+// 它的大小写受 `RestoreKeyWordUppercase`，`RestoreKeyWordLowercase` 控制
+func (ctx *RestoreCtx) WriteKeyWord(keyWord string) {
+	...
+
+// WriteString 用于向 `ctx` 中写入字符串。
+// 它是否被引号包裹及转义规则受 `RestoreStringSingleQuotes`，`RestoreStringDoubleQuotes`，`RestoreStringEscapeBackslash` 控制。
+func (ctx *RestoreCtx) WriteString(str string) {
+	...
+
+// WriteName 用于向 `ctx` 中写入名称（库名，表名，列名等）。
+// 它是否被引号包裹及转义规则受 `RestoreNameUppercase`，`RestoreNameLowercase`，`RestoreNameDoubleQuotes`，`RestoreNameBackQuotes` 控制。
+func (ctx *RestoreCtx) WriteName(name string) {
+	...
+
+// WriteName 用于向 `ctx` 中写入普通文本。
+// 它将被直接写入不受 flag 影响。
+func (ctx *RestoreCtx) WritePlain(plainText string) {
+	...
+
+// WriteName 用于向 `ctx` 中写入普通文本。
+// 它将被直接写入不受 flag 影响。
+func (ctx *RestoreCtx) WritePlainf(format string, a ...interface{}) {
+	...
+```
+
+我们在 `ast.Node` 接口中添加了一个 `Restore(ctx *RestoreCtx) error` 函数，这个函数将当前节点对应的 SQL 文本追加至参数 `ctx` 中，如果节点无效则返回 `error`。
 
 ```
 type Node interface {
-    // Restore AST to SQL text and append them to `sb`.
+    // Restore AST to SQL text and append them to `ctx`.
     // return error when the AST is invalid.
-    Restore(sb *strings.Builder) error
+	Restore(ctx *RestoreCtx) error
     
     ...
 }
@@ -47,8 +94,8 @@ type Node interface {
     在文件中找到 `BetweenExpr` 结构的 `Restore` 函数：
 
     ```
-    // Restore implements Recoverable interface.
-    func (n *BetweenExpr) Restore(sb *strings.Builder) error {
+    // Restore implements Node interface.
+    func (n *BetweenExpr) Restore(ctx *RestoreCtx) error {
         return errors.New("Not implemented")
     }
     ```
@@ -72,80 +119,70 @@ type Node interface {
 
 ## **示例**
 
-这里以[实现 ColumnNameExpr 的 Restore 函数 PR](https://github.com/pingcap/parser/pull/63/files) 为例，进行详细说明：
+这里以[实现 BetweenExpr 的 Restore 函数 PR](https://github.com/pingcap/parser/pull/71/files) 为例，进行详细说明：
 
 1. 首先看 `ast/expressions.go`：
 
-    我们要实现一个 ast.Node 结构的 Restore 函数，首先清楚该结构代表什么短语，例如 ColumnNameExpr 代表列名；
+    我们要实现一个 ast.Node 结构的 Restore 函数，首先清楚该结构代表什么短语，例如 `BetweenExpr` 代表 `expr [NOT] BETWEEN expr AND expr` (参见：[MySQL 语法 - 比较函数和运算符](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_between))。
     
-    观察 ColumnNameExpr 结构：
+    观察 `BetweenExpr` 结构：
     
     ```
-    // ColumnNameExpr represents a column name expression.
-    type ColumnNameExpr struct {
+    // BetweenExpr is for "between and" or "not between and" expression.
+    type BetweenExpr struct {
         exprNode
-    
-        // Name is the referenced column name.
-        // 我们发现要先实现 ColumnName 的 Restore 函数
-        Name *ColumnName
-    
-        // Refer is the result field the column name refers to.
-        // The value of Refer.Expr is used as the value of the expression.
-        // 观察 parser.y (3373~3401 行) 发现 parser 过程并没有对 Refer 赋值，因此忽略这个字段
-        Refer *ResultField
+        // 被检查的表达式
+        Expr ExprNode
+        // AND 左侧的表达式
+        Left ExprNode
+        // AND 右侧的表达式
+        Right ExprNode
+        // 是否有 NOT 关键字
+        Not bool
     }
     ```
     
-    实现 ColumnName 的 Restore 函数：
+    实现 `BetweenExpr` 的 `Restore` 函数：
     
     ```
     // Restore implements Node interface.
-    // ColumnName 表示列名
-    func (n *ColumnName) Restore(sb *strings.Builder) error {
-        // 如果 Schema 非空则写入 Schema 名
-        if n.Schema.O != "" {
-            // 调用 WriteName 函数追加 Name，自动添加反引号
-            WriteName(sb, n.Schema.O)
-            sb.WriteString(".")
+    func (n *BetweenExpr) Restore(ctx *RestoreCtx) error {
+        // 调用 Expr 的 Restore，向 ctx 写入 Expr
+        if err := n.Expr.Restore(ctx); err != nil {
+            return errors.Annotate(err, "An error occurred while restore BetweenExpr.Expr")
         }
-        // 如果 Table 名非空则写入 Table 名
-        if n.Table.O != "" {
-            WriteName(sb, n.Table.O)
-            sb.WriteString(".")
+        // 判断是否有 NOT，并写入相应关键字
+        if n.Not {
+            ctx.WriteKeyWord(" NOT BETWEEN ")
+        } else {
+            ctx.WriteKeyWord(" BETWEEN ")
         }
-        // 写入列名
-        WriteName(sb, n.Name.O)
-        return nil
-    }
-    ```
-    
-    然后我们实现 ColumnNameExpr 的 Restore 函数：
-    
-    ```
-    // Restore implements Node interface.
-    func (n *ColumnNameExpr) Restore(sb *strings.Builder) error {
-        err := n.Name.Restore(sb)
-        if err != nil {
-            return errors.Trace(err)
+        // 调用 Left 的 Restore
+        if err := n.Left.Restore(ctx); err != nil {
+            return errors.Annotate(err, "An error occurred while restore BetweenExpr.Left")
+        }
+        // 写入 AND 关键字
+        ctx.WriteKeyWord(" AND ")
+        // 调用 Right 的 Restore
+        if err := n.Right.Restore(ctx); err != nil {
+            return errors.Annotate(err, "An error occurred while restore BetweenExpr.Right ")
         }
         return nil
     }
     ```
 
-2. 接下来给函数实现添加单元测试，参见 [pingcap/parser#75](https://github.com/pingcap/parser/pull/75/files), `ast/expressions_test.go`：
+2. 接下来给函数实现添加单元测试, `ast/expressions_test.go`：
 
     ```
     // 添加测试函数
-    func (tc *testExpressionsSuite) TestColumnNameExprRestore(c *C) {
+    func (tc *testExpressionsSuite) TestBetweenExprRestore(c *C) {
         // 测试用例
         testCases := []NodeRestoreTestCase{
-            {"abc", "`abc`"},
-            {"`abc`", "`abc`"},
-            {"`ab``c`", "`ab``c`"},
-            {"sabc.tABC", "`sabc`.`tABC`"},
-            {"dabc.sabc.tabc", "`dabc`.`sabc`.`tabc`"},
-            {"dabc.`sabc`.tabc", "`dabc`.`sabc`.`tabc`"},
-            {"`dABC`.`sabc`.tabc", "`dABC`.`sabc`.`tabc`"},
+            {"b between 1 and 2", "`b` BETWEEN 1 AND 2"},
+            {"b not between 1 and 2", "`b` NOT BETWEEN 1 AND 2"},
+            {"b between a and b", "`b` BETWEEN `a` AND `b`"},
+            {"b between '' and 'b'", "`b` BETWEEN '' AND 'b'"},
+            {"b between '2018-11-01' and '2018-11-02'", "`b` BETWEEN '2018-11-01' AND '2018-11-02'"},
         }
         // 为了不依赖父节点实现，通过 extractNodeFunc 抽取待测节点
         extractNodeFunc := func(node Node) Node {
@@ -156,7 +193,7 @@ type Node interface {
     }
     ```
     
-    **至此 `ColumnNameExpr` 的 `Restore` 函数实现完成，可以提交 PR 了。为了更好的理解测试逻辑，下面我们看 `RunNodeRestoreTest`**
+    **至此 `BetweenExpr` 的 `Restore` 函数实现完成，可以提交 PR 了。为了更好的理解测试逻辑，下面我们看 `RunNodeRestoreTest`：**
     
     ```
     // 下面是测试逻辑，已经实现好了，不需要贡献者实现
@@ -171,7 +208,7 @@ type Node interface {
             c.Assert(err, IsNil, comment)
             var sb strings.Builder
             // 抽取指定节点并调用其 Restore 函数
-            err = extractNodeFunc(stmt).Restore(&sb)
+            err = extractNodeFunc(stmt).Restore(NewRestoreCtx(DefaultRestoreFlags, &sb))
             c.Assert(err, IsNil, comment)
             // 通过 template 将 restore 结果拼接为完整的 SQL
             restoreSql := fmt.Sprintf(template, sb.String())
