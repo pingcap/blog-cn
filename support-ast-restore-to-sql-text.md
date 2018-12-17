@@ -1,7 +1,7 @@
 ---
 title: 十分钟成为 Contributor 系列 | 支持 AST 还原为 SQL
 author: ['赵一霖']
-date: 2018-12-05
+date: 2018-12-17
 summary: 为了实现一些新特性，我们需要为 AST 实现可以还原为 SQL 文本的功能，这篇教程描述如何为 AST 节点添加该功能。首先介绍一些必需的背景知识，然后介绍实现 Restore() 函数的流程，最后会展示一个例子。
 tags: ['TiDB', 'Contributor', 'SQL', '社区']
 ---
@@ -38,26 +38,31 @@ type RestoreCtx struct {
 // 它的大小写受 `RestoreKeyWordUppercase`，`RestoreKeyWordLowercase` 控制
 func (ctx *RestoreCtx) WriteKeyWord(keyWord string) {
 	...
+}
 
 // WriteString 用于向 `ctx` 中写入字符串。
 // 它是否被引号包裹及转义规则受 `RestoreStringSingleQuotes`，`RestoreStringDoubleQuotes`，`RestoreStringEscapeBackslash` 控制。
 func (ctx *RestoreCtx) WriteString(str string) {
 	...
+}
 
 // WriteName 用于向 `ctx` 中写入名称（库名，表名，列名等）。
 // 它是否被引号包裹及转义规则受 `RestoreNameUppercase`，`RestoreNameLowercase`，`RestoreNameDoubleQuotes`，`RestoreNameBackQuotes` 控制。
 func (ctx *RestoreCtx) WriteName(name string) {
 	...
+}
 
 // WriteName 用于向 `ctx` 中写入普通文本。
 // 它将被直接写入不受 flag 影响。
 func (ctx *RestoreCtx) WritePlain(plainText string) {
 	...
+}
 
 // WriteName 用于向 `ctx` 中写入普通文本。
 // 它将被直接写入不受 flag 影响。
 func (ctx *RestoreCtx) WritePlainf(format string, a ...interface{}) {
 	...
+}
 ```
 
 我们在 `ast.Node` 接口中添加了一个 `Restore(ctx *RestoreCtx) error` 函数，这个函数将当前节点对应的 SQL 文本追加至参数 `ctx` 中，如果节点无效则返回 `error`。
@@ -77,21 +82,21 @@ type Node interface {
 ![ast-tree](media/ast-tree.png)
 
 值得注意的是，SQL 文本与 AST 是一个多对一的关系，我们不可能从 AST 结构中还原出与原 SQL 完全一致的文本，
-因此我们只要保证还原出的 SQL 文本与原 SQL **语义相同** 即可。所谓语义相同，指的是由 AST 还原出的 SQL 文本再被解析为 AST 后，两颗 AST 是相等的。
+因此我们只要保证还原出的 SQL 文本与原 SQL **语义相同** 即可。所谓语义相同，指的是由 AST 还原出的 SQL 文本再被解析为 AST 后，两个 AST 是相等的。
 
 我们已经完成了接口设计和测试框架，具体的`Restore()` 函数留空。因此**只需要选择一个留空的 `Restore()` 函数实现，并添加相应的测试数据，就可以提交一个 PR 了！**
 
 ## **实现 `Restore()` 函数的整体流程**
 
-0. 请先阅读 [Proposal](https://github.com/pingcap/tidb/tree/master/docs/design/2018-11-29-ast-to-sql-text.md)、[Issue](https://github.com/pingcap/tidb/issues/8532)
+1. 请先阅读 [Proposal](https://github.com/pingcap/tidb/tree/master/docs/design/2018-11-29-ast-to-sql-text.md)、[Issue](https://github.com/pingcap/tidb/issues/8532)
 
-1. 在 [Issue](https://github.com/pingcap/tidb/issues/8532) 中找到未实现的函数
+2. 在 [Issue](https://github.com/pingcap/tidb/issues/8532) 中找到未实现的函数
 
-    在 [Issue-pingcap/tidb#8532](https://github.com/pingcap/tidb/issues/8532) 中找到一个没有被其他贡献者认领的任务，例如 `ast/expressions.go: BetweenExpr`。
+    1. 在 [Issue-pingcap/tidb#8532](https://github.com/pingcap/tidb/issues/8532) 中找到一个没有被其他贡献者认领的任务，例如 `ast/expressions.go: BetweenExpr`。
     
-    在 [pingcap/parser](https://github.com/pingcap/parser) 中找到任务对应文件 `ast/expressions.go`。
+    2. 在 [pingcap/parser](https://github.com/pingcap/parser) 中找到任务对应文件 `ast/expressions.go`。
     
-    在文件中找到 `BetweenExpr` 结构的 `Restore` 函数：
+    3. 在文件中找到 `BetweenExpr` 结构的 `Restore` 函数：
 
     ```
     // Restore implements Node interface.
@@ -100,19 +105,19 @@ type Node interface {
     }
     ```
 
-2. 实现 `Restore()` 函数
+3. 实现 `Restore()` 函数
 
     根据 Node 节点结构和 SQL 语法实现函数功能。
     
      > 参考 [MySQL 5.7 SQL Statement Syntax](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax.html)
 
-3. 写单元测试
+4. 写单元测试
 
     参考示例在相关文件下添加单元测试。
 
-4. 运行 `make test`，确保所有的 test case 都能跑过。
+5. 运行 `make test`，确保所有的 test case 都能跑过。
 
-5. 提交 PR
+6. 提交 PR
 
      PR 标题统一为：`parser: implement Restore for XXX`  
      请在 PR 中关联 Issue: `pingcap/tidb#8532`
@@ -123,9 +128,9 @@ type Node interface {
 
 1. 首先看 `ast/expressions.go`：
 
-    我们要实现一个 `ast.Node` 结构的 `Restore` 函数，首先清楚该结构代表什么短语，例如 `BetweenExpr` 代表 `expr [NOT] BETWEEN expr AND expr` (参见：[MySQL 语法 - 比较函数和运算符](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_between))。
+    1. 我们要实现一个 `ast.Node` 结构的 `Restore` 函数，首先清楚该结构代表什么短语，例如 `BetweenExpr` 代表 `expr [NOT] BETWEEN expr AND expr` (参见：[MySQL 语法 - 比较函数和运算符](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_between))。
     
-    观察 `BetweenExpr` 结构：
+    2. 观察 `BetweenExpr` 结构：
     
     ```
     // BetweenExpr is for "between and" or "not between and" expression.
@@ -142,7 +147,7 @@ type Node interface {
     }
     ```
     
-    实现 `BetweenExpr` 的 `Restore` 函数：
+    3. 实现 `BetweenExpr` 的 `Restore` 函数：
     
     ```
     // Restore implements Node interface.
@@ -196,7 +201,7 @@ type Node interface {
     **至此 `BetweenExpr` 的 `Restore` 函数实现完成，可以提交 PR 了。为了更好的理解测试逻辑，下面我们看 `RunNodeRestoreTest`：**
     
     ```
-    // 下面是测试逻辑，已经实现好了，不需要贡献者实现
+    // 下面是测试逻辑，已经实现好了，不需要 contributor 实现
     func RunNodeRestoreTest(c *C, nodeTestCases []NodeRestoreTestCase, template string, extractNodeFunc func(node Node) Node) {
         parser := parser.New()
         for _, testCase := range nodeTestCases {
@@ -258,6 +263,6 @@ type Node interface {
     
     测试代码会判断原 SQL parse 出 AST 后再还原的 SQL 是否与预期的 restore SQL 相等，具体的测试逻辑在 `parser_test.go` 中 `RunTest()`、`RunRestoreTest()` 函数，逻辑与前例类似，此处不再赘述。
 
-编辑按：添加 TiDB Robot 微信，加入 TiDB Contributor Club，无门槛参与开源项目，改变世界从这里开始吧（萌萌哒）。
+编者按：添加 TiDB Robot 微信，加入 TiDB Contributor Club，无门槛参与开源项目，改变世界从这里开始吧（萌萌哒）。
 
 ![](media/tidb-robot.jpg "tidb_rpbot")
