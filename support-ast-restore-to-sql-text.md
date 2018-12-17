@@ -115,7 +115,7 @@ type Node interface {
 5. 提交 PR
 
      PR 标题统一为：`parser: implement Restore for XXX`  
-     请在 PR 中关联 Issue: pingcap/tidb#8532
+     请在 PR 中关联 Issue: `pingcap/tidb#8532`
 
 ## **示例**
 
@@ -123,7 +123,7 @@ type Node interface {
 
 1. 首先看 `ast/expressions.go`：
 
-    我们要实现一个 ast.Node 结构的 Restore 函数，首先清楚该结构代表什么短语，例如 `BetweenExpr` 代表 `expr [NOT] BETWEEN expr AND expr` (参见：[MySQL 语法 - 比较函数和运算符](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_between))。
+    我们要实现一个 `ast.Node` 结构的 `Restore` 函数，首先清楚该结构代表什么短语，例如 `BetweenExpr` 代表 `expr [NOT] BETWEEN expr AND expr` (参见：[MySQL 语法 - 比较函数和运算符](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_between))。
     
     观察 `BetweenExpr` 结构：
     
@@ -230,7 +230,7 @@ type Node interface {
 
 下面以[实现 UseStmt 的 Restore 函数 PR](https://github.com/pingcap/parser/pull/62/files) 为例，对测试进行说明：
 
-1. Restore 函数实现过程略。
+1. `Restore` 函数实现过程略。
 
 2. 给函数实现添加单元测试，参见 `parser_test.go`：
     
@@ -243,7 +243,7 @@ type Node interface {
     {"use select", false, "USE `select`"},
     ```
     
-    我们看 testCase 结构声明：
+    我们看 `testCase` 结构声明：
     
     ```
     type testCase struct {
