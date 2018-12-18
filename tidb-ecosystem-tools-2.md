@@ -61,7 +61,7 @@ INSERT INTO `tbl` VALUES (19, 20, 21), (22, 23, 24), (25, 26, 27);
 
 Lightning 会作初步分析，找出每行在文件的位置并分配一个行号，使得没有主键的表可以唯一的区分每一行。此外亦同时将文件分割为大小差不多的区块（默认 256 MiB）。这些区块也会并发处理，让数据量大的表也能快速导入。以下的例子把文件以 20 字节为限分割成 5 块：
 
-INSERT INTO `tbl` VALUES (1, 2, 3), (4, 5, 6), (7, 8, 9);  INSERT INTO `tbl` VALUES (10, 11, 12), (13, 14, 15), (16, 17, 18);  INSERT INTO `tbl` VALUES (19, 20, 21), (22, 23, 24), (25, 26, 27);
+![](https://upload-images.jianshu.io/upload_images/542677-992d80a95381b315.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 Lightning 会直接使用 TiDB 实例来把 SQL 转换为 KV 对，称为「KV 编码器」。与外部的 TiDB 集群不同，KV 编码器是寄存在 Lightning 进程内的，而且使用内存存储，所以每执行完一个 INSERT 之后，Lightning 可以直接读取内存获取转换后的 KV 对（这些 KV 对包含数据及索引）。
 
