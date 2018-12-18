@@ -71,7 +71,7 @@ Lightning 会直接使用 TiDB 实例来把 SQL 转换为 KV 对，称为「KV �
 
 ![](https://upload-images.jianshu.io/upload_images/542677-936ae304fa74eb81.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-因异步操作的源故，Importer 得到的原始 KV 对注定是无序的。所以，Importer 要做的第一件事就是要排序。这需要给每个表划定准备排序的储存空间，我们称之为 engine file。
+因异步操作的缘故，Importer 得到的原始 KV 对注定是无序的。所以，Importer 要做的第一件事就是要排序。这需要给每个表划定准备排序的储存空间，我们称之为 engine file。
 
 对大数据排序是个解决了很多遍的问题，我们在此使用现有的答案：直接使用 RocksDB。一个 engine file 就相等于本地的 RocksDB，并设置为优化大量写入操作。而「排序」就相等于将 KV 对全写入到 engine file 里，RocksDB 就会帮我们合并、排序，并得到 SST 格式的文件。
 
