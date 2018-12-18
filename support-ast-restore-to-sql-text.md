@@ -1,7 +1,7 @@
 ---
 title: 十分钟成为 Contributor 系列 | 支持 AST 还原为 SQL
 author: ['赵一霖']
-date: 2018-12-18
+date: 2018-12-20
 summary: 为了实现一些新特性，我们需要为 AST 实现可以还原为 SQL 文本的功能，这篇教程描述如何为 AST 节点添加该功能。首先介绍一些必需的背景知识，然后介绍实现 Restore() 函数的流程，最后会展示一个例子。
 tags: ['TiDB', 'Contributor', 'SQL', '社区']
 ---
