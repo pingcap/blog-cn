@@ -76,7 +76,7 @@ select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 
 
 在这个阶段我们记录 range 时用 rangePoint 的结构来存储 range。
 
-```
+```go
 // Point is the end point of range interval.
 type point struct {
 	value types.Datum
@@ -103,7 +103,7 @@ merge 函数使用 inRangeCount 来记录当前位置被 a, b 两个区间序列
 
 在得到最后的区间端点序列后，由 [points2TableRanges](https://github.com/pingcap/tidb/blob/source-code/util/ranger/ranger.go#L174) 转化为对外暴露的 range 结构，由 [BuildTableRange](https://github.com/pingcap/tidb/blob/source-code/util/ranger/ranger.go#L224) 输出到 plan package。
 
-```
+```go
 // NewRange represents a range generated in physical plan building phase.
 type NewRange struct {
 	LowVal  []types.Datum

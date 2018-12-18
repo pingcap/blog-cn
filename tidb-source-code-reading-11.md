@@ -119,7 +119,7 @@ Inner Worker 需要根据 Outer 表每个 batch 的数据，构建 Inner 表的�
 
 ## 示例
 
-```
+```sql
 CREATE TABLE `t` (
 `a` int(11) DEFAULT NULL,
 `pk` int(11) NOT NULL AUTO_INCREMENT,

@@ -86,17 +86,17 @@ Comment  string
 	
 ```
 
-`PartitionOptions` 结构中 Tp 字段表示分区类型，`Expr` 字段表示分区键，`ColumnNames` 字段表示 Columns 分区，这种类型分区有分为 Range columns 分区和 List columns 分区，这种分区目前先不展开介绍。`PartitionDefinition` 其中 Name 字段表示分区名，`LessThan` 表示分区 Range 值，`MaxValue` 字段表示 Range 值是否为最大值，`Comment` 字段表示分区的描述。
+`PartitionOptions` 结构中 Tp 字段表示分区类型，`Expr` 字段表示分区键，`ColumnNames` 字段表示 Columns 分区，这种类型分区又分为 Range columns 分区和 List columns 分区，这种分区目前先不展开介绍。`PartitionDefinition` 其中 Name 字段表示分区名，`LessThan` 表示分区 Range 值，`MaxValue` 字段表示 Range 值是否为最大值，`Comment` 字段表示分区的描述。
 
 [CreateTable](https://github.com/pingcap/tidb/blob/release-2.1/ddl/ddl_api.go#L905) Partition 部分主要流程如下：
 
 1. 把上文提到语法解析阶段会把 SQL语句中 Partition 相关信息转换成 `ast.PartitionOptions` , 然后 [buildTablePartitionInfo](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L41) 负责把 `PartitionOptions` 结构转换 `PartitionInfo`,  即 Partition 的元信息。
 
-2. [checkPartitionNameUnique](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L88) 检查分区名是否重复，分表名是不区大小写的。
+2. [checkPartitionNameUnique](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L88) 检查分区名是否重复，分表名是不区分大小写的。
 
 3. 对于每一分区 Range 值进行 Check，[checkAddPartitionValue](https://github.com/pingcap/tidb/blob/release-2.1/ddl/table.go#L469) 就是检查新增的 Partition 的 Range 需要比之前所有 Partition 的 Range 都更大。
 
-4. TiDB 单表最多只能有 [1024 个分区](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L329)  ，超过最大分区的限制不会创建成功。
+4. TiDB 单表最多只能有 [1024 个分区](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L329) ，超过最大分区的限制不会创建成功。
 
 5. 如果分区键构成是一个包含函数的表达式需要检查表达式里面是否是允许的函数 [checkPartitionFuncValid](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L107)。
 
@@ -116,9 +116,9 @@ add partition 首先需要从 SQL 中解析出来 Partition 的元信息，然�
 
 3. TiDB 默认一个表最多只能有 [1024 个分区](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L329)，超过最大分区的限制会报错。
 
-4. 对于每新增一个分区需要检查 Range 值进行 Check，[checkAddPartitionValue](https://github.com/pingcap/tidb/blob/release-2.1/ddl/table.go#L469) 简单说就是检查新增的 Partition 的 Range 需要比之前所有 Partition 的 Rrange 都更大。
+4. 对于每新增一个分区需要检查 Range 值进行 Check，[checkAddPartitionValue](https://github.com/pingcap/tidb/blob/release-2.1/ddl/table.go#L469) 简单说就是检查新增的 Partition 的 Range 需要比之前所有 Partition 的 Range 都更大。
 
-5. [checkPartitionNameUnique](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L88) 检查分区名是否重复，分表名是不区大小写的。
+5. [checkPartitionNameUnique](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L88) 检查分区名是否重复，分表名是不区分大小写的。
 
 6. 最后把 Partition 的元信息 [PartitionInfo](https://github.com/pingcap/tidb/blob/release-2.1/model/model.go#L308) 追加到 Table 的元信息 [TableInfo](https://github.com/pingcap/tidb/blob/release-2.1/model/model.go#L142).Partition 中，具体实现在这里 [updatePartitionInfo](https://github.com/pingcap/tidb/blob/release-2.1/ddl/table.go#L459)。
 
@@ -149,7 +149,7 @@ drop partition 和 drop table 类似，只不过需要先找到对应的 Partiti
 
 Select 语句重点讲 Select Partition 如何查询的和分区裁剪（Partition Pruning），更详细的可以看 [TiDB 源码阅读系列文章（六）Select 语句概览](https://pingcap.com/blog-cn/tidb-source-code-reading-6/) 。
 
-一条 SQL 语句的处理流程，从 Client 接收数据，MySQL 协议解析和转换，SQL 语法解析，逻辑查询计划和物理查询计划执行，到最后返回结果。那么对于分区表是如何查询的表里的数据的，其实最主要的修改是 [逻辑查询计划](https://github.com/pingcap/tidb/blob/release-2.1/planner/core/rule_partition_processor.go#L39) 阶段，举个例子：如果用上文中 employees 表作查询, 在 SQL 语句的处理流程前几个阶段没什么不同，但是在逻辑查询计划阶段，[rewriteDataSource](https://github.com/pingcap/tidb/blob/release-2.1/planner/core/rule_partition_processor.go#L46) 将 DataSource 重写了变成 Union All 。每个 Partition id 对应一个 Table Reader。
+一条 SQL 语句的处理流程，从 Client 接收数据，MySQL 协议解析和转换，SQL 语法解析，逻辑查询计划和物理查询计划执行，到最后返回结果。那么对于分区表是如何查询表里的数据的，其实最主要的修改是 [逻辑查询计划](https://github.com/pingcap/tidb/blob/release-2.1/planner/core/rule_partition_processor.go#L39) 阶段，举个例子：如果用上文中 employees 表作查询, 在 SQL 语句的处理流程前几个阶段没什么不同，但是在逻辑查询计划阶段，[rewriteDataSource](https://github.com/pingcap/tidb/blob/release-2.1/planner/core/rule_partition_processor.go#L46) 将 DataSource 重写了变成 Union All 。每个 Partition id 对应一个 Table Reader。
 
 ```sql
 select * from employees

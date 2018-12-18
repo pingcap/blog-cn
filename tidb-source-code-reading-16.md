@@ -64,7 +64,7 @@ INSERT 的执行逻辑在 [executor/insert.go](https://github.com/pingcap/tidb/b
 
 在讲 [insertOneRow](https://github.com/pingcap/tidb/blob/5bdf34b9bba3fc4d3e50a773fa8e14d5fca166d5/executor/insert.go#L42:22) 之前，我们先看一段 SQL。
 
-```
+```sql
 CREATE TABLE t (i INT UNIQUE);
 INSERT INTO t VALUES (1);
 BEGIN;
@@ -76,7 +76,7 @@ COMMIT;
 
 MySQL：
 
-```
+```sql
 mysql> CREATE TABLE t (i INT UNIQUE);
 Query OK, 0 rows affected (0.15 sec)
 
@@ -94,7 +94,7 @@ Query OK, 0 rows affected (0.11 sec)
 
 TiDB：
 
-```
+```sql
 mysql> CREATE TABLE t (i INT UNIQUE);
 Query OK, 0 rows affected (1.04 sec)
 
@@ -145,7 +145,7 @@ ERROR 1062 (23000): Duplicate entry '1' for key 'i'
 
 在上一步的 UPDATE 中，还需要处理以下场景，如下面这个 SQL：
 
-```
+```sql
 CREATE TABLE t (i INT UNIQUE);
 INSERT INTO t VALUES (1), (1) ON DUPLICATE KEY UPDATE i = i;
 ```
@@ -170,7 +170,7 @@ REPLACE 语句虽然它看起来像是独立的一类 DML，实际上观察语�
 
 他们都是处理一行数据跟表中的某一行冲突时的不同处理。但是 REPLACE 语句不同，它将会删除遇到的所有冲突行，直到没有冲突后再插入数据。如果表中有 5 个唯一索引，那有可能有 5 条与等待插入的行冲突的行。那么 REPLACE 语句将会一次性删除这 5 行，再将自己插入。看以下 SQL：
 
-```
+```sql
 CREATE TABLE t (
 i int unique, 
 j int unique, 

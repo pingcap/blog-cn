@@ -24,7 +24,7 @@ tags: ['源码阅读','TiDB']
 
 选择，投影，连接（简称 SPJ） 是最基本的算子。其中 Join 有内连接，左外右外连接等多种连接方式。
 
-```
+```sql
 select b from t1, t2 where t1.c = t2.c and t1.a > 5
 ```
 
@@ -42,7 +42,7 @@ select b from t1, t2 where t1.c = t2.c and t1.a > 5
 
 列裁剪的思想是这样的：对于用不上的列，没有必要读取它们的数据，无谓的浪费 IO 资源。比如说表 t 里面有 a b c d 四列。
 
-```
+```sql
 select a from t where b > 5
 ```
 
@@ -56,7 +56,7 @@ Aggregation 算子会涉及哪些列？`group by` 用到的列，以及聚合函
 
 Selection 做列裁剪时，要看它父节点要哪些列，然后它自己的条件里面要用到哪些列。Sort 就看 `order by` 里面用到了哪些列。Join 则要把连接条件中用到的各种列都算进去。具体的代码里面，各个算子都是实现 PruneColumns 接口：
 
-```
+```go
 func (p *LogicalPlan) PruneColumns(parentUsedCols []*expression.Column) 
 
 ```
@@ -67,13 +67,13 @@ func (p *LogicalPlan) PruneColumns(parentUsedCols []*expression.Column)
 
 最大最小消除，会对 Min/Max 语句进行改写。
 
-```
+```sql
 select min(id) from t
 ```
 
 我们用另一种写法，可以做到类似的效果：
 
-```
+```sql
 select id from t order by id desc limit 1
 ```
 
@@ -83,13 +83,13 @@ select id from t order by id desc limit 1
 
 最大最小消除，做的事情就是由 SQL 优化器“自动”地做这个变换。
 
-```
+```sql
 select max(id) from t
 ```
 
 生成的查询树会被转换成下面这种：
 
-```
+```sql
 select max(id) from (select id from t order by id desc limit 1 where id is not null) t
 ```
 
@@ -109,13 +109,13 @@ min 也是类似的语句替换。相应的代码是在 `max_min_eliminate.go` �
 
 代码是在 `eliminate_projection.go` 里面。
 
-```
+```go
 func eliminate(p Plan, canEliminate bool) {
-          对 p 的每个子节点，递归地调用 eliminate
-          如果 p 是 Project 
-              如果 canEliminate 为真 消除 p
-              如果 p 的子节点的输出列，跟 p 的输出列相同，消除 p
-    }
+    对 p 的每个子节点，递归地调用 eliminate
+    如果 p 是 Project 
+        如果 canEliminate 为真 消除 p
+        如果 p 的子节点的输出列，跟 p 的输出列相同，消除 p
+}
 ```
 
 注意 `canEliminate` 参数，它是代表是否处于一个可被消除的“上下文”里面。比如 `Projection(A) -> Projection(A, B, C)` 或者 `Aggregation -> Projection` 递归调用到子节点 Projection 时，该 Projection 就处于一个 `canEliminate` 的上下文。
@@ -129,7 +129,7 @@ func eliminate(p Plan, canEliminate bool) {
 
 谓词下推是非常重要的一个优化。比如
 
-```
+```sql
 select * from t1, t2 where t1.a > 3 and t2.b > 5
 ```
 
@@ -137,7 +137,7 @@ select * from t1, t2 where t1.a > 3 and t2.b > 5
 
 谓词下推的接口函数类似是这样子的：
 
-```
+```go
 func (p *baseLogicalPlan) PredicatePushDown(predicates []expression.Expression) ([]expression.Expression, LogicalPlan)
 ```
 
@@ -155,14 +155,14 @@ PredicatePushDown 函数处理当前的查询计划 p，参数 predicates 表示
 
 能转成 inner join 的例子:
 
-```
+```sql
    select * from t1 left outer join t2 on t1.id = t2.id where t2.id != null;
    select * from t1 left outer join t2 on t1.id = t2.id where t2.id != null and t2.value > 3;
 ```
 
 不能转成 inner join 的例子:
 
-```
+```sql
    select * from t1 left outer join t2 on t1.id = t2.id where t2.id != null or t2.value > 3;
 ```
 
