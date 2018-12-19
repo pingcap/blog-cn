@@ -265,6 +265,6 @@ type Node interface {
 
 ---
 
-添加 TiDB Robot 微信，加入 TiDB Contributor Club，无门槛参与开源项目，改变世界从这里开始吧（萌萌哒）。
+加入 TiDB Contributor Club，无门槛参与开源项目，改变世界从这里开始吧（萌萌哒）。
 
 ![](media/tidb-community.png "tidb-community")
