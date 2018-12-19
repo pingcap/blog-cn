@@ -128,7 +128,7 @@ type Node interface {
 
 1. 首先看 `ast/expressions.go`：
 
-    1. 我们要实现一个 `ast.Node` 结构的 `Restore` 函数，首先清楚该结构代表什么短语，例如 `BetweenExpr` 代表 `expr [NOT] BETWEEN expr AND expr` (参见：[MySQL 语法 - 比较函数和运算符](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_between))。
+    1. 我们要实现一个 `ast.Node` 结构的 `Restore` 函数，首先清楚该结构代表什么短语，例如 `BetweenExpr` 代表 `expr [NOT] BETWEEN expr AND expr` （参见：[MySQL 语法 - 比较函数和运算符](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_between)）。
     
     2. 观察 `BetweenExpr` 结构：
     
