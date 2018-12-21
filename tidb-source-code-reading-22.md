@@ -116,7 +116,7 @@ Stream Aggregate 的计算需要保证输入数据**按照 `Group-By` 列有序*
     * 存在某个聚合函数参数为 DISTINCT 时。TiDB 暂未实现对 DedupMode 的支持，因此对于含有 `DISTINCT` 的情况目前仅能单线程执行。
     * 系统变量 [`tidb_hashagg_partial_concurrency`](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_hashagg_partial_concurrency) 和 [`tide_hashagg_final_concurrency`](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_hashagg_final_concurrency) 被同时设置为 1 时。这两个系统变量分别用来控制 Hash Aggregation 并行计算时候，TiDB 层聚合计算 partial 和 final 阶段 worker 的并发数。当它们都被设置为 1 时，选择单线程执行。
 
-若 HashAgg 算子可以并行执行，使用 [AggFuncDesc.Split](https://github.com/pingcap/tidb/tree/v2.1.0/executor/builder.go#L1062) 根据 `AggFuncDesc.Mode` 将 TiDB 层的聚合算子的计算拆分为 partial 和 final 两个阶段，并分别生成对应的 `AggFuncDesc`，设为 `partialAggDesc` 和 `finalAggDesc`。若 `AggFuncDesc.Mode == CompleteMode`，则将 TiDB 层的计算阶段拆分为 `Partial1Mode --> FinalMode`；若 `AggFuncDesc.Mode == FinalMode`，则将 TiDB 层的计算阶段拆分为 `Partial2Mode --> FinalMode`。进一步的，我们可以根据 `partialAggDesc` 和 `finalAggDesc` 分别 [构造出对应的执行函数](https://github.com/pingcap/tidb/tree/v2.1.0/executor/builder.go#L1063-L1066)。
+若 `HashAgg` 算子可以并行执行，使用 [AggFuncDesc.Split](https://github.com/pingcap/tidb/tree/v2.1.0/executor/builder.go#L1062) 根据 `AggFuncDesc.Mode` 将 TiDB 层的聚合算子的计算拆分为 partial 和 final 两个阶段，并分别生成对应的 `AggFuncDesc`，设为 `partialAggDesc` 和 `finalAggDesc`。若 `AggFuncDesc.Mode == CompleteMode`，则将 TiDB 层的计算阶段拆分为 `Partial1Mode --> FinalMode`；若 `AggFuncDesc.Mode == FinalMode`，则将 TiDB 层的计算阶段拆分为 `Partial2Mode --> FinalMode`。进一步的，我们可以根据 `partialAggDesc` 和 `finalAggDesc` 分别 [构造出对应的执行函数](https://github.com/pingcap/tidb/tree/v2.1.0/executor/builder.go#L1063-L1066)。
 
 ### 并行 Hash Aggregation 执行过程详述
 
@@ -165,13 +165,13 @@ Hash Aggregation 的执行阶段可分为如下图所示的 5 步：
 
 在 TiDB 中，使用 [EXPLAIN ANALYZE](https://github.com/pingcap/docs-cn/blob/master/sql/understanding-the-query-execution-plan.md#explain-analyze-%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F) 可以获取 SQL 的执行统计信息。因篇幅原因此处仅贴出 TPC-H query-17 部分算子的 EXPLAIN ANALYZE 结果。
 
-HashAgg 单线程计算时：
+`HashAgg` 单线程计算时：
 
 ![](https://upload-images.jianshu.io/upload_images/542677-3157c1299e3143af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-查询总执行时间 23 分 24 秒，其中 HashAgg 执行时间约 17 分 9 秒。
+查询总执行时间 23 分 24 秒，其中 `HashAgg` 执行时间约 17 分 9 秒。
 
-HashAgg 并行计算时（此时 TiDB 层 Partial 和 Final 阶段的 worker 数量都设置为 16）：
+`HashAgg` 并行计算时（此时 TiDB 层 Partial 和 Final 阶段的 worker 数量都设置为 16）：
 
 ![](https://upload-images.jianshu.io/upload_images/542677-11bf835eac3f1d35.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
