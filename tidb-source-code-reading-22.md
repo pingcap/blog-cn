@@ -24,7 +24,7 @@ tags: ['源码阅读','TiDB']
 | 1 | 5 |
 | 2 | 4 |
 
-SQL: `select avg(b) from t group by a`, 要求将表 `t` 的数据按照 `a` 的值分组，对每一组的 `b` 值计算平均值。不管 Hash 还是 Stream 聚合，在 `AVG` 函数的计算过程中，我们都需要维护 2 个中间结果变量 `sum` 和 `count`。Hash 和 Stream 聚合算法的执行原理如下：
+SQL: `select avg(b) from t group by a`, 要求将表 `t` 的数据按照 `a` 的值分组，对每一组的 `b` 值计算平均值。不管 Hash 还是 Stream 聚合，在 `AVG` 函数的计算过程中，我们都需要维护 2 个中间结果变量 `sum` 和 `count`。Hash 和 Stream 聚合算法的执行原理如下。
 
 ### Hash Aggregate 的执行原理
 
@@ -95,7 +95,7 @@ Stream Aggregate 的计算需要保证输入数据**按照 `Group-By` 列有序*
 
     ![](https://upload-images.jianshu.io/upload_images/542677-90021d5e3538f806.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-除了上面的两个例子外，还可能有如下的几种计算方式，如：
+除了上面的两个例子外，还可能有如下的几种计算方式：
 
 1. 聚合被下推到 TiKV 上进行计算（Partial1Mode），并返回经过预聚合的中间结果。为了充分利用 TiDB server 所在机器的 CPU 和内存资源，加快 TiDB 层的聚合计算，TiDB 层的聚合函数计算可以这样进行：Partial2Mode --> FinalMode。
 
