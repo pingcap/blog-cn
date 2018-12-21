@@ -11,7 +11,7 @@ tags: ['源码阅读','TiDB']
 
 在 SQL 中，聚合操作对一组值执行计算，并返回单个值。TiDB 实现了 2 种聚合算法：Hash Aggregation 和 Stream Aggregation。
 
-我们首先以 AVG 函数为例（案例参考 [Stack Overflow](https://stackoverflow.com/questions/1471147/how-do-aggregates-group-by-work-on-sql-server/1471167#1471167)），简述这两种算法的执行原理。
+我们首先以 `AVG` 函数为例（案例参考 [Stack Overflow](https://stackoverflow.com/questions/1471147/how-do-aggregates-group-by-work-on-sql-server/1471167#1471167)），简述这两种算法的执行原理。
 
 假设表 `t` 如下：
 
@@ -28,7 +28,7 @@ SQL: `select avg(b) from t group by a`, 要求将表 `t` 的数据按照 `a` 的
 
 ### Hash Aggregate 的执行原理
 
-在 Hash Aggregate 的计算过程中，我们需要维护一个 Hash 表，Hash 表的键为聚合计算的 `Group-By` 列，值为聚合函数的中间结果 `sum` 和 `count`。在本例中，键为列 `a` 的值，值为 `sum(b)` 和 `count(b)`。
+在 Hash Aggregate 的计算过程中，我们需要维护一个 Hash 表，Hash 表的键为聚合计算的 `Group-By` 列，值为聚合函数的中间结果 `sum` 和 `count`。在本例中，键为 `列 a` 的值，值为 `sum(b)` 和 `count(b)`。
 
 计算过程中，只需要根据每行输入数据计算出键，在 Hash 表中找到对应值进行更新即可。对本例的执行过程模拟如下。
 
@@ -85,13 +85,13 @@ Stream Aggregate 的计算需要保证输入数据**按照 `Group-By` 列有序*
 
 * CompleteMode
 
-    此时 avg 的整个计算过程只有一个阶段，如图所示：
+    此时 `AVG` 函数的整个计算过程只有一个阶段，如图所示：
 
     ![](https://upload-images.jianshu.io/upload_images/542677-54c3f1e21a60b531.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 * Partial1Mode --> FinalMode
 
-    此时我们将 avg 函数的计算过程拆成两个阶段进行，如图所示：
+    此时我们将 `AVG` 函数的计算过程拆成两个阶段进行，如图所示：
 
     ![](https://upload-images.jianshu.io/upload_images/542677-90021d5e3538f806.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
