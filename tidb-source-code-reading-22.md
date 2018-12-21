@@ -114,7 +114,7 @@ Stream Aggregate 的计算需要保证输入数据**按照 `Group-By` 列有序*
 3. [构建 HashAgg 执行器](https://github.com/pingcap/tidb/blob/v2.1.0/executor/builder.go#L999)时，首先检查当前 `HashAgg` 算子[是否可以并行执行](https://github.com/pingcap/tidb/blob/v2.1.0/executor/builder.go#L1037-L1047)。目前当且仅当两种情况下 `HashAgg` 不可以并行执行：
 
     * 存在某个聚合函数参数为 DISTINCT 时。TiDB 暂未实现对 DedupMode 的支持，因此对于含有 `DISTINCT` 的情况目前仅能单线程执行。
-    * 系统变量 [`tidb_hashagg_partial_concurrency`](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_hashagg_partial_concurrency) 和 [`tide_hashagg_final_concurrency`](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_hashagg_final_concurrency) 被同时设置为 1 时。这两个系统变量分别用来控制 Hash Aggregation 并行计算时候，TiDB 层聚合计算 partial 和 final 阶段 worker 的并发数。当它们都被设置为 1 时，选择单线程执行。
+    * 系统变量 [`tidb_hashagg_partial_concurrency`](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_hashagg_partial_concurrency) 和 [`tidb_hashagg_final_concurrency`](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_hashagg_final_concurrency) 被同时设置为 1 时。这两个系统变量分别用来控制 Hash Aggregation 并行计算时候，TiDB 层聚合计算 partial 和 final 阶段 worker 的并发数。当它们都被设置为 1 时，选择单线程执行。
 
 若 `HashAgg` 算子可以并行执行，使用 [AggFuncDesc.Split](https://github.com/pingcap/tidb/tree/v2.1.0/executor/builder.go#L1062) 根据 `AggFuncDesc.Mode` 将 TiDB 层的聚合算子的计算拆分为 partial 和 final 两个阶段，并分别生成对应的 `AggFuncDesc`，设为 `partialAggDesc` 和 `finalAggDesc`。若 `AggFuncDesc.Mode == CompleteMode`，则将 TiDB 层的计算阶段拆分为 `Partial1Mode --> FinalMode`；若 `AggFuncDesc.Mode == FinalMode`，则将 TiDB 层的计算阶段拆分为 `Partial2Mode --> FinalMode`。进一步的，我们可以根据 `partialAggDesc` 和 `finalAggDesc` 分别 [构造出对应的执行函数](https://github.com/pingcap/tidb/tree/v2.1.0/executor/builder.go#L1063-L1066)。
 
