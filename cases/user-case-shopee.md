@@ -1,6 +1,6 @@
 ---
 title: TiDB 助力东南亚领先电商 Shopee 业务升级
-author: ['刘春辉','陈东','冀浩东']
+author: ['刘春辉','洪超']
 date: 2018-12-25
 summary: 截至目前，系统已经平稳运行了六个多月，数据量增长至 35TB（如图 4 所示），经历了两次扩容后现在集群共包含 42 个节点。
 tags: ['互联网']
@@ -11,8 +11,7 @@ logo: /images/blog-cn/customers/shopee-logo.png
 ---
 
 
-
->作者介绍：刘春辉，Shopee DBA；洪超，Shopee DBA。
+>作者介绍：**刘春辉**，Shopee DBA；**洪超**，Shopee DBA。
 
 ## 一、业务场景
 
