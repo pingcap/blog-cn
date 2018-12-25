@@ -6,6 +6,7 @@
   - [小米](user-case-xiaomi.md)
   - [美团点评](user-case-meituan.md)
   - [丰巢](user-case-fengchao.md)
+  - [Shopee](user-case-shopee.md)
   - [转转](user-case-zhuanzhuan.md)
   - [摩拜单车](user-case-mobike.md)
   - [易果集团](user-case-yiguo.md)
