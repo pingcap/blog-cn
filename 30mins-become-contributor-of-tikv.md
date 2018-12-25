@@ -3,9 +3,8 @@ title: 三十分钟成为 Contributor | 为 TiKV 添加 built-in 函数
 author: ['吴雪莲']
 date: 2018-08-01
 summary: 手把手教你如何在三十分钟内成为 TiKV 项目的 Contributor。
-tags: ['TiKV','社区']
+tags: ['TiKV','社区','Contributor']
 ---
-
 
 
 ## 背景知识

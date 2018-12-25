@@ -3,7 +3,7 @@ title: 十分钟成为 Contributor 系列 | 重构内建函数进度报告
 author: ['徐怀宇']
 date: 2017-07-14
 summary: 为了方便社区同学更好地参与 TiDB 项目，本文一方面对继上一篇文章发布后参考社区的反馈对表达式计算框架所做的修改进行详细介绍，另一方面对尚未重写的 built-in 函数进行陈列。
-tags: ['TiDB', 'Contributor']
+tags: ['TiDB', 'Contributor','社区']
 ---
 
 6 月 22 日，TiDB 发布了一篇如何十分钟成为 TiDB Contributor 系列的[第二篇文章](./reconstruct-built-in-function.md)，向大家介绍如何为 TiDB 重构 built-in 函数。

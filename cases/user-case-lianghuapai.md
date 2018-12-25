@@ -6,7 +6,7 @@ summary: 目前我们已经搭建两个 TiDB 集群，几十个物理节点，�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-lianghuapai/
-weight: 5
+weight: 8
 logo: /images/blog-cn/customers/lianghuapai-logo.png
 ---
 

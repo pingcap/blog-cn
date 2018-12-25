@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（十）Chunk 和执行框架简介
 author: ['张建']
 date: 2018-06-14
 summary: 本文详细介绍了在 TiDB 2.0 中引入的 Chunk 及执行框架，enjoy～
-tags: ['源码阅读','TiDB']
+tags: ['源码阅读','TiDB','社区']
 ---
 
 

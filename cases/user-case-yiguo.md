@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-yiguo/
 aliases: ['/blog-cn/user-case-yiguo/']
-weight: 3
+weight: 7
 logo: /images/blog-cn/customers/yiguo-logo.png
 ---
 
