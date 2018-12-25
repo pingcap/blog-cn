@@ -6,7 +6,7 @@ summary: 截至目前，系统已经平稳运行了六个多月，数据量增�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-shopee/
-weight: 
+weight: 3
 logo: /images/blog-cn/customers/shopee-logo.png
 ---
 
