@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-ifeng/
 aliases: ['/blog-cn/user-case-ifeng/']
-weight: 15
+weight: 18
 logo: /images/blog-cn/customers/ifeng-logo.png
 ---
 

@@ -6,7 +6,7 @@ summary: 目前，TiKV 的应用会影响饿了么全平台 80% 的流量，包�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-eleme-1/
-weight: 6
+weight: 10
 logo: /images/blog-cn/customers/eleme-logo.png
 ---
 

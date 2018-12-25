@@ -6,7 +6,7 @@ summary: 目前 TiDB 线上已经存储超过 6 个月的数据，总数据量�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-keruyun/
-weight: 14
+weight: 15
 logo: /images/blog-cn/customers/keruyun-logo.png
 ---
 

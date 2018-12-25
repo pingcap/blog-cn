@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-erweihuo/
 aliases: ['/blog-cn/user-case-erweihuo/']
-weight: 13
+weight: 14
 logo: /images/blog-cn/customers/erweihuo-logo.png
 ---
 

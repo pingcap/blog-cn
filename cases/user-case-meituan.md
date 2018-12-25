@@ -6,7 +6,7 @@ summary: 美团业务线众多，我们根据业务特点及重要程度逐步�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-meituan/
-weight: 1
+weight: 2
 logo: /images/blog-cn/customers/meituan-logo.png
 ---
 
