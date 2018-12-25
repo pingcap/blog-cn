@@ -3,7 +3,7 @@ title: TiDB EcoSystem Tools 原理解读（一）：TiDB-Binlog 架构演进与�
 author: ['王相']
 date: 2018-12-07
 summary: TiDB-Binlog 组件用于收集 TiDB 的 binlog，并提供实时备份和同步功能。本文主要介绍了 TiDB-Binlog 的架构演进之路和实现原理。
-tags: ['TiDB-Binlog','TiDB Ecosystem Tools']
+tags: ['TiDB-Binlog','TiDB Ecosystem Tools','社区']
 ---
 
 
