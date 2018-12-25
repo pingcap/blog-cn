@@ -5,12 +5,12 @@
 + 互联网
   - [小米](user-case-xiaomi.md)
   - [美团点评](user-case-meituan.md)
+  - [爱奇艺](user-case-iqiyi.md)
   - [丰巢](user-case-fengchao.md)
   - [Shopee](user-case-shopee.md)
   - [转转](user-case-zhuanzhuan.md)
   - [摩拜单车](user-case-mobike.md)
   - [易果集团](user-case-yiguo.md)
-  - [爱奇艺](user-case-iqiyi.md)
   - [同程艺龙](user-case-tongcheng.md)
   - [饿了么（一）](user-case-eleme-1.md)
   - [饿了么（二）](user-case-eleme-2.md)
