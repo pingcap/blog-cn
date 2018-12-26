@@ -1,5 +1,5 @@
 ---
-title: TiDB EcoSystem Tools 原理解读系列（二）TiDB-Lightning Toolset 介绍
+title: TiDB Ecosystem Tools 原理解读系列（二）TiDB-Lightning Toolset 介绍
 author: ['Kenny Chan']
 date: 2018-12-18
 summary: TiDB-Lightning Toolset 是一套快速全量导入 SQL dump 文件到 TiDB 集群的工具集，适合在上线前用作迁移现有的大型数据库到全新的 TiDB 集群。
