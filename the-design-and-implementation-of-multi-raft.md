@@ -11,7 +11,7 @@ tags: ['TiKV', 'PD', 'Multi-Raft', 'Raft', '源码分析']
 
 本文档主要面向 TiKV 社区开发者，主要介绍 TiKV 的系统架构，源码结构，流程解析。目的是使得开发者阅读文档之后，能对 TiKV 项目有一个初步了解，更好的参与进入 TiKV 的开发中。
 
-需要注意，TiKV 使用 [Rust](https://www.rust-lang.org/zh-CN/) 语言编写，用户需要对 Rust 语言有一个大概的了解。另外，本文档并不会涉及到 TiKV 中心控制服务 Placement Driver(PD) 的详细介绍，但是会说明一些重要流程 TiKV 是如何与 PD 交互的。
+需要注意，TiKV 使用 [Rust](https://www.rust-lang.org/) 语言编写，用户需要对 Rust 语言有一个大概的了解。另外，本文档并不会涉及到 TiKV 中心控制服务 Placement Driver(PD) 的详细介绍，但是会说明一些重要流程 TiKV 是如何与 PD 交互的。
 
 TiKV 是一个分布式的 KV 系统，它采用 Raft 协议保证数据的强一致性，同时使用 MVCC + 2PC 的方式实现了分布式事务的支持。
 
