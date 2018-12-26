@@ -57,7 +57,7 @@ DM 是集群模式的，其主要由 DM-master、DM-worker 与 DM-ctl 三个组�
 
 * 对于 DDL，由于会变更下游的表结构，因此必须确保在旧表结构对应的 DML 都同步完成后，才能进行同步。在 DM 中，当解析 binlog event 得到 DDL 后，会向每一个 job channel 发送一个特殊的 flush job；当各 worker 协程遇到 flush job 时，会立刻向下游 TiDB 同步之前已经取出的所有 job；等各 job channel 中的 job 都同步到下游 TiDB 后，开始同步 DDL；等待 DDL 同步完成后，继续同步后续的 DML。即 DDL 不能与 DML 并发同步，且 DDL 之前与之后的 DML 也不能并发同步。sharding 场景下 DDL 的同步处理见后文。
 
-* 对于 DML，多条 DML 可能会修改同一行的数据，甚至是主键。如果并发地同步这些 DML，则可能造成同步后数据的不一致。DM 中对于 DML 之间的冲突检测与处理，与 TiDB-Binlog 中的处理类似，具体原理可以阅读 《[TiDB EcoSystem Tools 原理解读（一）TiDB-Binlog 架构演进与实现原理](https://mp.weixin.qq.com/s/N8ozCqkUmdrB3Qu6Mt-5_Q)》中关于 Drainer 内 SQL 之间冲突检测的讨论。
+* 对于 DML，多条 DML 可能会修改同一行的数据，甚至是主键。如果并发地同步这些 DML，则可能造成同步后数据的不一致。DM 中对于 DML 之间的冲突检测与处理，与 TiDB-Binlog 中的处理类似，具体原理可以阅读《[TiDB EcoSystem Tools 原理解读（一）TiDB-Binlog 架构演进与实现原理](https://mp.weixin.qq.com/s/N8ozCqkUmdrB3Qu6Mt-5_Q)》中关于 Drainer 内 SQL 之间冲突检测的讨论。
 
 ### 合库合表数据同步
 
@@ -71,7 +71,7 @@ DM 是集群模式的，其主要由 DM-master、DM-worker 与 DM-ctl 三个组�
 
 在这个例子中，上游有 2 个 MySQL 实例，每个实例有 2 个逻辑库，每个库有 2 个表，总共 8 个表。当同步到下游 TiDB 后，希望所有的这 8 个表最终都合并同步到同一个表中。
 
-但为了能将 8 个来自不同实例、不同库且有不同名的表同步到同一个表中，首先要处理的，就是要能根据某些定义好的规则 ，将来自不同表的数据都路由到下游的同一个表中。在 DM 中，这类规则叫做 router-rules。对于上面的示例，其规则如下：
+但为了能将 8 个来自不同实例、不同库且有不同名的表同步到同一个表中，首先要处理的，就是要能根据某些定义好的规则，将来自不同表的数据都路由到下游的同一个表中。在 DM 中，这类规则叫做 router-rules。对于上面的示例，其规则如下：
 
 ```
 name-of-router-rule:
@@ -191,7 +191,7 @@ mapping-rule-of-instance-1:
 
 6. DM-worker-1 根据 step 2 时收到的 DDL 锁信息验证 DDL 执行请求；向下游执行 DDL，并将执行结果反馈给 DM-master；若执行 DDL 成功，则自身开始继续同步后续的（从 t2 时刻对应的 binlog 开始的）DML。
 
-7. DM-master 收到来自 owner 执行 DDL 成功的响应，请求在等待该 DDL 锁的所有其他 DM-worker（DM-worker-2）忽略该 DDL ，直接继续同步后续的（从 t4 时刻对应的 binlog 开始的）DML。
+7. DM-master 收到来自 owner 执行 DDL 成功的响应，请求在等待该 DDL 锁的所有其他 DM-worker（DM-worker-2）忽略该 DDL，直接继续同步后续的（从 t4 时刻对应的 binlog 开始的）DML。
 
 根据上面 DM 处理多个 DM-worker 间的 DDL 同步的流程，归纳一下 DM 内处理多个 DM-worker 间 sharding DDL 同步的特点：
 
@@ -270,7 +270,7 @@ mapping-rule-of-instance-1:
 
 3. DM-master 根据 DM-worker 发来的 DDL 信息，协调由各 DM-worker 组成的 sharing group 的 DDL 同步。
 
-4. 当 DM-master 收到所有 DM-worker 的 DDL 信息时，请求 DDL lock 的 owner（某个 DM-worker） 执行 DDL。
+4. 当 DM-master 收到所有 DM-worker 的 DDL 信息时，请求 DDL lock 的 owner（某个 DM-worker）执行 DDL。
 
 5. owner 执行 DDL，并将结果反馈给 DM-master；自身开始重新同步在内部协调 DDL 同步过程中被忽略的 DML。
 
@@ -314,7 +314,7 @@ name-of-bwl-rule:
 
 示例中只使用了该规则的部分配置项，完整的配置项及各配置项的含义，可阅读该功能对应的用户文档。DM 中该规则与 MySQL 的主从同步过滤规则类似，因此也可参考 [Evaluation of Database-Level Replication and Binary Logging Options](https://dev.mysql.com/doc/refman/5.7/en/replication-rules-db-options.html) 与 [Evaluation of Table-Level Replication Options](https://dev.mysql.com/doc/refman/5.7/en/replication-rules-table-options.html)。
 
-对于 loader 单元，在解析 SQL 文件名获得库名表名后，会与配置的黑白名单规则进行匹配，如果匹配结果为不需要同步，则会忽略对应的整个 SQL 文件。对于 syncer 单元，在解析 binlog 获得库名表名后，会与配置的黑白名单规则进行匹配，如果匹配结果为不需要同步，则会忽略对应的（部分） binlog event 数据。
+对于 loader 单元，在解析 SQL 文件名获得库名表名后，会与配置的黑白名单规则进行匹配，如果匹配结果为不需要同步，则会忽略对应的整个 SQL 文件。对于 syncer 单元，在解析 binlog 获得库名表名后，会与配置的黑白名单规则进行匹配，如果匹配结果为不需要同步，则会忽略对应的（部分）binlog event 数据。
 
 #### binlog event 过滤
 
