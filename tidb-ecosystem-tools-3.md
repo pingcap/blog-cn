@@ -45,7 +45,7 @@ DM 是集群模式的，其主要由 DM-master、DM-worker 与 DM-ctl 三个组�
 
 ![3.png](https://upload-images.jianshu.io/upload_images/542677-91e59b2d45b02cc6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-使用 mydumper 执行导出时，可以通过 `--chunk-filesize` 等参数将单个表拆分成多个 SQL 文件，这些 SQL 文件对应的都是上游 MySQL 某一个时刻的静态快照数据，且各 SQL 文件间的数据不存在关联。因此，在使用 loader 单元执行导入时，可以直接在一个 loader 单元内启动多个 worker 工作协程，由各 worker 协程并发、独立地每次读取一个待导入的 SQL 文件进行导入。即 loader 导入阶段，是以 SQL 文件级别粒度并发进行的。在 DM 的任务配置中，对于 loader 单元，其中的 pool-size 参数即用于控制此处 worker 协程数量。
+使用 mydumper 执行导出时，可以通过 `--chunk-filesize` 等参数将单个表拆分成多个 SQL 文件，这些 SQL 文件对应的都是上游 MySQL 某一个时刻的静态快照数据，且各 SQL 文件间的数据不存在关联。因此，在使用 loader 单元执行导入时，可以直接在一个 loader 单元内启动多个 worker 工作协程，由各 worker 协程并发、独立地每次读取一个待导入的 SQL 文件进行导入。即 loader 导入阶段，是以 SQL 文件级别粒度并发进行的。在 DM 的任务配置中，对于 loader 单元，其中的 `pool-size` 参数即用于控制此处 worker 协程数量。
 
 对于增量数据同步，在从上游拉取 binlog 并持久化到本地的阶段，由于上游 MySQL 上 binlog 的产生与发送是以 stream 形式进行的，因此这部分只能串行处理。在使用 syncer 单元执行的导入阶段，在一定的限制条件下，可以执行并发导入，对应的模型结构如下：
 
