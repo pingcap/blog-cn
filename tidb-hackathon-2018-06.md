@@ -38,7 +38,7 @@ tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 
 2. 内部数据系统：
     * 实时数据采样统计，比如内部监控系统；
-    * 时间窗口数据分析系统，比如实时的数据流数据分析(分析一段时间内异常的数据流量和系统指标)，用于辅助做 AI Ops 相关的事情(比如根据数据流量做节点自动扩容/自动提供参数调优/异常流量和风险报告等等)
+    * 时间窗口数据分析系统，比如实时的数据流数据分析（分析一段时间内异常的数据流量和系统指标），用于辅助做 AI Ops 相关的事情（比如根据数据流量做节点自动扩容/自动提供参数调优/异常流量和风险报告等等）。
 
 业界 Streaming 相关的系统很多，前期我这边快速地看了下能不能站在巨人的肩膀上做事情，有没有可借鉴或者可借用的开源项目。
 
@@ -60,9 +60,9 @@ tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 
 ## Hackathon 流水账
 
->具体的技术实现方面都是比较硬核的东西，细节也比较多，扔在最后面写，免的大家看到一半就点×了。
+>*具体的技术实现方面都是比较硬核的东西，细节也比较多，扔在最后面写，免的大家看到一半就点×了。*
 >
->至于参加 Hackathon 的感受，因为不像龙哥那么文豪，也不像马老师那么俏皮，而且本来读书也不多，所以也只能喊一句“黑客马拉松真是太好玩了”！
+>*至于参加 Hackathon 的感受，因为不像龙哥那么文豪，也不像马老师那么俏皮，而且本来读书也不多，所以也只能喊一句“黑客马拉松真是太好玩了”！*
 
 ### Day 1
 
@@ -78,7 +78,7 @@ tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 
 #### 11:00 AM
 
-简单的开幕式之后，Hackathon 正式开始。我们首先搞定的是 Streaming SQL 的语法定义以及 Parser 相关改动。这一部分在之前就经过比较详细的在线讨论了，所以现场只需要根据碰头后统一的想法一顿敲敲敲就搞定了。快速搞定这一块以后，我们就有了 SQL 语法层面的 Streaming 实现。当然此时 Streaming 也仅限于语法层面，Streaming在SQL引擎层面对应的其实还是普通的TiDB Table。
+简单的开幕式之后，Hackathon 正式开始。我们首先搞定的是 Streaming SQL 的语法定义以及 Parser 相关改动。这一部分在之前就经过比较详细的在线讨论了，所以现场只需要根据碰头后统一的想法一顿敲敲敲就搞定了。快速搞定这一块以后，我们就有了 SQL 语法层面的 Streaming 实现。当然此时 Streaming 也仅限于语法层面，Streaming 在 SQL 引擎层面对应的其实还是普通的TiDB Table。
 
 接下来是 DDL 部分。这一块我们已经想好了要复用 TiDB Table 的 Meta 结构 [TableInfo](https://github.com/qiuyesuifeng/parser/blob/e5d56f38f4b2fdfb1d7010180cb038bd9f58c071/model/model.go#L140) ，因此主要工作就是按照 [DDL源码解析](https://pingcap.com/blog-cn/tidb-source-code-reading-17/) 依葫芦画瓢，难度也不大，以至于我们还有闲心纠结一下 SHOW TABLES 语法里到底要不要屏蔽掉 Streaming Table 的问题。
 
@@ -88,7 +88,7 @@ tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 
 随着热身的结束，马上迎来了稳定的敲敲敲阶段。川总简单弄了一个 Mock 的 StreamReader 然后丢给了我，因为我之前写 TiDB 的时候，时代比较遥远，那时候都还在用周 sir 的 Datum，现在一看，为了提高内存效率和性能，已经换成了高大上的 Chunk，于是一个很常见的问题：如何用最正确的做法把一个传过来的 Json 数据格式化成 Table Row 数据放到 Chunk 里面，让彻底我懵逼了。
 
-这里面倒不是技术的问题，主要是类型太多，如果枚举所有类型，搞起来很麻烦，按道理应该有更轻快的办法，但是翻了源代码还是没找到解决方案。这个时候果断去求助现场导师，也顺便去赛场溜（ci）达（tan）一（di）圈（qing）。随便扫了一眼，惊呆了，龙哥他们竟然已经开始写 PPT 了，之前知道龙哥他们强，但是没想到强到这个地步，还让不让大家一块欢快地玩耍了。同时，也了解到了不少非常有意思的项目，比如用机器学习方法去自动调节 TiDB 的调度参数，用 Lua 给 TiKV 添加 UDF  之类的，在 TiDB 上面实现异构数据库的关联查询（简直就是 F1 的大一统，而且听小道消息，他们都已经把 Join 推到 PG 上面去了，然而我们还没开始进入到核心开发流程），在 TiKV 上面实现时序数据库和 Memcached 协议等等，甚至东旭都按捺不住自己 Hackathon 起来了（嘻嘻，可以学学我啊 ;D ）
+这里面倒不是技术的问题，主要是类型太多，如果枚举所有类型，搞起来很麻烦，按道理应该有更轻快的办法，但是翻了源代码还是没找到解决方案。这个时候果断去求助现场导师，也顺便去赛场溜（ci）达（tan）一（di）圈（qing）。随便扫了一眼，惊呆了，龙哥他们竟然已经开始写 PPT 了，之前知道龙哥他们强，但是没想到强到这个地步，还让不让大家一块欢快地玩耍了。同时，也了解到了不少非常有意思的项目，比如用机器学习方法去自动调节 TiDB 的调度参数，用 Lua 给 TiKV 添加 UDF  之类的，在 TiDB 上面实现异构数据库的关联查询（简直就是 F1 的大一统，而且听小道消息，他们都已经把 Join 推到 PG 上面去了，然而我们还没开始进入到核心开发流程），在 TiKV 上面实现时序数据库和 Memcached 协议等等，甚至东旭都按捺不住自己 Hackathon 起来了（嘻嘻，可以学学我啊 ;D ）。
 
 本来还想去聊聊各个项目的具体实现方案，但是一想到自己挖了一堆坑还没填，只能默默回去膜拜 TiNiuB 项目。看起来不能太佛系了，于是乎我赶紧召开了一次内部团队 sync 的 catch up，明确下分工，川总开始死磕 TBSSQL 的核心逻辑 Streaming Aggregation 的实现，我这边继续搞不带 Aggregation 的 Streaming SQL 的其他实现，GZY 已经部署起来了 Pulsar，开始准备 Mock 数据，WPH 辅助 GZY 同时也快速理解我们的 Demo 场景，着手设计实现前端展现。
 
@@ -122,7 +122,7 @@ tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 
 #### 2:30 AM
 
-GZY 和 WPH 把今天安排的工作完成的差不多了，而且第二天还靠他们主要准备 Demo Show，就去睡觉了，川总也已经困得不行了，准备打烊睡觉。我和川总合计了一下，还差一个最重要的 Feature，抱着就试一把，不行就手工的心态，我们把社区的小伙伴王聪（[bb7133](https://github.com/bb7133)）提的支持 [CREATE TABLE AS SELECT](https://github.com/pingcap/tidb/pull/7787) 语法的 PR 合到了我们的分支，冲突竟然不是太多，然后稍微改了一下来支持 Streaming，结果一运行奇迹般地发现竟然能够运行，RP 全面爆发了，于是我们就近乎免费地增加了一个 Feature。改完这个地方，川总实在坚持不住了，就回去睡了。我这边的 http restful api 也搞的差不多了，准备联调一把，StreamReader 通过 http client 从 collector 读数据，collector 通过 kafka consumer 从 kafka broker 获取数据，结果获取的 Json 数据序列化成 TiDB 自定义的 Time 类型老是出问题，于是我又花了一些时间给 Time 增加了 Marshall 和 Unmarshal 的格式化支持，到这里基本上可以 work 了，看了看时间，凌晨四点半，我也准备去睡了。期间好几次看到霸哥（韩飞）凌晨还在一直忙小（tian）伙（zi）伴（ji）查（wa）问（de）题（keng），其实霸哥认真的时候还是非常靠谱的。
+GZY 和 WPH 把今天安排的工作完成的差不多了，而且第二天还靠他们主要准备 Demo Show，就去睡觉了，川总也已经困得不行了，准备打烊睡觉。我和川总合计了一下，还差一个最重要的 Feature，抱着就试一把，不行就手工的心态，我们把社区的小伙伴王聪（[bb7133](https://github.com/bb7133)）提的支持 [CREATE TABLE AS SELECT](https://github.com/pingcap/tidb/pull/7787) 语法的 PR 合到了我们的分支，冲突竟然不是太多，然后稍微改了一下来支持 Streaming，结果一运行奇迹般地发现竟然能够运行，RP 全面爆发了，于是我们就近乎免费地增加了一个 Feature。改完这个地方，川总实在坚持不住了，就回去睡了。我这边的 http restful api 也搞的差不多了，准备联调一把，StreamReader 通过 http client 从 collector 读数据，collector 通过 kafka consumer 从 kafka broker 获取数据，结果获取的 Json 数据序列化成 TiDB 自定义的 Time 类型老是出问题，于是我又花了一些时间给 Time 增加了 Marshall 和 Unmarshal 的格式化支持，到这里基本上可以 work 了，看了看时间，凌晨四点半，我也准备去睡了。期间好几次看到霸哥（韩飞）凌晨还在一直帮小（tian）伙（zi）伴（ji）查（wa）问（de）题（keng），其实霸哥认真的时候还是非常靠谱的。
 
 #### 7:30 AM
 
@@ -245,7 +245,7 @@ Streaming 有两个比较本质的特征：
 
 6. **基于时间窗口的 Aggregation 和 Sort**
 
-    在 TBSSQL 当中，我们实现了基于固定时间窗的 [Hash Aggregation Operator](https://github.com/qiuyesuifeng/tidb/blob/master/executor/aggregate.go#L934) 和 [Sort Operator](https://github.com/qiuyesuifeng/tidb/commit/d36b70bdb2d54b8c34216746ff7a716cba8f4d3c)。这里比较正规的打法其实应该是实现一个独立的 TimeWindow，各种基于时间窗口的 Operator 可以切换时间窗的逻辑，然后比如 Aggregation 和 Sort 这类算子只关心自己的计算逻辑。 但是这样一来要对 Planner 做比较大的改动，想想看难度太大了，所以我们再一次采取了直(tou)接(lan)的方法，将时间窗口直接实现分别实现在 Aggregation 和 Sort 内部，这样 Planner 这块不用做伤筋动骨的改动，只要在各个分支逻辑上修修补补就可以了。
+    在 TBSSQL 当中，我们实现了基于固定时间窗的 [Hash Aggregation Operator](https://github.com/qiuyesuifeng/tidb/blob/master/executor/aggregate.go#L934) 和 [Sort Operator](https://github.com/qiuyesuifeng/tidb/commit/d36b70bdb2d54b8c34216746ff7a716cba8f4d3c)。这里比较正规的打法其实应该是实现一个独立的 TimeWindow，各种基于时间窗口的 Operator 可以切换时间窗的逻辑，然后比如 Aggregation 和 Sort 这类算子只关心自己的计算逻辑。 但是这样一来要对 Planner 做比较大的改动，想想看难度太大了，所以我们再一次采取了直（tou）接（lan）的方法，将时间窗口直接实现分别实现在 Aggregation 和 Sort 内部，这样 Planner 这块不用做伤筋动骨的改动，只要在各个分支逻辑上修修补补就可以了。
 
     对于 Aggregation，我们还做了一些额外的修改。Aggregation 的输出 Schema 语义上来说只包括聚合列和聚合算子的输出列。但是在引入时间窗口的情况下，为了区分不同的窗口的聚合输出，我们为聚合结果显式加上了两个 Timestamp 列 `window_start` 和 `window_end`, 来表示窗口的开始时间和结束时间。为了这次这个小特性，我们踩到一个大坑，费了不少劲，这个后面再仔细聊聊。
 
@@ -261,7 +261,7 @@ Streaming 有两个比较本质的特征：
 
 这时我们意识到事情没有这么简单了，赶忙从导师团搬来老司机（还是上面那位）。我们一起用简单粗暴的二分大法和 Print 大法，在生成 LogicalPlan，PhysicalPlan 和 Executor 前后将各个算子的 Schema 打印出来。结果发现，在 PhysicalPlan 完成后，窗口列还是存在的，也就是说我们的修改是生效了的，但是在生成 Executor 以后，这一列却神秘消失了。所以一开始我们定位的思路就错了，问题出在生成 Executor 的过程，但是我们一直在 Planner 中定位，当然找不到问题。
 
-明确了方向以后，我们很快就发现了元凶。在 Build HashAggregation 的时候，有一个不起眼的函数调用 [buildProjBelowAgg](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/executor/builder.go#L1111)，这个函数悄悄地在 Aggregation 算子下面加塞了一个 Projection 算子，顺道又做了一把列裁剪，最为蛋疼的是，因为这个 Projection 算子是在生成 Executor 阶段才塞进去的，而 EXPLAIN 语句是走不到这里来的，所以这个 Projection 算子在做 Explain 的时候是看不见的，想当于是一个隐形的算子，所以我们就这样华丽丽地被坑了，于是就有了罗伯特小姐姐听到的那句 “xxx，出来挨打” 的桥段。
+明确了方向以后，我们很快就发现了元凶。在 Build HashAggregation 的时候，有一个不起眼的函数调用 [buildProjBelowAgg](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/executor/builder.go#L1111)，这个函数悄悄地在 Aggregation 算子下面加塞了一个 Projection 算子，顺道又做了一把列裁剪，最为头疼的是，因为这个 Projection 算子是在生成 Executor 阶段才塞进去的，而 EXPLAIN 语句是走不到这里来的，所以这个 Projection 算子在做 Explain 的时候是看不见的，想当于是一个隐形的算子，所以我们就这样华丽丽地被坑了，于是就有了罗伯特小姐姐听到的那句 “xxx，出来挨打” 的桥段。
 
 ## 今后的计划
 
@@ -269,7 +269,7 @@ Streaming 有两个比较本质的特征：
 
 ### 1. Streaming 数据源
 
-在对接 Streaming 数据源这块，目前 TBSSQL 有两个问题。首先，TBSSQL 默认输入数据是按照窗口时间戳严格有序的。这一点在生产环境中并不一定成立(比如因为网络原因，某一段数据出现了乱序)。为此，我们需要引入类似 [Google MillWheel](https://ai.google/research/pubs/pub41378) 系统中 Low Watermark 的机制来保证数据的有序性。其次，为了保证有序，目前 StreamReader 只能单线程运行。在实际生产环境当中，这里很可能因为数据消费速度赶不上上游数据生产速度，导致上游数据源的堆积，这又会反过来导致产生计算结果的时间和数据生产时间之间的延迟越来越大。为了解决这个问题，我们需要将 StreamReader 并行化，而这又要求基于时间窗口的计算算子能够对多路数据进行归并排序。另外，目前采用 TiDB Global Variable 来模拟 Streaming 的位置信息，其实更好地方案是设计用一个 TiDB Table 来记录每个不同 StreamReader 读取到的数据位置，这种做法更标准。
+在对接 Streaming 数据源这块，目前 TBSSQL 有两个问题。首先，TBSSQL 默认输入数据是按照窗口时间戳严格有序的。这一点在生产环境中并不一定成立（比如因为网络原因，某一段数据出现了乱序）。为此，我们需要引入类似 [Google MillWheel](https://ai.google/research/pubs/pub41378) 系统中 Low Watermark 的机制来保证数据的有序性。其次，为了保证有序，目前 StreamReader 只能单线程运行。在实际生产环境当中，这里很可能因为数据消费速度赶不上上游数据生产速度，导致上游数据源的堆积，这又会反过来导致产生计算结果的时间和数据生产时间之间的延迟越来越大。为了解决这个问题，我们需要将 StreamReader 并行化，而这又要求基于时间窗口的计算算子能够对多路数据进行归并排序。另外，目前采用 TiDB Global Variable 来模拟 Streaming 的位置信息，其实更好地方案是设计用一个 TiDB Table 来记录每个不同 StreamReader 读取到的数据位置，这种做法更标准。
 
 ### 2. Planner
 
