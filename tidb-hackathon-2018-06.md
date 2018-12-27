@@ -11,7 +11,6 @@ tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 >
 >TiDB Batch and Streaming SQL（简称 TBSSQL）扩展了 TiDB 的 SQL 引擎，支持用户以类似 StreamSQL 的语法将 Kafka、Pulsar 等外部数据源以流式表的方式接入 TiDB。通过简单的 SQL 语句，用户可以实现对流式数据的过滤，流式表与普通表的 Join（比如流式事实表与多个普通维度表），甚至通过 CREATE TABLE AS SELECT 语法将处理过的流式数据写入普通表中。此外，针对流式数据的时间属性，我们实现了基于时间窗口的聚合/排序算子，使得我们可以对流式数据进行时间维度的聚合/排序。
 
-
  
 ## 序
 
@@ -205,7 +204,7 @@ Streaming 有两个比较本质的特征：
 
 * 实现单 Streaming Join 多 Batch Table 作为 Batch / Streaming 融合的示例, 多个 Streaming Join 太复杂，因为时间有限就先不做了。
 
-* 支持 Streaming 处理结果写入 Batch Table（TiDB Table）这种常见但是非常实用的功能。也就是说要支持 CREATE TABLE AS SELECT xxx FROM streaming 的类似语法。
+* 支持 Streaming 处理结果写入 Batch Table（TiDB Table）这种常见但是非常实用的功能。也就是说要支持 `CREATE TABLE AS SELECT xxx FROM streaming` 的类似语法。
 
 此外，既然是要支持 Streaming SQL，选择合适的 SQL 语法也是必要的，需要在 Parser 和 DDL 部分做相应的修改。单整理下，我们的 Feature List 如下图所示：
 
@@ -221,20 +220,20 @@ Streaming 有两个比较本质的特征：
 
 2. **Sreaming DDL**
 
-    DDL 这一块实现难度不大，只要照着 [DDL源码解析](https://pingcap.com/blog-cn/tidb-source-code-reading-17/) 依葫芦画瓢就行。这里值得一提的是在 Meta 层，我们直(tou)接(lan)复用了 [TableInfo](https://github.com/qiuyesuifeng/parser/blob/e5d56f38f4b2fdfb1d7010180cb038bd9f58c071/model/model.go#L140) 结构(加了判断是否为 Streaming 的 Flag 和一些表示 Streaming 属性的字段) 来表示 Streaming Table。这个选择主要是从实现难度上考虑的，毕竟复用现有的结构是最快最安全的。但是从设计思想上看，这个决定其实也暗示了在 TBSSQL 当中，Streaming 是 Table 的一种特殊形式，而不是一个独立的概念。理解这一点很重要，因为这是一些其他设计的依据。比如按照以上设定，那么从语义上讲，在同一个 DB 下 Streaming 和普通 Table 就不能重名，反之的话这种重名就是可以接受的。
+    DDL 这一块实现难度不大，只要照着 [DDL源码解析](https://pingcap.com/blog-cn/tidb-source-code-reading-17/) 依葫芦画瓢就行。这里值得一提的是在 Meta 层，我们直接（偷懒）复用了 [TableInfo](https://github.com/qiuyesuifeng/parser/blob/e5d56f38f4b2fdfb1d7010180cb038bd9f58c071/model/model.go#L140) 结构（加了判断是否为 Streaming 的 Flag 和一些表示 Streaming 属性的字段）来表示 Streaming Table。这个选择主要是从实现难度上考虑的，毕竟复用现有的结构是最快最安全的。但是从设计思想上看，这个决定其实也暗示了在 TBSSQL 当中，Streaming 是 Table 的一种特殊形式，而不是一个独立的概念。理解这一点很重要，因为这是一些其他设计的依据。比如按照以上设定，那么从语义上讲，在同一个 DB 下 Streaming 和普通 Table 就不能重名，反之的话这种重名就是可以接受的。
 
 3. **StreamReader**
 
-    这一块主要有两个部分，一个是适配不同的数据源(collector)，另一个是将 Streaming 数据源引入 TiDB 计算引擎(StreamReader)。collector 这部分上面已经介绍过了，这里就不再过多介绍了。StreamReader 这一块，主要要修改由 LogicalPlan 生成 PhysicalPlan([具体代码](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/planner/core/find_best_task.go#L206))，以及由 PhysicalPlan 生成 Executor Operator Tree 的过程([具体代码](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/executor/builder.go#L171))。[StreamReader](https://github.com/qiuyesuifeng/tidb/blob/master/executor/stream_reader.go) 的 Open 方法中，会利用 Meta 中的各种元信息来初始化与 collector 之间的连接，然后在 Next 方法中通过 Pull 的方式不断拉取数据。
+    这一块主要有两个部分，一个是适配不同的数据源（collector），另一个是将 Streaming 数据源引入 TiDB 计算引擎（StreamReader）。collector 这部分上面已经介绍过了，这里就不再过多介绍了。StreamReader 这一块，主要要修改由 LogicalPlan 生成 PhysicalPlan（[具体代码](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/planner/core/find_best_task.go#L206)），以及由 PhysicalPlan 生成 Executor Operator Tree 的过程（[具体代码](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/executor/builder.go#L171)）。[StreamReader](https://github.com/qiuyesuifeng/tidb/blob/master/executor/stream_reader.go) 的 Open 方法中，会利用 Meta 中的各种元信息来初始化与 collector 之间的连接，然后在 Next 方法中通过 Pull 的方式不断拉取数据。
 
 4. **对时间窗口的处理**
 
-    前面我们提到，时间窗口是 Streaming 系统中的核心概念。那么这里就有一个重要的问题，Time Window 中的 Time 如何界定？如何判断什么时候应该切换 Window? 最容易想到，也是最简单粗暴的方式，就是按照系统的当前时间来进行切割。这种方式问题很大，因为:
+    前面我们提到，时间窗口是 Streaming 系统中的核心概念。那么这里就有一个重要的问题，Time Window 中的 Time 如何界定？如何判断什么时候应该切换 Window？最容易想到，也是最简单粗暴的方式，就是按照系统的当前时间来进行切割。这种方式问题很大，因为：
 
      * 数据从生成到被 TBSSQL 系统接收到，肯定会有一定的延迟，而且这个延迟时间是没有办法精确预估的。因此在用户实际场景中，除非是要测量收发延迟，这个系统时间对用户没有太大意义。
-     * 考虑到算子并发执行的可能性(虽然还没有实现)，不同机器的系统时间可能会有些许偏差，这个偏差对于 Window 操作来说可能导致致命的误差，也会导致结果的不精确(因为 Streaming 源的数据 Shuffle 到不同的处理节点上，系统时间的误差可能不太一样,可能会导致 Window 划分的不一样)。
+     * 考虑到算子并发执行的可能性（虽然还没有实现），不同机器的系统时间可能会有些许偏差，这个偏差对于 Window 操作来说可能导致致命的误差，也会导致结果的不精确（因为 Streaming 源的数据 Shuffle 到不同的处理节点上，系统时间的误差可能不太一样,可能会导致 Window 划分的不一样）。
 
-    因此，比较合理的方式是以 Streaming 中的某一 Timestamp 类型的列来切分窗口，这个值由用户在应用层来指定。当然 Streaming 的 Schema 中可能有多个 Timestamp 列，这里可以要求用户指定一个作为 Window 列。在实现 Demo 的时候，为了省事，我们直接限定了用户 Schema 中只能有一个时间列，并且以该列作为 Window 列（[具体代码](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/ddl/table.go#L58)）。当然这里带来一个问题，就是 Streaming 的 Schema 中必须有 Timestamp 列，不然这里就没法玩了。为此，我们在创建 Streaming 的 DDL 中加了 [检查逻辑](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/ddl/ddl_api.go#L149)，强制 Streaming 的 Schema 必须有 Timestamp 列(其实我们也没想明白当初 Hackathon 为啥要写的这么细，这尼玛的细节为后来通宵埋下了浓重的伏笔，只能理解为程序猿的本能，希望撸的代码大家看的时候吐槽少一些)。
+    因此，比较合理的方式是以 Streaming 中的某一 Timestamp 类型的列来切分窗口，这个值由用户在应用层来指定。当然 Streaming 的 Schema 中可能有多个 Timestamp 列，这里可以要求用户指定一个作为 Window 列。在实现 Demo 的时候，为了省事，我们直接限定了用户 Schema 中只能有一个时间列，并且以该列作为 Window 列（[具体代码](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/ddl/table.go#L58)）。当然这里带来一个问题，就是 Streaming 的 Schema 中必须有 Timestamp 列，不然这里就没法玩了。为此，我们在创建 Streaming 的 DDL 中加了 [检查逻辑](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/ddl/ddl_api.go#L149)，强制 Streaming 的 Schema 必须有 Timestamp 列（其实我们也没想明白当初 Hackathon 为啥要写的这么细，这些细节为后来通宵埋下了浓重的伏笔，只能理解为程序猿的本能，希望这些代码大家看的时候吐槽少一些）。
 
 5. **Streaming DML**
 
@@ -254,7 +253,7 @@ Streaming 有两个比较本质的特征：
 
 7. **支持 Streaming 处理结果写入 Batch Table**
 
-    因为 TiDB 本身目前还暂时不支持 CREATE TABLE AS SELECT … 语法，而从头开始搞的话工作量又太大，因此我们一度打算放弃这个 Feature。后面经过老司机提醒，我们发现社区的小伙伴王聪([bb7133](https://github.com/bb7133))已经提了一个 [PR](https://github.com/pingcap/tidb/pull/7787) 在做这个事情了。本着试一把的想法我们把这个 PR 合到我们的分支上一跑，结果竟然没多少冲突，还真能 Work…...稍微有点问题的是如果 SELECT 子句中有带时间窗口的聚合，输出的结果不太对。仔细研究了一下发现，CREATE TABLE AS SELECT 语句中做 LogicalPlan 的路径和直接执行 SELECT 时做 LogicalPlan 的入口不太一致，以至于对于前者，我们做 LogicalPlan 的时候遗漏了一些 Streaming 相关信息。这里稍作修改以后，也能够正常运行了。
+    因为 TiDB 本身目前还暂时不支持 CREATE TABLE AS SELECT … 语法，而从头开始搞的话工作量又太大，因此我们一度打算放弃这个 Feature。后面经过老司机提醒，我们发现社区的小伙伴王聪（[bb7133](https://github.com/bb7133)）已经提了一个 [PR](https://github.com/pingcap/tidb/pull/7787) 在做这个事情了。本着试一把的想法我们把这个 PR 合到我们的分支上一跑，结果竟然没多少冲突，还真能 Work…...稍微有点问题的是如果 SELECT 子句中有带时间窗口的聚合，输出的结果不太对。仔细研究了一下发现，CREATE TABLE AS SELECT 语句中做 LogicalPlan 的路径和直接执行 SELECT 时做 LogicalPlan 的入口不太一致，以至于对于前者，我们做 LogicalPlan 的时候遗漏了一些 Streaming 相关信息。这里稍作修改以后，也能够正常运行了。
 
 ## 遇到的困难和坑
 
