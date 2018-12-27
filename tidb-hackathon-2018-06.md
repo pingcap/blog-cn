@@ -2,7 +2,7 @@
 title: TBSSQL 的那些事 | TiDB Hackathon 2018
 author: ['崔秋']
 date: 2018-12-27
-summary: 本文作者是来自 TiBoys 队的崔秋同学，他们的项目 TBSSQL 在 TiDB Hackathon 2018 中获得了一等奖。
+summary: 本文作者是来自 TiBoys 队的崔秋同学，他们的项目 TBSSQL（TiDB Batch and Streaming SQL） 在 TiDB Hackathon 2018 中获得了一等奖。
 category: community reading
 tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 ---
