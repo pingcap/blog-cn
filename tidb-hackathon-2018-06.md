@@ -9,7 +9,7 @@ tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 
 >本文作者是来自 TiBoys 队的崔秋同学，他们的项目 TBSSQL 在 TiDB Hackathon 2018 中获得了一等奖。
 >
->TiDB Batch and Streaming SQL（简称 TBSSQL）扩展了 TiDB 的 SQL 引擎，支持用户以类似 StreamSQL 的语法将 Kafka, Pulsar 等外部数据源以流式表的方式接入 TiDB。通过简单的 SQL 语句，用户可以实现对流式数据的过滤，流式表与普通表的 Join（比如流式事实表与多个普通维度表），甚至通过 CREATE TABLE AS SELECT 语法将处理过的流式数据写入普通表中。此外，针对流式数据的时间属性, 我们实现了基于时间窗口的聚合/排序算子, 使得我们可以对流式数据进行时间维度的聚合/排序。
+>TiDB Batch and Streaming SQL（简称 TBSSQL）扩展了 TiDB 的 SQL 引擎，支持用户以类似 StreamSQL 的语法将 Kafka、Pulsar 等外部数据源以流式表的方式接入 TiDB。通过简单的 SQL 语句，用户可以实现对流式数据的过滤，流式表与普通表的 Join（比如流式事实表与多个普通维度表），甚至通过 CREATE TABLE AS SELECT 语法将处理过的流式数据写入普通表中。此外，针对流式数据的时间属性，我们实现了基于时间窗口的聚合/排序算子，使得我们可以对流式数据进行时间维度的聚合/排序。
 
 
  
