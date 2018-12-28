@@ -52,13 +52,13 @@ func (ctx *RestoreCtx) WriteName(name string) {
 	...
 }
 
-// WriteName 用于向 `ctx` 中写入普通文本。
+// WritePlain 用于向 `ctx` 中写入普通文本。
 // 它将被直接写入不受 flag 影响。
 func (ctx *RestoreCtx) WritePlain(plainText string) {
 	...
 }
 
-// WriteName 用于向 `ctx` 中写入普通文本。
+// WritePlainf 用于向 `ctx` 中写入普通文本。
 // 它将被直接写入不受 flag 影响。
 func (ctx *RestoreCtx) WritePlainf(format string, a ...interface{}) {
 	...
