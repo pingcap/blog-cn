@@ -151,7 +151,7 @@ Hash Aggregation 的执行阶段可分为如下图所示的 5 步：
 
 4. Final Worker 计算最终结果，发送给 Main Thread。
 
-    这部分工作由 [HashAggFinalWorker.run](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L505) 函数完成。该函数调用 [consumeIntermData](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L434) 函数 [接收 PartialWorkers 发送来的预聚合结果](https://github.com/pingcap/tidb/tree/v2.1.0/aggregate.go#L443)，进而 [合并](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L459) 得到最终结果。[getFinalResult](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L459) 函数完成发送最终结果给 Main Thread。
+    这部分工作由 [HashAggFinalWorker.run](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L505) 函数完成。该函数调用 [consumeIntermData](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L434) 函数 [接收 PartialWorkers 发送来的预聚合结果](https://github.com/pingcap/tidb/blob/v2.1.0/executor/aggregate.go#L442)，进而 [合并](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L459) 得到最终结果。[getFinalResult](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L459) 函数完成发送最终结果给 Main Thread。
 
 5. Main Thread 接收最终结果并返回。
 
