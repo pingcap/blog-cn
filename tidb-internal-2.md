@@ -30,7 +30,7 @@ SQL 和 KV 结构之间存在巨大的区别，那么如何能够方便高效地
 表的元信息我们暂时不讨论，会有专门的章节来介绍。
 对于 Row，可以选择行存或者列存，这两种各有优缺点。TiDB 面向的首要目标是 OLTP 业务，这类业务需要支持快速地读取、保存、修改、删除一行数据，所以采用行存是比较合适的。
 
-对于 Index，TiDB 不止需要支持 Primary Index，还需要支持 Secondary Index。Index 的作用的辅助查询，提升查询性能，以及保证某些 Constraint。查询的时候有两种模式，一种是点查，比如通过 Primary Key 或者 Unique Key 的等值条件进行查询，如 `select name from user where id=1;` ，这种需要通过索引快速定位到某一行数据；另一种是 Range 查询，如 `select name from user where age > 30 and age < 35;`，这个时候需要通过`idxAge`索引查询 age 在 20 和 30 之间的那些数据。Index 还分为 Unique Index 和 非 Unique Index，这两种都需要支持。
+对于 Index，TiDB 不止需要支持 Primary Index，还需要支持 Secondary Index。Index 的作用的辅助查询，提升查询性能，以及保证某些 Constraint。查询的时候有两种模式，一种是点查，比如通过 Primary Key 或者 Unique Key 的等值条件进行查询，如 `select name from user where id=1;` ，这种需要通过索引快速定位到某一行数据；另一种是 Range 查询，如 `select name from user where age > 30 and age < 35;`，这个时候需要通过`idxAge`索引查询 age 在 30 和 35 之间的那些数据。Index 还分为 Unique Index 和 非 Unique Index，这两种都需要支持。
 
 分析完需要存储的数据的特点，我们再看看对这些数据的操作需求，主要考虑 Insert/Update/Delete/Select 这四种语句。
 
