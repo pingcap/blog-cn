@@ -49,7 +49,7 @@ tags: ['TiDB','TiKV','社区']
 
 <center>多租户 TiDB</center>
 
-今年还做了一件很大的事情，我们成立了一个新的部门 TEP（TiDB Enterprise Platform）专注于商业化组件及相关的交付质量控制。作为一个企业级的分布式数据库，TiDB 今年完成了商业化从0到1的跨越，越来越的付费客户证明 TiDB 的核心的成熟度已经可以委以重任，成立 TEP 小组也是希望在企业级产品方向上继续发力。从 [TiDB-Lightning](https://pingcap.com/blog-cn/tidb-ecosystem-tools-2/)（MySQL 到 TiDB 高速离线数据导入工具）到 [TiDB-DM](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)（TiDB-DataMigration，端到端的数据迁移-同步工具）能看到发力的重点在让用户无缝的从上游迁移到 TiDB 上。另一方面，[TiDB-Binlog](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/) 虽然不是今年的新东西，但是今年这一年在无数个社区用户的场景中锻炼，越来越稳定。做工具可能在很多人看来并不是那么「高科技」， 很多时候也确实是脏活累活，但是这些经过无数用户场景打磨的周边工具和生态才是一个成熟的基础软件的护城河和竞争壁垒，在 PingCAP 内部，负责工具和外围系统研发的团队规模几乎和内核团队是 1:1 的配比，重要性可见一斑。
+今年还做了一件很大的事情，我们成立了一个新的部门 TEP（TiDB Enterprise Platform）专注于商业化组件及相关的交付质量控制。作为一个企业级的分布式数据库，TiDB 今年完成了商业化从0到1的跨越，越来越多的付费客户证明 TiDB 的核心的成熟度已经可以委以重任，成立 TEP 小组也是希望在企业级产品方向上继续发力。从 [TiDB-Lightning](https://pingcap.com/blog-cn/tidb-ecosystem-tools-2/)（MySQL 到 TiDB 高速离线数据导入工具）到 [TiDB-DM](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)（TiDB-DataMigration，端到端的数据迁移-同步工具）能看到发力的重点在让用户无缝的从上游迁移到 TiDB 上。另一方面，[TiDB-Binlog](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/) 虽然不是今年的新东西，但是今年这一年在无数个社区用户的场景中锻炼，越来越稳定。做工具可能在很多人看来并不是那么「高科技」， 很多时候也确实是脏活累活，但是这些经过无数用户场景打磨的周边工具和生态才是一个成熟的基础软件的护城河和竞争壁垒，在 PingCAP 内部，负责工具和外围系统研发的团队规模几乎和内核团队是 1:1 的配比，重要性可见一斑。
 
 在使用场景上，TiDB 的使用规模也越来越大，下面这张图是我们统计的我们已知 TiDB 的用户，包括上线和准上线的用户，**从 1.0 GA 后，几乎是以一个指数函数的曲线在增长，应用的场景也从简单的 MySQL Sharding 替代方案变成横跨 OLTP 到实时数据中台的通用数据平台组件。**
 
