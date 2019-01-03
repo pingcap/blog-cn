@@ -2,7 +2,7 @@
 title: TiDB 源码阅读系列文章（二十三）Prepare/Execute 请求处理
 author: ['苏立']
 date: 2019-01-03
-summary: 在《TiDB 源码阅读系列文章（三）SQL 的一生》中，我们介绍了 TiDB 在收到客户端请求包时，最常见的 `Command --- COM_QUERY` 的请求处理流程，在这篇文章中我们来看下另外一种大家经常使用的 `Command --- Prepare/Execute` 请求在 TiDB 中的处理过程。
+summary: 在《（三）SQL 的一生》中，我们介绍了 TiDB 在收到客户端请求包时，最常见的 `Command --- COM_QUERY` 的请求处理流程，在这篇文章中我们来看下另外一种大家经常使用的 `Command --- Prepare/Execute` 请求在 TiDB 中的处理过程。
 tags: ['源码阅读','TiDB','社区']
 ---
 
