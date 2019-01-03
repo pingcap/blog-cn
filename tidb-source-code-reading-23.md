@@ -80,7 +80,7 @@ Prepare 成功之后，客户端会通过 `COM_STMT_EXECUTE` 命令请求执行�
 
 在客户不再需要执行之前的 Prepared 的语句时，可以通过 `COM_STMT_CLOSE` 来释放服务器资源，TiDB 收到后会进入 [`clientConn#handleStmtClose`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L501)，会通过 `stmtID` 在 `TiDBContext#stmts` 中找到对应的 `TiDBStatement`，并且执行 [Close](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L152) 清理之前的保存的 `TiDBContext#stmts` 和 `SessionVars#PrepareStmts`，不过通过代码我们看到，对于前者的确直接进行了清理，对于后者不会删除而是加入到 [`RetryInfo#DroppedPreparedStmtIDs`](https://github.com/lysu/tidb/blob/source-read-prepare/session/session.go#L1020) 中，等待当前事务提交或回滚才会从 `SessionVars#PrepareStmts` 中清理，之所以延迟删除是由于 TiDB 在事务提交阶段遇到冲突会根据配置决定是否重试事务，参与重试的语句可能只有 Execute 和 Deallocate，为了保证重试还能通过 `stmtID` 找到 prepared 的语句 TiDB 目前使用延迟到事务执行完成后才做清理。
 
-## `其他 COM_STMT`
+## 其他 `COM_STMT`
 
 除了上面介绍的 3 个 `COM_STMT`，还有另外几个 `COM_STMT_SEND_LONG_DATA`， `COM_STMT_FETCH`， `COM_STMT_RESET` 也会在 Prepare 中使用到。
 
@@ -90,7 +90,7 @@ Prepare 成功之后，客户端会通过 `COM_STMT_EXECUTE` 命令请求执行�
 
 TiDB 的处理在 [`client#handleStmtSendLongData`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L514)，通过 `stmtID` 在 `TiDBContext#stmts` 中找到 `TiDBStatement` 并提前放置 `paramID` 对应的参数信息，进行追加参数到 `boundParams`（所以客户端其实可以多次 send 数据并追加到一个参数上），Execute 时会通过 `stmt.BoundParams()` 获取到提前传过来的参数并和 Execute 命令带的参数 [一起执行](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L176)，在每次执行完成后会重置 `boundParams`。
 
-### COM_STMT_FETCH
+### `COM_STMT_FETCH`
 
 通常的 Execute 执行后，TiDB 会向客户端持续返回结果，返回速率受 `max_chunk_size` 控制（见《[TiDB 源码阅读系列文章（十）Chunk 和执行框架简介](https://pingcap.com/blog-cn/tidb-source-code-reading-10/)》）， 但实际中返回的结果集可能非常大。客户端受限于资源（一般是内存）无法一次处理那么多数据，就希望服务端一批批返回，[`COM_STMT_FETCH`](https://dev.mysql.com/doc/internals/en/com-stmt-fetch.html) 正好解决这个问题。
 
@@ -98,7 +98,7 @@ TiDB 的处理在 [`client#handleStmtSendLongData`](https://github.com/lysu/tidb
 
 客户端看到 `ServerStatusCursorExists` 后，会用 `COM_STMT_FETCH` 向 TiDB 拉去指定 fetchSize 大小的结果集，在 [`connClient#handleStmtFetch`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L210) 中，会通过 session 找到 `TiDBStatement` 进而找到之前缓存的结果集，开始实际调用执行器的 Next 获取满足 fetchSize 的数据并返回客户端，如果执行器一次 Next 超过了 fetchSize 会只返回 fetchSize 大小的数据并把剩下的数据留着下次再给客户端，最后对于结果集最后一次返回会标记 [ServerStatusLastRowSend](https://dev.mysql.com/doc/internals/en/status-flags.html) 的 flag 通知客户端没有后续数据。
 
-### COM_STMT_RESET
+### `COM_STMT_RESET`
 
 主要用于客户端主动重置 `COM_SEND_LONG_DATA` 发来的数据，正常 `COM_STMT_EXECUTE` 后会自动重置，主要针对客户端希望主动废弃之前数据的情况，因为 `COM_STMT_SEND_LONG_DATA` 是一直追加的操作，客户端某些场景需要主动放弃之前预存的参数，这部分逻辑主要位于 [`connClient#handleStmtReset`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L531) 中。
 
