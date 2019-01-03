@@ -2,11 +2,11 @@
 title: TiDB 源码阅读系列文章（二十三）Prepare/Execute 请求处理
 author: ['苏立']
 date: 2019-01-03
-summary: 在《（三）SQL 的一生》中，我们介绍了 TiDB 在收到客户端请求包时，最常见的 `Command --- COM_QUERY` 的请求处理流程，在这篇文章中我们来看下另外一种大家经常使用的 `Command --- Prepare/Execute` 请求在 TiDB 中的处理过程。
+summary: 在《（三）SQL 的一生》中，我们介绍了 TiDB 在收到客户端请求包时，最常见的 `Command --- COM_QUERY` 的请求处理流程。本文我们将介绍另外一种大家经常使用的 `Command --- Prepare/Execute` 请求在 TiDB 中的处理过程。
 tags: ['源码阅读','TiDB','社区']
 ---
 
-在之前的一篇文章[《TiDB 源码阅读系列文章（三）SQL 的一生》](https://pingcap.com/blog-cn/tidb-source-code-reading-3/)中介绍了 TiDB 在收到客户端请求包时，最常见的 `Command --- COM_QUERY` 的请求处理流程，在这篇文章中我们来看下另外一种大家经常使用的 `Command --- Prepare/Execute` 请求在 TiDB 中的处理过程。
+在之前的一篇文章[《TiDB 源码阅读系列文章（三）SQL 的一生》](https://pingcap.com/blog-cn/tidb-source-code-reading-3/)中，我们介绍了 TiDB 在收到客户端请求包时，最常见的 `Command --- COM_QUERY` 的请求处理流程。本文我们将介绍另外一种大家经常使用的 `Command --- Prepare/Execute` 请求在 TiDB 中的处理过程。
 
 ## Prepare/Execute Statement 简介
 
@@ -36,7 +36,7 @@ TiDB 和 [MySQL 协议](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-prepa
 
 * 文本协议：使用 `COM_QUERY`，并且用 `PREPARE`，`EXECUTE`，`DEALLOCATE PREPARE` 使用文本协议获取结果，这个效率不如上一种，多用于非程序调用场景，比如在 MySQL 客户端中手工执行。
 
-下面我们主要以 Binary 协议来看下 TiDB 的处理过程， 对于文本协议比较类似会在最后一节简要介绍一下和 Binary 协议的差异点。
+下面我们主要以 Binary 协议来看下 TiDB 的处理过程。文本协议的处理与 Binary 协议处理过程比较类似，我们会在后面简要介绍一下它们的差异点。
 
 ## `COM_STMT_PREPARE`
 
@@ -62,7 +62,7 @@ TiDB 和 [MySQL 协议](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-prepa
 
 Prepare 成功之后，客户端会通过 `COM_STMT_EXECUTE` 命令请求执行，TiDB 会进入 [`clientConn#handleStmtExecute`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L108)，首先会通过 stmtID 在上节介绍中保存的 [`TiDBContext#stmts`](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L53) 中获取前面保存的 `TiDBStatement`，并解析出是否使用 `userCursor` 和请求参数信息，并且调用对应 `TiDBStatement` 的 Execute 进行实际的 Execute 逻辑：
 
-1. 生成 [`ast.ExecuteStmt`](https://github.com/pingcap/parser/blob/732efe993f70da99fdc18acb380737be33f2333a/ast/misc.go#L218) 并调用 [`planer.Optimize`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/optimize.go#L28) 生成 `plancore.Execute`，并和普通优化过程不同的是会执行 [`Exeucte#OptimizePreparedPlan`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/optimize.go#L53)。
+1. 生成 [`ast.ExecuteStmt`](https://github.com/pingcap/parser/blob/732efe993f70da99fdc18acb380737be33f2333a/ast/misc.go#L218) 并调用 [`planer.Optimize`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/optimize.go#L28) 生成 `plancore.Execute`，和普通优化过程不同的是会执行 [`Exeucte#OptimizePreparedPlan`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/optimize.go#L53)。
 
 2. 使用 `stmtID` 通过 [`SessionVars#PreparedStmts`](https://github.com/lysu/tidb/blob/source-read-prepare/sessionctx/variable/session.go#L190) 获取到到 Prepare 阶段的 `ast.Prepared` 信息。
 
@@ -72,7 +72,7 @@ Prepare 成功之后，客户端会通过 `COM_STMT_EXECUTE` 命令请求执行�
 
 5.  之后调用 [`Execute#getPhysicalPlan`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/core/common_plans.go#L188) 获取物理计划，实现中首先会根据是否启用 PreparedPlanCache 来查找已缓存的 Plan，本文后面我们也会专门介绍这个。
 
-6.  在没有开启 PreparedPlanCache 或者开启了当没命中 cache 时，会对 AST 进行一次正常的 Optimize。
+6.  在没有开启 PreparedPlanCache 或者开启了但没命中 cache 时，会对 AST 进行一次正常的 Optimize。
 
 在获取到 PhysicalPlan 后就是正常的 [Executing 执行](https://zhuanlan.zhihu.com/p/35134962)。
 
@@ -82,7 +82,7 @@ Prepare 成功之后，客户端会通过 `COM_STMT_EXECUTE` 命令请求执行�
 
 ## 其他 `COM_STMT`
 
-除了上面介绍的 3 个 `COM_STMT`，还有另外几个 `COM_STMT_SEND_LONG_DATA`， `COM_STMT_FETCH`， `COM_STMT_RESET` 也会在 Prepare 中使用到。
+除了上面介绍的 3 个 `COM_STMT`，还有另外几个 `COM_STMT_SEND_LONG_DATA`，`COM_STMT_FETCH`，`COM_STMT_RESET` 也会在 Prepare 中使用到。
 
 ### `COM_STMT_SEND_LONG_DATA`
 
