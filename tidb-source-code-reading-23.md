@@ -10,7 +10,7 @@ tags: ['源码阅读','TiDB','社区']
 
 ## Prepare/Execute Statement 简介
 
-首先我们先简单回顾下客户端使用 Prepare 请求过程:
+首先我们先简单回顾下客户端使用 Prepare 请求过程：	
 
 1. 客户端发起 Prepare 命令将带 “?” 参数占位符的 SQL 语句发送到数据库，成功后返回 `stmtID`。
 
@@ -54,7 +54,7 @@ TiDB 和 [MySQL 协议](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-prepa
 
 6. 保存 `stmtID` 到 `ast.Prepared` (由 AST，参数类型信息，schema 版本，是否使用 `PreparedPlanCache` 标记组成) 的映射信息到 [`SessionVars#PreparedStmts`](https://github.com/lysu/tidb/blob/source-read-prepare/sessionctx/variable/session.go#L185) 中供 Execute 部分使用。
 
-7. 保存 `stmtID` 到 [`TiDBStatement`](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L57) （由 `stmtID`，参数个数，SQL 返回列类型信息，`sendLongData` 预 `BoundParams` 组成）的映射信息保存到 [TiDBContext#stmts](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L53)。
+7. 保存 `stmtID` 到 [`TiDBStatement`](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L57) （由 `stmtID`，参数个数，SQL 返回列类型信息，`sendLongData` 预 `BoundParams` 组成）的映射信息保存到 [`TiDBContext#stmts`](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L53)。
 
 在处理完成之后客户端会收到并持有 `stmtID` 和参数类型信息，返回列类型信息，后续即可通过 `stmtID` 进行执行时，server 可以通过 6、7 步保存映射找到已经 Prepare 的信息。
 
@@ -64,7 +64,7 @@ Prepare 成功之后，客户端会通过 `COM_STMT_EXECUTE` 命令请求执行�
 
 1. 生成 [`ast.ExecuteStmt`](https://github.com/pingcap/parser/blob/732efe993f70da99fdc18acb380737be33f2333a/ast/misc.go#L218) 并调用 [`planer.Optimize`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/optimize.go#L28) 生成 `plancore.Execute`，并和普通优化过程不同的是会执行 [`Exeucte#OptimizePreparedPlan`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/optimize.go#L53)。
 
-2. 使用 `stmtID` 通过 [SessionVars#PreparedStmts](https://github.com/lysu/tidb/blob/source-read-prepare/sessionctx/variable/session.go#L190) 获取到到 Prepare 阶段的 `ast.Prepared` 信息。
+2. 使用 `stmtID` 通过 [`SessionVars#PreparedStmts`](https://github.com/lysu/tidb/blob/source-read-prepare/sessionctx/variable/session.go#L190) 获取到到 Prepare 阶段的 `ast.Prepared` 信息。
 
 3. 使用上一节第 2 步中准备的 [`prepared.Params`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/core/common_plans.go#L167) 来快速查找并填充参数值；同时会保存一份参数到 [`sessionVars.PreparedParams`](https://github.com/lysu/tidb/blob/source-read-prepare/sessionctx/variable/session.go#L190) 中，这个主要用于支持 `PreparePlanCache` 延迟获取参数。
 
@@ -96,7 +96,7 @@ TiDB 的处理在 [`client#handleStmtSendLongData`](https://github.com/lysu/tidb
 
 它的使用首先要和 `COM_STMT_EXECUTE` 配合（也就是必须使用 Prepared 语句执行）， `handleStmtExeucte` 请求协议 flag 中有标记要使用 cursor，execute 在完成 plan 拿到结果集后并不立即执行而是把它缓存到 `TiDBStatement` 中，并立刻向客户端回包中带上列信息并标记 [`ServerStatusCursorExists`](https://dev.mysql.com/doc/internals/en/status-flags.html)，这部分逻辑可以参看 [`handleStmtExecute`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L193)。
 
-客户端看到 `ServerStatusCursorExists` 后，会用 `COM_STMT_FETCH` 向 TiDB 拉去指定 fetchSize 大小的结果集，在 [`connClient#handleStmtFetch`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L210) 中，会通过 session 找到 `TiDBStatement` 进而找到之前缓存的结果集，开始实际调用执行器的 Next 获取满足 fetchSize 的数据并返回客户端，如果执行器一次 Next 超过了 fetchSize 会只返回 fetchSize 大小的数据并把剩下的数据留着下次再给客户端，最后对于结果集最后一次返回会标记 [ServerStatusLastRowSend](https://dev.mysql.com/doc/internals/en/status-flags.html) 的 flag 通知客户端没有后续数据。
+客户端看到 `ServerStatusCursorExists` 后，会用 `COM_STMT_FETCH` 向 TiDB 拉去指定 fetchSize 大小的结果集，在 [`connClient#handleStmtFetch`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L210) 中，会通过 session 找到 `TiDBStatement` 进而找到之前缓存的结果集，开始实际调用执行器的 Next 获取满足 fetchSize 的数据并返回客户端，如果执行器一次 Next 超过了 fetchSize 会只返回 fetchSize 大小的数据并把剩下的数据留着下次再给客户端，最后对于结果集最后一次返回会标记 [`ServerStatusLastRowSend`](https://dev.mysql.com/doc/internals/en/status-flags.html) 的 flag 通知客户端没有后续数据。
 
 ### `COM_STMT_RESET`
 
@@ -144,4 +144,4 @@ DEALLOCTE PREPARE stmt_name
 
 ## 写在最后
 
-Prepared 是提高程序 SQL 执行效率的有效手段之一。熟悉 TiDB 的 Prepared 实现，可以帮助各位读者在将来使用 Prepared 时更加得心应手。另外，如果有兴趣向 TiDB 贡献代码的读者，也可以通过该文更快的理解这部分的实现。
+Prepared 是提高程序 SQL 执行效率的有效手段之一。熟悉 TiDB 的 Prepared 实现，可以帮助各位读者在将来使用 Prepared 时更加得心应手。另外，如果有兴趣向 TiDB 贡献代码的读者，也可以通过本文更快的理解这部分的实现。
