@@ -40,27 +40,27 @@ TiDB 和 [MySQL 协议](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-prepa
 
 ## `COM_STMT_PREPARE`
 
-首先，客户端发起 `COM_STMT_PREPARE`，在 TiDB 收到后会进入 [`clientConn#handleStmtPrepare`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L51)，这个函数会通过调用 [`TiDBContext#Prepare`](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L305) 来进行实际 Prepare 操作并返回 [结果](https://dev.mysql.com/doc/internals/en/com-stmt-prepare-response.html) 给客户端，实际的 Prepare 处理主要在 [`session#PrepareStmt`](https://github.com/lysu/tidb/blob/source-read-prepare/session/session.go#L924) 和 [`PrepareExec`](https://github.com/lysu/tidb/blob/source-read-prepare/executor/prepared.go#L73) 中完成:
+首先，客户端发起 `COM_STMT_PREPARE`，在 TiDB 收到后会进入 [`clientConn#handleStmtPrepare`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L51)，这个函数会通过调用 [`TiDBContext#Prepare`](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L305) 来进行实际 Prepare 操作并返回 [结果](https://dev.mysql.com/doc/internals/en/com-stmt-prepare-response.html) 给客户端，实际的 Prepare 处理主要在 [`session#PrepareStmt`](https://github.com/lysu/tidb/blob/source-read-prepare/session/session.go#L924) 和 [`PrepareExec`](https://github.com/lysu/tidb/blob/source-read-prepare/executor/prepared.go#L73) 中完成：
 
-1.  调用 Parser 完成文本到 AST 的转换，这部分可以参考[《TiDB 源码阅读系列文章（五）TiDB SQL Parser 的实现》](https://pingcap.com/blog-cn/tidb-source-code-reading-5/)。
+1. 调用 Parser 完成文本到 AST 的转换，这部分可以参考[《TiDB 源码阅读系列文章（五）TiDB SQL Parser 的实现》](https://pingcap.com/blog-cn/tidb-source-code-reading-5/)。
 
-2.  使用名为 [paramMarkerExtractor](https://github.com/lysu/tidb/blob/source-read-prepare/executor/prepared.go#L57) 的 visitor 从 AST 中提取 “?” 表达式，并根据出现位置（offset）构建排序 Slice，后面我们会看到在 Execute 时会通过这个 Slice 值来快速定位并替换 “?” 占位符。
+2. 使用名为 [`paramMarkerExtractor`](https://github.com/lysu/tidb/blob/source-read-prepare/executor/prepared.go#L57) 的 visitor 从 AST 中提取 “?” 表达式，并根据出现位置（offset）构建排序 Slice，后面我们会看到在 Execute 时会通过这个 Slice 值来快速定位并替换 “?” 占位符。
 
-3.  检查参数个数是否超过 Uint16 最大值（这个是 [协议限制](https://dev.mysql.com/doc/internals/en/com-stmt-prepare-response.html)，对于参数只提供 2 个 Byte）。
+3. 检查参数个数是否超过 Uint16 最大值（这个是 [协议限制](https://dev.mysql.com/doc/internals/en/com-stmt-prepare-response.html)，对于参数只提供 2 个 Byte）。
 
-4.  进行 Preprocess， 并且创建 LogicPlan， 这部分实现可以参考之前关于 [逻辑优化的介绍](https://pingcap.com/blog-cn/tidb-source-code-reading-7/)，这里生成 LogicPlan 主要为了获取并检查组成 Prepare 响应中需要的列信息。
+4. 进行 Preprocess， 并且创建 LogicPlan， 这部分实现可以参考之前关于 [逻辑优化的介绍](https://pingcap.com/blog-cn/tidb-source-code-reading-7/)，这里生成 LogicPlan 主要为了获取并检查组成 Prepare 响应中需要的列信息。
 
-5.  生成 `stmtID`，生成的方式是当前会话中的递增 int。
+5. 生成 `stmtID`，生成的方式是当前会话中的递增 int。
 
-6.  保存 `stmtID` 到 `ast.Prepared` (由 AST，参数类型信息，schema 版本，是否使用 `PreparedPlanCache` 标记组成) 的映射信息到 [`SessionVars#PreparedStmts`](https://github.com/lysu/tidb/blob/source-read-prepare/sessionctx/variable/session.go#L185) 中供 Execute 部分使用。
+6. 保存 `stmtID` 到 `ast.Prepared` (由 AST，参数类型信息，schema 版本，是否使用 `PreparedPlanCache` 标记组成) 的映射信息到 [`SessionVars#PreparedStmts`](https://github.com/lysu/tidb/blob/source-read-prepare/sessionctx/variable/session.go#L185) 中供 Execute 部分使用。
 
-7.  保存 stmtID 到 [`TiDBStatement`](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L57) （由 `stmtID`，参数个数，SQL 返回列类型信息，`sendLongData` 预 `BoundParams` 组成）的映射信息保存到 [TiDBContext#stmts](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L53)。
+7. 保存 `stmtID` 到 [`TiDBStatement`](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L57) （由 `stmtID`，参数个数，SQL 返回列类型信息，`sendLongData` 预 `BoundParams` 组成）的映射信息保存到 [TiDBContext#stmts](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L53)。
 
 在处理完成之后客户端会收到并持有 `stmtID` 和参数类型信息，返回列类型信息，后续即可通过 `stmtID` 进行执行时，server 可以通过 6、7 步保存映射找到已经 Prepare 的信息。
 
 ## `COM_STMT_EXECUTE`
 
-Prepare 成功之后，客户端会通过 `COM_STMT_EXECUTE` 命令请求执行，TiDB 会进入 [`clientConn#handleStmtExecute`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L108)，首先会通过 stmtID 在上节介绍中保存的 [`TiDBContext#stmts`](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L53) 中获取前面保存的 `TiDBStatement`，并解析出是否使用 `userCursor` 和请求参数信息，并且调用对应 `TiDBStatement` 的 Execute 进行实际的 Execute 逻辑:
+Prepare 成功之后，客户端会通过 `COM_STMT_EXECUTE` 命令请求执行，TiDB 会进入 [`clientConn#handleStmtExecute`](https://github.com/lysu/tidb/blob/source-read-prepare/server/conn_stmt.go#L108)，首先会通过 stmtID 在上节介绍中保存的 [`TiDBContext#stmts`](https://github.com/lysu/tidb/blob/source-read-prepare/server/driver_tidb.go#L53) 中获取前面保存的 `TiDBStatement`，并解析出是否使用 `userCursor` 和请求参数信息，并且调用对应 `TiDBStatement` 的 Execute 进行实际的 Execute 逻辑：
 
 1. 生成 [`ast.ExecuteStmt`](https://github.com/pingcap/parser/blob/732efe993f70da99fdc18acb380737be33f2333a/ast/misc.go#L218) 并调用 [`planer.Optimize`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/optimize.go#L28) 生成 `plancore.Execute`，并和普通优化过程不同的是会执行 [`Exeucte#OptimizePreparedPlan`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/optimize.go#L53)。
 
@@ -106,7 +106,7 @@ TiDB 的处理在 [`client#handleStmtSendLongData`](https://github.com/lysu/tidb
 
 通过前面的解析过程我们看到在 Prepare 时完成了 AST 转换，在之后的 Execute 会通过 `stmtID` 找之前的 AST 来进行 Plan 跳过每次都进行 Parse SQL 的开销。如果开启了 Prepare Plan Cache，可进一步在 Execute 处理中重用上次的 PhysicalPlan 结果，省掉查询优化过程的开销。
 
-TiDB 可以通过 [修改配置文件](https://github.com/lysu/tidb/blob/source-read-prepare/config/config.toml.example#L167) 开启 Prepare Plan Cache， 开启后每个新 Session 创建时会初始化一个 [SimpleLRUCache](https://github.com/lysu/tidb/blob/source-read-prepare/util/kvcache/simple_lru.go#L38) 类型的 `preparedPlanCache` 用于保存用于缓存 Plan 结果，缓存的 key 是 `pstmtPlanCacheKey`（由当前 DB，连接 ID，`statementID`，`schemaVersion`， `snapshotTs`，`sqlMode`，`timezone` 组成，所以要命中 plan cache 这以上元素必须都和上次缓存的一致），并根据配置的缓存大小和内存大小做 LRU。
+TiDB 可以通过 [修改配置文件](https://github.com/lysu/tidb/blob/source-read-prepare/config/config.toml.example#L167) 开启 Prepare Plan Cache， 开启后每个新 Session 创建时会初始化一个 [`SimpleLRUCache`](https://github.com/lysu/tidb/blob/source-read-prepare/util/kvcache/simple_lru.go#L38) 类型的 `preparedPlanCache` 用于保存用于缓存 Plan 结果，缓存的 key 是 `pstmtPlanCacheKey`（由当前 DB，连接 ID，`statementID`，`schemaVersion`， `snapshotTs`，`sqlMode`，`timezone` 组成，所以要命中 plan cache 这以上元素必须都和上次缓存的一致），并根据配置的缓存大小和内存大小做 LRU。
 
 在 Execute 的处理逻辑 [`PrepareExec`](https://github.com/lysu/tidb/blob/source-read-prepare/executor/prepared.go#L161) 中除了检查 `PreparePlanCache` 是否开启外，还会判断当前的语句是否能使用 `PreparePlanCache`。
 
