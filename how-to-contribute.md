@@ -54,9 +54,9 @@ tags: ['开源', '社区', 'TiDB', 'TiKV', 'GitHub']
   - TiDB Contributing 文档 https://github.com/pingcap/tidb/blob/master/CONTRIBUTING.md
 
 - **License**：LICENSE 文件就是这个开源项目的许可证。一个开源项目会告知用户他们可以做什么，不可做什么(比如：使用，修改，重新分发)，以及贡献者允许其他人做哪些事。开源许可证有多种，你可以在[认识各种开源协议及其关系](http://www.ruanyifeng.com/blog/2011/05/how_to_choose_free_software_licenses.html)了解更多关于开源许可证的信息。
-  - TiDB 遵循 Apache-2.0 Lincense
+  - TiDB 遵循 Apache-2.0 License
 https://github.com/pingcap/tidb/blob/master/LICENSE
-  - TiKV 遵循 Apache-2.0 Lincense https://github.com/pingcap/tikv/blob/master/LICENSE
+  - TiKV 遵循 Apache-2.0 License https://github.com/pingcap/tikv/blob/master/LICENSE
 
 -  **Documentation**：许多大型项目不会只通过自述文件去引导用户如何使用。在这些项目中你经常可以找到通往其他文件的超链接，或者是在仓库中找到一个叫做 docs 的文件夹.
   - TiDB Docs https://github.com/pingcap/tidb/tree/master/docs
@@ -90,7 +90,7 @@ Linux 版本： uname -a
 
 ### Pull Request
 
-如果你能解决这个 bug，或者你能够添加其他的功能。并且知道如何成为贡献者，理解 license，已经签过[Contributor Licence Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) (CLA) 后，请发起 Pull Request。这样维护人员可以将你的分支与现有分支进行比较，来决定是否合并你的更改。
+如果你能解决这个 bug，或者你能够添加其他的功能。并且知道如何成为贡献者，理解 license，已经签过[Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) (CLA) 后，请发起 Pull Request。这样维护人员可以将你的分支与现有分支进行比较，来决定是否合并你的更改。
 
 ### Pull Request Pro Tips
 
