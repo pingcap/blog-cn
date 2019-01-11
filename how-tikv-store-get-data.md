@@ -50,7 +50,7 @@ Percolator 的原理是比较复杂的，需要关注几点：
 
 Percolator 提供三个 column family (CF)，Lock，Data 和 Write，当写入一个 key-value 的时候，会将这个 key 的 lock 放到 Lock CF 里面，会将实际的 value 放到 Data CF 里面，如果这次写入 commit 成功，则会将对应的 commit 信息放到入 Write CF 里面。
 
-Key 在 Data CF 和 Write CF 里面存放的时候，会把对应的时间戳给加到 Key 的后面。在 Data CF 里面，添加的是 startTS，而在 Write CF 里面，则是 commitCF。
+Key 在 Data CF 和 Write CF 里面存放的时候，会把对应的时间戳给加到 Key 的后面。在 Data CF 里面，添加的是 startTS，而在 Write CF 里面，则是 commitTS。
 
 假设我们需要写入 a = 1，首先从 TSO 上面拿到一个 startTS，譬如 10，然后我们进入 Percolator 的 PreWrite 阶段，在 Lock 和 Data CF 上面写入数据，如下：
 
