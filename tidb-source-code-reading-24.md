@@ -27,23 +27,23 @@ DML 语句包括 Insert/Replace、Update、Delete，这里挑 Insert 语句来�
 // TableMutation 存储表中数据的变化
 message TableMutation {
 	    // 表的 id，唯一标识一个表
-	    optional int64 table_id      = 1 [(gogoproto.nullable) = false];
+	    optional int64 table_id      = 1 [(gogoproto.nullable) = false]; 
 	    
-       // 保存插入的每行数据
+	    // 保存插入的每行数据
 	    repeated bytes inserted_rows = 2;
- 
+	    
 	    // 保存修改前和修改后的每行的数据
 	    repeated bytes updated_rows  = 3;
- 
+	    
 	    // 已废弃
 	    repeated int64 deleted_ids   = 4;
- 
+	    
 	    // 已废弃
 	    repeated bytes deleted_pks   = 5;
- 
+	     
 	    // 删除行的数据
 	    repeated bytes deleted_rows  = 6;
- 
+	    
        // 记录数据变更的顺序
 	    repeated MutationType sequence = 7;
 }
