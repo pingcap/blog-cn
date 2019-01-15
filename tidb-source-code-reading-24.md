@@ -152,7 +152,7 @@ func (c *twoPhaseCommitter) writeFinishBinlog(tp binlog.BinlogType, commitTS int
 }
 ```
 
-值得注意的是，这里 WriteBinlog 是单独启动 goroutine 异步完成的，也就是 Commit 阶段，是不再需要等待写 binlog 完成的。这里可以节省一点 commit 的等待时间，这里不需要等待是因为 Pump 即使接收不到这个 Commit Binlog，在超过 timeout 时间后，Pump 会自行根据 Prewrite binlog 到 TiKV 中确认当条事务的提交状态。
+值得注意的是，这里 WriteBinlog 是单独启动 goroutine 异步完成的，也就是 Commit 阶段，是不再需要等待写 binlog 完成的。这里可以节省一点 commit 的等待时间，这里不需要等待是因为 Pump 即使接收不到这个 Commit Binlog，在超过 timeout 时间后，Pump 会自行根据 Prewrite Binlog 到 TiKV 中确认当条事务的提交状态。
 
 ## DDL Binlog
 
