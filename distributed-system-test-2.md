@@ -105,7 +105,7 @@ InnoDB: Error number 5 means 'Input/output error'.
 
 **OpenStack fault-injection library:**
 
-***https://pypi.python.org/pypi/os-faults/0.1.2***
+***https://pypi.org/project/os-faults/***
 
 大名鼎鼎的 OpenStack 其实也有一个 Failure Injection Library，然后我把这个例子也贴到这里，大家有兴趣可以看一下这个 OpenStack 的 Failure Injection。这以前大家可能不太关注，其实大家在这一点上都很痛苦， OpenStack 现在还有一堆人在骂，说稳定性太差了，其实他们已经很努力了。但是整个系统确实是做的异乎寻常的复杂，因为组件太多。如果你出错的点特别多，那可能会带来另外一个问题，就是出错的点之间还能组合，就是先 A 出错，再 B 出错，或者 AB 都出错，这也就几种情况，还好。那你要是有十万个错误的点，这个组合怎么弄？当然现在还有新的论文在研究这个，2015 年的时候好像有一篇论文，讲的就是会探测你的程序的路径，然后在对应的路径下面去注入错误。
 
