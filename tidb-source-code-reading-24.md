@@ -44,7 +44,7 @@ message TableMutation {
 	    // 删除行的数据
 	    repeated bytes deleted_rows  = 6;
 	    
-       // 记录数据变更的顺序
+	    // 记录数据变更的顺序
 	    repeated MutationType sequence = 7;
 }
 ```
