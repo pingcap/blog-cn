@@ -113,7 +113,7 @@ CREATE TABLE `t_test` (
 **查询**：如果需要查询 (a=1 且 b=1）或 c=2 的数据，在 MySQL 中，sql 可以写为：`SELECT id from t_test where (a=1 and b=1) or (c=2);`，MySQL 做查询优化时，会检索到 `idx_a_b` 和 `idx_c` 两个索引；但是在 TiDB（v2.0.8-9）中，这个 sql 会成为一个慢 SQL，需要改写为：
 
 ```
-SELECT id fromt_test where (a=1 and b=1) UNION SELECT id from t_test where (c=2);
+SELECT id from t_test where (a=1 and b=1) UNION SELECT id from t_test where (c=2);
 ```
 
 **小结**：导致该问题的原因，可以理解为 TiDB 的 sql 解析还有优化空间。
@@ -138,9 +138,9 @@ CREATE TABLE `t_job_record` (
 
 **数据说明**：
 
-a. 冷数据，status=1 的数据（已经处理过的数据）；
+a. 冷数据，`status=1` 的数据（已经处理过的数据）；
 
-b. 热数据，status=0 并且 execute_time<= 当前时间的数据。
+b. 热数据，`status=0 并且 execute_time<= 当前时间` 的数据。
 
 **慢查询**：对于热数据，数据量一般不大，但是查询频度很高，假设当前（毫秒级）时间为：1546361579646，则在 MySQL 中，查询 sql 为：
 
@@ -156,10 +156,10 @@ SELECT * FROM t_job_record where status=0 and execute_time<= 1546361579646
 
 当从内存级的 C0 层查询不到数据时，会逐层扫描硬盘中各层；且 merge 操作为异步操作，索引数据更新会存在一定的延迟，可能存在无效索引。由于逐层扫描和异步 merge，使得查询效率较低。
 
-**优化方式**：尽可能缩小过滤范围，比如结合异步 job 获取记录频率，在保证不遗漏数据的前提下，合理设置 execute_time 筛选区间，例如 1 小时，sql 改写为：
+**优化方式**：尽可能缩小过滤范围，比如结合异步 job 获取记录频率，在保证不遗漏数据的前提下，合理设置 `execute_time` 筛选区间，例如 1 小时，sql 改写为：
 
 ```
-SELECT * FROM t_job_record  where status=0 and execute_time>1546357979646  and execute_time<= 1546361579646
+SELECT * FROM t_job_record  where status=0 and execute_time>1546357979646  and execute_time<= 1546361579646
 ```
 
 **优化效果**：耗时 10 毫秒级别（以下）。
@@ -172,7 +172,7 @@ SELECT * FROM t_job_record  where status=0 and execute_time>1546357979646  and
 
 ## 服务端预编译
 
-在 MySQL 中，可以使用 `PREPARE stmt_name FROM preparable_stm` 对 sql 语句进行预编译，然后使用 `EXECUTE stmt_name [USING@var_name [, @var_name] ...]` 执行预编译语句。如此，同一 sql 的多次操作，可以获得比常规 sql 更高的性能。
+在 MySQL 中，可以使用 `PREPARE stmt_name FROM preparable_stm` 对 sql 语句进行预编译，然后使用 `EXECUTE stmt_name [USING @var_name [, @var_name] ...]` 执行预编译语句。如此，同一 sql 的多次操作，可以获得比常规 sql 更高的性能。
 
 mysql-jdbc 源码中，实现了标准的 `Statement` 和 `PreparedStatement` 的同时，还有一个`ServerPreparedStatement` 实现，`ServerPreparedStatement` 属于`PreparedStatement`的拓展，三者对比如下：
 
@@ -182,7 +182,7 @@ mysql-jdbc 源码中，实现了标准的 `Statement` 和 `PreparedStatement` �
 
 ## 批处理
 
-对于多条数据写入，常用 sql 为 `insert … values(…),(…)`；而对于多条数据更新，亦可以使用 `update … case … when… then… end` 来减少 IO 次数。但它们都有一个特点，数据条数越多，sql 越加复杂，sql 解析成本也更高，耗时增长可能高于线性增长。而批处理，可以复用一条简单 sql，实现批量数据的写入或更新，为系统带来更低、更稳定的耗时。
+对于多条数据写入，常用 sql 为 `insert … values (…),(…)`；而对于多条数据更新，亦可以使用 `update … case … when… then… end` 来减少 IO 次数。但它们都有一个特点，数据条数越多，sql 越加复杂，sql 解析成本也更高，耗时增长可能高于线性增长。而批处理，可以复用一条简单 sql，实现批量数据的写入或更新，为系统带来更低、更稳定的耗时。
 
 对于批处理，作为客户端，`java.sql.Statement` 主要定义了两个接口方法，`addBatch` 和 `executeBatch` 来支持批处理。
 
