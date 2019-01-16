@@ -2,7 +2,7 @@
 title: TiDB 在转转的业务实战
 author: ['陈维']
 date: 2019-01-16
-summary: 目前 TiDB 在转转线上已经接入消息、风控两套 OLTP 以及一套风控 OLAP 集群。
+summary: 我们对关系型数据库的一些使用经验和积累，在 TiDB 中是存在差异的，现主要阐述“事务”和“查询”两方面的差异。
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-zhuanzhuan-2/
