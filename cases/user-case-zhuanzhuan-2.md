@@ -100,17 +100,17 @@ logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 
 ```
 CREATE TABLE `t_test` (
-`id` bigint(20) NOT NULL DEFAULT '0' COMMENT '主键id',
-`a` int(11) NOT NULL DEFAULT '0' COMMENT 'a',
-`b` int(11) NOT NULL DEFAULT '0' COMMENT 'b',
-`c` int(11) NOT NULL DEFAULT '0' COMMENT 'c',
-PRIMARY KEY (`id`),
-KEY `idx_a_b` (`a`,`b`),
-KEY `idx_c` (`c`)
-) ENGINE=InnoDB;
+	  `id` bigint(20) NOT NULL DEFAULT '0' COMMENT '主键id',
+	  `a` int(11) NOT NULL DEFAULT '0' COMMENT 'a',
+	  `b` int(11) NOT NULL DEFAULT '0' COMMENT 'b',
+	  `c` int(11) NOT NULL DEFAULT '0' COMMENT 'c',
+	  PRIMARY KEY (`id`),
+	  KEY `idx_a_b` (`a`,`b`),
+	  KEY `idx_c` (`c`)
+	) ENGINE=InnoDB;
 ```
 
-**查询**：如果需要查询 (a=1 且 b=1）或 c=2 的数据，在 MySQL 中，sql 可以写为：`SELECT id fromt_test where (a=1 and b=1) or (c=2);`，MySQL 做查询优化时，会检索到`idx_a_b`和`idx_c`两个索引；但是在 TiDB（v2.0.8-9）中，这个 sql 会成为一个慢 SQL，需要改写为：
+**查询**：如果需要查询 (a=1 且 b=1）或 c=2 的数据，在 MySQL 中，sql 可以写为：`SELECT id from t_test where (a=1 and b=1) or (c=2);`，MySQL 做查询优化时，会检索到 `idx_a_b` 和 `idx_c` 两个索引；但是在 TiDB（v2.0.8-9）中，这个 sql 会成为一个慢 SQL，需要改写为：
 
 ```
 SELECT id fromt_test where (a=1 and b=1) UNION SELECT id from t_test where (c=2);
@@ -124,16 +124,17 @@ SELECT id fromt_test where (a=1 and b=1) UNION SELECT id from t_test where (c=2)
 
 ```
 CREATE TABLE `t_job_record` (
-`id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-`job_code` varchar(255) NOT NULL DEFAULT '' COMMENT '任务code',
-`record_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '记录id',
-`status` tinyint(3) NOT NULL DEFAULT '0' COMMENT '执行状态:0 待处理',
-`execute_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '执行时间（毫秒）',
-PRIMARY KEY (`id`),
-KEY `idx_status_execute_time` (`status`,`execute_time`),
-KEY `idx_record_id` (`record_id`)
-) ENGINE=InnoDB COMMENT='异步任务job'
+	  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+	  `job_code` varchar(255) NOT NULL DEFAULT '' COMMENT '任务code',
+	  `record_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '记录id',
+	  `status` tinyint(3) NOT NULL DEFAULT '0' COMMENT '执行状态:0 待处理',
+	  `execute_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '执行时间（毫秒）',
+	  PRIMARY KEY (`id`),
+	  KEY `idx_status_execute_time` (`status`,`execute_time`),
+	  KEY `idx_record_id` (`record_id`)
+	) ENGINE=InnoDB COMMENT='异步任务job'
 ```
+
 
 **数据说明**：
 
@@ -144,7 +145,7 @@ b. 热数据，status=0 并且 execute_time<= 当前时间的数据。
 **慢查询**：对于热数据，数据量一般不大，但是查询频度很高，假设当前（毫秒级）时间为：1546361579646，则在 MySQL 中，查询 sql 为：
 
 ```
-SELECT * FROMt_job_record where status=0 and execute_time<= 1546361579646
+SELECT * FROM t_job_record where status=0 and execute_time<= 1546361579646
 ```
 
 这个在 MySQL 中很高效的查询，在 TiDB 中虽然也可从索引检索，但其耗时却不尽人意（百万级数据量，耗时百毫秒级）。
@@ -158,7 +159,7 @@ SELECT * FROMt_job_record where status=0 and execute_time<= 1546361579646
 **优化方式**：尽可能缩小过滤范围，比如结合异步 job 获取记录频率，在保证不遗漏数据的前提下，合理设置 execute_time 筛选区间，例如 1 小时，sql 改写为：
 
 ```
-SELECT * FROMt_job_record  where status=0 andexecute_time>1546357979646  andexecute_time<= 1546361579646
+SELECT * FROM t_job_record  where status=0 and execute_time>1546357979646  and execute_time<= 1546361579646
 ```
 
 **优化效果**：耗时 10 毫秒级别（以下）。
@@ -173,7 +174,7 @@ SELECT * FROMt_job_record  where status=0 andexecute_time>1546357979646  andex
 
 在 MySQL 中，可以使用 `PREPARE stmt_name FROM preparable_stm` 对 sql 语句进行预编译，然后使用 `EXECUTE stmt_name [USING@var_name [, @var_name] ...]` 执行预编译语句。如此，同一 sql 的多次操作，可以获得比常规 sql 更高的性能。
 
-mysql-jdbc源码中，实现了标准的 `Statement` 和 `PreparedStatement` 的同时，还有一个`ServerPreparedStatement` 实现，`ServerPreparedStatement` 属于`PreparedStatement`的拓展，三者对比如下：
+mysql-jdbc 源码中，实现了标准的 `Statement` 和 `PreparedStatement` 的同时，还有一个`ServerPreparedStatement` 实现，`ServerPreparedStatement` 属于`PreparedStatement`的拓展，三者对比如下：
 
 ![图8.png](https://upload-images.jianshu.io/upload_images/542677-6145187404c2ed5c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
