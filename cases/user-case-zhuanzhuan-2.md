@@ -45,7 +45,7 @@ logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 
 1. 同步 RPC 调用中，如果需要严格依赖影响条数以确认返回值，那将如何是好？
 
-2. 多表操作中，如果需要严格依赖某个主表数据更新结果，作为是否更新(或写入)其他表的判断依据，那又将如何是好？
+2. 多表操作中，如果需要严格依赖某个主表数据更新结果，作为是否更新（或写入）其他表的判断依据，那又将如何是好？
 
 ### 原因分析及解决方案
 
@@ -63,13 +63,13 @@ logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 
 所以，在业务层面避免 TiDB 事务差异的本质在于避免锁冲突，即，当前事务执行时，不产生别的事务时间戳（无其他事务并行）。**处理方式为事务串行化**。
 
-## TiDB 事务串行化
+### TiDB 事务串行化
 
 在业务层，可以借助分布式锁，实现串行化处理，如下：
 
 ![图 3](https://upload-images.jianshu.io/upload_images/542677-dc82ae214d24623a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-### 基于Spring和分布式锁的事务管理器拓展
+#### 基于 Spring 和分布式锁的事务管理器拓展
 
 在 Spring 生态下，spring-tx 中定义了统一的事务管理器接口：`PlatformTransactionManager`，其中有获取事务（getTransaction）、提交（commit）、回滚（rollback）三个基本方法；使用装饰器模式，事务串行化组件可做如下设计：
 
@@ -81,7 +81,7 @@ logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 
 2. 加锁时机：TiDB 中“锁检查”的依据是事务开启时获取的“全局时间戳”，所以加锁时机必须在事务开启前。
 
-### 事务模板接口设计
+#### 事务模板接口设计
 
 隐藏复杂的事务重写逻辑，暴露简单友好的 API：
 
@@ -104,20 +104,19 @@ CREATE TABLE `t_test` (
 `a` int(11) NOT NULL DEFAULT '0' COMMENT 'a',
 `b` int(11) NOT NULL DEFAULT '0' COMMENT 'b',
 `c` int(11) NOT NULL DEFAULT '0' COMMENT 'c',
-
 PRIMARY KEY (`id`),
 KEY `idx_a_b` (`a`,`b`),
 KEY `idx_c` (`c`)
 ) ENGINE=InnoDB;
 ```
 
-**查询**：如果需要查询 (a=1 且 b=1）或 c=2 的数据，在 MySQL 中，sql 可以写为：`SELECT id fromt_test where (a=1 and b=1) or (c=2);`，MySQL 做查询优化时，会检索到`idx_a_b`和`idx_c`两个索引；但是在 TiDB(v2.0.8-9) 中，这个 sql 会成为一个慢 SQL，需要改写为：
+**查询**：如果需要查询 (a=1 且 b=1）或 c=2 的数据，在 MySQL 中，sql 可以写为：`SELECT id fromt_test where (a=1 and b=1) or (c=2);`，MySQL 做查询优化时，会检索到`idx_a_b`和`idx_c`两个索引；但是在 TiDB（v2.0.8-9）中，这个 sql 会成为一个慢 SQL，需要改写为：
 
 ```
 SELECT id fromt_test where (a=1 and b=1) UNION SELECT id from t_test where (c=2);
 ```
 
-**小结**：导致该问题的原因，可以理解为TiDB的sql解析还有优化空间
+**小结**：导致该问题的原因，可以理解为 TiDB 的 sql 解析还有优化空间。
 
 ### 冷热数据型（举例）
 
@@ -130,7 +129,6 @@ CREATE TABLE `t_job_record` (
 `record_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '记录id',
 `status` tinyint(3) NOT NULL DEFAULT '0' COMMENT '执行状态:0 待处理',
 `execute_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '执行时间（毫秒）',
-
 PRIMARY KEY (`id`),
 KEY `idx_status_execute_time` (`status`,`execute_time`),
 KEY `idx_record_id` (`record_id`)
@@ -173,15 +171,13 @@ SELECT * FROMt_job_record  where status=0 andexecute_time>1546357979646  andex
 
 ## 服务端预编译
 
-在 MySQL 中，可以使用`PREPAREstmt_name FROM preparable_stm`对 sql 语句进行预编译，然后使用`EXECUTE stmt_name [USING@var_name [, @var_name] ...]`执行预编译语句。如此，同一 sql 的多次操作，可以获得比常规 sql 更高的性能。
+在 MySQL 中，可以使用`PREPARE stmt_name FROM preparable_stm`对 sql 语句进行预编译，然后使用`EXECUTE stmt_name [USING@var_name [, @var_name] ...]`执行预编译语句。如此，同一 sql 的多次操作，可以获得比常规 sql 更高的性能。
 
 mysql-jdbc源码中，实现了标准的`Statement`和`PreparedStatement`的同时，还有一个`ServerPreparedStatement`实现，`ServerPreparedStatement`属于`PreparedStatement`的拓展，三者对比如下：
 
 ![图8.png](https://upload-images.jianshu.io/upload_images/542677-6145187404c2ed5c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-容易发现，`PreparedStatement`和 `Statement`的区别主要区别在于参数处理，而对于发送数据包，调用服务端的处理逻辑是一样（或类似）的；经测试，二者速度相当。其实，`PreparedStatement`并不是服务端预处理的；
-
-`ServerPreparedStatement`才是真正的服务端预处理，速度也较`PreparedStatement`快；其使用场景一般是：频繁的数据库访问，sql 数量有限（有缓存淘汰策略，使用不宜会导致两次 IO）。
+容易发现，`PreparedStatement`和 `Statement`的区别主要区别在于参数处理，而对于发送数据包，调用服务端的处理逻辑是一样（或类似）的；经测试，二者速度相当。其实，`PreparedStatement`并不是服务端预处理的；`ServerPreparedStatement`才是真正的服务端预处理，速度也较`PreparedStatement`快；其使用场景一般是：频繁的数据库访问，sql 数量有限（有缓存淘汰策略，使用不宜会导致两次 IO）。
 
 ## 批处理
 
