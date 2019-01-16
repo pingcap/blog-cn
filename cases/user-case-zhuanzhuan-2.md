@@ -2,7 +2,7 @@
 title: TiDB 在转转的业务实战
 author: ['陈维']
 date: 2019-01-16
-summary: 我们对关系型数据库的一些使用经验和积累，在 TiDB 中是存在差异的，现主要阐述“事务”和“查询”两方面的差异。
+summary: TiDB 在业务开发中是值得推广和实践的，但是我们对关系型数据库的一些使用经验和积累，在 TiDB 中是存在差异的，现主要阐述“事务”和“查询”两方面的差异。
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-zhuanzhuan-2/
