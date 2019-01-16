@@ -5,7 +5,7 @@ date: 2019-01-16
 summary: 目前 TiDB 在转转线上已经接入消息、风控两套 OLTP 以及一套风控 OLAP 集群。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-zhuanzhuan/
+url: /cases-cn/user-case-zhuanzhuan-2/
 weight: 4
 logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 ---
