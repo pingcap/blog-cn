@@ -133,7 +133,7 @@ Titan 会为每个有效的 `BlobFile` 在内存中维护一个 discardable size
 
 ![8-Update Performance.jpg](https://upload-images.jianshu.io/upload_images/542677-4030eb2998541f5a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-> 图 8 Update Performance：Titan 在更新场景中的性能要比 RocksDB 高180%以上，这主要得益于 Titan 优秀的读性能和良好的 GC 算法。
+> 图 8 Update Performance：Titan 在更新场景中的性能要比 RocksDB 高 180% 以上，这主要得益于 Titan 优秀的读性能和良好的 GC 算法。
 
 ![9-Output Size.jpg](https://upload-images.jianshu.io/upload_images/542677-cc2f1225f3bcc8c3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -147,16 +147,14 @@ Titan 会为每个有效的 `BlobFile` 在内存中维护一个 discardable size
 
 > 图 11 Sorted Range Iteration：Titan 的范围查询性能目前和 RocksDB 相比还是有一定的差距，这也是我们未来优化的一个重要方向。
 
-本次测试我们对比了两个具有代表性的 value size 在4种不同场景下的性能差异，更多不同粒度的 value size 的测试和更详细的性能报告我们会放在下一篇文章去说明，并且我们会从更多的角度（例如 CPU 和内存的使用率等）去分析 Titan 和 RocksDB 的差异。从本次测试我们可以大致得出结论，在大 value 的场景下，Titan 会比 RocksDB 拥有更好的写、更新和点读性能。同时，Titan 的范围查询性能和空间放大都逊于 RocksDB 。
+本次测试我们对比了两个具有代表性的 value size 在 4 种不同场景下的性能差异，更多不同粒度的 value size 的测试和更详细的性能报告我们会放在下一篇文章去说明，并且我们会从更多的角度（例如 CPU 和内存的使用率等）去分析 Titan 和 RocksDB 的差异。从本次测试我们可以大致得出结论，在大 value 的场景下，Titan 会比 RocksDB 拥有更好的写、更新和点读性能。同时，Titan 的范围查询性能和空间放大都逊于 RocksDB 。
 
 ## 兼容性
 
-一开始我们便将兼容 RocksDB 作为设计 Titan 的首要目标，因此我们保留了绝大部分 RocksDB 的 API。目前仅有两个 API 是我们明确不支持的，包括：
+一开始我们便将兼容 RocksDB 作为设计 Titan 的首要目标，因此我们保留了绝大部分 RocksDB 的 API。目前仅有两个 API 是我们明确不支持的：
 
-```
-Merge
-SingleDelete
-```
+* `Merge`
+* `SingleDelete`。
 
 除了 `Open` 接口以外，其他 API 的参数和返回值都和 RocksDB 一致。已有的项目只需要很小的改动即可以将 `RocksDB` 实例平滑地升级到 Titan。值得注意的是 Titan 并不支持回退回 RocksDB。
 
@@ -217,7 +215,7 @@ if (s.ok()) s = db->Put(rocksdb::WriteOptions(), key2, value);
 if (s.ok()) s = db->Delete(rocksdb::WriteOptions(), key1);
 ```
 
-### 在 `TiKV` 中使用 `Titan`
+### 在 TiKV 中使用 Titan
 
 目前 Titan 在 TiKV 中是默认关闭的，我们通过 TiKV 的配置文件来决定是否开启和设置 Titan，相关的配置项包括 [`[rocksdb.titan]`](https://github.com/tikv/tikv/blob/12a1ea8d13b6478c8a4d07f0bb7411f3367dc8f9/etc/config-template.toml#L375) 和 [`[rocksdb.defaultcf.titan]`](https://github.com/tikv/tikv/blob/12a1ea8d13b6478c8a4d07f0bb7411f3367dc8f9/etc/config-template.toml#L531)， 开启 Titan 只需要进行如下配置即可：
 
