@@ -154,7 +154,7 @@ Titan 会为每个有效的 `BlobFile` 在内存中维护一个 discardable size
 一开始我们便将兼容 RocksDB 作为设计 Titan 的首要目标，因此我们保留了绝大部分 RocksDB 的 API。目前仅有两个 API 是我们明确不支持的：
 
 * `Merge`
-* `SingleDelete`。
+* `SingleDelete`
 
 除了 `Open` 接口以外，其他 API 的参数和返回值都和 RocksDB 一致。已有的项目只需要很小的改动即可以将 `RocksDB` 实例平滑地升级到 Titan。值得注意的是 Titan 并不支持回退回 RocksDB。
 
