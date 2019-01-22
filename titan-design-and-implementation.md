@@ -6,7 +6,7 @@ summary: Titan 是由 PinCAP 研发的一个基于 RocksDB 的高性能单机 ke
 tags: ['Titan','TiKV','RocksDB','LSM-tree']
 ---
 
-[Titan](https://github.com/pingcap/rocksdb/tree/titan-5.15) 是由 [PingCAP](https://www.pingcap.com/) 研发的一个基于 [RocksDB](https://github.com/facebook/rocksdb) 的高性能单机 key-value 存储引擎，其主要设计灵感来源于`USENIX FAST 2016` 上发表的一篇论文 [WiscKey](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)。`WiscKey` 提出了一种高度基于 SSD 优化的设计，利用 SSD 高效的随机读写性能，通过将 value 分离出 `LSM-tree` 的方法来达到降低写放大的目的。
+[Titan](https://github.com/pingcap/rocksdb/tree/titan-5.15) 是由 [PingCAP](https://www.pingcap.com/) 研发的一个基于 [RocksDB](https://github.com/facebook/rocksdb) 的高性能单机 key-value 存储引擎，其主要设计灵感来源于 USENIX FAST 2016 上发表的一篇论文 [WiscKey](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)。`WiscKey` 提出了一种高度基于 SSD 优化的设计，利用 SSD 高效的随机读写性能，通过将 value 分离出 `LSM-tree` 的方法来达到降低写放大的目的。
 
 我们的基准测试结果显示，当 value 较大的时候，Titan 在写、更新和点读等场景下性能都优于 RocksDB。但是根据  [`RUM Conjecture`](http://daslab.seas.harvard.edu/rum-conjecture/)，通常某些方面的提升往往是以牺牲其他方面为代价而取得的。Titan 便是以牺牲硬盘空间和范围查询的性能为代价，来取得更高的写性能。随着 SSD 价格的降低，我们认为这种取舍的意义会越来越明显。
 
@@ -77,7 +77,7 @@ Titan 使用 RocksDB 提供的两个特性来解决这两个问题，这两个�
 
 #### `BlobFileSizeCollector`
 
-`Rocksdb` 允许我们使用自定义的 `TablePropertiesCollector` 来搜集 `SST` 上的 properties 并写入到对应文件中去。`Titan` 通过一个自定义的 `TablePropertiesCollector` —— `BlobFileSizeCollector` 来搜集每个 `SST` 中有多少数据是存放在哪些 `BlobFile` 上的，我们将它收集到的 properties 命名为 `BlobFileSizeProperties`，它的工作流程和数据格式如下图所示：
+RocksDB 允许我们使用自定义的 `TablePropertiesCollector` 来搜集 `SST` 上的 properties 并写入到对应文件中去。`Titan` 通过一个自定义的 `TablePropertiesCollector` —— `BlobFileSizeCollector` 来搜集每个 `SST` 中有多少数据是存放在哪些 `BlobFile` 上的，我们将它收集到的 properties 命名为 `BlobFileSizeProperties`，它的工作流程和数据格式如下图所示：
 
 ![5-BlobFileSizeProperties.jpg](https://upload-images.jianshu.io/upload_images/542677-c96a4dfc696ec3f5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -85,7 +85,7 @@ Titan 使用 RocksDB 提供的两个特性来解决这两个问题，这两个�
 
 #### `EventListener`
 
-我们知道 `RocksDB` 是通过 Compaction 来丢弃旧版本数据以回收空间的，因此每次 Compaction 完成后 Titan 中的某些 `BlobFile` 中便可能有部分或全部数据过期。因此我们便可以通过监听 Compaction 事件来触发 GC，通过搜集比对 Compaction 中输入输出 `SST` 的 `BlobFileSizeProperties` 来决定挑选哪些 `BlobFile` 进行 GC。其流程大概如下图所示：
+我们知道 RocksDB 是通过 Compaction 来丢弃旧版本数据以回收空间的，因此每次 Compaction 完成后 Titan 中的某些 `BlobFile` 中便可能有部分或全部数据过期。因此我们便可以通过监听 Compaction 事件来触发 GC，通过搜集比对 Compaction 中输入输出 `SST` 的 `BlobFileSizeProperties` 来决定挑选哪些 `BlobFile` 进行 GC。其流程大概如下图所示：
 
 ![6-EventListener.jpg](https://upload-images.jianshu.io/upload_images/542677-18640cc4433c7cac.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
