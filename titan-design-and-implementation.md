@@ -47,7 +47,7 @@ Titan 的核心组件主要包括：`BlobFile`、`TitanTableBuilder`、`Version`
 
 ### `TitanTableBuilder`
 
-`TitanTableBuilder` 是实现分离 key-value 的关键。我们知道 RocksDB 支持使用用户自定义 table builder创建 `SST`，这使得我们可以不对 build table 流程做侵入性的改动就可以将 value 从 `SST` 中分离出来。下面将介绍 `TitanTableBuilder` 的主要工作流程：
+`TitanTableBuilder` 是实现分离 key-value 的关键。我们知道 RocksDB 支持使用用户自定义 table builder 创建 `SST`，这使得我们可以不对 build table 流程做侵入性的改动就可以将 value 从 `SST` 中分离出来。下面将介绍 `TitanTableBuilder` 的主要工作流程：
 
 ![3-TitanTableBuilder.jpg](https://upload-images.jianshu.io/upload_images/542677-da5902882270f61a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -55,7 +55,7 @@ Titan 的核心组件主要包括：`BlobFile`、`TitanTableBuilder`、`Version`
 
 Titan 和 [`Badger`](https://github.com/dgraph-io/badger) 的设计有很大区别。`Badger` 直接将 `WAL` 改造成 `VLog`，这样做的好处是减少一次 Flush 的开销。而 Titan 不这么设计的主要原因有两个：
 
-1. 假设 `LSM-tree` 的 max level 是 5，放大因子为 10，则 `LSM-tree` 总的写放大大概为1 + 1 + 10 + 10 + 10 + 10，其中 Flush 的写放大是 1，其比值是 42 : 1，因此 Flush 的写放大相比于整个 LSM-tree 的写放大可以忽略不计。
+1. 假设 `LSM-tree` 的 max level 是 5，放大因子为 10，则 `LSM-tree` 总的写放大大概为 1 + 1 + 10 + 10 + 10 + 10，其中 Flush 的写放大是 1，其比值是 42 : 1，因此 Flush 的写放大相比于整个 LSM-tree 的写放大可以忽略不计。
 2. 在第一点的基础上，保留 `WAL` 可以使 Titan 极大地减少对 RocksDB 的侵入性改动，而这也正是我们的设计目标之一。
 
 ### `Version`
@@ -117,7 +117,7 @@ Titan 会为每个有效的 `BlobFile` 在内存中维护一个 discardable size
 |    1KB     |                 64M                  |     64GB      |
 |    16KB    |                  4M                  |     64GB      |
 
-我们主要测试 4 个常用的场景：
+我们主要测试 5 个常用的场景：
 
 - Data Loading Performance：使用预先计算好的 key 数量和固定的 value 大小，以一定的速度并发写入。
 - Update Performance：由于 Titan 在纯写入场景下不需要 GC（`BlobFile` 中没有可丢弃数据），因此我们还需要通过更新来测试 `GC` 对性能的影响。
@@ -129,7 +129,7 @@ Titan 会为每个有效的 `BlobFile` 在内存中维护一个 discardable size
 
 ![7-Data Loading Performance.jpg](https://upload-images.jianshu.io/upload_images/542677-e1c2053bd817ee07.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-> 图 7 Data Loading Performance：Titan 在写场景中的性能要比 RocksDB 高70%以上，并且随着 value size 的变大，这种性能的差异会更加明显。值得注意的是，数据在写入 KV Engine 之前会先写入Raft Log，因此 Titan 的性能提升会被摊薄，实际上裸测 RocksDB 和 Titan 的话这种性能差异会更大。
+> 图 7 Data Loading Performance：Titan 在写场景中的性能要比 RocksDB 高 70% 以上，并且随着 value size 的变大，这种性能的差异会更加明显。值得注意的是，数据在写入 KV Engine 之前会先写入 Raft Log，因此 Titan 的性能提升会被摊薄，实际上裸测 RocksDB 和 Titan 的话这种性能差异会更大。
 
 ![8-Update Performance.jpg](https://upload-images.jianshu.io/upload_images/542677-4030eb2998541f5a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -147,7 +147,7 @@ Titan 会为每个有效的 `BlobFile` 在内存中维护一个 discardable size
 
 > 图 11 Sorted Range Iteration：Titan 的范围查询性能目前和 RocksDB 相比还是有一定的差距，这也是我们未来优化的一个重要方向。
 
-本次测试我们对比了两个具有代表性的 value size 在 4 种不同场景下的性能差异，更多不同粒度的 value size 的测试和更详细的性能报告我们会放在下一篇文章去说明，并且我们会从更多的角度（例如 CPU 和内存的使用率等）去分析 Titan 和 RocksDB 的差异。从本次测试我们可以大致得出结论，在大 value 的场景下，Titan 会比 RocksDB 拥有更好的写、更新和点读性能。同时，Titan 的范围查询性能和空间放大都逊于 RocksDB 。
+本次测试我们对比了两个具有代表性的 value size 在 5 种不同场景下的性能差异，更多不同粒度的 value size 的测试和更详细的性能报告我们会放在下一篇文章去说明，并且我们会从更多的角度（例如 CPU 和内存的使用率等）去分析 Titan 和 RocksDB 的差异。从本次测试我们可以大致得出结论，在大 value 的场景下，Titan 会比 RocksDB 拥有更好的写、更新和点读性能。同时，Titan 的范围查询性能和空间放大都逊于 RocksDB 。
 
 ## 兼容性
 
@@ -234,7 +234,7 @@ enabled = true
 
 ### `GC` 速度控制和自动调节
 
-通常来说，GC 的速度太慢会导致空间放大严重，过快又会对服务的 QPS 和延时带来影响。目前 Titan 支持自动 GC，虽然可以通过减小并发度和 batch size 来达到一定程度限制 GC 速度的目的，但是由于每个 `BlobFile`中的 blob record 数目不定，若 `BlobFile` 中的 blob record 过于密集，将其有效的 key 更新回 `LSM-tree` 时仍然可能堵塞业务的写请求。为了达到更加精细化的控制 GC 速度的目的，后续我们将使用 [`Token Bucket`](https://en.wikipedia.org/wiki/Token_bucket) 算法限制一段时间内 GC 能够更新的 key 数量，以降低 GC 对 QPS 和延时的影响，使服务更加稳定。
+通常来说，GC 的速度太慢会导致空间放大严重，过快又会对服务的 QPS 和延时带来影响。目前 Titan 支持自动 GC，虽然可以通过减小并发度和 batch size 来达到一定程度限制 GC 速度的目的，但是由于每个 `BlobFile` 中的 blob record 数目不定，若 `BlobFile` 中的 blob record 过于密集，将其有效的 key 更新回 `LSM-tree` 时仍然可能堵塞业务的写请求。为了达到更加精细化的控制 GC 速度的目的，后续我们将使用 [`Token Bucket`](https://en.wikipedia.org/wiki/Token_bucket) 算法限制一段时间内 GC 能够更新的 key 数量，以降低 GC 对 QPS 和延时的影响，使服务更加稳定。
 
 另一方面，我们也正在研究自动调节 GC 速度的算法，这样我们便可以，在服务高峰期的时候降低 GC 速度来提供更高的服务质量；在服务低峰期的时候提高 GC 速度来加快空间的回收。
 
