@@ -3,7 +3,7 @@ title: Titan 的设计与实现
 author: ['郑志铨']
 date: 2019-01-22
 summary: Titan 是由 PinCAP 研发的一个基于 RocksDB 的高性能单机 key-value 存储引擎。我们的基准测试结果显示，当 value 较大的时候，Titan 在写、更新和点读等场景下性能都优于 RocksDB。
-tags: ['Titan','TiKV','RocksDB']
+tags: ['Titan','TiKV','RocksDB','LSM-tree']
 ---
 
 [`Titan`](https://github.com/pingcap/rocksdb/tree/titan-5.15) 是由 [`PingCAP`](https://www.pingcap.com/) 研发的一个基于  [`RocksDB`](https://github.com/facebook/rocksdb) 的高性能单机 key-value 存储引擎，其主要设计灵感来源于`USENIX FAST 2016` 上发表的一篇论文 [`WiscKey`](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)。`WiscKey` 提出了一种高度基于 SSD 优化的设计，利用 SSD 高效的随机读写性能，通过将 value 分离出 `LSM-tree` 的方法来达到降低写放大的目的。
@@ -117,7 +117,7 @@ Garbage Collection (GC) 的目的是回收空间，一个高效的 GC 算法应�
 |    1KB     |                 64M                  |     64GB      |
 |    16KB    |                  4M                  |     64GB      |
 
-我们主要测试4个常用的场景：
+我们主要测试 4 个常用的场景：
 
 - Data Loading Performance：使用预先计算好的 key 数量和固定的 value 大小，以一定的速度并发写入。
 - Update Performance：由于 `Titan` 在纯写入场景下不需要 GC（`BlobFile` 中没有可丢弃数据），因此我们还需要通过更新来测试 `GC` 对性能的影响。
