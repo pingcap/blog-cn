@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-meituandianping/
 weight: 2
 logo: /images/blog-cn/customers/meituandianping-logo.png
-aliases: [‘/cases-cn/user-case-meituan/’]
+aliases: ['/cases-cn/user-case-meituan/']
 ---
 
 
