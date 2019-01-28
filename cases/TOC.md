@@ -4,7 +4,7 @@
 
 + 互联网
   - [小米](user-case-xiaomi.md)
-  - [美团点评](user-case-meituan.md)
+  - [美团点评](user-case-meituandianping.md)
   - [爱奇艺](user-case-iqiyi.md)
   - [丰巢](user-case-fengchao.md)
   - [Shopee](user-case-shopee.md)
