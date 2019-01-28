@@ -5,9 +5,10 @@ date: 2018-11-15
 summary: 美团业务线众多，我们根据业务特点及重要程度逐步推进上线，到截稿为止，已经上线 10 个集群，近 200 个物理节点。初期上线的集群，已经分别服务于配送、出行、闪付、酒旅等业务。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-meituan/
+url: /cases-cn/user-case-meituandianping/
 weight: 2
-logo: /images/blog-cn/customers/meituan-logo.png
+logo: /images/blog-cn/customers/meituandianping-logo.png
+aliases: ['/cases-cn/user-case-meituan/']
 ---
 
 
