@@ -36,7 +36,7 @@ tags: ['TiKV 源码解析','社区']
 
 TiKV 现在使用 [RocksDB](https://github.com/facebook/rocksdb) 作为底层数据存储方案。在 pingcap/rust-rocksdb 这个库里面，我们会简单说明 Rust 是如何通过 Foreign Function Interface (FFI) 来跟 C library 进行交互，以及我们是如何将 RocksDB 的 C API 封装好给 Rust 使用的。
 
-另外，在 pingcap/rocksdb 这个库里面，我们会详细的介绍我们自己研发的 Key-Value 分离引擎 - [Titan](https://github.com/pingcap/rocksdb)，同时也会让大家知道如何使用 RocksDB 对外提供的接口来构建自己的 engine。
+另外，在 pingcap/rocksdb 这个库里面，我们会详细的介绍我们自己研发的 Key-Value 分离引擎 - [Titan](https://github.com/pingcap/rocksdb/tree/titan-5.15)，同时也会让大家知道如何使用 RocksDB 对外提供的接口来构建自己的 engine。
 
 ### Raft
 
