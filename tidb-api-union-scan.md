@@ -4,6 +4,7 @@ author: ['周昱行']
 date: 2016-06-18
 summary: TiDB 集群的架构分为上层的 SQL 层和底层的 KV 层，SQL 层通过调用 KV 层的 API 读写数据，由于 SQL 层的节点和 KV 层节点通常不在一台机器上，所以，每次调用 KV 的 API 都是一次 RPC, 而往往一个普通的 Select 语句的执行，需要调用几十到几十万次 KV 的接口，这样的结果就是性能非常差，绝大部分时间都消耗在 RPC 上。为了解决这个问题，TiDB 实现了下推 API，把一部分简单的 SQL 层的执行逻辑下推到 KV 层执行，让 KV 层可以理解 Table 和 Column，可以批量读取多行结果，可以用 Where 里的 Expression 对结果进行过滤, 可以计算聚合函数，大幅减少了 RPC 次数和数据的传输量。
 tags: ['TiDB', '分布式计算']
+meetup_type: memoir
 ---
 
 TiDB 集群的架构分为上层的 SQL 层和底层的 KV 层，SQL 层通过调用 KV 层的 API 读写数据，由于 SQL 层的节点和 KV 层节点通常不在一台机器上，所以，每次调用 KV 的 API 都是一次 RPC, 而往往一个普通的 `Select` 语句的执行，需要调用几十到几十万次 KV 的接口，这样的结果就是性能非常差，绝大部分时间都消耗在 RPC 上。
