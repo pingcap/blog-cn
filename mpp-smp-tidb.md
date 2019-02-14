@@ -4,6 +4,7 @@ author: ['申砾']
 date: 2016-11-15
 summary: 本篇文章整理自第 21 期 PingCAP Infra Meetup 上申砾分享的《MPP and SMP in TiDB》内容。
 tags: ['TiDB', 'SQL', 'MPP', 'SMP']
+meetup_type: memoir
 ---
 
 今天主要是想把我们 TiDB 做 SQL 性能优化的一些经验和一些思考，就此跟大家探讨一下。题目写的比较大，但是内容还是比较简单。我们做 TiDB 的 SQL 层时，一开始做的很简单，就是通过最简单的 KV 接口(Get/Set/Seek)去存数据、取数据，做一些非常直白、简单的计算。然而后来我们发现，这个方案在性能上不可接受，可能行不通，我们就重新思考了这个事情。
