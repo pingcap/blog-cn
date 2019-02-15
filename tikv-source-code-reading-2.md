@@ -83,7 +83,7 @@ Raft 算法中的日志复制部分抽象了一个可以不断追加写入新日
 
 这个接口处理从该 Raft group 中其他节点收到的消息。比如，当 Follower 收到 Leader 发来的日志时，需要把日志存储起来并回复相应的 ACK；或者当节点收到 term 更高的选举消息时，应该进入选举状态并回复自己的投票。这个接口和它调用的子函数的详细逻辑几乎涵盖了 Raft 协议的全部内容，代码较多，因此这里仅阐述在 Leader 上发生的日志复制过程。
 
-当应用程序希望向 Raft 系统提交一个写入时，需要在 Leader 上调用 `RawNode::propose` 方法，后者就会调用 `RawNode::step`，而参数是一个类型为 `MessageType::MsgPropose` 的消息；应用程序要写入的内容被被封装到了这个消息中。对于这一消息类型，后续会调用 `Raft::step_leader` 函数，将这个消息作为一个 Raft Log 暂存起来，同时广播到 Follower 的信箱中。到这一步，propose 的过程就可以返回了，注意，此时这个 Raft Log 并没有持久化，同时广播给 Follower 的 MsgAppend 消息也并未真正发出去。应用程序需要设法将这个写入挂起，等到从 Raft 中获知这个写入已经被集群中的过半成员确认之后，再向这个写入的发起者返回写入成功的响应。那么， 如何能够让 Raft 把消息真正发出去，并接收 Follower 的确认呢？
+当应用程序希望向 Raft 系统提交一个写入时，需要在 Leader 上调用 `RawNode::propose` 方法，后者就会调用 `RawNode::step`，而参数是一个类型为 `MessageType::MsgPropose` 的消息；应用程序要写入的内容被封装到了这个消息中。对于这一消息类型，后续会调用 `Raft::step_leader` 函数，将这个消息作为一个 Raft Log 暂存起来，同时广播到 Follower 的信箱中。到这一步，propose 的过程就可以返回了，注意，此时这个 Raft Log 并没有持久化，同时广播给 Follower 的 MsgAppend 消息也并未真正发出去。应用程序需要设法将这个写入挂起，等到从 Raft 中获知这个写入已经被集群中的过半成员确认之后，再向这个写入的发起者返回写入成功的响应。那么， 如何能够让 Raft 把消息真正发出去，并接收 Follower 的确认呢？
 
 ## `RawNode::ready` 和 `RawNode::advance` 接口
 
@@ -119,7 +119,7 @@ impl Ready {
 
 ## `RawNode::tick` 接口
 
-这是本文最后要介绍的一个接口，它的作用是驱动 Raft 内部的逻辑时钟前进，并对超时进行处理。比如对于 Follower 而言，如果它在 tick 的时候发现 Leader 已经失联很久了，便会发起一次选举；而 Leader 为了避免自己被取代，也会在一个更短的超时之后给 Follower 发送心跳。值得注意的是，tick 也是会产生 Raft 消息的，为了使这部分 Raft 消息能够及时发送出去，在 应用程序的每一轮循环中一般应该先处理 tick，然后处理 Ready，正如示例程序中所做的那样。
+这是本文最后要介绍的一个接口，它的作用是驱动 Raft 内部的逻辑时钟前进，并对超时进行处理。比如对于 Follower 而言，如果它在 tick 的时候发现 Leader 已经失联很久了，便会发起一次选举；而 Leader 为了避免自己被取代，也会在一个更短的超时之后给 Follower 发送心跳。值得注意的是，tick 也是会产生 Raft 消息的，为了使这部分 Raft 消息能够及时发送出去，在应用程序的每一轮循环中一般应该先处理 tick，然后处理 Ready，正如示例程序中所做的那样。
 
 ## 总结
 
