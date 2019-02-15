@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（二十四）TiDB Binlog 源码解析
 author: ['姚维']
 date: 2019-01-15
 summary: 本文将为大家介绍 TiDB 在执行 DML/DDL 语句过程中，如何将 Binlog 数据 发送给 TiDB Binlog 集群的 Pump 组件。
-tags: ['TiDB 源码阅读','社区']
+tags: ['源码阅读','TiDB','社区']
 ---
 
 
