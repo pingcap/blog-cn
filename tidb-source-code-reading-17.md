@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（十七）DDL 源码解析
 author: ['陈霜']
 date: 2018-08-27
 summary: 本文首先会介绍 TiDB DDL 组件的总体设计，以及如何在分布式场景下支持无锁 schema 变更，并描述这套算法的大致流程，然后详细介绍一些常见的 DDL 语句的源码实现。Enjoy～
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 

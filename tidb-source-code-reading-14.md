@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（十四）统计信息（下）
 author: ['谢海滨']
 date: 2018-07-18
 summary: 本篇文章将介绍直方图和 Count-Min(CM) Sketch 的数据结构，然后介绍 TiDB 是如何实现统计信息的查询、收集以及更新的。
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 
