@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（八）基于代价的优化
 author: ['李霞']
 date: 2018-05-04
 summary: 本文是 TiDB 源码阅读系列文章的第八篇。内文会先简单介绍制定查询计划以及优化的过程，然后用较大篇幅详述在得到逻辑计划后的 Cost-Based Optimization（CBO）过程。
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 

@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（十九）tikv-client（下）
 author: ['周昱行']
 date: 2018-09-26
 summary: 本文将继续介绍 tikv-client 里的两个主要的模块——负责处理分布式计算的 copIterator 和执行二阶段提交的 twoPhaseCommitter。
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 

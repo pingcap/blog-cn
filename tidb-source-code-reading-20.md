@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（二十）Table Partition
 author: ['肖亮亮']
 date: 2018-10-26
 summary: 本篇文章主要介绍 Table Partition 在 TiDB 中的实现。
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 

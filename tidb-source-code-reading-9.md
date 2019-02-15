@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（九）Hash Join
 author: ['张建']
 date: 2018-06-06
 summary: 本文是 TiDB 源码阅读系列文章的第九篇。内文详细介绍了 TiDB Hash Join 的实现以及几种常见的问题，enjoy～
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 
