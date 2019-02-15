@@ -6,7 +6,7 @@ summary: 本文将以 raft-rs 的公共 API 作为切入点，介绍一般 propo
 tags: ['TiKV 源码解析','社区']
 ---
 
-本文为 TiKV 源码阅读系列的第二篇，按照计划首先将为大家介绍 TiKV 依赖的周边库 [raft-rs](https://github.com/pingcap/raft-rs) 。raft-rs 是 Raft 算法的 [Rust](https://www.rust-lang.org/) 语言实现，后者是分布式领域中应用非常广泛的一种共识算法。相比于此类算法的鼻祖 Paxos，具有更简单、更容易理解和实现的特点。
+本文为 TiKV 源码阅读系列的第二篇，按照计划首先将为大家介绍 TiKV 依赖的周边库 [raft-rs](https://github.com/pingcap/raft-rs) 。raft-rs 是 Raft 算法的 [Rust](https://www.rust-lang.org/) 语言实现。Raft 是分布式领域中应用非常广泛的一种共识算法，相比于此类算法的鼻祖 Paxos，具有更简单、更容易理解和实现的特点。
 
 分布式系统的共识算法会将数据的写入复制到多个副本，从而在网络隔离或节点失败的时候仍然提供可用性。具体到 Raft 算法中，发起一个读写请求称为一次 proposal。本文将以 raft-rs 的公共 API 作为切入点，介绍一般 proposal 过程的实现原理，让用户可以深刻理解并掌握 raft-rs API 的使用， 以便用户开发自己的分布式应用，或者优化、定制 TiKV。
 
