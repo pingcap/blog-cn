@@ -112,7 +112,7 @@ TSO 是一个 int64 的整形，它由 physical time + logical time 两个部分
 
 对于 TSO 的保存于分配，PD 会做如下处理：
 
-1. 当 PD 成为 leader 之后，会从 etcd 上面获取上一次保存的时间，如果发现本地的时间比这个大，则会继续等待直到当前的时间大于这个值：
+1. 当 PD 成为 leader 之后，会从 etcd 上面获取上一次保存的时间，如果发现本地的时间比这个小，则会继续等待直到当前的时间大于这个值：
 
     ```go
     last, err := s.loadTimestamp()
