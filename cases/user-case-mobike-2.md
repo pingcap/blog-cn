@@ -52,7 +52,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 * 新 Sharding 集群按照 `order_id` 取模通过 DBproxy 写入各分表，解决数据分布不均、热点等问题。
 * 将老 Sharding 集群的数据通过使用 DRC（摩拜自研的开源异构数据同步工具 [Gravity](https://github.com/moiot/gravity)）全量+增量同步到新 Sharding 集群，并将增量数据进行打标，反向同步链路忽略带标记的流量，避免循环复制。
 * 为支持上线过程中业务回滚至老 Sharding 集群，需要将新 Sharding 集群上的增量数据同步回老 Sharding 集群，由于写回老 Sharding 集群需要耦合业务逻辑，因此 DRC（Gravity）负责订阅 DBProxy-Sharding 集群的增量数放入 Kafka，由业务方开发一个消费 Kafka 的服务将数据写入到老 Sharding 集群。
-* 新的 TiDB 集群作为订单合库，使用 DRC（Gravity）从新 Sharding 集群同步数据到 TiDB中。
+* 新的 TiDB 集群作为订单合库，使用 DRC（Gravity）从新 Sharding 集群同步数据到 TiDB 中。
 * 新方案中 DBProxy 集群负责 `order_id` 的读写流量，TiDB 合库作为 readonly 负责其他多维度的查询。
 
 
