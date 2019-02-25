@@ -178,7 +178,7 @@ TiDB 在 2.1 版本后引入新的参数 `tidb_mem_quota_query`，可以设置�
 
 **4.1.3 监控问题**
 
-当前的 TiDB 监控架构中，TiKV 依赖 Pushgateway 拉取监控数据到 Prometheus，当 TiKV 实例数量越来越多，达到 Pushgateway 的内存限制 2GB 进程会进入假死状态，Grafana 监控就会变成图 7 的断点样子：
+当前的 TiDB 监控架构中，TiKV 依赖 Pushgateway 拉取监控数据到 Prometheus，当 TiKV 实例数量越来越多，达到 Pushgateway 的内存限制 2GB 进程会进入假死状态，Grafana 监控就会变成下图的断点样子：
 
 
 ![图 6 监控拓扑图](https://upload-images.jianshu.io/upload_images/542677-9df064565da405d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
