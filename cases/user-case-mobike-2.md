@@ -1,6 +1,6 @@
 ---
 title: TiDB 在摩拜单车的深度实践及应用
-author: ['李凯','吕磊']
+author: ['吕磊']
 date: 2019-02-18
 summary: TiDB 的出现，不仅弥补了 MySQL 单机容量上限、传统 Sharding 方案查询维度单一等缺点，而且其计算存储分离的架构设计让集群水平扩展变得更容易。
 tags: ['互联网']
@@ -10,7 +10,7 @@ weight: 4
 logo: /images/blog-cn/customers/mobike-logo.png
 ---
 
->作者介绍：**李凯**，摩拜单车基础架构负责人；**吕磊**，摩拜单车高级 DBA。
+>作者介绍：**吕磊**，摩拜单车高级 DBA。
 
 
 ## 一、业务场景
