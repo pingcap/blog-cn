@@ -1,9 +1,9 @@
 ---
-title: TiKV 源码解析系列 - Lease Read
+title: TiKV 功能介绍 - Lease Read
 author: ['唐刘']
 date: 2017-02-21
 summary: 在 TiKV 里面，从最开始的 Raft log read，到后面的 Lease Read，我们一步一步的在保证线性一致性的情况下面改进着性能。后面，我们会引入更多的一致性测试 case 来验证整个系统的安全性，当然，也会持续的提升性能。
-tags: ['TiKV', 'Raft', 'Lease Read', '源码解析', '性能优化']
+tags: ['TiKV', 'Raft', 'Lease Read','性能优化']
 ---
 
 

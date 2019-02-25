@@ -1,9 +1,9 @@
 ---
-title: TiKV 源码浅析 - PD Scheduler
+title: TiKV 功能介绍 - PD Scheduler
 author: ['唐刘']
 date: 2017-01-23
 summary: 在前面的文章里面，我们介绍了 PD 一些常用功能，以及它是如何跟 TiKV 进行交互的，这里，我们重点来介绍一下 PD 是如何调度 TiKV 的。
-tags: ['TiKV', 'PD', '集群调度', '源码解析']
+tags: ['TiKV', 'PD', '集群调度']
 ---
 
 

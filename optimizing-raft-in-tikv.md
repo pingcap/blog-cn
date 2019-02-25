@@ -1,9 +1,9 @@
 ---
-title: TiKV 源码解析系列 - Raft 的优化
+title: TiKV 功能介绍 - Raft 的优化
 author: ['唐刘']
 date: 2017-03-07
 summary: 在分布式领域，为了保证数据的一致性，通常都会使用 Paxos 或者 Raft 来实现。但 Paxos 以其复杂难懂著称，相反 Raft 则是非常简单易懂，所以现在很多新兴的数据库都采用 Raft 作为其底层一致性算法，包括我们的 TiKV。
-tags: ['TiKV', 'Raft', '性能优化', '源码解析']
+tags: ['TiKV', 'Raft', '性能优化']
 ---
 
 
