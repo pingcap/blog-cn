@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（十五）Sort Merge Join
 author: ['姚维']
 date: 2018-08-07
 summary: 本篇文章主要介绍 Sort Merge Join 在 TiDB 中的实现，enjoy~
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 ## 什么是 Sort Merge Join

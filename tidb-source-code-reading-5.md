@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（五）TiDB SQL Parser 的实现
 author: ['马震']
 date: 2018-03-20
 summary: 本文为 TiDB 源码阅读系列文章的第五篇，主要对 SQL Parser 功能的实现进行了讲解。内容来自社区小伙伴——马震（GitHub ID：mz1999 ）的投稿。
-tags: ['TiDB','源码阅读','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 > 本文为 TiDB 源码阅读系列文章的第五篇，主要对 SQL Parser 功能的实现进行了讲解，内容来自社区小伙伴——马震（GitHub ID：mz1999 ）的投稿。

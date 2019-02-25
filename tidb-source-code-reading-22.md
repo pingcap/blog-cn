@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（二十二）Hash Aggregation
 author: ['徐怀宇']
 date: 2018-12-21
 summary: 本篇文章将介绍 TiDB 中 Hash Aggregation 的实现原理和细节。
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','TiDB','社区']
 ---
 
 

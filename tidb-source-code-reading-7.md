@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（七）基于规则的优化
 author: ['毛康力']
 date: 2018-04-10
 summary: 本文是 TiDB 源码阅读系列文章的第七篇。在 TiDB 中，SQL 优化的过程可以分为逻辑优化和物理优化两个部分。本篇将主要关注逻辑优化。Enjoy ～
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 在 TiDB 里面，SQL 优化的过程可以分为逻辑优化和物理优化两个部分。逻辑优化主要是基于规则的优化，简称 RBO（rule based optimization）。物理优化会为逻辑查询计划中的算子选择某个具体的实现，需要用到一些统计信息，决定哪一种方式代价最低，所以是基于代价的优化 CBO（cost based optimization）。
