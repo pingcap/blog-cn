@@ -7,7 +7,7 @@ tags: ['互联网']
 category: case
 url: /cases-cn/user-case-mobike/
 aliases: ['/blog-cn/user-case-mobike/']
-weight: 4
+weight: 12
 logo: /images/blog-cn/customers/mobike-logo.png
 ---
 
