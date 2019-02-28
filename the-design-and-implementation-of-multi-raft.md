@@ -37,9 +37,9 @@ TiKV 的 Raft 主要移植 [etcd Raft](https://github.com/coreos/etcd/tree/maste
 
 * Leader election
 
-* Log replicationLog compaction
+* Log replication / Log compaction
 
-* Membership changesLeader transfer
+* Membership changes / Leader transfer
 
 * Linearizable / Lease read
 
