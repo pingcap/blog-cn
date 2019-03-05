@@ -51,11 +51,11 @@ TiDB 对每个表分配一个 TableID，每一个索引都会分配一个 IndexI
 每行数据按照如下规则进行编码成 Key-Value pair：
 
 ```
-Key: tablePrefix_tableID_rowSeperator_rowID
+Key: tablePrefix_tableID_recordPrefixSep_rowID
 Value: [col1, col2, col3, col4]
 ```
 
-其中 Key 的 tablePrefix/rowSeperator 都是特定的字符串常量，用于在 KV 空间内区分其他数据。
+其中 Key 的 `tablePrefix`/`recordPrefixSep` 都是特定的字符串常量，用于在 KV 空间内区分其他数据。
 
 对于 Index 数据，会按照如下规则编码成 Key-Value pair：
 
