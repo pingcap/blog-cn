@@ -67,7 +67,7 @@ Value: rowID
 Index 数据还需要考虑 Unique Index 和非 Unique Index 两种情况，对于 Unique Index，可以按照上述编码规则。但是对于非 Unique Index，通过这种编码并不能构造出唯一的 Key，因为同一个 Index 的 `tablePrefix_tableID_indexPrefixSep_indexID` 都一样，可能有多行数据的 `ColumnsValue` 是一样的，所以对于非 Unique Index 的编码做了一点调整：
 
 ```
-Key: tablePrefix_tableID_indexPrefixSep_indexID_indexedColumnsValue
+Key: tablePrefix_tableID_indexPrefixSep_indexID_indexedColumnsValue_rowID
 Value: null
 ```
 
