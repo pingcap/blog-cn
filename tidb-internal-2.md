@@ -9,16 +9,18 @@ tags: ['TiDB', '计算', 'SQL', '架构', '分布式SQL']
 ## 关系模型到 Key-Value 模型的映射
 在这我们将关系模型简单理解为 Table 和 SQL 语句，那么问题变为如何在 KV 结构上保存 Table 以及如何在 KV 结构上运行 SQL 语句。
 假设我们有这样一个表的定义：
+
 ```SQL
-	CREATE TABLE User {
-		ID int,
-		Name varchar(20),
-		Role varchar(20),
-		Age int,
-		PRIMARY KEY (ID)，
-		Key idxAge (age)
-	};
+CREATE TABLE User {
+	ID int,
+	Name varchar(20),
+	Role varchar(20),
+	Age int,
+	PRIMARY KEY (ID)，
+	Key idxAge (age)
+};
 ```
+
 SQL 和 KV 结构之间存在巨大的区别，那么如何能够方便高效地进行映射，就成为一个很重要的问题。一个好的映射方案必须有利于对数据操作的需求。那么我们先看一下对数据的操作有哪些需求，分别有哪些特点。
 
 对于一个 Table 来说，需要存储的数据包括三部分：
@@ -45,31 +47,41 @@ SQL 和 KV 结构之间存在巨大的区别，那么如何能够方便高效地
 大致的需求已经分析完了，现在让我们看看手里有什么可以用的：**一个全局有序的分布式 Key-Value 引擎**。全局有序这一点重要，可以帮助我们解决不少问题。比如对于快速获取一行数据，假设我们能够构造出某一个或者某几个 Key，定位到这一行，我们就能利用 TiKV 提供的 Seek 方法快速定位到这一行数据所在位置。再比如对于扫描全表的需求，如果能够映射为一个 Key 的 Range，从 StartKey 扫描到 EndKey，那么就可以简单的通过这种方式获得全表数据。操作 Index 数据也是类似的思路。接下来让我们看看 TiDB 是如何做的。
 
 TiDB 对每个表分配一个 TableID，每一个索引都会分配一个 IndexID，每一行分配一个 RowID（如果表有整数型的 Primary Key，那么会用 Primary Key 的值当做 RowID），其中 TableID 在整个集群内唯一，IndexID/RowID 在表内唯一，这些 ID 都是 int64 类型。
+
 每行数据按照如下规则进行编码成 Key-Value pair：
+
 ```
-	Key： tablePrefix_rowPrefix_tableID_rowID
-	Value: [col1, col2, col3, col4]
+Key: tablePrefix_tableID_recordPrefixSep_rowID
+Value: [col1, col2, col3, col4]
 ```
-其中 Key 的 tablePrefix/rowPrefix 都是特定的字符串常量，用于在 KV 空间内区分其他数据。
+
+其中 Key 的 `tablePrefix`/`recordPrefixSep` 都是特定的字符串常量，用于在 KV 空间内区分其他数据。
+
 对于 Index 数据，会按照如下规则编码成 Key-Value pair：
+
 ```
-	Key: tablePrefix_idxPrefix_tableID_indexID_indexColumnsValue
-	Value: rowID
+Key: tablePrefix_tableID_indexPrefixSep_indexID_indexedColumnsValue
+Value: rowID
 ```
-Index 数据还需要考虑 Unique Index 和非 Unique Index 两种情况，对于 Unique Index，可以按照上述编码规则。但是对于非 Unique Index，通过这种编码并不能构造出唯一的 Key，因为同一个 Index 的 `tablePrefix_idxPrefix_tableID_indexID_ ` 都一样，可能有多行数据的 `ColumnsValue ` 是一样的，所以对于非 Unique Index 的编码做了一点调整：
+
+Index 数据还需要考虑 Unique Index 和非 Unique Index 两种情况，对于 Unique Index，可以按照上述编码规则。但是对于非 Unique Index，通过这种编码并不能构造出唯一的 Key，因为同一个 Index 的 `tablePrefix_tableID_indexPrefixSep_indexID` 都一样，可能有多行数据的 `ColumnsValue` 是一样的，所以对于非 Unique Index 的编码做了一点调整：
+
 ```
-	Key: tablePrefix_idxPrefix_tableID_indexID_ColumnsValue_rowID
-	Value：null
+Key: tablePrefix_tableID_indexPrefixSep_indexID_indexedColumnsValue_rowID
+Value: null
 ```
+
 这样能够对索引中的每行数据构造出唯一的 Key。
 注意上述编码规则中的 Key 里面的各种 xxPrefix 都是字符串常量，作用都是区分命名空间，以免不同类型的数据之间相互冲突，定义如下：
+
 ```
-	var(
-		tablePrefix     = []byte{'t'}
-		recordPrefixSep = []byte("_r")
-		indexPrefixSep  = []byte("_i")
-	)
+var(
+	tablePrefix     = []byte{'t'}
+	recordPrefixSep = []byte("_r")
+	indexPrefixSep  = []byte("_i")
+)
 ```
+
 另外请大家注意，上述方案中，无论是 Row 还是 Index 的 Key 编码方案，一个 Table 内部所有的 Row 都有相同的前缀，一个 Index 的数据也都有相同的前缀。这样具体相同的前缀的数据，在 TiKV 的 Key 空间内，是排列在一起。同时只要我们小心地设计后缀部分的编码方案，保证编码前和编码后的比较关系不变，那么就可以将 Row 或者 Index 数据有序地保存在 TiKV 中。这种`保证编码前和编码后的比较关系不变` 的方案我们称为 Memcomparable，对于任何类型的值，两个对象编码前的原始类型比较结果，和编码成 byte 数组后（注意，TiKV 中的 Key 和 Value 都是原始的 byte 数组）的比较结果保持一致。具体的编码方案参见 TiDB 的 [codec 包](https://github.com/pingcap/tidb/tree/master/util/codec)。采用这种编码后，一个表的所有 Row 数据就会按照 RowID 的顺序排列在 TiKV 的 Key 空间中，某一个 Index 的数据也会按照 Index 的 ColumnValue 顺序排列在 Key 空间内。
 
 现在我们结合开始提到的需求以及 TiDB 的映射方案来看一下，这个方案是否能满足需求。首先我们通过这个映射方案，将 Row 和 Index 数据都转换为 Key-Value 数据，且每一行、每一条索引数据都是有唯一的 Key。其次，这种映射方案对于点查、范围查询都很友好，我们可以很容易地构造出某行、某条索引所对应的 Key，或者是某一块相邻的行、相邻的索引值所对应的 Key 范围。最后，在保证表中的一些 Constraint 的时候，可以通过构造并检查某个 Key 是否存在来判断是否能够满足相应的 Constraint。
@@ -81,17 +93,21 @@ Index 数据还需要考虑 Unique Index 和非 Unique Index 两种情况，对�
 3. "PD", "Manager", 30
 
 那么首先每行数据都会映射为一个 Key-Value pair，注意这个表有一个 Int 类型的 Primary Key，所以 RowID 的值即为这个 Primary Key 的值。假设这个表的 Table ID 为 10，其 Row 的数据为：
+
 ```
-	t_r_10_1 --> ["TiDB", "SQL Layer", 10]
-	t_r_10_2 --> ["TiKV", "KV Engine", 20]
-	t_r_10_3 --> ["PD", "Manager", 30]
+t10_r1 --> ["TiDB", "SQL Layer", 10]
+t10_r2 --> ["TiKV", "KV Engine", 20]
+t10_r3 --> ["PD", "Manager", 30]
 ```
+
 除了 Primary Key 之外，这个表还有一个 Index，假设这个 Index 的 ID 为 1，则其数据为：
+
 ```
-	t_i_10_1_10_1 --> null
-	t_i_10_1_20_2 --> null
-	t_i_10_1_30_3 --> null
+t10_i1_10_1 --> null
+t10_i1_20_2 --> null
+t10_i1_30_3 --> null
 ```
+
 大家可以结合上面的编码规则来理解这个例子，希望大家能理解我们为什么选择了这个映射方案，这样做的目的是什么。
 
 ## 元信息管理
