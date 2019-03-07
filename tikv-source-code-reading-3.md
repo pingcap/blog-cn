@@ -1,14 +1,14 @@
 ---
-title: TiKV 源码解析系列文章（三）Prometheus （上）
+title: TiKV 源码解析系列文章（三）Prometheus（上）
 author: ['施闻轩']
 date: 2019-03-08
-summary: 本文为 TiKV 源码解析系列的第三篇，继续为大家介绍 TiKV 依赖的周边库。本文将为大家介绍 rust-prometheus 的基础知识以及最基本的几个指标的内部工作机制。
+summary: 本文将为大家介绍 rust-prometheus 的基础知识以及最基本的几个指标的内部工作机制。
 tags: ['TiKV 源码解析','Prometheus','社区']
 ---
 
-> 本文为 TiKV 源码解析系列的第三篇，继续为大家介绍 TiKV 依赖的周边库，这次是 [rust-prometheus]。
+> 本文为 TiKV 源码解析系列的第三篇，继续为大家介绍 TiKV 依赖的周边库： [rust-prometheus]。关于 [rust-prometheus] 的介绍会分为两篇，上篇主要介绍基础知识以及最基本的几个指标的内部工作机制，下篇会介绍一些高级功能的实现原理。
 >
-> [rust-prometheus] 是监控系统 [Prometheus] 的 Rust 客户端库，由 TiKV 团队实现。TiKV 使用 [rust-prometheus] 收集各种指标（metric）到 Prometheus 中，从而后续能再利用 [Grafana] 等可视化工具将其展示出来作为仪表盘监控面板。这些监控指标对于了解 TiKV 当前或历史的状态具有非常关键的作用。TiKV 提供了丰富的监控指标数据，并且代码中也到处穿插了监控指标的收集片段，因此了解 [rust-prometheus] 很有必要。[rust-prometheus] 的介绍会分为两篇，本文为上篇，主要介绍基础知识以及最基本的几个指标的内部工作机制，下篇会介绍一些高级功能的实现原理。
+> [rust-prometheus] 是监控系统 [Prometheus] 的 Rust 客户端库，由 TiKV 团队实现。TiKV 使用 [rust-prometheus] 收集各种指标（metric）到 Prometheus 中，从而后续能再利用 [Grafana] 等可视化工具将其展示出来作为仪表盘监控面板。这些监控指标对于了解 TiKV 当前或历史的状态具有非常关键的作用。TiKV 提供了丰富的监控指标数据，并且代码中也到处穿插了监控指标的收集片段，因此了解 [rust-prometheus] 很有必要。
 >
 > 感兴趣的小伙伴还可以观看我司同学在 [FOSDEM 2019] 会议上关于 rust-prometheus 的[技术分享][Share @ FOSDEM 2019]。
 
