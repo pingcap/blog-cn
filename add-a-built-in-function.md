@@ -3,7 +3,7 @@ title: 十分钟成为 TiDB Contributor 系列 | 添加內建函数
 author: ['申砾']
 date: 2017-03-14
 summary: 最近我们对 TiDB 代码做了些改进，大幅度简化了添加內建函数的流程，这篇教程描述如何为 TiDB 新增 builtin 函数。首先介绍一些必需的背景知识，然后介绍增加 builtin 函数的流程，最后会以一个函数作为示例。
-tags: ['TiDB', 'Contributor', '内建函数', '源码解析','社区']
+tags: ['TiDB','内建函数','社区']
 ---
 
 

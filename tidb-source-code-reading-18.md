@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（十八）tikv-client（上）
 author: ['周昱行']
 date: 2018-09-06
 summary: 本文会详细介绍数据读写过程中 tikv-client 需要解决的几个具体问题，enjoy～
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 

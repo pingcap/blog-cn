@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（十一）Index Lookup Join
 author: ['徐怀宇']
 date: 2018-06-27
 summary: 前两篇文章中介绍了 Chunk 和 Hash Join，本篇将继续介绍 TiDB 中 Index Lookup Join 具体实现方法和执行流程。Enjoy～
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 

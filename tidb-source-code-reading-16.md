@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（十六）INSERT 语句详解
 author: ['于帅鹏']
 date: 2018-08-17
 summary: 本文将首先介绍在 TiDB 中的 INSERT 语句的分类，以及各语句的语法和语义，然后分别介绍五种 INSERT 语句的源码实现，enjoy~
-tags: ['源码阅读','TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 

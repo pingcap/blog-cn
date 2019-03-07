@@ -3,7 +3,7 @@ title: TiDB 源码阅读系列文章（六）Select 语句概览
 author: ['申砾']
 date: 2018-03-30
 summary: 在先前的 TiDB 源码阅读系列文章（四）中，我们介绍了 Insert 语句，想必大家已经了解了 TiDB 是如何写入数据，本篇文章介绍一下 Select 语句是如何执行的。Enjoy~
-tags: ['源码阅读', 'TiDB','社区']
+tags: ['TiDB 源码阅读','社区']
 ---
 
 
