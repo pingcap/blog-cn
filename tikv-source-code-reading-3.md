@@ -1,6 +1,6 @@
 ---
 title: TiKV 源码解析系列文章（三）Prometheus（上）
-author: ['施闻轩']
+author: ['Breezewish']
 date: 2019-03-08
 summary: 本篇将为大家介绍 rust-prometheus 的基础知识以及最基本的几个指标的内部工作机制。
 tags: ['TiKV 源码解析','Prometheus','社区']
