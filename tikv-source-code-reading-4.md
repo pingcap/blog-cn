@@ -10,7 +10,7 @@ tags: ['TiKV 源码解析','Prometheus','社区']
 
 与上篇一样，以下内部实现都基于本文发布时最新的 rust-prometheus 0.5 版本代码，目前我们正在开发 1.0 版本，API 设计上会进行一些简化，实现上出于效率考虑也会和这里讲解的略微有一些出入，因此请读者注意甄别。
 
-## 指标向量 (Metric Vector)
+## 指标向量（Metric Vector）
 
 Metric Vector 用于支持带 Label 的指标。由于各种指标都可以带上 Label，因此 Metric Vector 本身实现为了一种泛型结构体，[`Counter`]、[`Gauge`] 和 [`Histogram`] 在这之上实现了 [`CounterVec`]、[`GaugeVec`] 和 [`HistogramVec`]。Metric Vector 主要实现位于 [src/vec.rs](https://github.com/pingcap/rust-prometheus/blob/89ca69913691d9d1609c78cc043fca9c3faa1a78/src/vec.rs)。
 
@@ -94,7 +94,7 @@ impl<T: MetricVecBuilder> MetricVecCore<T> {
 
 另外读者也可以发现，Label Values 的取值应当是一个有限的、封闭的小集合，不应该是一个开放的或取值空间很大的集合，因为每一个值都会对应一个内存中指标实例，并且不会被释放。例如 HTTP Method 是一个很好的 Label，因为它只可能是 GET / POST / PUT / DELETE 等；而 Client Address 则很多情况下并不适合作为 Label，因为它是一个开放的集合，或者有非常巨大的取值空间，如果将它作为 Label 很可能会有容易 OOM 的风险。这个风险在 [Prometheus 官方文档](https://prometheus.io/docs/practices/naming/#labels)中也明确指出了。
 
-## 整型指标 (Integer Metric)
+## 整型指标（Integer Metric）
 
 在讲解 Counter / Gauge 的实现时我们提到，[rust-prometheus] 使用 CAS 操作实现 [`AtomicF64`] 中的原子递增和递减，如果改用 atomic fetch-and-add 操作则一般可以取得更高效率。考虑到大部分情况下指标都可以是整数而不需要是小数，例如对于简单的次数计数器来说它只可能是整数，因此 [rust-prometheus] 额外地提供了整型指标，允许用户自由地选择，针对整数指标情况提供更高的效率。
 
@@ -135,7 +135,7 @@ pub type Counter = GenericCounter<AtomicF64>;
 pub type IntCounter = GenericCounter<AtomicI64>;
 ```
 
-# 本地指标 (Local Metrics)
+## 本地指标（Local Metrics）
 
 由前面这些源码解析可以知道，指标内部的实现是原子变量，用于支持线程安全的并发更新，但这在需要频繁更新指标的场景下相比简单地更新本地变量仍然具有显著的开销（大约有 10 倍的差距）。为了进一步优化、支持高效率的指标更新操作，[rust-prometheus] 提供了 Local Metrics 功能。
 
@@ -153,7 +153,7 @@ rust-prometheus 中 Counter 和 Histogram 指标支持 `local()` 函数，该函
 
 TiKV 中大量运用了本地指标提升性能。例如，[TiKV 的线程池](https://github.com/tikv/tikv/blob/56c1c6c2fbf6e357e0778b81f41343c52c91fddf/src/util/futurepool.rs)一般都提供 [`Context`](https://github.com/tikv/tikv/blob/56c1c6c2fbf6e357e0778b81f41343c52c91fddf/src/util/futurepool.rs#L284) 变量，`Context` 中存储了本地指标。线程池上运行的任务都能访问到一个和当前 worker thread 绑定的 `Context`，因此它们都可以安全地更新 `Context` 中的这些本地指标。最后，线程池一般提供 [`tick()`](https://github.com/tikv/tikv/blob/56c1c6c2fbf6e357e0778b81f41343c52c91fddf/src/util/futurepool.rs#L50) 函数，允许以一定间隔触发任务，[在 `tick()` 中 TiKV 会对这些 `Context` 中的本地指标进行 `flush()`](https://github.com/tikv/tikv/blob/56c1c6c2fbf6e357e0778b81f41343c52c91fddf/src/coprocessor/readpool_context.rs#L50)。
 
-## Local Counter
+### Local Counter
 
 [`Counter`] 的本地指标 [`LocalCounter`] 实现很简单，它是一个包含了计数器的结构体，该结构体提供了与 [`Counter`] 一致的接口方便用户使用。该结构体额外提供了 [`flush()`][`LocalCounter::flush()`]，将保存的计数器的值作为增量值更新到全局指标：
 
@@ -231,7 +231,7 @@ impl LocalHistogramCore {
 }
 ```
 
-## 静态指标 (Static Metrics)
+## 静态指标（Static Metrics）
 
 之前解释过，对于 Metric Vector 来说，由于每一个 Label Values 取值都是独立的指标实例，因此为了线程安全实现上采用了 HashMap + RwLock。为了提升效率，可以将 `with_label_values` 访问获得的指标保存下来，以后直接访问。另外使用姿势正确的话，Label Values 取值是一个有限的、确定的、小的集合，甚至大多数情况下在编译期就知道取值内容（例如 HTTP Method）。综上，我们可以直接写代码将各种已知的 Label Values 提前保存下来，之后可以以静态的方式访问，这就是静态指标。
 
