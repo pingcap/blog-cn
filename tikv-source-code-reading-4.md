@@ -235,7 +235,7 @@ impl LocalHistogramCore {
 
 之前解释过，对于 Metric Vector 来说，由于每一个 Label Values 取值都是独立的指标实例，因此为了线程安全实现上采用了 HashMap + RwLock。为了提升效率，可以将 `with_label_values` 访问获得的指标保存下来，以后直接访问。另外使用姿势正确的话，Label Values 取值是一个有限的、确定的、小的集合，甚至大多数情况下在编译期就知道取值内容（例如 HTTP Method）。综上，我们可以直接写代码将各种已知的 Label Values 提前保存下来，之后可以以静态的方式访问，这就是静态指标。
 
-以 TiKV 为例，有 Contributor 为 TiKV 提过这么个 PR：[#2765 server: precreate some labal metrics](https://github.com/tikv/tikv/pull/2765)。这个 PR 改进了 TiKV 中统计各种 gRPC 接口消息次数的指标，由于 gRPC 接口是固定的、已知的，因此可以提前将它们缓存起来：
+以 TiKV 为例，有 Contributor 为 TiKV 提过这个 PR：[#2765 server: precreate some labal metrics](https://github.com/tikv/tikv/pull/2765)。这个 PR 改进了 TiKV 中统计各种 gRPC 接口消息次数的指标，由于 gRPC 接口是固定的、已知的，因此可以提前将它们缓存起来：
 
 ```rust
 struct Metrics {
