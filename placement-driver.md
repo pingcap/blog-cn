@@ -193,7 +193,7 @@ TSO 是一个 int64 的整形，它由 physical time + logical time 两个部分
 
 对于 membership changes，比较容易，因为我们有最大副本数的配置，假设三个，那么当 region 的心跳上来，发现只有两个 peer，那么就 add peer，如果有四个 peer，就 remove peer。而对于 region 的 split / merge，则情况稍微要复杂一点，但也比较简单。注意，现阶段，我们只支持 split，merge 处于开发阶段，没对外发布，所以这里仅仅以 split 举例：
 
-1. 在 TiKV 里面，leader peer 会定期检查 region 所占用的空间是否超过某一个阀值，假设我们设置 region 的 size 为 64MB，如果一个 region 超过了 96MB， 就需要分裂。
+1. 在 TiKV 里面，leader peer 会定期检查 region 所占用的空间是否超过某一个阈值，假设我们设置 region 的 size 为 64MB，如果一个 region 超过了 96MB， 就需要分裂。
 2. Leader peer 会首先向 PD 发送一个请求分裂的命令，PD 在 `handleAskSplit` 里面处理，因为我们是一个 region 分裂成两个，对于这两个新分裂的 region，一个会继承之前 region 的所有的元信息，而另一个相关的信息，譬如 region ID，新的 peer ID，则需要 PD 生成，并将其返回给 leader。
 3. Leader peer 写入一个 split raft log，在 apply 的时候执行，这样 region 就分裂成了两个。
 4. 分裂成功之后，TiKV 告诉 PD，PD 就在 `handleReportSplit` 里面处理，更新 cache 相关的信息，并持久化到 etcd。
