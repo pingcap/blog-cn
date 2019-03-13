@@ -139,7 +139,7 @@ pub type IntCounter = GenericCounter<AtomicI64>;
 
 由前面这些源码解析可以知道，指标内部的实现是原子变量，用于支持线程安全的并发更新，但这在需要频繁更新指标的场景下相比简单地更新本地变量仍然具有显著的开销（大约有 10 倍的差距）。为了进一步优化、支持高效率的指标更新操作，[rust-prometheus] 提供了 Local Metrics 功能。
 
-rust-prometheus 中 Counter 和 Histogram 指标支持 `local()` 函数，该函数会返回一个该指标的本地实例。本地实例是一个非线程安全的实例，不能多个线程共享。例如，[`Histogram::local()`] 会返回 [`LocalHistogram`]。由于 Local Metrics 使用是本地变量，开销极小，因此可以放心地频繁更新 Local Metrics。用户只需定期调用 Local Metrics 的 `flush()` 函数将其数据定期同步到全局指标即可。一般来说 Prometheus 收集数据的间隔是 15s 到一分钟左右（由用户自行配置），因此即使是以 1s 为间隔进行 `flush()` 精度也足够了。
+rust-prometheus 中 Counter 和 Histogram 指标支持 `local()` 函数，该函数会返回一个该指标的本地实例。本地实例是一个非线程安全的实例，不能多个线程共享。例如，[`Histogram::local()`] 会返回 [`LocalHistogram`]。由于 Local Metrics 使用是本地变量，开销极小，因此可以放心地频繁更新 Local Metrics。用户只需定期调用 Local Metrics 的 `flush()` 函数将其数据定期同步到全局指标即可。一般来说 Prometheus 收集数据的间隔是 15s 到 1 分钟左右（由用户自行配置），因此即使是以 1s 为间隔进行 `flush()` 精度也足够了。
 
 普通的全局指标使用流程如下图所示，多个线程直接利用原子操作更新全局指标：
 
@@ -283,7 +283,7 @@ impl<T: RaftStoreRouter + 'static> tikvpb_grpc::Tikv for Service<T> {
 
 2. 如果还有另一个 Label 维度，那么需要维护的字段数量就会急剧膨胀（因为每一种值的组合都需要分配一个字段）。
 
-为了解决以上两个问题，[rust-prometheus] 提供了 [Static Metric 宏](https://github.com/pingcap/rust-prometheus/tree/master/static-metric)。例如对于刚才这个 TiKV 改进 PR #2765 来说，使用 Static Metric 宏可以简化为：
+为了解决以上两个问题，[rust-prometheus] 提供了 [Static Metric 宏](https://github.com/pingcap/rust-prometheus/tree/master/static-metric)。例如对于刚才的 TiKV 改进 PR #2765 来说，使用 Static Metric 宏可以简化为：
 
 ```rust
 make_static_metric! {
@@ -306,7 +306,7 @@ metrics.kv_get.start_coarse_timer();
 
 可以看到，使用宏之后，需要维护的繁琐的代码量大大减少了。这个宏也能正常地支持多个 Label 同时存在的情况。
 
-限于篇幅，这里就不具体讲解这个宏是如何写的了，感兴趣的同学可以观看我司同学最近才刚在 FOSDEM 2019 上进行的技术分享 [视频][Share @ FOSDEM 2019]（进度条 19:54 开始介绍 Static Metrics）和 [Slide](https://fosdem.org/2019/schedule/event/rust_prometheus/attachments/slides/3301/export/events/attachments/rust_prometheus/slides/3301/Introducing_Rust_Prometheus.pdf)，里面详细地介绍了如何从零开始写出一个这样的宏（的简化版本）。
+限于篇幅，这里就不具体讲解这个宏是如何写的了，感兴趣的同学可以观看我司同学最近在 FOSDEM 2019 上的技术分享 [视频][Share @ FOSDEM 2019]（进度条 19:54 开始介绍 Static Metrics）和 [Slide](https://fosdem.org/2019/schedule/event/rust_prometheus/attachments/slides/3301/export/events/attachments/rust_prometheus/slides/3301/Introducing_Rust_Prometheus.pdf)，里面详细地介绍了如何从零开始写出一个这样的宏（的简化版本）。
 
 [Prometheus]: https://prometheus.io
 [Grafana]: https://grafana.com/
