@@ -30,7 +30,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 ### 2.1 订单 TiDB 集群的两地三中心部署架构
 
-![图 1  两地三中心部署架构图](https://upload-images.jianshu.io/upload_images/542677-8c6dc6bb05f4004d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1  两地三中心部署架构图](../media/user-case-mobike-2/1.png)
 
 <center>图 1 两地三中心部署架构图</center>
 
@@ -43,7 +43,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 ### 2.2 订单集群的迁移过程以及业务接入拓扑
 
-![图 2 订单集群的迁移过程以及业务接入拓扑图](https://upload-images.jianshu.io/upload_images/542677-9e7d6d80e9556314.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 2 订单集群的迁移过程以及业务接入拓扑图](../media/user-case-mobike-2/2.png)
 
 <center>图 2 订单集群的迁移过程以及业务接入拓扑图</center>
 
@@ -83,7 +83,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 * Raft 算法中一个 Follower 出现网络隔离的场景，如下图所示。
 
-![图 3  Raft 算法中，Follower 出现网络隔离的场景图](https://upload-images.jianshu.io/upload_images/542677-31ec1d749e5472de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3  Raft 算法中，Follower 出现网络隔离的场景图](../media/user-case-mobike-2/3.png)
 
 <center>图 3 Raft 算法中，Follower 出现网络隔离的场景图</center>
 
@@ -104,7 +104,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 在线业务集群，承载了用户余额变更、我的消息、用户生命周期、信用分等 P1 级业务，数据规模和访问量都在可控范围内。产出的 TiDB Binlog 可以通过 Gravity 以增量形式同步给大数据团队，通过分析模型计算出用户新的信用分定期写回 TiDB 集群。
 
-![图 4  在线业务集群拓扑图](https://upload-images.jianshu.io/upload_images/542677-7fcca26eb2d557d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 4  在线业务集群拓扑图](../media/user-case-mobike-2/4.png)
 
 <center>图 4 在线业务集群拓扑图</center>
 
@@ -129,7 +129,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 * 数据归档、灾备。
 
 
-![图 5  数据沙盒集群拓扑图](https://upload-images.jianshu.io/upload_images/542677-98b790d16733b580.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 5  数据沙盒集群拓扑图](../media/user-case-mobike-2/5.png)
 
 <center>图 5  数据沙盒集群拓扑图</center>
 
@@ -181,11 +181,11 @@ TiDB 在 2.1 版本后引入新的参数 `tidb_mem_quota_query`，可以设置�
 当前的 TiDB 监控架构中，TiKV 依赖 Pushgateway 拉取监控数据到 Prometheus，当 TiKV 实例数量越来越多，达到 Pushgateway 的内存限制 2GB 进程会进入假死状态，Grafana 监控就会变成下图的断点样子：
 
 
-![图 6 监控拓扑图](https://upload-images.jianshu.io/upload_images/542677-9df064565da405d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 6 监控拓扑图](../media/user-case-mobike-2/6.png)
 
 <center>图 6 监控拓扑图</center>
 
-![图 7 监控展示图](https://upload-images.jianshu.io/upload_images/542677-2f25d08f4a24dcfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 7 监控展示图](../media/user-case-mobike-2/7.png)
 
 <center>图 7 监控展示图</center>
 
