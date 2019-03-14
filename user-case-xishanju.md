@@ -34,18 +34,16 @@ BigTable、GFS、MapReduce 是谷歌在分布式存储与查询领域的探索�
 
 新购物理机器 6 台：
 
-![表1.png](https://upload-images.jianshu.io/upload_images/542677-e19ddf99214a70ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-xishanju/1.png)
 
 旧物理机 4 台：
 
-![表2.png](https://upload-images.jianshu.io/upload_images/542677-c8f7cd05715934b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-xishanju/2.png)
 
 我们将对资源使用相对较小的 PD、监控服务分别放在旧物理机上，TiDB、TiKV 和 TiSpark 则分配在新机器上，详细如下：
 
+![](media/user-case-xishanju/3.png)
 
-
-![表3.png](https://upload-images.jianshu.io/upload_images/542677-6c80204ac5078d1d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 其中每个 TiKV 分配 CPU 10C / 内存 64G / 硬盘 2T，每个 TiSpark 分配 CPU 20C / 内存 64G。在资源有限情况下，结合数据量及舆情系统的 AP 业务属性，我们设计了这样相对复杂的架构，目的是为了充分利用好服务器资源，让它们能承担更极限的压力，事后有多次历史数据的导入也证明了我们这样设计的必要性，多谢 TiDB 的兄弟全程耐心指导及帮助。
 
@@ -57,7 +55,8 @@ BigTable、GFS、MapReduce 是谷歌在分布式存储与查询领域的探索�
 
 当前版本未加入实时计算业务，再加上使用了 TiSpark，所以整个架构相对简单，详细如下图：
 
-![1.png](https://upload-images.jianshu.io/upload_images/542677-988ce871ae65b6d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](media/user-case-xishanju/4.png)
 
 
 ## 项目上线及使用情况
