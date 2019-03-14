@@ -22,7 +22,7 @@ logo: /images/blog-cn/customers/weiruida-logo.png
 
 本平台以多维、丰富的数据为基础，结合传统的诊断分析方法，并充分发挥利用大数据智能化的技术手段，快速及时的发现、分析定位设备运转及企业运维过程中的问题，并以流程化、自动化的软件系统辅助用户高效的跟踪、处理问题，目标提升企业设备运维管理的能力，节约运维成本，为企业创造价值。
 
-![图 1：WindRDS 系统交互图](https://upload-images.jianshu.io/upload_images/542677-64dad7838b3d4419.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1：WindRDS 系统交互图](media/user-case-weiruida/1.png)
 
 <center>图 1：WindRDS 系统交互图</center>
 
@@ -66,35 +66,35 @@ TiDB 在我司的数据中心部署的应用情况如下：
 
 而为了满足大数据可视化 BI 分析、机器学习的 OLAP 场景，选用了多种数据中间件产品 HBase、Hive、Kylin 及 Spark 进行组合，形成一个复杂的多种数据中间件产品混合型集群，一定程度满足了 OLAP 的需求，但不同的产品之间存在资源争抢和制约，集群非常难于维护，非一步到位的最佳方案。
 
-![图 2：改造前 WindRDS 系统架构](https://upload-images.jianshu.io/upload_images/542677-937f442a57515cf0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![图 2：改造前 WindRDS 系统架构](media/user-case-weiruida/2.png)
 
 <center>图 2：改造前 WindRDS 系统架构</center>
 
 改造之后，TiDB + TiSpark 的解决方案，解决了之前方案的不足，系统数据中间件产品种类简化，OLTP + OLAP 一揽子解决方案，系统数据存储和查询计算集群结构简单，较少人工参与系统节点维护，降低运维复杂度，是一个比较理想的解决方案。
 
-![图 3：改造后 WindRDS 部署架构](https://upload-images.jianshu.io/upload_images/542677-7cfd638000315b80.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3：改造后 WindRDS 部署架构](media/user-case-weiruida/3.png)
 
 <center>图 3：改造后 WindRDS 部署架构</center>
 
 ### 测试集群配置
 
 TiDB 测试集群总体配置如下：
-![](https://upload-images.jianshu.io/upload_images/542677-6d24f93e5d52046e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](media/user-case-weiruida/4.png)
 
 TiSpark 测试集群总体配置如下：
-![](https://upload-images.jianshu.io/upload_images/542677-8b8048dd27d66036.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](media/user-case-weiruida/5.png)
 
 ### 测试数据查询性能对比
 
 我们使用 TiDB 1.0 版本搭建测试集群，然后我们进行了简单的查询性能测试，我们对 WindRDS 的 5 种类型的数据进行查询测试，从业务应用中选择了针对每种数据类型的耗时、复杂的关联 SQL 语句，分别在 MySQL 上和 TiDB 上进行执行，多次执行取平均值，如下图所示，明显的，TiDB 的响应时间要小于 MySQL，可见 TiDB 的查询性在我们业务模型中表现明显优于 MySQL 。
 
-![图 4：测试数据关键操作对比 MySQL vs TiDB](https://upload-images.jianshu.io/upload_images/542677-4a993bd1ba4eaf04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![图 4：测试数据关键操作对比 MySQL vs TiDB](media/user-case-weiruida/6.png)
 
 <center>图 4：测试数据关键操作对比 MySQL vs TiDB</center>
 
-![图 5：测试数据关键操作 MySQL vs TiDB 耗时对比 (越低越好)](https://upload-images.jianshu.io/upload_images/542677-31a2f4d848c711f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 5：测试数据关键操作 MySQL vs TiDB 耗时对比 (越低越好)](media/user-case-weiruida/7.png)
 
 <center>图 5：测试数据关键操作 MySQL vs TiDB 耗时对比 (越低越好)</center>
 
