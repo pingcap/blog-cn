@@ -10,6 +10,7 @@ weight: 3
 logo: /images/blog-cn/customers/iqiyi-logo.png
 ---
 
+>作者：朱博帅，爱奇艺资深数据库架构师
 
 ## 背景介绍
 
@@ -113,5 +114,5 @@ TiDB-Lightning 实现架构图：
 
 我司仍有其它业务在接入 TiDB 服务，目前正在评估测试中。一些业务场景是 OLTP+OLAP 混合的场景，TiSpark 正好可以大展身手。目前在测试集群发现 TiSpark 查询时对 OLTP 业务的影响还是比较大的，必须限制 TiSpark 对 TiDB 集群造成的压力。还部署了单独 TiDB 集群做 OLAP 场景的测试，对内部参数做了针对性的优化。未来计划会继续加大对 TiDB 的投入，贡献一些 PR 到社区，其中很大的一部分工作是增强 TiDB-Binlog 的功能，和现有的一些数据同步组件整合起来，支持 TiDB 到 Kudu、HBase 等的同步。
 
->作者：朱博帅，爱奇艺资深数据库架构师
+
 

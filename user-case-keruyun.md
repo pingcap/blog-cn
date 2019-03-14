@@ -10,6 +10,7 @@ weight: 15
 logo: /images/blog-cn/customers/keruyun-logo.png
 ---
 
+>作者：客如云 BigData Infra Team 
 
 ## 公司介绍
 
@@ -292,4 +293,3 @@ group by t.id ;
 感谢 TiDB 的厂商的人员给予了我们巨大的支持，希望我们能够提供给 TiDB 一些有意义的信息和建议，在 TiDB 成长的路上添砖加瓦。
 
 
->作者：客如云 BigData Infra Team 

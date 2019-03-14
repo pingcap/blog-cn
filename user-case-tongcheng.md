@@ -10,6 +10,7 @@ weight: 9
 logo: /images/blog-cn/customers/tongcheng-logo.png
 ---
 
+>作者：瞿锴，同程网资深 DBA。
 
 ## 项目背景  
 
@@ -58,4 +59,4 @@ logo: /images/blog-cn/customers/tongcheng-logo.png
 
 另外，我们通过同 PingCAP 工程师的深度交流，了解到了 TiDB 的子项目 [TiSpark](https://github.com/pingcap/tispark)，后续计划引入 TiSpark 来对数据进行实时分析、实时数仓等工作的尝试，让技术对业务产生更大的价值。
 
->作者：瞿锴，同程网资深 DBA。
+
