@@ -35,11 +35,11 @@ logo: /images/blog-cn/customers/keruyun-logo.png
 
 新老框架如下图：
 
-![图：老的框架](http://upload-images.jianshu.io/upload_images/542677-a1df896622f704fb?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图：老的框架](media/user-case-keruyun/1.png)
 
 <center>图：老的框架</center>
 
-![图：新的框架](http://upload-images.jianshu.io/upload_images/542677-c458370c2f45d4a0?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图：新的框架](media/user-case-keruyun/2.png)
 
 <center>图：新的框架</center>
 
@@ -57,25 +57,28 @@ logo: /images/blog-cn/customers/keruyun-logo.png
 
 目前我们将线上 RDS 中三个库的数据通过 Binlog 同步到 TiDB ，高峰期 QPS 23k 左右，接入了业务端部分查询服务；未来我们会将更多 RDS 库数据同步过来，并交付给更多业务组使用。因为 TiDB 是新上项目，之前的业务线也没有线上 SQL 迁移的经历，所以在写入性能上也没有历史数据对比。
 
-![](http://upload-images.jianshu.io/upload_images/542677-bd84a89f3f5a968b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/3.png)
+
 
 ### 2. 性能对比
 
 （1）查询一个索引后的数字列，返回 10 条记录，测试索引查询的性能。
 
-![](http://upload-images.jianshu.io/upload_images/542677-e9b8c6ab8727d3b9?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/4.png)
+
 
 （2）查询两个索引后的数字列，返回 10 条记录（每条记录只返回 10 字节左右的 2 个小字段）的性能，这个测的是返回小数据量以及多一个查询条件对性能的影响。
 
-![](http://upload-images.jianshu.io/upload_images/542677-a8cd97f157086ca1?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/5.png)
+
 
 （3）查询一个索引后的数字列，按照另一个索引的日期字段排序（索引建立的时候是倒序，排序也是倒序），并且 Skip 100 条记录后返回 10 条记录的性能，这个测的是 Skip 和 Order 对性能的影响。
 
-![](http://upload-images.jianshu.io/upload_images/542677-a071a948645b68ab?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/6.png)
 
 （4）查询 100 条记录的性能（没有排序，没有条件），这个测的是大数据量的查询结果对性能的影响。
 
-![](http://upload-images.jianshu.io/upload_images/542677-5c2116de0650aad5?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/7.png)
 
 （5）TiDB 对比 MySQL 复杂 SQL 执行速率：
 
@@ -116,7 +119,7 @@ ANDc.trade_pay_status in(3,5)                    
 AND c.delivery_type in(1,2,3,4,15)
 ```
 
-![](http://upload-images.jianshu.io/upload_images/542677-b91ac6ac0408c699?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/8.png)
 
 
  **b. 对应 SQL：**
@@ -158,7 +161,8 @@ ANDp.payment_type not in(4,5,6,8,9,10,11,12)        
 GROUP BY p.relate_id  ) c
 ```
 
-![](http://upload-images.jianshu.io/upload_images/542677-2c3dbbf4df319fd6?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/9.png)
+
 
  **c. 对应 SQL：**
 
@@ -199,7 +203,8 @@ ANDc.trade_pay_status in(3,5)                    
 AND c.delivery_type in(1,2,3,4,15)
 ```
 
-![](http://upload-images.jianshu.io/upload_images/542677-4623b5c6a45ed127?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/10.png)
+
 
 **d. 对应 SQL：**
 
@@ -224,7 +229,8 @@ AND t.shop_identy IN(<123个商户号码>)
 GROUP BY t.id
 ```
 
-![](http://upload-images.jianshu.io/upload_images/542677-2e4687a243c4d125?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/11.png)
+
 
 **e. 对应 SQL：**
 
@@ -251,15 +257,17 @@ ANDp.is_paid=1  AND  t.status_flag=1
 group by t.id ;
 ```
 
-![](http://upload-images.jianshu.io/upload_images/542677-6bb750b9fc3e5cea?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/12.png)
+
 
 （6）OLTP 对比测试结果：
 
-![](http://upload-images.jianshu.io/upload_images/542677-c574063f7389fde5?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/13.png)
 
-![](http://upload-images.jianshu.io/upload_images/542677-426667ee175decb0?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/14.png)
 
-![](http://upload-images.jianshu.io/upload_images/542677-172723f1eb8d214f?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-keruyun/15.png)
+
 
 （7）简单测试结论：
 
