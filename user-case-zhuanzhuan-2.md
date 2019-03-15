@@ -33,7 +33,7 @@ logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 
 ### MySQL 事务和 TiDB 事务对比
 
-![图 1](https://upload-images.jianshu.io/upload_images/542677-22a7e7be0e8f9d74.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan-2/1.png)
 
 在 TiDB 中执行的事务 b，返回影响条数是 1（认为已经修改成功），但是提交后查询，status 却不是事务 b 修改的值，而是事务 a 修改的值。
 
@@ -55,7 +55,7 @@ logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 
 其简要流程如下：
 
-![图 2](https://upload-images.jianshu.io/upload_images/542677-32fb2e3a7f0f5370.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan-2/2.png)
 
 在事务提交的 PreWrite 阶段，当“锁检查”失败时：如果开启冲突重试，事务提交将会进行重试；如果未开启冲突重试，将会抛出写入冲突异常。
 
@@ -67,13 +67,14 @@ logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 
 在业务层，可以借助分布式锁，实现串行化处理，如下：
 
-![图 3](https://upload-images.jianshu.io/upload_images/542677-dc82ae214d24623a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](media/user-case-zhuanzhuan-2/3.png)
 
 #### 基于 Spring 和分布式锁的事务管理器拓展
 
 在 Spring 生态下，spring-tx 中定义了统一的事务管理器接口：`PlatformTransactionManager`，其中有获取事务（getTransaction）、提交（commit）、回滚（rollback）三个基本方法；使用装饰器模式，事务串行化组件可做如下设计：
 
-![图 4](https://upload-images.jianshu.io/upload_images/542677-12af845508259b13.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan-2/4.png)
 
 其中，关键点有：
 
@@ -85,9 +86,9 @@ logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 
 隐藏复杂的事务重写逻辑，暴露简单友好的 API：
 
-![图 5](https://upload-images.jianshu.io/upload_images/542677-b949cb5e1608134e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan-2/5.png)
 
-![图 6](https://upload-images.jianshu.io/upload_images/542677-c418d28a4380935a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan-2/6.png)
 
 
 ## TiDB 查询和 MySQL 的差异
@@ -152,7 +153,7 @@ SELECT * FROM t_job_record where status=0 and execute_time<= 1546361579646
 
 **原因分析**：在 TiDB 中，底层索引结构为 LSM-Tree，如下图：
 
-![图 7](https://upload-images.jianshu.io/upload_images/542677-2dd7c6f5418403ba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan-2/7.png)
 
 当从内存级的 C0 层查询不到数据时，会逐层扫描硬盘中各层；且 merge 操作为异步操作，索引数据更新会存在一定的延迟，可能存在无效索引。由于逐层扫描和异步 merge，使得查询效率较低。
 
@@ -176,7 +177,7 @@ SELECT * FROM t_job_record  where status=0 and execute_time>1546357979646  and e
 
 mysql-jdbc 源码中，实现了标准的 `Statement` 和 `PreparedStatement` 的同时，还有一个`ServerPreparedStatement` 实现，`ServerPreparedStatement` 属于`PreparedStatement`的拓展，三者对比如下：
 
-![图8.png](https://upload-images.jianshu.io/upload_images/542677-6145187404c2ed5c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan-2/8.png)
 
 容易发现，`PreparedStatement` 和 `Statement` 的区别主要区别在于参数处理，而对于发送数据包，调用服务端的处理逻辑是一样（或类似）的；经测试，二者速度相当。其实，`PreparedStatement` 并不是服务端预处理的；`ServerPreparedStatement` 才是真正的服务端预处理，速度也较 `PreparedStatement` 快；其使用场景一般是：频繁的数据库访问，sql 数量有限（有缓存淘汰策略，使用不宜会导致两次 IO）。
 
@@ -188,8 +189,7 @@ mysql-jdbc 源码中，实现了标准的 `Statement` 和 `PreparedStatement` �
 
 批处理的简要流程说明如下：
 
-![图9.png](https://upload-images.jianshu.io/upload_images/542677-55a982cd9b2b6fc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-zhuanzhuan-2/9.png)
 
 经业务中实践，使用批处理方式的写入（或更新），比常规 `insert … values(…),(…)`（或 `update … case … when… then… end`）性能更稳定，耗时也更低。
 
