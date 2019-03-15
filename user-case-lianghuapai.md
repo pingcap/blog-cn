@@ -76,7 +76,7 @@ logo: /images/blog-cn/customers/lianghuapai-logo.png
 
 可以发现，TiDB 完美契合我们的每个需求。经过 TiDB 在用户行为数据分析系统中的长期使用，我们已经积累了一定的经验，在此过程中 TiDB 官方也给予了长期的技术支持，遇到的问题在沟通时也能够及时的反馈，而且还与我司技术人员进行过多次技术交流及线下分享，在此我们深表感谢。伴随着风控系统需求的持续增长，我们对整体架构进行了新一轮的优化，新的数据接入及存储架构如图 1。
 
-![1-优化后的架构图](https://upload-images.jianshu.io/upload_images/542677-0a608360ebc707b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![1-优化后的架构图](media/user-case-lianghuapai/1.png)
 
 <center>图 1  优化后的架构图</center>
 
@@ -98,7 +98,8 @@ logo: /images/blog-cn/customers/lianghuapai-logo.png
 
 经过与 TiDB 官方技术人员的沟通，我们进行了删除类似索引、analyze table 等操作，发现问题仍然存在。通过图 2 可以看到完全相同的 SQL 语句，其执行结果的差异性。最后按官方建议，我们采用添加 use index 的方式使其强制走索引，执行时间由 4 分钟变成了 < 1s，暂时解决了业务上的需求。
 
-![2-explain 示意图](https://upload-images.jianshu.io/upload_images/542677-890875d7de5a4e8f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![2-explain 示意图](media/user-case-lianghuapai/2.png)
+
 
 <center>图 2  explain 示意图</center>
 
