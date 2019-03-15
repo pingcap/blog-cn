@@ -35,7 +35,8 @@ logo: /images/blog-cn/customers/fengchao-logo.png
 
 根据以上期望进行分析，我们分析了目前市面上存在的 NewSQL 分布式数据库，列表如下： 
 
-![](https://upload-images.jianshu.io/upload_images/542677-5a820d66fe6d1a99.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](media/user-case-fengchao/1.jpg)
 
 **在综合考虑了开源协议，成熟度，可控度，性能，服务支撑等综合因素之后，我们选择了 TiDB，它主要优势如下：**
 
@@ -65,19 +66,19 @@ TiDB 的基准测试，使用的工具是 sysbanch 进行测试，使用了 8 �
 
 核心服务器配置：
 
-![](https://upload-images.jianshu.io/upload_images/542677-995e5b7f363a02df.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](media/user-case-fengchao/2.jpg)
+
 
 测试结果：
 
-![](https://upload-images.jianshu.io/upload_images/542677-07def9ded73b6070.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-fengchao/3.png)
 
 通过～
 
 ### 2. 功能测试
 
-
-![](https://upload-images.jianshu.io/upload_images/542677-f7ee13595c0635dd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-fengchao/4.jpg)
 
 通过～
 
@@ -89,7 +90,7 @@ TiDB 的基准测试，使用的工具是 sysbanch 进行测试，使用了 8 �
 
 在寻找第一个接入项目的时候，我们以下面 4 个特征，进行了选择：
 
-![](https://upload-images.jianshu.io/upload_images/542677-1e6b3da457be7626.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-fengchao/5.png)
 
 最终，我们选择了推送服务。因为推送服务是丰巢用来发送取件通知的核心服务，量非常大，但逻辑简单，而且有备选外部推送方案，所以即便万一出现问题，而不会影响用户。
 
@@ -111,25 +112,28 @@ TiDB 的基准测试，使用的工具是 sysbanch 进行测试，使用了 8 �
 
 接入 TiDB 之后，原先按照时间维度来拆分的十几个分表，变成了一张大表。最明显的变化，是在大数据量下，数据查询能力有了显著的提升。 
 
-![](https://upload-images.jianshu.io/upload_images/542677-eef2bf7900e8671d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-fengchao/6.jpg)
 
 ### 2. 监控能力
 
 TiDB 拥有很完善的监控平台，可以直观的看到容量，以及节点状态：
 
-![](https://upload-images.jianshu.io/upload_images/542677-9f06fd3b88effdc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-fengchao/7.png)
 
 还能了解每个节点负载和 sql 执行的延时：
 
-![](https://upload-images.jianshu.io/upload_images/542677-4912a4c9f12da3a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-fengchao/8.png)
+
 
 当然还能了解所在机器上的位置，CPU 内存等负载情况：
 
-![](https://upload-images.jianshu.io/upload_images/542677-21130af5ec82e33b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](media/user-case-fengchao/9.png)
+
 
 网络状态也能清晰的监控到：
 
-![](https://upload-images.jianshu.io/upload_images/542677-6de5bfaa854bf2f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-fengchao/10.png)
 
 所有这些能让团队能分析出来有问题的 sql，以及数据库本身的问题。
 
