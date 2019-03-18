@@ -19,7 +19,7 @@ logo: /images/blog-cn/customers/youzu-logo.png
 
 2017 年初的时候，游族的用户中心体系面临迭代和重构，当时数据库有数亿多的核心数据，通过 hash key 分为了 1024 张表在 64 个数据库中来存储，使用自研的代码框架来进行对应 hash key 的 seek 操作。这时，非 hash key 的查询、DDL 变更等业务需求，分表分库逻辑代码框架的局限，让研发和运维都面临较高的数据库使用成本，数据库不能灵活高效的支撑业务需求。
 
-![图1：分库分表方案架构图](http://upload-images.jianshu.io/upload_images/542677-db73a1e640bd1dd6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图1：分库分表方案架构图](media/user-case-youzu/1.png)
 
 <center>图 1：分库分表方案架构图</center>
 
@@ -109,7 +109,7 @@ logo: /images/blog-cn/customers/youzu-logo.png
 
 同时，在 kv 存储层没有瓶颈的时候，采用复用了集群的 kv 层的策略，在无状态的 Server 层做了业务隔离，间接的提升了整个集群的使用率，类似一个 DBaaS 的服务（图 2）。
 
-![图2：多套业务系统 TiDB 部署图](http://upload-images.jianshu.io/upload_images/542677-2cf390d0d0f3e6c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图2：多套业务系统 TiDB 部署图](media/user-case-youzu/2.png)
 
 <center>图 2：多套业务系统 TiDB 部署图</center>
 
