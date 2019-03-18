@@ -25,7 +25,7 @@ logo: /images/blog-cn/customers/erweihuo-logo.png
 
 二维火各类报表界面：
 
-![](http://upload-images.jianshu.io/upload_images/542677-d05435a306377f4e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-erweihuo/1.png)
 
 ## 二维火实时报表的业务约束
 
@@ -83,7 +83,7 @@ logo: /images/blog-cn/customers/erweihuo-logo.png
 
 TiDB 集群总体配置如下：2\*TiDB、3\*TiKV、3*PD
 
-![](http://upload-images.jianshu.io/upload_images/542677-dd95c840011a68c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-erweihuo/2.png)
 
 ## TiDB 使用体验
 
@@ -91,7 +91,7 @@ TiDB 集群总体配置如下：2\*TiDB、3\*TiKV、3*PD
 
 整体数据库架构图：
 
-![](http://upload-images.jianshu.io/upload_images/542677-a8567f41fb8d3bc9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-erweihuo/3.png)
 
 ## 在 TiDB 使用中的几点注意事项
 
