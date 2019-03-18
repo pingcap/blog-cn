@@ -10,7 +10,10 @@ weight: 4
 logo: /images/blog-cn/customers/funyours-japan-logo.png
 ---
 
+>作者：张明塘，FUNYOURS JAPAN 运营系统工程師 
+
 ## 背景
+
 [株式会社 FUNYOURS JAPAN]( http://company.funyours.co.jp/ ) 自 2014 在日本成立以来，营运多款颇受好评的页游跟手游，如：剣戟のソティラス、九十九姬 等，对于营运游戏来说，能够了解游戏中的玩家在做什么，喜欢的偏好是什么，关卡的设计是否平衡，都是相当重要的，所以随着营运时间的增长，资料库数据在亿笔以上也是寻常的。
 
 所以我们的技术单位也一直不断在评估市面上的各种资料库以及如何改进目前现有系统与架构，近年来最热门的资料库系统可以说是 NoSQL 了，不论 MongoDB，Cassandra，Redis，HBase 等等都占有一片天，具有读写快速，容易扩展等特性。经过初步了解后，采用 NoSQL 方式，需要对于目前的资料储存架构整个重新设计，并且需要配合采用的该套 NoSQL 资料库进行业务改造设计，那么该采用哪一套 NoSQL 资料库又是一个需要慎重考虑的课题。先回过头来看当前最需要处理改进的项目：
@@ -36,7 +39,7 @@ logo: /images/blog-cn/customers/funyours-japan-logo.png
 ## 上线 TiDB
 初期上线采用了 4 core cpu、记忆体 32 GB 作为 TiKV，8 core cpu、记忆体 16 GB 作为 TiDB/PD，3 台 TiKV、3 台 PD 、2 台 TiDB 跟 PD 混搭的方式。透过 prometheus 观察，发现 loading 都集中在同一台 TiKV 上，且 loadaverage 在高峰期间会冲到 7 以上，初步判断可能是规格不够，于是决定将 TiKV 都提升到 16 core 、24 GB 记忆体。因为线上正在举办活动，所以不希望停机，采用先增加三台 TiKV 机器同步后，再移除三台原本 TiKV 的方式进行，也特别感谢 PingCAP 在置换机器中间，一直在线上支援，过程中很平顺的完成了切换机器。机器提高规格后，高峰期的 loadaverage 下降到 4，但是还是会集中在其中某一台 TiKV 上不会分散到三台，在 PingCAP 的协助分析下，判断出可能是业务行为中的 `select count(1)` 这个 SQL 太过频繁，涉及该业务数据一直存取在同 1 个 region，通过尝试在文件上的提高开发度的方式，还是无法解决（最新的 v1.1 版有在对 `count(*)`  进行最佳化），最后结合数据特性对业务行为进行了变更，loadavg 几乎都是保持在 1 以下。
 
-![原本架构与 TiDB 架构](http://upload-images.jianshu.io/upload_images/542677-9796df989c1e95e8..png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![原本架构与 TiDB 架构](media/user-case-funyours-japan/1.png)
 
 比较原本架构与 TiDB 架构，原本架构上是采用多组 DB 的方式来让使用者分布在不同组 DB 上面，来达到所需的效能。但是当其中某几组负荷较大时，其他组 DB 并无法协助分担负荷。采用 TiDB 的架构后，在机器的使用上更有效率，并且在使用后台查找分析资料时，原本的架构下，只要时间一拉长到一个月以上，就会对该组 DB 的效能造成影响，而在 TiDB 的架构下，并不会有这样的问题。
 
@@ -45,6 +48,6 @@ logo: /images/blog-cn/customers/funyours-japan-logo.png
 ## 未来计划
 目前正在评估 TiSpark 的使用，未来计划将后台分析资料部份，改采用 TiSpark。因为 TiSpark 可以直接操作 TiKV，也能够应用 Spark 提供的许多现成的函式库来对收集到的 log 做数据分析。预期利用 Spark 的机器学习来初步判断系统内的每个功能是否正常运作，并提出警示，例如当使用者的登入频率异常时等，来协助人工监控游戏运行状态。
 
->作者：张明塘，FUNYOURS JAPAN 运营系统工程師 
+
 
 
