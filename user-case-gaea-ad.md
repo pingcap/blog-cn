@@ -11,6 +11,8 @@ logo: /images/blog-cn/customers/gaea-ad-logo.png
 ---
 
 
+>作者简介：刘玄，盖娅互娱数据平台高级开发工程师，主要负责实时数据业务和数据流方向。毕业于湖南大学软件工程系，曾任百度高级运维工程师，负责大搜建库运维。
+
 ## 背景介绍
 
 盖娅广告匹配系统（GaeaAD）用于支撑盖娅互娱全平台实时广告投放系统，需要将广告数据和游戏 SDK 上报的信息进行近实时匹配，本质上来说需要实时的根据各个渠道的广告投放与相应渠道带来的游戏玩家数据进行计算，实现广告转化效果分钟级别的展现及优化。
@@ -20,7 +22,7 @@ logo: /images/blog-cn/customers/gaea-ad-logo.png
 
 在系统设计之初，基于对数据量的预估以及简化实现方案考虑，我们选用了高可用的 MySQL RDS 存储方案，当时的匹配逻辑主要通过 SQL 语句来实现，包含了很多联表查询和聚合操作。当数据量在千万级别左右，系统运行良好，基本响应还在一分钟内。
 
-![图 1 MySQL RDS 存储方案架构图](https://upload-images.jianshu.io/upload_images/542677-b1f4547eb1e05b6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1 MySQL RDS 存储方案架构图](media/user-case-gaea-ad/1.png)
 
 <center>图 1 MySQL RDS 存储方案架构图</center>
 
@@ -50,7 +52,8 @@ logo: /images/blog-cn/customers/gaea-ad-logo.png
 
 在部署测试的过程中，我们使用 TiDB 提供的 Syncer 工具将 TiDB 作为 MySQL Slave 接在原业务的 MySQL 主库后边观察，确保读写的兼容性以及稳定性，经过一段时间观察后，确认读写没有任何问题，业务层的读请求切换至 TiDB，随后把写的流量也切换至 TiDB 集群，完成平滑的上线。
 
-![图 2 TiDB 方案架构图](https://upload-images.jianshu.io/upload_images/542677-c1afc37c2f93f590.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图 2 TiDB 方案架构图](media/user-case-gaea-ad/2.png)
 
 <center>图 2 TiDB 方案架构图</center>
 
@@ -58,7 +61,7 @@ GaeaAD 系统从 2016 年 10 月上线以来，已经稳定运行了一季度多
 
 * 用 3 个节点组成的 TiDB 集群替换了原先的高可用 MySQL RDS 后，同样数据量级下，单次匹配平均耗时从 2 分钟以上降到了 30 秒左右，后续随着 TiDB 工程师的持续优化，达到了10 秒左右。另外，我们发现，**TiDB 在数据规模越大的情况下，对比 MySQL 的优势就越明显，应该是 TiDB 自研的分布式 SQL 优化器带来的优势。**不过在数据量比较轻量的情况下，因内部通信成本，优势相比 MySQL 并不明显。
 
-![图 3 TiDB 与 MySQL 在不同数据量下的查询时间对比.png](https://upload-images.jianshu.io/upload_images/542677-3d6c68670b9e0ce1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3 TiDB 与 MySQL 在不同数据量下的查询时间对比](media/user-case-gaea-ad/3.png)
 
 <center>图 3 TiDB 与 MySQL 在不同数据量下的查询时间对比</center>
 
@@ -81,5 +84,3 @@ GaeaAD 系统从 2016 年 10 月上线以来，已经稳定运行了一季度多
 
 3\. TiDB 采用流水线的方式读取数据，并且优化过 IndexScan 算子，降低整个流程的启动时间。
 
-
->作者简介：刘玄，盖娅互娱数据平台高级开发工程师，主要负责实时数据业务和数据流方向。毕业于湖南大学软件工程系，曾任百度高级运维工程师，负责大搜建库运维。
