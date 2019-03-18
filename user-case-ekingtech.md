@@ -68,7 +68,7 @@ TiDB 适用于 100% 的 OLTP 场景和 80% 的 OLAP 场景。对业务没有任
 
 TiDB 集群主要分为三个组件：**TiDB Server、TiKVServer、PD Server**，整体实现架构如下：
 
-![image](http://upload-images.jianshu.io/upload_images/542677-1d7aafcd6acdefbc?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-ekingtech/1.jpeg)
 
 <center>TiDB 整体架构图</center>
 
@@ -96,7 +96,7 @@ TiKV Server 负责存储数据，从外部看 TiKV 是一个分布式的提供�
 
 **RSS 系统的架构如下：**
 
-![image](http://upload-images.jianshu.io/upload_images/542677-d749884e50f2faa3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-ekingtech/2.jpeg)
 
 <center>RSS 系统的架构图</center>
 
