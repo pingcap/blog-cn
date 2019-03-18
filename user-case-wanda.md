@@ -11,6 +11,8 @@ weight: 3
 logo: /images/blog-cn/customers/wanda-logo.png
 ---
 
+> 作者：陈新江，万达网络科技集团大数据中心
+
 
 [万达网络科技集团](http://www.wanda-tech.cn/ ) 是中国唯一的实业+互联网大型开放型平台公司，拥有飞凡信息、快钱支付、征信、网络信贷、大数据等公司，运用大数据、云计算、人工智能、场景应用等技术为实体产业实现数字化升级，为消费者提供生活圈的全新消费服务。
 
@@ -34,7 +36,7 @@ logo: /images/blog-cn/customers/wanda-logo.png
 
 + 集群整体性能的短板加上对 JOIN 支持的薄弱，使得要在业务上实现大并发高性能的风控规则计算变的很困难。
 
-![风控平台原来采用的 MySQL Galera Cluster 集群架构](http://upload-images.jianshu.io/upload_images/542677-a380aeaba920856f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![风控平台原来采用的 MySQL Galera Cluster 集群架构](media/user-case-wanda/1.png)
 
 万达的技术团队还考察了市场上用的比较多的 MySQL 主从复制以及通过 MySQL Proxy 中间件实现分库分表的方案。但这些方案，无论是高可用安全性，强一致性，还是对业务应用所需要的复杂事务／JOIN 操作以及横向扩展能力上，都无法满足实时风控平台的业务要求。这些问题集中反映在以下几个方面：
 
@@ -48,7 +50,7 @@ logo: /images/blog-cn/customers/wanda-logo.png
 
 最终万达的技术团队，通过评估验证，选择了 TiDB 帮助他们实现一个高性能，高可靠性和高扩展能力的实时风控平台后台数据库系统。
 
-![TiDB 的整体框架图](http://upload-images.jianshu.io/upload_images/542677-15ca9b6ebcf280fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![TiDB 的整体框架图](media/user-case-wanda/2.png)
 
 TiDB 产品和技术方案对业务需求的支持和助力效果，集中表现在：
 
@@ -64,4 +66,4 @@ TiDB 产品和技术方案对业务需求的支持和助力效果，集中表现
 
 万达网络科技集团大数据中心技术专家陈新江表示："TiDB 的表现让万达的技术团队有了信心，接下来将在 TiDB 的基础上，根据业务特点，拓展应用规模，增加诸如 TiSpark 复杂计算组件，整合 CDC 工具以提升 ETL 实时性以及增强 TiDB 运维管理能力等多项架构和技术演进工作，继续在万达的核心业务架构中发挥重要作用。"
 
-> 作者：陈新江，万达网络科技集团大数据中心
+
