@@ -10,6 +10,7 @@ weight: 3
 logo: /images/blog-cn/customers/iqiyi-logo.png
 ---
 
+>作者：朱博帅，爱奇艺资深数据库架构师
 
 ## 背景介绍
 
@@ -25,11 +26,11 @@ logo: /images/blog-cn/customers/iqiyi-logo.png
 
 边控中心存储的是机器的安全统计信息，包括根据 DC、IP、PORT 等不同维度统计的流量信息。上层业务会不定期做统计查询，其业务页面如下：
 
-![图 1 边控中心上层业务页面（一）](https://upload-images.jianshu.io/upload_images/542677-31617bccf7b2dc4d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1 边控中心上层业务页面（一）](media/user-case-iqiyi/1.png)
 
 <center>图 1 边控中心上层业务页面（一）</center>
 
-![图 2 边控中心上层业务页面（二）](https://upload-images.jianshu.io/upload_images/542677-87b0c2cbb3c68e13.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 2 边控中心上层业务页面（二）](media/user-case-iqiyi/2.png)
 
 <center>图 2 边控中心上层业务页面（二）</center>
 
@@ -57,13 +58,14 @@ logo: /images/blog-cn/customers/iqiyi-logo.png
 
 边控中心数据量增长情况如下：
 
-![图 3 边控中心数据量增长情况](https://upload-images.jianshu.io/upload_images/542677-1457e97d133e0794.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3 边控中心数据量增长情况](media/user-case-iqiyi/3.png)
+
 
 <center>图 3 边控中心数据量增长情况</center>
 
 TiDB 底层自动分片策略：
 
-![图 4 TiDB 底层自动分片策略](https://upload-images.jianshu.io/upload_images/542677-5117ecbfdcf71579.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 4 TiDB 底层自动分片策略](media/user-case-iqiyi/4.png)
 
 <center>图 4 TiDB 底层自动分片策略</center>
 
@@ -75,7 +77,7 @@ TiDB 底层自动分片策略：
 
 TiDB-Lightning 实现架构图：
 
-![图 5 TiDB-Lightning 实现架构图](https://upload-images.jianshu.io/upload_images/542677-841506db328169ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 5 TiDB-Lightning 实现架构图](media/user-case-iqiyi/5.png)
 
 <center>图 5 TiDB-Lightning 实现架构图</center>
 
@@ -86,13 +88,13 @@ TiDB-Lightning 实现架构图：
 
 在部署增量同步的过程中使用了官方的 Syncer 工具。Syncer 支持通过通配符的方式将多源多表数据汇聚到一个表当中，是个实用的功能，大大简化了我们的增量同步工作。目前的 Syncer 工具还不支持在 Grafana 中展示实时延迟信息，这对同步延迟敏感的业务是个缺点，据官方的消息称已经在改进中，同时 PingCAP 他们重构了整个 Syncer，能自动处理分表主键冲突，多源同时 DDL 自动过滤等功能，总之通过这套工具，可以快速部署 TiDB “实时”同步多个 MySQL，数据迁移体验超赞。
 
-![图 6 Syncer 架构](https://upload-images.jianshu.io/upload_images/542677-d86beef3b1c60f2e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 6 Syncer 架构](media/user-case-iqiyi/6.png)
 
 <center>图 6 Syncer 架构</center>
 
 在我们公司业务对数据库高可用有两个需求：一个是机房宕机了，服务仍然可用。另一个是，多机房的业务，提供本机房的只读从库，提升响应速度。针对这些不同的需求，TiDB 集群采用了多机房部署的方式，保证其中任一个机房不可用时仍然正常对外提供服务（如下图）。对每个 TiKV 节点设置 label 后，TiDB 集群在每个机房都有一份数据的副本，PD 集群会自动调度到合适的副本进行读操作，也可以满足第二个要求。为了满足迁移过程中的高可用性，会在流量迁移完成后部署 TiDB 到 MySQL 的实时同步。Drainer 支持指定同步开始的时间戳，有力支持了反向同步功能。
 
-![图 7 TiDB 集群多机房部署形式](https://upload-images.jianshu.io/upload_images/542677-71a26e25a783538f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 7 TiDB 集群多机房部署形式](media/user-case-iqiyi/7.png)
 
 <center>图 7 TiDB 集群多机房部署形式</center>
 
@@ -112,5 +114,5 @@ TiDB-Lightning 实现架构图：
 
 我司仍有其它业务在接入 TiDB 服务，目前正在评估测试中。一些业务场景是 OLTP+OLAP 混合的场景，TiSpark 正好可以大展身手。目前在测试集群发现 TiSpark 查询时对 OLTP 业务的影响还是比较大的，必须限制 TiSpark 对 TiDB 集群造成的压力。还部署了单独 TiDB 集群做 OLAP 场景的测试，对内部参数做了针对性的优化。未来计划会继续加大对 TiDB 的投入，贡献一些 PR 到社区，其中很大的一部分工作是增强 TiDB-Binlog 的功能，和现有的一些数据同步组件整合起来，支持 TiDB 到 Kudu、HBase 等的同步。
 
->作者：朱博帅，爱奇艺资深数据库架构师
+
 

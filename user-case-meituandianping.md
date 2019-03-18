@@ -11,12 +11,13 @@ logo: /images/blog-cn/customers/meituandianping-logo.png
 aliases: ['/cases-cn/user-case-meituan/']
 ---
 
+>**作者介绍**：**赵应钢**，美团点评研究员；**李坤**，美团点评数据库专家；**朴昌俊**，美团点评数据库专家。
 
 ## 一、背景和现状
 
 在美团，基于 MySQL 构建的传统关系型数据库服务已经难于支撑公司业务的爆发式增长，促使我们去探索更合理的数据存储方案和实践新的运维方式。随着近一两年来分布式数据库大放异彩，美团 DBA 团队联合架构存储团队，于 2018 年初启动了分布式数据库项目。
 
-![图 1 美团点评产品展示图](https://upload-images.jianshu.io/upload_images/542677-059706c57f50b346.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1 美团点评产品展示图](media/user-case-meituandianping/1.png)
 
 <center>图 1 美团点评产品展示图</center>
 
@@ -75,7 +76,7 @@ TiDB 架构分层清晰，服务平稳流畅，但在美团当前的数据量规
 
 当前 MySQL 的业务接入方式主要有两种，DNS 接入和 Zebra 客户端接入。在前期调研阶段，我们选择了 DNS + 负载均衡组件的接入方式，TiDB-Server 节点宕机，15s 可以被负载均衡识别到，简单有效。业务架构如图 2。
 
-![图 2 业务架构图](https://upload-images.jianshu.io/upload_images/542677-7b168e7060dd1a84.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 2 业务架构图](media/user-case-meituandianping/2.png)
 
 <center>图 2 业务架构图</center>
 
@@ -85,7 +86,7 @@ TiDB 架构分层清晰，服务平稳流畅，但在美团当前的数据量规
 
 美团目前使用 Mt-Falcon 平台负责监控报警，通过在 Mt-Falcon 上配置不同的插件，可以实现对多种组件的自定义监控。另外也会结合 Puppet 识别不同用户的权限、文件的下发。这样，只要我们编写好插件脚本、需要的文件，装机和权限控制就可以完成了。监控架构如图 3。
 
-![图 3 监控架构图](https://upload-images.jianshu.io/upload_images/542677-4a649fff11279bd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3 监控架构图](media/user-case-meituandianping/3.png)
 
 <center>图 3 监控架构图</center>
 
@@ -107,7 +108,7 @@ TiDB 使用 Ansible 实现自动化部署。迭代快，是 TiDB 的一个特点
 
 随着线上集群数量的增加，打造运维平台提上了日程，而美团对 TiDB 和 MySQL 的使用方式基本相同，因此 MySQL 平台上具有的大部分组件，TiDB 平台也需要建设。典型的底层组件和方案：SQL 审核模块、DTS、数据备份方案等。自动化运维平台展示如图 4。
 
-![图 4 自动化运维平台展示图](https://upload-images.jianshu.io/upload_images/542677-73c4bb9badc15fa1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 4 自动化运维平台展示图](media/user-case-meituandianping/4.png)
 
 <center>图 4 自动化运维平台展示图</center>
 
@@ -125,7 +126,7 @@ TiDB 是在线存储体系中的一环，它同时也需要融入到公司现有
     * Hive to TiDB 比较好解决，这体现了 TiDB 和 MySQL 高度兼容的好处，insert 语句可以不用调整，基于 Hive to MySQL 简单改造即可。
     * TiDB to Hive 则需要基于官方 Pump + Drainer 组件，Drainer 可以消费到 Kafka、MySQL、TiDB，我们初步考虑用下图 5 中的方案通过使用 Drainer 的 Kafka 输出模式同步到 Hive。
 
-![图 5 TiDB to Hive 方案图](https://upload-images.jianshu.io/upload_images/542677-d2bac28b708cd89f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 5 TiDB to Hive 方案图](media/user-case-meituandianping/5.png)
 
 <center>图 5 TiDB to Hive 方案图</center>
 
@@ -160,7 +161,8 @@ TiKV 底层有 2 个 RocksDB 作为存储。新写的数据写入 L0 层，当 R
 * 写入量大，Compact 完不成。
 * Snapshot 一直创建不完，导致堆积的副本一下释放，rocksdb-raft 创建大量的 L0 文件，监控展示如图 6。
 
-![图 6 TiKV 发生 Write Stall 监控展示图](https://upload-images.jianshu.io/upload_images/542677-3498c34ccec97c8b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图 6 TiKV 发生 Write Stall 监控展示图](media/user-case-meituandianping/6.png)
 
 <center>图 6 TiKV 发生 Write Stall 监控展示图</center>
 
@@ -187,7 +189,8 @@ TiKV 底层有 2 个 RocksDB 作为存储。新写的数据写入 L0 层，当 R
 * 临时解决
     * 增加 Heartbeat 的周期，从 1s 改为 2s，效果比较明显，监控展示如图 7。
 
-![图 7 insert 响应时间优化前后对比图](https://upload-images.jianshu.io/upload_images/542677-d71c725b67264df7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图 7 insert 响应时间优化前后对比图](media/user-case-meituandianping/7.png)
 
 <center>图 7 insert 响应时间优化前后对比图</center>
 
@@ -253,7 +256,7 @@ TiDB 的物理优化阶段需要依靠统计信息。在 2.0 版本统计信息�
 
 + **TiDB HTAP Platform**：PingCAP 在原有 TiDB Server 计算引擎的基础上，还构建 TiSpark 计算引擎，和他们官方沟通，他们在研发了一个基于列的存储引擎，这样就形成了下层行、列两个存储引擎、上层两个计算引擎的完整混合数据库（HTAP），这个架构不仅大大的节省了核心业务数据在整个公司业务周期里的副本数量，还通过收敛技术栈，节省了大量的人力成本、技术成本、机器成本，同时还解决了困扰多年的 OLAP 的实效性。后面我们也会考虑将一些有实时、准实时的分析查询系统接入 TiDB。
 
-![图 8 TiDB HTAP Platform 整体架构图](https://upload-images.jianshu.io/upload_images/542677-6600ced9b40620b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 8 TiDB HTAP Platform 整体架构图](media/user-case-meituandianping/8.png)
 
 <center>图 8 TiDB HTAP Platform 整体架构图</center>
 
@@ -261,10 +264,3 @@ TiDB 的物理优化阶段需要依靠统计信息。在 2.0 版本统计信息�
 
 TiDB 在业务层面、技术合作层面都已经在美团扬帆起航，美团点评将携手 PingCAP 开启新一代数据库深度实践、探索之旅。后续，还有美团点评架构存储团队针对 TiDB 源码研究和改进的系列文章，敬请期待！
 
->**作者介绍**
->
->赵应钢，美团点评研究员
->
->李坤，美团点评数据库专家
->
->朴昌俊，美团点评数据库专家

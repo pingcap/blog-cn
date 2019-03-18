@@ -32,13 +32,14 @@ logo: /images/blog-cn/customers/yuanfudao-logo.png
 
 TiDB 是一款定位于在线事务处理/在线分析处理（HTAP）的融合型数据库产品，具备在线弹性水平扩展、分布式强一致性事务、故障自恢复的高可用、跨数据中心多活等核心特性；对业务没有任何侵入性，能优雅的替换传统的数据库中间件、数据库分库分表等 Sharding 方案，并在此过程中保证了事务的 ACID 特性。同时它也让开发运维人员不用关注数据库 Scale 的细节问题，专注于业务开发，极大的提升研发的生产力。用户可以把 TiDB 当作一个容量无限扩展的单机数据库，复杂的分布式事务和数据复制由底层存储引擎来支持，开发者只需要集中精力在业务逻辑的开发上面。
 
-![image](http://upload-images.jianshu.io/upload_images/542677-d96d66ed46c672ac?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](media/user-case-yuanfudao/1.jpeg)
 
 <center>图为 TiDB 与传统的 MySQL 中间件方案的一些对比</center>
 
 TiDB 集群主要分为三个组件：TiDB Server、TiKV Server、PD Server。
 
-![image](http://upload-images.jianshu.io/upload_images/542677-e90b532c4aa0057f?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-yuanfudao/2.jpeg)
 
 <center>TiDB 整体架构图</center>
 

@@ -11,6 +11,8 @@ weight: 2
 logo: /images/blog-cn/customers/ping++-logo.png
 ---
 
+>作者：宋涛，Ping++ DBA
+
 ## Ping++ 介绍
 
 Ping++ 是国内领先的支付解决方案 SaaS 服务商。自 2014 年正式推出聚合支付产品，Ping++ 便凭借“7 行代码接入支付”的极致产品体验获得了广大企业客户的认可。
@@ -23,8 +25,7 @@ Ping++ 连续两年入选毕马威中国领先金融科技 50 强，并于 2017 
 
 Ping++ 数据支撑系统主要由流计算类、报表统计类、日志类、数据挖掘类组成。其中报表统计类对应的数据仓库系统，承载着数亿交易数据的实时汇总、分析统计、流水下载等重要业务:
 
-![](http://upload-images.jianshu.io/upload_images/542677-1c557b3068be5b7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-ping++/1.png)
 
 随着业务和需求的扩展，数仓系统历经了多次发展迭代过程：
 
@@ -54,7 +55,7 @@ TiDB 具备的以下核心特征是我们选择其作为实时数仓的主要原
 
 并追踪形成了以下数据支撑系统架构：
 
-![](http://upload-images.jianshu.io/upload_images/542677-0a6aa279544b9141.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-ping++/2.png)
 
 新的方案给我们的业务和管理带来了以下的提升和改变:
 
@@ -70,11 +71,11 @@ TiDB 具备的以下核心特征是我们选择其作为实时数仓的主要原
 
 TiDB 是 PingCAP 公司受 Google Spanner / F1 论文启发而设计的开源分布式 NewSQL 数据库。从下图 Google Spanner 的理念模型可以看出，其设想出数据库系统把数据分片并分布到多个物理 Zone 中、由 Placement Driver 进行数据片调度、借助 TrueTime 服务实现原子模式变更事务，从而对外 Clients 可以提供一致性的事务服务。因此，一个真正全球性的 OLTP & OLAP 数据库系统是可以实现的。
 
-![](http://upload-images.jianshu.io/upload_images/542677-9c9f91a097eb5a16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-ping++/3.png)
 
 我们再通过下图分析 TiDB 整体架构：
 
-![](http://upload-images.jianshu.io/upload_images/542677-ae6b78de27f9142e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-ping++/4.png)
 
 可以看出 TiDB 是 Spanner 理念的一个完美实践，一个 TiDB 集群由 TiDB、PD、TiKV 三个组件构成。
 
@@ -86,7 +87,7 @@ TiDB 是 PingCAP 公司受 Google Spanner / F1 论文启发而设计的开源分
 
 生产集群部署情况：
 
-![](http://upload-images.jianshu.io/upload_images/542677-aef872b2131e3cb5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-ping++/5.png)
 
 现已稳定运行数月，对应的复杂报表分析性能得到了大幅提升，替换 ADS、ES 后降低了大量运维成本。
 
@@ -130,7 +131,7 @@ TiDB 是 PingCAP 公司受 Google Spanner / F1 论文启发而设计的开源分
 最后，特此感谢 PingCAP 所有团队成员对 Ping++ 上线 TiDB 各方面的支持！
 
 
-✎ 作者：宋涛，Ping++ DBA
+
 
 
 

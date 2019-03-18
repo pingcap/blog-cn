@@ -11,13 +11,15 @@ logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 ---
 
 
+> 作者：**孙玄**，转转公司首席架构师；**陈东**，转转公司资深工程师；**冀浩东**，转转公司资深 DBA。
+
 ## 公司及业务架构介绍
 
 转转二手交易网 —— 把家里不用的东西卖了变成钱，一个帮你赚钱的网站。由腾讯与 58 集团共同投资。为海量用户提供一个有担保、便捷的二手交易平台。转转是 2015 年 11 月 12 日正式推出的 APP，遵循“用户第一”的核心价值观，以“让资源重新配置，让人与人更信任”为企业愿景，提倡真实个人交易。
 
 转转二手交易涵盖手机、3C 数码、母婴用品等三十余个品类。在系统设计上，转转整体架构采用微服务架构，首先按照业务领域模型垂直拆分成用户、商品、交易、搜索、推荐微服务。对每一个功能单元（商品等），继续进行水平拆分，分为商品网关层、商品业务逻辑层、商品数据访问层、商品 DB / Cache，如下图所示： 
 
-![图 1](https://upload-images.jianshu.io/upload_images/542677-7da0dce6cfbc4bc7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan/1.png)
 
 ## 项目背景
 
@@ -54,7 +56,7 @@ TiDB 支持绝大多数 MySQL 语法，业务可以将基于 MySQL 的开发，�
 此次压力测试，总共使用 6 台物理服务器，其中 3 台 CPU 密集型服务器，用于启动 TiDB - Server、PD 服务；另外 3 台为 IO / CPU 密集型的PCIE 服务器，用于启动 TiKV 服务。
 使用 sysbench - 1.0.11 测试数据大小为 200G 的 TiDB 集群，在不同场景下 TiDB 的响应时间（95th per）：
 
-![图 2](https://upload-images.jianshu.io/upload_images/542677-6da57bb428148fb4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan/2.png)
 
 
 ### 3\. 结果整理
@@ -109,26 +111,28 @@ TiDB 支持绝大多数 MySQL 语法，业务可以将基于 MySQL 的开发，�
 
 ### 1\. 队列等待情况对比
 
-![图 3](https://upload-images.jianshu.io/upload_images/542677-03de6fb40f9c9387.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![图 4](https://upload-images.jianshu.io/upload_images/542677-f782ff66860e87f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan/3.png)
+
+![](media/user-case-zhuanzhuan/4.png)
 
 
 使用 TiDB 数据库，业务模块队列请求数基本保持 1 个，MySQL 会有较大抖动。
 
 ### 2\. 请求延迟情况对比
 
-![图 5](https://upload-images.jianshu.io/upload_images/542677-7c9adddf5f3885de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan/5.png)
 
-![图 6](https://upload-images.jianshu.io/upload_images/542677-ce74ebdbbbbfeae4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan/6.png)
+
 
 使用 TiDB 数据库，整体响应延时非常稳定，不受业务流量高峰影响，但 MySQL 波动很大。 另外在扩展性方面，我们可以通过无缝扩展 TiDB 和 TiKV 实例提升系统的吞吐量，这个特性 MySQL 是不具备的。
 
 ### 3\. 业务延迟和错误量对比
 
-![图 7](https://upload-images.jianshu.io/upload_images/542677-1addb79095df9d0a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan/7.png)
 
-![图 8](https://upload-images.jianshu.io/upload_images/542677-baf2c1181f11c6f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-zhuanzhuan/8.png)
 
 接入 TiDB 数据库后业务逻辑层服务接口耗时稳定无抖动，且没有发生丢弃的情况（上图错误大多由数据访问层服务队列堆积发生请求丢弃造成）。
 
@@ -138,8 +142,7 @@ TiDB 支持绝大多数 MySQL 语法，业务可以将基于 MySQL 的开发，�
 
 集群架构如下：目前转转线上 TiDB 集群的总容量几百 TB，线上 TiDB 表现很稳定，我们会继续接入更多的业务（留言，评论、搜索、商品、交易等等）。
 
-![图 9](https://upload-images.jianshu.io/upload_images/542677-f2a8c3cd058ab0b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-zhuanzhuan/9.png)
 
 ### 1\. 后续规划
 
@@ -155,5 +158,3 @@ TiDB 支持绝大多数 MySQL 语法，业务可以将基于 MySQL 的开发，�
 *   集群出现故障对用户无感知；
 *   TiDB 自带了完善的监控系统，使得运维成本大大降低。
 
-
-> 作者：**孙玄**，转转公司首席架构师；**陈东**，转转公司资深工程师；**冀浩东**，转转公司资深 DBA。

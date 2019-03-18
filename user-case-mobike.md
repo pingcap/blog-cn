@@ -11,6 +11,7 @@ weight: 12
 logo: /images/blog-cn/customers/mobike-logo.png
 ---
 
+> 作者：丁宬杰 / 胡明，Mobike 技术研发部基础平台中心 
 
 ## 背景
 
@@ -53,8 +54,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 考虑到这些情况，MySQL 分库分表的方案就出现了一些问题，首先频繁变动表结构就比较麻烦，而 TiDB 可以进行在线 DDL。数据生命期比较长，可以设计之初做一个比较大的集群，但是弹性就比较差，针对这个问题，TiDB 可以根据需要，弹性的增加或者减少节点，这样的灵活性是 MySQL 分库分表没有的。另外，数据要支持频繁的复杂关联查询，MySQL 分库分表方案完全没办法做到这一点，而这恰恰是 TiDB 的优势，通过以上的对比分析，我们选择了 TiDB 作为开关锁日志成功率统计项目的支撑数据库。
 
-![](http://upload-images.jianshu.io/upload_images/542677-90ca4aa244d4ca5a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-mobike/1.png)
 
 目前，大致可以将到端到端的延时控制在分钟级，即，若有开锁成功率下降，监控端可即时感知，此外，还能通过后台按用户和车查询单次故障骑行事件，帮助运维人员快速定位出故障的具体位置。
 
@@ -66,8 +66,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 TiDB 本身有很多不错的工具，可以和 MySQL 的生态方便的连接到一起。这里我们主要使用了 TiDB 的 syncer 工具，这个工具可以方便的把 MySQL 实例或者 MySQL 分库分表的集群都同步到 TiDB 集群。因为 TiDB 本身可以 update，所以不存在 Hive 里的那些问题。同时有 TiSpark 项目，数据进入 TiDB 以后，可以直接通过 Spark 进行非常复杂的 OLAP 查询。有了这套系统，运营部门提出的一些复杂在线需求，都能够快速简洁的完成交付，这些在 Hadoop 平台上是无法提供这样的实时性的。
 
-![](http://upload-images.jianshu.io/upload_images/542677-929d50b80c426b1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-mobike/2.png)
 
 目前，该集群拥有数十个节点，存储容量数十 T，受益于 TiDB 天然的高可用构架，该系统运行稳定，日后集群规模日益变大也仅需简单增加 x86 服务器即可扩展。后台开发、运维、业务方等都可以利用 TiDB 的数据聚合能力汇总数据，进行数据的汇总和分析。
 
@@ -81,15 +80,13 @@ TiDB 本身有很多不错的工具，可以和 MySQL 的生态方便的连接�
 
 #### 摩豆信用分业务
 
-![](http://upload-images.jianshu.io/upload_images/542677-5e4199644f917e69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-mobike/3.png)
 
 摩拜单车信用分业务与用户骑行相关，用户扫码开锁时先行查询用户信用积分判断是否符合骑行条件，待骑行完成后，系统会根据用户行为进行信用分评估并进行修改。当单车无法骑行，上报故障核实有效后增加信用分、举报违停核实有效后降低信用分；但是如果不遵守使用规范，则会扣除相应的信用分；例如用户将自行车停在禁停区域内，系统就会扣除该用户的部分信用分作为惩罚，并存档该违停记录。当用户的信用分低于 80 分时，骑行费用将会大幅上升。
 
 #### 摩豆商城业务（APP 中的摩拜成就馆）
 
-![](http://upload-images.jianshu.io/upload_images/542677-00062704a2682c7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-mobike/4.png)
 
 魔豆商城业务即摩拜成就馆，用户的每一次骑行结束后，系统会根据骑行信息赠送数量不等的省时币、环保币、健康币作为积分，通过积累这些积分可以在摩拜成就馆内兑换相应积分的实物礼品。
 
@@ -114,15 +111,13 @@ TiDB 本身有很多不错的工具，可以和 MySQL 的生态方便的连接�
 
 基于 TiSpark 项目，Spark 集群可以直接读取 TiDB 集群的数据，在一些运营需要实时数据提供的场景，不再需要按照原有的提供数据到大数据平台，设计 ETL 方案，运营再去大数据部门沟通运算逻辑。而是直接在 TiDB 现有数据的基础上，直接提出复杂的分析需求，设计 Spark 程序进行在线的直接分析即可。这样做，我们非常容易就可以实现一些实时状态的分析需求，让数据除了完成自己的工作，还能更好的辅助运营团队。
 
-![](http://upload-images.jianshu.io/upload_images/542677-c388a2f52db4a51d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-mobike/5.png)
 
 ## 使用过程中遇到的问题和优化
 
 在说优化问题之前，先看 TiDB 的架构图，整个系统大致分为几个部分。
 
-![](http://upload-images.jianshu.io/upload_images/542677-542c8f093157c91f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-mobike/6.png)
 
 其中：
 
@@ -169,4 +164,4 @@ PD 在设计之初考虑了这方面的问题（专门设计了 HotRegionBalance
 
 未来，我们会联合 PingCAP 进一步丰富多集群的管理工具，进行更深入的研究和开发，持续提升 TiDB 的性能，将 TiDB 应用到更多的业务中。
 
-> 作者：丁宬杰 / 胡明，Mobike 技术研发部基础平台中心 
+

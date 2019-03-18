@@ -10,6 +10,8 @@ weight: 21
 logo: /images/blog-cn/customers/linkdoc-logo.png
 ---
 
+> 作者介绍：杨浩，现任零氪科技运维&安全负责人，曾就职于阿里巴巴-技术保障部-CDN。专注 CDN、安全、自动化运维、大数据等领域。
+
 
 ## 公司介绍
 
@@ -19,7 +21,8 @@ logo: /images/blog-cn/customers/linkdoc-logo.png
 
 LinkDoc 通过将患者真实的病例数据和算法模型应用于肿瘤治疗，构建精准的诊疗模型并提供数据支持，从而辅助医院管理决策、辅助科研、辅助临床诊疗。目前 Hubble 系统“肺癌淋巴结跳跃转移风险预测”模块可避免肺癌病人由于误判而导致提前 8-10 个月的复发，每年能让近两万病人的生命再延长 8-10 个月。Hubble 系统“AI - 肺结节智能诊断”模块全自动地识别 CT 影像中所有的结节，识别率达 91.5%。LinkDoc 希望凭借医疗大数据整合、处理和分析上的核心技术优势，以互联网人工智能上的创新研发，提升中国医师的全球医学水准，并通过支持药物研发与医疗保险行业的发展，让每一位患者享有普惠、精准的医疗服务。
 
-![](http://upload-images.jianshu.io/upload_images/542677-cb74e459c299c159.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-linkdoc/1.png)
+
 
 支撑 LinkDoc 业务的底层数据库平台也面临着医疗行业新领域的技术 & 业务挑战，如数据量的快速增长（亿级别）、大数据量下的清洗逻辑的数据擦写、分析型事务对数据库的读压力都要求我们在数据库平台进行重新探索，选择一款适合医疗大数据业务的数据库解决方案。
 
@@ -80,17 +83,18 @@ LinkDoc 通过将患者真实的病例数据和算法模型应用于肿瘤治疗
 
 系统配置 & 架构如下：
 
-![](http://upload-images.jianshu.io/upload_images/542677-ca62e3e42263fabd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-linkdoc/2.png)
 
 生产集群部署情况（机器基于阿里云）：
 
-![](http://upload-images.jianshu.io/upload_images/542677-73aeeff2011883f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-linkdoc/3.png)
+
 
 ## 目前现状和下一步规划
 
 目前 TiDB 在 LinkDoc 已承载数据量最大的两个业务。平时 QPS 6K，峰值 12K。
 
-![](http://upload-images.jianshu.io/upload_images/542677-dcd6422e735968a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-linkdoc/4.png)
 
 后续将使用 TiDB 承载更多大数据量业务库, 并调研 TiSpark。通过 TiDB 构造成一个兼容分析型和事务型的统一数据库 HTAP 平台。
 
@@ -100,4 +104,3 @@ LinkDoc 通过将患者真实的病例数据和算法模型应用于肿瘤治疗
 非常感谢 PingCAP 小伙伴们的大力支持，从硬件选型、业务优化、系统培训到上线支持 PingCAP 都展现了热情的服务态度、专业的技术能力，帮助 LinkDoc 顺利上线 TiDB，解决系统难题，支持业务快速发展。相信在这样一群小伙伴的努力下 TiDB 会越来越成熟、承载更多的业务场景，用技术创造奇迹。
 
 
-> 作者介绍：杨浩，现任零氪科技运维&安全负责人，曾就职于阿里巴巴-技术保障部-CDN。专注 CDN、安全、自动化运维、大数据等领域。

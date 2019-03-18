@@ -10,6 +10,7 @@ weight: 9
 logo: /images/blog-cn/customers/tongcheng-logo.png
 ---
 
+>作者：瞿锴，同程网资深 DBA。
 
 ## 项目背景  
 
@@ -26,14 +27,16 @@ logo: /images/blog-cn/customers/tongcheng-logo.png
 确定方案后，我们连夜安排压测同事和开发同事协作，紧急测试，发现这套分片集群 + TiDB 的方案能够满足我们的功能和性能方面的需求，于是迅速调整了该项目的架构，我们将数千个 MySQL 分片汇总到一个 TiDB 集群，保障了 2016 年国庆的高峰平稳渡过。当时的流量达到了我们平时流量的 2 倍，然而并没有出现异常。
 
 该实时同步查询系统架构如下所示：
-![1-structure.png](https://upload-images.jianshu.io/upload_images/542677-4364eff28e3649d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![1-structure](media/user-case-tongcheng/1.png)
 
 在该项目实施成功后，我们加深了对于 TiDB 的使用。并根据 PingCAP 的建议和协助部署了各类监控。
 
 
-![2-grafana-tidb.png](https://upload-images.jianshu.io/upload_images/542677-94e949e80aaa6959.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![2-grafana-tidb](media/user-case-tongcheng/2.png)
 
-![3-grafana-tikv.png](https://upload-images.jianshu.io/upload_images/542677-e046b2164f4e32b1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![3-grafana-tikv](media/user-case-tongcheng/3.png)
+
 
 同时，为了更好的关注数据库的情况，第一时间发现异常，我们将 TiDB 的异常报警接入了公司的监控系统和自愈系统。当发生异常的时候，监控系统会第一时间发现，然后自愈系统会依据提前制定的愈合逻辑处理对应异常，在第一时间恢复应用的可用。
 
@@ -47,12 +50,13 @@ logo: /images/blog-cn/customers/tongcheng-logo.png
 
 现在公司内部越来越多的开发在联系 DBA 咨询 TiDB 的信息，我们给他们的反馈就是：这是一个高度兼容 MySQL 协议和语法的数据库，非常简单易用，基本上看下相关文档就可以上手。你们在用的时候就可以当它就是一个 MySQL 来使用，只是它能存放的数据量远远超过 MySQL。而对于 DBA 来讲，这就是一个自带高可用和可动态扩容的数据库，对外是个 MySQL，对内是个分布式数据库。业务侧的开发人员基本没有学习成本，DBA 维护起来也和 MySQL 有很多相似点，系统生态非常好。
 
-可以预见，随着项目继续以及新项目建设，TiDB 的实例数和机器数又会继续以较快的速度增长，目前线上用的版本还不是最新的版本，正在做升级到 1.05 的准备工作。我们预计 2018 年底，TiDB 的集群数很快就会有 20 套，机器数数百台，这给开发和运维都带来了一定的挑战。如果我们仍然按照目前的方式建设和运维 TiDB 集群，可能就要面临增加相关人力的处境。我们一直在寻找多 TiDB 集群的便捷管理方案，这时一篇文章引起了我们的注意——[《Cloud+TiDB 技术解读》](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247485442&idx=1&sn=93ea387081a3a4960e061eb05d6f94d7&chksm=eb162f68dc61a67ebf91bd809502e24804aa61384e9b87bc0c309be608e0225736f7cdb6cb1b&scene=21#wechat_redirect )。我们迅速和 TiDB 工程师取得联系，了解到 TiDB 最新的 DBaaS 方案基于 K8S 来自动管理和调度多个 TiDB 实例，这和我们目前大量 docker 化业务和数据库的战略方向是一致的。通过 TiDB-Operator 使可以自动化部署和管理 TiDB 及周边工具，自动化部署这些应用以及使后端获得故障转移能力，这样可以大大降低运维成本，同时提供丰富的接口方便后续对其进行扩展。
+可以预见，随着项目继续以及新项目建设，TiDB 的实例数和机器数又会继续以较快的速度增长，目前线上用的版本还不是最新的版本，正在做升级到 1.05 的准备工作。我们预计 2018 年底，TiDB 的集群数很快就会有 20 套，机器数数百台，这给开发和运维都带来了一定的挑战。如果我们仍然按照目前的方式建设和运维 TiDB 集群，可能就要面临增加相关人力的处境。我们一直在寻找多 TiDB 集群的便捷管理方案，这时一篇文章引起了我们的注意——[《Cloud+TiDB 技术解读》](https://mp.weixin.qq.com/s/znT1jIbMhBcWldlBIkrkpQ)。我们迅速和 TiDB 工程师取得联系，了解到 TiDB 最新的 DBaaS 方案基于 K8S 来自动管理和调度多个 TiDB 实例，这和我们目前大量 docker 化业务和数据库的战略方向是一致的。通过 TiDB-Operator 使可以自动化部署和管理 TiDB 及周边工具，自动化部署这些应用以及使后端获得故障转移能力，这样可以大大降低运维成本，同时提供丰富的接口方便后续对其进行扩展。
 
-![4-tidb-dbaas.png](https://upload-images.jianshu.io/upload_images/542677-de71ad63429c0486.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![4-tidb-dbaas](media/user-case-tongcheng/4.png)
 
 我们计划 2018 年开始和 PingCAP 合作尝试引入 TiDB DBaaS 方案。
 
-另外，我们通过同 PingCAP 工程师的深度交流，了解到了 TiDB 的子项目 [ TiSpark ]( https://github.com/pingcap/tispark)，后续计划引入 TiSpark 来对数据进行实时分析、实时数仓等工作的尝试，让技术对业务产生更大的价值。
+另外，我们通过同 PingCAP 工程师的深度交流，了解到了 TiDB 的子项目 [TiSpark](https://github.com/pingcap/tispark)，后续计划引入 TiSpark 来对数据进行实时分析、实时数仓等工作的尝试，让技术对业务产生更大的价值。
 
->作者：瞿锴，同程网资深 DBA。
+

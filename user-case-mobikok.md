@@ -10,6 +10,8 @@ weight: 20
 logo: /images/blog-cn/customers/mobikok-logo.png
 ---
 
+ 
+>作者：rayi，深圳可可网络服务端架构负责人
 
 ## 公司介绍
 Mobikok（可可网络）成立于 2013 年，是一家快速成长的移动互联网营销公司，专注于移动 eCPM 营销。总部在中国深圳，聚焦于订阅 offer 的海外流量变现业务。Mobikok 提供的接口方式支持各类手机端流量（API、SDK、Smartlink），RTB（实时竞价系统）对接海外的 DSP（Demand-Side Platform，需求方平台）高效优化客户的广告效果。截止目前，系统已对 2 亿用户进行广告优化，已接入上百家广告主以及上百家渠道，Mobikok 致力于高效，便捷，专业的帮助广告主以及渠道互惠共赢。
@@ -22,8 +24,7 @@ Mobikok（可可网络）成立于 2013 年，是一家快速成长的移动互�
 
 迁移后整体架构图：
 
-![](https://upload-images.jianshu.io/upload_images/542677-b8df2c47baab5455.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-mobikok/1.png)
 
  
 ## 引入 TiDB
@@ -40,16 +41,15 @@ Mobikok（可可网络）成立于 2013 年，是一家快速成长的移动互�
 
 * 成熟的配套监控服务。
 
-TiDB 数据库整体集群配置：2*TiDB、3*TiKV、3*PD。
+TiDB 数据库整体集群配置：2* TiDB、3* TiKV、3* PD。
 
-![](https://upload-images.jianshu.io/upload_images/542677-c2158162bbe79cfb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-mobikok/2.png)
 
 从 12 月初正式上线到目前为止，TiDB 稳定运行四个多月，最高 QPS 达到 2000，平均 QPS 稳定在 500 左右。TiDB 在性能、可用性、稳定性上完全超出了我们的预期，但是由于前期我们对 TiDB 的了解还不深，在此迁移期间碰到的一些兼容性的问题，比如 TiDB 的自增 ID 的机制，排序的时候需要使用字段名等，咨询 TiDB 的工程师都很快的得到了解决，非常感谢 TiDB 团队的支持以及快速响应。
 
 下图是当前集群的 Grafana 展示图：
 
-![](https://upload-images.jianshu.io/upload_images/542677-cc0dd3109183cdd6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-mobikok/3.png)
 
 ## 后续计划
 使用 TiDB 对于像我们这样可预期核心数据会暴增的场景，有非常大的意义。在后端支撑力量有限时，业务暴增时只需要增加机器，而不是频繁重构业务，让我们有更多精力在自己的业务上耕耘，增加我们的行业竞争力。未来我们还有 ADX（Ad Exchang，广告交易平台）和 DSP 业务，需要处理海量的用户数据以及广告数据。目前统计数据这一块当前业务当中使用的是 Spark Streaming，通过和 TiDB 开发团队沟通，官方 TiSpark 可直接引入到当前统计 Spark 群集当中，非常期望在后续开发当中使用 TiSpark。
@@ -57,8 +57,7 @@ TiDB 数据库整体集群配置：2*TiDB、3*TiKV、3*PD。
 ## 问题建议
 在实际应用当中，因为我们切换的并不是只有用户数据表，还迁移了关于广告业务、渠道业务基础数据表。由于 TiDB 是一个分布式数据库，对于一些小表以及 count(*) 操作会影响效率，后来咨询 TiDB 官方得知，TiDB 有不同的隔离级别，SQL 也有高低优先级，如果有全表扫描的需求，可以使用低的隔离级别或者是低的优先级。将来我们就可以直接所有线上业务使用 TiDB 进行替换，最后还是非常感谢 TiDB 团队的支持与帮助。
 
- 
->作者：rayi，深圳可可网络服务端架构负责人
+
  
 
 

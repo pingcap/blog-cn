@@ -11,6 +11,10 @@ weight: 7
 logo: /images/blog-cn/customers/yiguo-logo.png
 ---
 
+
+> 作者简介：罗瑞星，曾就职于前程无忧，参加过 Elasticsearch 官方文档中文翻译工作，现就职于易果集团，担任资深大数据工程师，负责易果集团数据分析架构设计等工作。
+
+
 ## 项目背景  
 
 目前企业大多数的数据分析场景的解决方案底层都是围绕 Hadoop 大数据生态展开的，常见的如 HDFS + Hive + Spark + Presto + Kylin，在易果集团，我们初期也是采取这种思路，但是随着业务规模的快速增长和需求的不断变化，一些实时或者准实时的需求变得越来越多，这类业务除了有实时的 OLTP 需求，还伴随着一些有一定复杂度的 OLAP 的需求，单纯地使用 Hadoop 已经无法满足需求。
@@ -58,7 +62,8 @@ Greenplum 是一套基于 PostgreSQL 分析为主的 MPP 引擎，大多用在�
 
 由于我们公司的架构是 .NET + SQL Server 架构，所以我们无法像大多数公司一样去使用 MySQL Binlog 去做数据同步，当然也就无法使用 TiDB 官方提供的 Syncer 工具了。因此我们采用了 Flume + Kafka 的架构，我们自己开发了基于 Flume 的 SQL Server Source 去实时监控 SQL Server 数据变化，进行捕捉并写入 Kafka 中，同时，我们使用 Spark Streaming 去读取 Kafka 中的数据并写入 TiDB，同时我们将之前 SQL Server 的存储过程改造成定时调度的 MySQL 脚本。
 
-![图：SQL Server 数据迁移到 TiDB](http://upload-images.jianshu.io/upload_images/542677-cc08a4bab6425e1d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图：SQL Server 数据迁移到 TiDB](media/user-case-yiguo/1.png)
+
 
 ## TiDB 前期测试
 
@@ -106,11 +111,12 @@ TiSpark 的配置非常简单，只需要把 TiSprak 相关的 jar 包放入 Spa
 
 有了 TiSpark 这个项目，TiDB 与 Hadoop 的生态体系得到进一步的融合，在没有 TiSpark 之前，我们的系统设计如下：
 
-![图：多套数仓并存](http://upload-images.jianshu.io/upload_images/542677-7e8a2d166704cfbb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图：多套数仓并存](media/user-case-yiguo/2.png)
 
 可以发现，实时数仓与 T+1 异步数仓是两个相对独立的系统，并没有任何交集，我们需要进行数据实时的同步，同时也会在夜晚做一次异步同步，不管是 Datax 还是 Sqoop 读取关系型数据库的效率都远远达不到 TiSpark 的速度，而在有了 TiSpark 之后，我们可以对 T+1 异步数仓进行整合，于是我们的架构进化为如下：
 
-![图：TiDB / TiSpark 实时数仓平台](http://upload-images.jianshu.io/upload_images/542677-03f1ffb1adc9bb6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图：TiDB / TiSpark 实时数仓平台](media/user-case-yiguo/3.png)
 
 这样就能够利用 TiSpark 将 TiDB 和 Hadoop 很好的串联起来，互为补充，TiDB 的功能也由单纯的实时数仓变成能够提供如下几个功能混合数据库：
 
@@ -134,5 +140,3 @@ TiSpark 的配置非常简单，只需要把 TiSprak 相关的 jar 包放入 Spa
 
 同时解决 OLAP 和 OLTP 是一件相当困难的事情，TiDB 和 TiSpark 虽然推出不久，但是已经满足很多应用场景，同时在易用性和技术支持上也非常值得称赞，相信 TiDB 一定能够在越来越多的企业中得到广泛应用。
 
-
-> 作者简介：罗瑞星，曾就职于前程无忧，参加过 Elasticsearch 官方文档中文翻译工作，现就职于易果集团，担任资深大数据工程师，负责易果集团数据分析架构设计等工作。

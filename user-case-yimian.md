@@ -10,6 +10,7 @@ weight: 21
 logo: /images/blog-cn/customers/yimian-logo.png
 ---
 
+>作者：刘畅，一面数据高级 AI 工程师。
 
 ## 公司介绍
 
@@ -21,7 +22,7 @@ logo: /images/blog-cn/customers/yimian-logo.png
 
 起初，一面数据的核心系统采用的是多个 MySQL 实例和一个 Cassandra 集群。MySQL 多实例集群主要存储指定特征的爬虫数据，Cassandra 主要存储数据量大、不适合存储 MySQL 的全页面缓存的数据。在数据量/请求量小的时候系统运行正常。下图为一面数据改造前系统构架图：
 
-![](http://upload-images.jianshu.io/upload_images/542677-c716bb553daf9d41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-yimian/1.png)
 
 
 随着数据量的增长，逐渐暴露出很多问题：
@@ -38,7 +39,7 @@ logo: /images/blog-cn/customers/yimian-logo.png
 
 TiDB 支持包括跨行事务，JOIN 及子查询在内的绝大多数 MySQL 的语法，用户可以直接使用现有的 MySQL 客户端连接。如果现有的业务已经基于 MySQL 开发，大多数情况不需要修改代码即可直接替换单机的 MySQL。同时现有的大多数 MySQL 运维工具（如 PHPMyAdmin, Navicat, MySQL Workbench 等），以及备份恢复工具（如 mysqldump, mydumper / myloader）等都可以在 TiDB 直接使用，这也让开发运维人员不用关注数据库 scale 的细节问题，专注于业务开发，极大的提升研发的生产力。下图为一面数据改造后系统构架图：
 
-![](http://upload-images.jianshu.io/upload_images/542677-93fc003caa1c83f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-yimian/2.png)
 
 一面数据的生产环境部署了数十个 TiKV 节点及几个 TiDB 节点。迁移原有 MySQL 集群数据时使用 Percona 的 mydumper 以及 TiDB 专有优化的 loader 工具，逐个爬虫进行迁移。目前 TiDB 集群存储了接近数十 TB 的数据，把另外几个应用迁移完成后将会每日新增近亿条记录。
 
@@ -48,10 +49,8 @@ TiDB 支持包括跨行事务，JOIN 及子查询在内的绝大多数 MySQL 的
 
 目前 TiDB 新增了 TiSpark 组件，并且在 TiKV 层实现了 Spark 的下推算子，使得可以直接在 TiDB 集群上跑 Spark 程序，这样可以省去 ETL 的步骤。后续一面数据也考虑深入使用 TiSpark 组件，让一面数据的整个系统增加一定的实时复杂查询的能力。长远来看，可以把现在 ElasticSearch，Impala，Hive 的业务都迁移到 Spark 集群上，这样一方面统一了分析侧的技术栈，另一方面连接了 Spark 丰富庞大的生态。下图为一面数据未来系统构架图：
 
-![](http://upload-images.jianshu.io/upload_images/542677-815f23ed88ab0866.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](media/user-case-yimian/3.png)
 
 在一面数据 CTO 张锦杰看来：“TiDB 水平扩展性、兼容 MySQL 是非常好的特性，对需要使用关系型数据库作为存储方案的业务有极大的诱惑力，避免了传统分表、分库方案带来的上层应用的复杂性，解决了我们目前迫切的关系型数据存储的需求。”
 
 
->作者：刘畅，

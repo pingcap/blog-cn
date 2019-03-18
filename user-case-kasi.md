@@ -10,10 +10,12 @@ weight: 17
 logo: /images/blog-cn/customers/kasi-logo.png
 ---
 
+>作者：刘广信，火星文化技术经理
 
 卡思数据是国内领先的视频全网数据开放平台，依托领先的数据挖掘与分析能力，为视频内容创作者在节目创作和用户运营方面提供数据支持，为广告主的广告投放提供数据参考和效果监测，为内容投资提供全面客观的价值评估。
 
-![图 1 卡思数据产品展示图](http://upload-images.jianshu.io/upload_images/542677-2950df5c7b87182b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图 1 卡思数据产品展示图](media/user-case-kasi/1.jpeg)
 
 <center>图 1 卡思数据产品展示图</center>
 
@@ -27,7 +29,7 @@ logo: /images/blog-cn/customers/kasi-logo.png
 
 *  MongoDB 存储最小单元的数据，MongoDB 有更好的写入性能，保证了每天数据爬取存储速度；对海量数据存储上，MongoDB 内建的分片特性，可以很好的适应大数据量的需求。
 
-![图 2 起初卡思数据架构图 ](http://upload-images.jianshu.io/upload_images/542677-2908881062133b06?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 2 起初卡思数据架构图](media/user-case-kasi/2.png)
 
 <center>图 2 起初卡思数据架构图</center>
 
@@ -89,17 +91,17 @@ PolarDB 是阿里云新推出新一代关系型数据库，主要思想是计算
 
 目前卡思数据的架构如图 3：
 
-![图 3 目前卡思数据架构图](http://upload-images.jianshu.io/upload_images/542677-6b839be4161e0b66?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3 目前卡思数据架构图](media/user-case-kasi/3.jpeg)
 
 <center>图 3 目前卡思数据架构图</center>
 
 查询性能，单表最小 1000 万，最大 8 亿，有比较复杂的连表查询，整体响应延时非常稳定，监控展示如图 4、图 5。
 
-![图 4 Duration 监控展示图](http://upload-images.jianshu.io/upload_images/542677-ec361f4f3332e254?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 4 Duration 监控展示图](media/user-case-kasi/4.jpeg)
 
 <center>图 4 Duration 监控展示图</center>
 
-![图 5 QPS 监控展示图](http://upload-images.jianshu.io/upload_images/542677-98c792d2b0d47fb4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 5 QPS 监控展示图](media/user-case-kasi/5.jpeg)
 
 <center>图 5 QPS 监控展示图</center>
 
@@ -112,4 +114,3 @@ PolarDB 是阿里云新推出新一代关系型数据库，主要思想是计算
 非常感谢 PingCAP 小伙伴们在数据库上线过程中的大力支持，每次遇到困难都能及时、细心的给予指导，非常的专业和热心。相信 PingCAP 会越来越好，相信 TiDB 会越来越完善，引领 NewSQL 的发展。
 
 
->作者：刘广信，火星文化技术经理

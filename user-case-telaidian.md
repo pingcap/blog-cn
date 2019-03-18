@@ -11,6 +11,8 @@ logo: /images/blog-cn/customers/telaidian-logo.png
 ---
 
 
+>**作者介绍**：潘博存，特来电大数据技术研发部架构师，具有 10 多年平台软件设计开发经验，现专注于大数据领域快速读写方向。
+
 ## 背景介绍
 
 特来电新能源有限公司是创业板第一股特锐德（300001）的全资子公司，主要从事新能源汽车充电网的建设、运营及互联网的增值服务。特来电颠覆了传统充电桩的模式，世界首创了电动汽车群智能充电系统，获得 336 项技术专利，以“无桩充电、无电插头、群管群控、模块结构、主动防护、柔性充电”的特点引领世界新能源汽车充电的发展，系统的鉴定结论为：“产品世界首创、技术水平国际领先。主动柔性充电对电池寿命可以延长 30% 左右，电池充电的安全性可以提升 100 倍以上。”
@@ -37,7 +39,8 @@ logo: /images/blog-cn/customers/telaidian-logo.png
 
 我们先了解一下 NewSQL。
 
-![图 1 数据库发展史](https://upload-images.jianshu.io/upload_images/542677-6fa148da055eebfe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1 数据库发展史](media/user-case-telaidian/1.png)
+
 
 <center>图 1 数据库发展史</center>
 
@@ -49,7 +52,7 @@ logo: /images/blog-cn/customers/telaidian-logo.png
 
 TiDB 是 PingCAP 公司受 Google Spanner / F1 论文启发而设计的开源分布式 HTAP 数据库，结合了传统的 RDBMS 和 NoSQL 的最佳特性。TiDB 兼容 MySQL，支持无限的水平扩展，具备强一致性和高可用性。
 
-![图 2 TiDB 架构图](https://upload-images.jianshu.io/upload_images/542677-842f9d3f022cacae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 2 TiDB 架构图](media/user-case-telaidian/2.png)
 
 <center>图 2 TiDB 架构图</center>
 
@@ -69,7 +72,7 @@ TiDB 是 PingCAP 公司受 Google Spanner / F1 论文启发而设计的开�
 
 在处理大型复杂的计算时，PingCAP 结合上图说的 TiKV 以及目前大数据生态的 Spark，提供了另外一个开源产品 TiSpark。不得不说这是一个巧妙的设计，充分利用了现在企业已有的 Spark 集群的资源，不需要另外再新建集群。TiSpark 架构以及核心原理简单描述如下：
 
-![图 3 TiSpark 架构图](https://upload-images.jianshu.io/upload_images/542677-d9bdd233b2deb8d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3 TiSpark 架构图](media/user-case-telaidian/3.png)
 
 <center>图 3 TiSpark 架构图</center>
 
@@ -87,13 +90,15 @@ TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的�
 
 **1\. 目前的集群配置**
 
-![图 4 集群配置清单](https://upload-images.jianshu.io/upload_images/542677-57b082f15ec1898d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图 4 集群配置清单](media/user-case-telaidian/4.png)
 
 <center>图 4 集群配置清单</center>
 
 **2\. 规划的应用架构**
 
-![图 5 引入 TiDB 以后的应用架构图](https://upload-images.jianshu.io/upload_images/542677-8767f7e241d86d96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图 5 引入 TiDB 以后的应用架构图](media/user-case-telaidian/5.png)
 
 <center>图 5 引入 TiDB 以后的应用架构图</center>
 
@@ -105,7 +110,8 @@ TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的�
 
 每个用户使用特来电的充电桩进行充电时，车辆的 BMS 数据、充电桩数据、环境温度等数据是实时的保存到大数据库中。我们基于采集的用户充电数据，需要按照一定的时间展示全国的充电功率 比如展示过去一天，全国的充电功率变化曲线，每隔 15 分钟或者 30 分钟进行一次汇总。随着我们业务规模的增加，此场景的计算也逐步进行了更新换代。
 
-![图 6 充电功率的分时统计](https://upload-images.jianshu.io/upload_images/542677-f48b496716055d0a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图 6 充电功率的分时统计](media/user-case-telaidian/6.png)
 
 <center>图 6 充电功率的分时统计</center>
 
@@ -115,7 +121,7 @@ TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的�
 
 上面我们讲了，我们已经有了充电过程中的宝贵的海量数据，如何让数据发挥价值，我们基于充电数据进行充电过程的分析就是其中的一个方式，比如分析不同的车型在不同的环境（环境温度、电池特性）下，充电的最大电压和电流的变化情况，以及我们充电桩的需求功率满足度等。
 
-![图 7 充电过程分析](https://upload-images.jianshu.io/upload_images/542677-1f003d1702a66a64.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 7 充电功率的分时统计](media/user-case-telaidian/7.png)
 
 <center>图 7 充电过程分析</center>
 
@@ -143,5 +149,4 @@ TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的�
 
 结合我们的实际现状，现阶段我们主要用于进行离线计算和部分即席查询的场景，后期随着应用的深入，我们逐步考虑增加更多的应用以及部分 OLTP 场景。
 
->**作者介绍**：潘博存，特来电大数据技术研发部架构师，具有 10 多年平台软件设计开发经验，现专注于大数据领域快速读写方向。
 

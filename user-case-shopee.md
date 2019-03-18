@@ -23,7 +23,7 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 * 2018 年双 11 促销日，Shopee 单日订单超过 1100 万，是 2017 年双 11 的 4.5 倍；刚刚过去的双 12 促销日再创新高，实现单日 1200 万订单。
 
-![图 1](https://upload-images.jianshu.io/upload_images/542677-3c3531cbec9e73a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1 Shopee 电商平台展示图](media/user-case-shopee/1.png)
 
 <center>图 1 Shopee 电商平台展示图</center>
 
@@ -37,7 +37,7 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 ## 二、选型：MySQL 分库分表 vs TiDB
 
-![图 2](https://upload-images.jianshu.io/upload_images/542677-da0953476c7a913c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 2 风控日志收集和处理示意图](media/user-case-shopee/2.png)
 
 <center>图 2 风控日志收集和处理示意图</center>
 
@@ -75,7 +75,8 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 * 停止双写：迁移过程至此结束。
 
-![图 3](https://upload-images.jianshu.io/upload_images/542677-3cad026a752152e8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图 3 迁移过程图：保持双写，逐步从读 MySQL 改为读 TiDB](media/user-case-shopee/3.png)
 
 <center>图 3 迁移过程图：保持双写，逐步从读 MySQL 改为读 TiDB</center>
 
@@ -100,13 +101,13 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 **截至目前，系统已经平稳运行了六个多月，数据量增长至 35TB（如图 4 所示），经历了两次扩容后现在集群共包含 42 个节点。**
 
-![图 4](https://upload-images.jianshu.io/upload_images/542677-c7c823c8f47b59a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 4 风控日志 TiDB 数据库存储容量和使用状况](media/user-case-shopee/4.png)
 
 <center>图 4 风控日志 TiDB 数据库存储容量和使用状况</center>
 
 ### 性能
 
-![图 5](https://upload-images.jianshu.io/upload_images/542677-1a1e97fa0e7d6ed9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 5 风控日志 TiDB 数据库 QPS Total 曲线](media/user-case-shopee/5.png)
 
 <center>图 5 风控日志 TiDB 数据库 QPS Total 曲线</center>
 
@@ -114,7 +115,7 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 **尽管数据量较之 6 个月前涨了 8 倍，目前整个集群的查询响应质量仍然良好，大部分时间 pct99 响应时间（如图 6 所示）都小于 60ms。对于以大型复杂 SQL 查询为主的风控系统而言，这个级别的响应时间已经足够好了。**
 
-![图 6](https://upload-images.jianshu.io/upload_images/542677-1487349092fa4fa8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 6 风控日志 TiDB 数据库两天 pct99 查询响应时间曲线](media/user-case-shopee/6.png)
 
 <center>图 6 风控日志 TiDB 数据库两天 pct99 查询响应时间曲线</center>
 

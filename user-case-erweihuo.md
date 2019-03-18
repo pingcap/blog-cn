@@ -11,6 +11,9 @@ weight: 14
 logo: /images/blog-cn/customers/erweihuo-logo.png
 ---
 
+> 作者介绍：火烧（花名），二维火架构运维负责人 
+
+
 ## 二维火 SaaS 平台介绍
 
 二维火作为餐饮商家管理标准化服务提供商，帮助商家节省经营成本、提升服务效果是我们的使命。在商家日常生产中，上游系统产生了很多数据，包括供应链采购系统（Support），门店收银系统（POS），食客排队系统（Queueing），智能厨房显示系统（KDS），电子菜谱系统等（E-Menu）， 一个实时、精准、可多维度分析的报表系统能充分利用这些数据，支持商家对经营决策进行优化，极大提升商家工作效率。主要服务于以下场景：
@@ -25,7 +28,7 @@ logo: /images/blog-cn/customers/erweihuo-logo.png
 
 二维火各类报表界面：
 
-![](http://upload-images.jianshu.io/upload_images/542677-d05435a306377f4e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-erweihuo/1.png)
 
 ## 二维火实时报表的业务约束
 
@@ -83,7 +86,7 @@ logo: /images/blog-cn/customers/erweihuo-logo.png
 
 TiDB 集群总体配置如下：2\*TiDB、3\*TiKV、3*PD
 
-![](http://upload-images.jianshu.io/upload_images/542677-dd95c840011a68c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-erweihuo/2.png)
 
 ## TiDB 使用体验
 
@@ -91,7 +94,7 @@ TiDB 集群总体配置如下：2\*TiDB、3\*TiKV、3*PD
 
 整体数据库架构图：
 
-![](http://upload-images.jianshu.io/upload_images/542677-a8567f41fb8d3bc9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-erweihuo/3.png)
 
 ## 在 TiDB 使用中的几点注意事项
 
@@ -118,6 +121,5 @@ TiDB 集群总体配置如下：2\*TiDB、3\*TiKV、3*PD
 
 最终通过 TiDB 构造成一个同时兼容分析型和事务型（HTAP）的统一数据库平台。
 
-> 作者介绍：火烧（花名），二维火架构运维负责人 
 
 

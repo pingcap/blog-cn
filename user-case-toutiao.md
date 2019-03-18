@@ -10,7 +10,7 @@ weight: 11
 logo: /images/blog-cn/customers/toutiao-logo.png
 ---
 
-![](https://upload-images.jianshu.io/upload_images/542677-f5322f71353d7ee7.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-toutiao/1.jpeg)
 
 > 本文整理自今日头条数据库中间件/分布式数据库负责人吴镝（[知乎 ID：吴镝](http://www.zhihu.com/people/foxmailed)）在 TiDB DevCon2018 上的分享内容。
 
@@ -54,7 +54,7 @@ TiDB 主要应用在今日头条核心 OLTP 系统 - 对象存储系统中，存
 
 在使用 TiDB 过程中，我们也比较了一下 TiDB 和 MySQL 的延时：
 
-![](https://upload-images.jianshu.io/upload_images/542677-3c3a46fc6919e9c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/user-case-toutiao/2.png)
 
 第一条线就是 MySQL 的延时，pct99 的，下面的黑线是 TiDB 的延时。可以看到，在 MySQL 的数据量非常大的情况下，TiDB 是明显 Latency 更优的，虽然说它用的机器会稍微多点。
 
