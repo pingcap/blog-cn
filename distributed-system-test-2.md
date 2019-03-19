@@ -13,7 +13,7 @@ meetup_type: memoir
 
 当然测试可能会让你代码变得没有那么漂亮，举个例子：
 
-![](http://static.zybuluo.com/zyytop/igccqzz7wgbkuxtszt3fnnzs/1.jpg)
+![](media/distributed-system-test-2/1.jpg)
 
 这是知名的 Kubernetes 的代码，就是说它有一个 DaemonSetcontroller，这 controller 里面注入了三个测试点，比如这个地方注入了一个 handler ，你可以认为所有的注入都是 interface。比如说你写一个简单的 1+1=2 的程序，假设我们写一个计算器，这个计算器的功能就是求和，那这就很难注入错误。所以你必须要在你正确的代码里面去注入测试逻辑。再比如别人 call 你的这个 add 的 function，然后你是不是有一个 error？这个 error 的问题是它可能永远不会返回一个 error，所以你必须要人肉的注进去，然后看应用程序是不是正确的行为。说完了加法，再说我们做一个除法。除法大家知道可能有处理异常，那上面是不是能正常处理呢？上面没有，上面写着一个比如说 6 ÷ 3，然后写了一个 test，coverage 100%，但是一个除零异常，系统就崩掉了，所以这时候就需要去注入错误。大名鼎鼎的 Kubernetes 为了测试各种异常逻辑也采用类似的方式，这个结构体不算长，大概是十几个成员，然后里面就注入了三个点，可以在里面注入错误。
 
@@ -44,9 +44,9 @@ meetup_type: memoir
 
 以前我遇到一个问题很有意思，当时我们在做一个消息系统，有大量连接会连这个，一个单机大概是连八十万左右的连接，就是做消息推送。然后我记得，当时的 swap 分区开了，开了是什么概念？当你有更多连接打进来的时候，然后你内存要爆了对吧？内存爆的话会自动启用 swap 分区，但一旦你启用 swap 分区，那你系统就卡成狗了，外面用户断连之后他就失败了，他得重连，但是重连到你正常程序能响应，可能又需要三十秒，然后那个用户肯定觉得超时了，又切断连接又重连，就造成一个什么状态呢？就是系统永远在重试，永远没有一次成功。那这个行为是不是可以预测？这种错误当时有没有做很好的测试？这都是非常重要的一些教训。
 
-硬件测试以前的办法是这样的(Joke)：
+硬件测试以前的办法是这样的（Joke）：
 
-![](http://static.zybuluo.com/zyytop/qxx4emlxbxns9ifx4qpbwke6/2.jpg)
+![](media/distributed-system-test-2/2.jpg)
 
 假设我一个磁盘坏了，假设我一个机器挂了，还有一个假设它不一定坏了也不一定挂了，比如说它着火了会怎么样？前两个月吧，是瑞士还是哪个地方的一个银行做测试，那哥们也挺逗的，人肉对着服务器这样吹气，来看监控数据那个变化，然后那边马上开始报警。这还只是吹气而已，那如果更复杂的测试，比如说你着火从哪个地方开始烧，先烧到硬盘、或者先烧到网卡，这个结果可能也是不一样的。当然这个成本很高，然后也不是能 scale 的一种方案，同时也很难去复制。
 
@@ -64,7 +64,7 @@ It can be used to perform fault injection in the **POSIX API** without having to
 
 举一个例子，正常来讲我们敲 ls 命令的时候，肯定是能够把当前的目录显示出来。
 
-![](http://static.zybuluo.com/zyytop/9nido67ui4w89hyptchngewz/3.png)
+![](media/distributed-system-test-2/3.png)
 
 这个程序干的是什么呢？就是 run，指定一个参数，现在是要有一个 enable_random，就是后面所有的对于 IO 下面这些 API 的操作，有 5% 的失败率。那第一次是运气比较好，没有遇到失败，所以我们把整个目录列出来了。然后我们重新再跑一次，这时候它告诉我有一次读取失败了，就是它 read 这个 directory 的时候，遇到一个 Bad file descriptor，这时候可以看到，列出来的文件就比上面的要少了，因为有一条路径让它失败了。接下来，我们进一步再跑，发现刚列出来一个目录，然后下次读取就出错了。然后后面再跑一次的时候，这次运气也比较好，把这整个都列出来了，这个还只是模拟的 5% 的失败率。就是有 5% 的概率你去 read、去 open 的时候会失败，那么这时候可以看到 ls 命令的行为还是很 stable 的，就是没有什么常见的 segment fault 这些。
 
@@ -92,13 +92,14 @@ InnoDB: Error number 5 means 'Input/output error'.
 
 换一个思路来看，假设没有这个东西，你复现这个 bug 的成本是什么？大家可以想想，如果没有这个东西，这个 bug 应该怎么复现，怎么让 MySQL 读取的东西出错？正常路径下你让它读取出错太困难了，可能好多年没出现过。这时我们进一步再放大一下，这个在 5.7 里面还有，也是在 MySQL 里面很可能有十几年大家都没怎么遇到过的，但这种 bug 在这个工具的辅助下，马上就能出来。所以  Fault injection 它带来了很重要的一个好处就是让一个东西可以变得更加容易重现。这个还是模拟的 5% 的概率。这个例子是我昨天晚上做的，就是我要给大家一个直观的理解，但是分布式系统里面错误注入比这个要复杂。而且如果你遇到一个错误十年都没出现，你是不是太孤独了？ 这个电影大家可能还有印象，威尔史密斯主演的，全世界就一个人活着，唯一的伙伴是一条狗。
 
-![](http://static.zybuluo.com/zyytop/alxnjqkoeq63zwvnru86poxu/4.jpg)
+![](media/distributed-system-test-2/4.jpg)
 
 实际上不是的，比我们痛苦的人大把的存在着。
 
 举 Netflix 的一个例子，下图是 Netflix 的系统。
 
-![](http://static.zybuluo.com/zyytop/yzje24743ddveinu1h7dwq15/5.png)
+
+![](media/distributed-system-test-2/5.png)
 
 他们在 2014 年 10 月份的时候写了一篇博客，叫《 Failure Injection Testing 》，是讲他们整个系统怎么做错误注入，然后他们的这个说法是 Internet Scale，就是整个多数据中心互联网的这个级别。大家可能记得 Spanner 刚出来的时候他们叫做 Global Scale，然后这地方可以看到，蓝色是注射点，黑色的是网络调用，就是所有这些请求在这些情况下面，所有这些蓝色的框框都有可能出错。大家可以想一想，在 Microservice 系统上，一个业务调用可能涉及到几十个系统的调用，如果其中一个失败了会怎么样？如果是第一次第一个失败，第二次第二个失败，第三次第三个失败是怎么样的？有没有系统做过这样的测试？有没有系统在自己的程序里面去很好的验证过是不是每一个可以预期的错误都是可预测的，这个变得非常的重要。这里以 cache 为例，就说每一次访问  Cassandra 的时候可能出错，那么也就给了我们一个错误的注入点。
 
@@ -114,7 +115,8 @@ InnoDB: Error number 5 means 'Input/output error'.
 
 **Jepsen: Distributed Systems Safety Analysis**
 
-![](http://static.zybuluo.com/zyytop/nrx2pne826o8rubsi4wfutez/6.jpg)
+
+![](media/distributed-system-test-2/6.jpg)
 
 大家所有听过的知名的开源分布式系统基本上都被它找出来过 bug。但是在这之前大家都觉得自己还是很 OK 的，我们的系统还是比较稳定的，所以当新的这个工具或者新的方法出现的时候，就比如说我刚才提到的那篇能够线性 Scale 的去查错的那篇论文，那个到时候查错力就很惊人了，因为它能够自动帮你探测。另外我介绍一个工具 Namazu，后面讲，它也很强大。这里先说Jepsen, 这货算是重型武器了，无论是 ZooKeeper、MongoDB 以及 Redis 等等，所有这些全部都被找出了 bug，现在用的所有数据库都是它找出的 bug，最大的问题是小众语言 closure 编写的，扩展起来有点麻烦。我先说说 Jepsen 的基本原理，一个典型使用 Jepsen 的测试通过会在一个 control node上面运行相关的 clojure 程序，control node 会使用 ssh 登陆到相关的系统 node（jepsen 叫做 db node）进行一些测试操作。
 
