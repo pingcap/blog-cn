@@ -48,7 +48,7 @@ tags: ['DM 源码阅读','社区']
 
 ## 代码简介
 
-DM 源代码完全托管在 Github 上，从 [项目主页](https://github.com/pingcap/dm) 可以看到所有信息，整个项目使用 Go 语言开发，按照功能划分了很多 package，下表列出了 DM 每个 package 的基本功能：
+DM 源代码完全托管在 GitHub 上，从 [项目主页](https://github.com/pingcap/dm) 可以看到所有信息，整个项目使用 Go 语言开发，按照功能划分了很多 package，下表列出了 DM 每个 package 的基本功能：
 
 | Package | Introduction |
 | :---------- | :----------------------------------------- |
@@ -56,7 +56,7 @@ DM 源代码完全托管在 Github 上，从 [项目主页](https://github.com/p
 | cmd/dm-ctl, cmd/dm-master, cmd/dm-worker | dmctl, DM-master, DM-worker 的 main 文件所在模块 |
 | dm/config | 同步任务配置、子任务配置、前置检查配置定义模块 |
 | dm/ctl | dmctl 所有 RPC 调用实现的模块 |
-| dm/master | DM-master 的核心实现，包含了 DM-master 后台服务，对 dmctl 到 DM-master 的 RPC 调用的处理逻辑，对 DM-worker 的管理，对 sharing DDL 进行协调调度等功能 |
+| dm/master | DM-master 的核心实现，包含了 DM-master 后台服务，对 dmctl 到 DM-master 的 RPC 调用的处理逻辑，对 DM-worker 的管理，对 sharding DDL 进行协调调度等功能 |
 | dm/pb, dm/proto | dm/proto 定义了 DM-master 和 DM-worker 相关交互的 protobuf 协议，dm/pb 是对应的生成代码 |
 | dm/unit | 定义了子任务执行的逻辑单元（包括 dump unit, load unit, sync unit, relay unit）接口，在每个不同逻辑单元对应的 package 内都有对应的 接口实现 |
 | dm/worker | DM-worker 的核心实现，实现 DM-worker 后台服务，管理维护每个任务的 relay 逻辑单元，管理、调度每个子任务的逻辑单元 |
