@@ -8,9 +8,9 @@ aliases:
   - /blog-cn/tangliu-tool-2/
 ---
 
-在[前一篇](./iostat-perf-strace.md)文章，我们简单提到了 perf，实际 perf 能做的事情远远不止这么少，这里就要好好介绍一下，我们在 TiKV 性能调优上面用的最多的工具 - 火焰图。
+在 [前一篇](./iostat-perf-strace.md) 文章，我们简单提到了 perf，实际 perf 能做的事情远远不止这么少，这里就要好好介绍一下，我们在 TiKV 性能调优上面用的最多的工具 - 火焰图。
 
-火焰图，也就是 [FlameGraph](https://github.com/brendangregg/FlameGraph)，是超级大牛 Brendan Gregg 捣鼓出来的东西，主要就是将 profile 工具生成的数据进行可视化处理，方便开发人员查看。我第一次知道火焰图，应该是来自 OpenResty 的章亦春介绍，大家可以详细去看看这篇文章[动态追踪技术漫谈](https://openresty.org/posts/dynamic-tracing/)。
+火焰图，也就是 [FlameGraph](https://github.com/brendangregg/FlameGraph)，是超级大牛 Brendan Gregg 捣鼓出来的东西，主要就是将 profile 工具生成的数据进行可视化处理，方便开发人员查看。我第一次知道火焰图，应该是来自 OpenResty 的章亦春介绍，大家可以详细去看看这篇文章[《动态追踪技术漫谈》](https://openresty.org/posts/dynamic-tracing/)。
 
 之前，我的所有工作在很长一段时间几乎都是基于 Go 的，而 Go 原生提供了很多相关的 profile 工具，以及可视化方法，所以我没怎么用过火焰图。但开始用 Rust 开发 TiKV 之后，我就立刻傻眼了，Rust 可没有官方的工具来做这些事情，怎么搞？自然，我们就开始使用火焰图了。
 
@@ -42,7 +42,7 @@ aliases:
 /opt/FlameGraph/flamegraph.pl out.folded > cpu.svg
 ```
 
-![][1]
+![](media/flame-graph/1.jpg)
 
 上面就是生成的一个 TiKV 火焰图，我们会发现 gRPC 线程主要开销在 c gRPC core 上面，而这个也是现在 c gRPC core 大家普遍反映的一个问题，就是太费 CPU，但我相信凭借 Google gRPC team 的实力，这问题应该能够搞定。
 
@@ -75,7 +75,8 @@ perf script > out.perf
 /opt/FlameGraph/flamegraph.pl  --colors=mem out.folded > mem.svg
 ```
 
-![][2]
+
+![](media/flame-graph/2.png)
 
 上面是生成的一个 malloc 火焰图，我们可以看到，大部分的内存开销仍然是在 RocksDB 上面。
 
@@ -120,7 +121,7 @@ perf script -F comm,pid,tid,cpu,time,period,event,ip,sym,dso,trace | awk '
     /opt/FlameGraph/flamegraph.pl --countname=ms --title="Off-CPU Time Flame Graph" --colors=io > offcpu.svg
 ```
 
-![][3]
+![](media/flame-graph/3.png)
 
 上面就是 TiKV 一次 off CPU 的火焰图，可以发现只要是 server event loop 和 time monitor 两个线程 off CPU 比较长，server event loop 是等待外部的网络请求，因为我在 perf 的时候并没有进行压力测试，所以 wait 是正常的。而 time monitor 则是 sleep 一段时间，然后检查时间是不是出现了 jump back，因为有长时间的 sleep，所以也是正常的。
 
@@ -147,16 +148,10 @@ chmod +x sample-bt-off-cpu
 /opt/difffolded.pl out.folded1 out.folded2 | ./flamegraph.pl > diff2.svg
 ```
 
-![][4]
+![](media/flame-graph/4.png)
 
 但现在我仅仅只会生成，还没有详细对其研究过，这里就不做过多说明了。
 
 ## 总结
 
 上面简单介绍了我们在 TiKV 里面如何使用火焰图来排查问题，现阶段主要还是通过 CPU 火焰图发现了不少问题，但我相信对于其他火焰图的使用研究，后续还是会很有帮助的。
-
-
-  [1]: http://static.zybuluo.com/zyytop/yduq8ncg6ja4s4310wg4xk2p/cpu.jpg
-  [4]: http://static.zybuluo.com/zyytop/twmscpi5uixcm5ny0n29od6h/diff2.png
-  [2]: http://static.zybuluo.com/zyytop/5p110cw96xnpfh0cuwwkt7wf/mem.png
-  [3]: http://static.zybuluo.com/zyytop/mg0s8dpac6tm8j59p2meyooo/offcpu.png
