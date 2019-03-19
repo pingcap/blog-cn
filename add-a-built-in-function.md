@@ -131,4 +131,4 @@ SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST�
 
 编辑按：添加 TiDB Robot 微信，加入 TiDB Contributor Club，无门槛参与开源项目，改变世界从这里开始吧（萌萌哒）。
 
-![](media/tidb-robot.jpg "tidb_rpbot")
+![](media/add-a-built-in-function/tidb-robot.jpg)
