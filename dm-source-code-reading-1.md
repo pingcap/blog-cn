@@ -22,29 +22,29 @@ tags: ['DM 源码阅读','社区']
 
 *   基本的后端服务知识，比如后台服务进程管理、RPC 工作原理等。
 
-总体而言，读者需要有一定 MySQL/TiDB 的使用经验，了解 MySQL 数据备份和主从同步的原理，以及可以读懂 Go 语言程序。在阅读 DM 源码之前，可以先从阅读 [TiDB-DM 架构设计与实现原理](https://www.pingcap.com/blog-cn/tidb-ecosystem-tools-3/)入手，并且参考 [使用文档](https://pingcap.com/docs-cn/tools/dm/overview/) 在本地搭建一个 DM 的测试环境，从基础原理和使用对 DM 有一个初步的认识，然后再进一步分析源码，深入理解代码的设计和实现。
+总体而言，读者需要有一定 MySQL/TiDB 的使用经验，了解 MySQL 数据备份和主从同步的原理，以及可以读懂 Go 语言程序。在阅读 DM 源码之前，可以先从阅读[《TiDB-DM 架构设计与实现原理》](https://www.pingcap.com/blog-cn/tidb-ecosystem-tools-3/)入手，并且参考 [使用文档](https://pingcap.com/docs-cn/tools/dm/overview/) 在本地搭建一个 DM 的测试环境，从基础原理和使用对 DM 有一个初步的认识，然后再进一步分析源码，深入理解代码的设计和实现。
 
 ## 内容概要
 
 源码阅读系列将会从两条线进行展开，一条是围绕 DM 的系统架构和重要模块进行分析，另一条线围绕 DM 内部的同步机制展开分析。源码阅读不仅是对代码实现的分析，更重要的是深入的分析背后的设计思想，源码阅读和原理分析的覆盖范围包括但不限于以下列出的内容（因为目前 DM 仍处于快速迭代的阶段，会有新的功能和模块产生，部分模块在未来也会进行优化和重构，后续源码阅读的内容会随着 DM 的功能演进做适当的调整）：
 
-*   整体架构介绍，包括 DM 有哪些模块，分别实现什么功能，模块之间交互的数据模型和 RPC 实现
+*   整体架构介绍，包括 DM 有哪些模块，分别实现什么功能，模块之间交互的数据模型和 RPC 实现。
 
-*   DM-worker 内部组件设计原理（relay-unit, dump-unit, load-unit, sync-unit）和数据同步的并发模型设计与实现
+*   DM-worker 内部组件设计原理（relay-unit, dump-unit, load-unit, sync-unit）和数据同步的并发模型设计与实现。
 
-*   基于 binlog 的数据同步模型设计和实现
+*   基于 binlog 的数据同步模型设计和实现。
 
-*   relay log 的原理和实现
+*   relay log 的原理和实现。
 
-*   定制化数据同步功能的实现原理（包括库表路由，库表黑白名单，binlog event 过滤，列值转换）
+*   定制化数据同步功能的实现原理（包括库表路由，库表黑白名单，binlog event 过滤，列值转换）。
 
-*   DM 如何支持上游 online DDL 工具（[pt-osc](https://www.percona.com/doc/percona-toolkit/LATEST/pt-online-schema-change.html), [gh-ost](https://github.com/github/gh-ost)）的 DDL 同步场景
+*   DM 如何支持上游 online DDL 工具（[pt-osc](https://www.percona.com/doc/percona-toolkit/LATEST/pt-online-schema-change.html), [gh-ost](https://github.com/github/gh-ost)）的 DDL 同步场景。
 
-*   sharding DDL 处理的具体实现
+*   sharding DDL 处理的具体实现。
 
-*   checkpoint 的设计原理和实现，深入介绍 DM 如何在各类异常情况下保证上下游数据同步的一致性
+*   checkpoint 的设计原理和实现，深入介绍 DM 如何在各类异常情况下保证上下游数据同步的一致性。
 
-*   DM 测试的架构和实现
+*   DM 测试的架构和实现。
 
 ## 代码简介
 
@@ -98,4 +98,4 @@ DM 源代码完全托管在 Github 上，从 [项目主页](https://github.com/p
 
 ## 小结
 
-本篇文章主要介绍了 DM 源码阅读的目的和源码阅读的规划，简单介绍了 DM 的源码结构和工具链。下一篇文章我们会从 DM 的整体架构入手，详细分析 DM-master、DM-worker 和 dmctl 三个组件服务逻辑的实现和功能抽象， RPC 数据模型和交互接口。更多的代码阅读内容会在后面的章节中逐步展开，敬请期待。
+本篇文章主要介绍了 DM 源码阅读的目的和源码阅读的规划，简单介绍了 DM 的源码结构和工具链。下一篇文章我们会从 DM 的整体架构入手，详细分析 DM-master、DM-worker 和 dmctl 三个组件服务逻辑的实现和功能抽象，RPC 数据模型和交互接口。更多的代码阅读内容会在后面的章节中逐步展开，敬请期待。
