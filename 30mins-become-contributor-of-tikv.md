@@ -11,7 +11,7 @@ tags: ['TiKV','社区','Contributor']
 
 SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再经过 Query Optimizer 生成执行计划，执行计划切分成很多子任务，这些子任务以表达式的方式最后下推到底层的各个 TiKV 来执行。
 
-![图 1](https://upload-images.jianshu.io/upload_images/542677-5e242bc6212f6b8c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/30mins-become-contributor-of-tikv/1.png)
 
 <center>图 1</center>
 
