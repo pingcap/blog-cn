@@ -83,11 +83,20 @@ TiDB 在我司的数据中心部署的应用情况如下：
 
 TiDB 测试集群总体配置如下：
 
-![](media/user-case-weiruida/4.png)
+| 类型 | 配置 | 节点数 |
+|:------|:----------|:----|
+| TiDB | 12C 32G | 2 |
+| PD | 16C 16G | 3 |
+| TiKV | 16C 32G 2T(SSD) | 5 |
 
 TiSpark 测试集群总体配置如下：
 
-![](media/user-case-weiruida/5.png)
+
+
+| 类型 | 配置 | 节点数 |
+|:------|:----------|:----|
+| TiSpark_master | 4C 8G | 1 |
+| TiSpark_slave | 9C 15G | 7 |
 
 ### 测试数据查询性能对比
 
