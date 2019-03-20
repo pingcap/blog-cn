@@ -14,7 +14,7 @@ tags: ['TiKV','Raft','RocksDB']
 
 ### Raft
 
-![Raft](https://upload-images.jianshu.io/upload_images/542677-c9ca0e03f4c5f998.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/how-tikv-store-get-data/1.png)
 
 TiKV 使用 Raft 一致性算法来保证数据的安全，默认提供的是三个副本支持，这三个副本形成了一个 Raft Group。
 
@@ -28,7 +28,7 @@ Leader 也会通过 Raft 算法将 entry 复制到其他的 Follower 上面，�
 
 ### Multi Raft
 
-![Multi Raft](https://upload-images.jianshu.io/upload_images/542677-9fb5f3942a7d3d67.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Multi Raft](media/how-tikv-store-get-data/2.png)
 
 因为一个 Raft Group 处理的数据量有限，所以我们会将数据切分成多个 Raft Group，我们叫做 Region。切分的方式是按照 range 进行切分，也就是我们会将数据的 key 按照字节序进行排序，也就是一个无限的 sorted map，然后将其切分成一段一段（连续）的 key range，每个 key range 当成一个 Region。
 
@@ -120,7 +120,8 @@ RocksDB 支持 Column Family，所以能直接跟 Percolator 里面的 CF 对应
 
 TiKV 会将自己所有的 Region 信息汇报给 PD，这样 PD 就有了整个集群的 Region 信息，当然就有了一张 Region 的路由表，如下：
 
-![Router](https://upload-images.jianshu.io/upload_images/542677-27913390576dd7b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](media/how-tikv-store-get-data/3.png)
 
 当 Client 需要操作某一个 key 的数据的时候，它首先会向 PD 问一下这个 key 属于哪一个 Region，譬如对于 key a 来说，PD 知道它属于 Region 1，就会给 Client 返回 Region 1 的相关信息，包括有多少个副本，现在 Leader 是哪一个副本，这个 Leader 副本在哪一个 TiKV 上面。
 
@@ -135,7 +136,7 @@ PD 同时也提供全局的授时服务，在 Percolator 事务模型里面，�
 
 ### Write
 
-![](http://upload-images.jianshu.io/upload_images/542677-4a6cbf6b22671f21?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/how-tikv-store-get-data/4.jpeg)
 
 当进行写入，譬如 Write a = 1，会进行如下步骤：
 
@@ -151,7 +152,7 @@ PD 同时也提供全局的授时服务，在 Percolator 事务模型里面，�
 
 ### Read
 
-![](http://upload-images.jianshu.io/upload_images/542677-90c3b82402f420a1?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/how-tikv-store-get-data/5.jpeg)
 
 对于 Read 来说，也是一样的操作，唯一不同在于 Leader 可以直接提供 Read，不需要走 Raft。
 
@@ -159,7 +160,7 @@ PD 同时也提供全局的授时服务，在 Percolator 事务模型里面，�
 
 ### Write
 
-![](http://upload-images.jianshu.io/upload_images/542677-aeb71cc30d3be9f6?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/how-tikv-store-get-data/6.jpeg)
 
 对于 TxnKV 来说，情况就要复杂的多，不过大部分流程已经在 Percolator 章节进行说明了。这里需要注意的是，因为我们要快速的 seek 到最新的 commit，所以在 RocksDB 里面，我们会先将 TS 使用 bigendian 生成 8 字节的 bytes，然后将这个 bytes 逐位取反，在跟原始的 key 组合存储到 RocksDB 里面，这样就能保证最新的提交存放到前面，seek 的时候就能直接定位了，当然 seek 的时候，也同样会将对应的 TS 按照相同的方式编码处理。
 
@@ -195,7 +196,7 @@ Write CF: W a_11 -> 10 + Data
 
 ### Read
 
-![](http://upload-images.jianshu.io/upload_images/542677-c5310f4912b2a083?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/how-tikv-store-get-data/7.jpeg)
 
 Read 的流程之前的 Percolator 已经有说明了，这里就不详细解释了。
 
