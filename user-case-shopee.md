@@ -131,6 +131,16 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 * TiDB v1.x 版本需要定期手动执行 Analyze Table 以确保元信息准确。PingCAP 的同学告诉我们说：当 (Modify_count / Row_count) 大于 0.3 就要手动 Analyze Table 了。v2.x 版本已经支持自动更新元数据了。我们后续会考虑升级到新版本。
 
+```
+mysql> show stats_meta where db_name = 'aaa_db'  \G
+*************************** 1. row ***************************
+     Db_name: aaa_db
+  Table_name: xxx_tab
+ Update_time: 2018-12-16 23:49:02
+Modify_count: 166545248
+   Row_count: 8568560708
+1 row in set (0.00 sec)
+```
 
 ## 六、未来规划
 
