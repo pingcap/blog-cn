@@ -21,7 +21,7 @@ PingCAP University 是 PingCAP 官方设立的对企业和个人进行 TiDB 全�
 
 *  获得来自 PingCAP 官方的专业技术能力认可，提升个人技术竞争力
 
-![](http://upload-images.jianshu.io/upload_images/542677-05a5fa578ca8af03?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/pingcap-university-tidb-dba-plan/1.jpeg)
 
 ## 培训特色
 
@@ -35,7 +35,7 @@ PingCAP University 是 PingCAP 官方设立的对企业和个人进行 TiDB 全�
 
 *   **高级 TiDB DBA**：PCTP（PingCAP Certified TiDB Professional） 培训及认证
 
-![](https://upload-images.jianshu.io/upload_images/542677-c632be4fa6d90f78.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/pingcap-university-tidb-dba-plan/2.png)
 
 ### 培训及考试安排
 
