@@ -136,7 +136,7 @@ PingCAP 攻城狮小申典型的一天：
 如果要做的是比较大的功能，那么最好先和官方做一轮讨论，然后写一个尽可能详细的 Design，讨论 OK 后，开始开发。
 
 ### 讲一点好玩的事情
-在开源项目中总能或多或少的发现奇葩的 [Issue](https://github.com/pingcap/tidb/issues/194)，比如[这个](https://github.com/pingcap/tidb/issues/194)
+在开源项目中总能或多或少的发现奇葩的 [Issue](https://github.com/pingcap/tidb/issues/194)，比如 [这个](https://github.com/pingcap/tidb/issues/194)：
 
 ![](media/talk-about-opensource-1.jpg)
 ![](media/talk-about-opensource-2.jpg)
