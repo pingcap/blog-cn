@@ -201,4 +201,4 @@ func (s *testPlanSuite) TestInferType(c *C) {
 
 加入 TiDB Contributor Club 请添加我们的 AI 微信：
 
-![](media/tidb-robot.jpg "tidb_rpbot")
+![](media/reconstruct-built-in-function-report/1.jpg)
