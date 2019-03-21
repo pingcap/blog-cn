@@ -24,7 +24,7 @@ Simulate the following errors:
 
 再来看看 Cloudera，下图是整个 Cloudera 的一个 Failure Injection 的结构。
 
-![](http://static.zybuluo.com/zyytop/q5urfv8k4v3qv5dzjewtsf9p/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-12-07%20%E4%B8%8B%E5%8D%881.58.25.png)
+![](media/distributed-system-test-3/1.png)
 
 一边是 Tools，一边是它的整个的 Level 划分。比如说整个 Cluster， Cluster 上面有很多 Host，Host 上面又跑了各种 Service，整个系统主要用于测试 HDFS， HDFS 也是很努力的在做有效的测试。然后每个机器上部署一个 AgenTEST，就用来注射那些可能出现的错误。
 
@@ -104,13 +104,14 @@ Simulate the following errors:
 
 + american fuzzy lop
 
-![](http://static.zybuluo.com/zyytop/tw2w9n4gz6g7x1nqjlr10dok/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-12-07%20%E4%B8%8B%E5%8D%882.12.41.png)
+![](media/distributed-system-test-3/2.png)
+
 
 其实还有一些更加先进的工具，大家平时觉得特别稳定的东西，都被摧残的不行。Nginx 、NGPD、tcpdump 、LibreOffice ，如果有用 Linux 的同学可能知道，还有 Flash、sqlite。这个东西一出来，当时大家很兴奋，说怎么一下子找了这么多 bug，为什么以前那么稳定的系统这么不堪一击，会觉得这个东西它还挺智能的。就比如说你程序里面有个 if 分支，它是这样的，假如你程序有一百条指令，它先从前面一直走，走到某条分支指令的时候，它是一直持续探索，一个分支走不下去，它会一直在这儿持续探索，再给你随机的输入，直到我探索进去了，我记下来了下次我知道我用这个输入可以进去特定的分支。那我可以再往下走，比如说你 if 分支进去之后里面还有 if ，那你传统手段可能探测不进去了但它可以，它记录一下，我这个可以进去，然后我重来，反正我继续输入这个，我再往里面走，一旦我探测到一个新的分支，我再记住，我再往里面走。所以它一出来的时候大家都说这个真厉害，一下发现这么多 bug。但最激动的不是这些人，最激动的是黑客，为什么？因为突然有很多栈溢出、堆溢出漏洞被发现了，然后就可以写一堆工具去攻击线上的这么多系统。所以很多的技术的推进在早期的时候是黑客做出来，但是他们的目的当然不一定是为了测试 bug，而是为了怎么黑一个系统进去，这是他们当时做的，所以这个工具也是非常强大、非常有意思的，大家可以拿去研究一下自己的系统。
 
 大家印象里面各种文件系统是很稳定的，可是当用 American fuzzy lop 来测试的时候，被惊呆了。 Btrfs 连 5 秒都没有坚持到就跪了，大家用的最多的 Ext4 是最坚挺的，也才抗了两个小时！！！
 
-![](http://static.zybuluo.com/zyytop/6u4uzgefxk7pt6ghf2fkxcia/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-12-07%20%E4%B8%8B%E5%8D%882.16.11.png)
+![](media/distributed-system-test-3/3.png)
 
 再来说说 Google，Google 怎么做测试对外讲的不多，最近 Chrome team 开源了他们的 Fuzz 测试工具 OSS-Fuzz，这个工具强大的地方在于自动化做的极好：
 
@@ -129,11 +130,12 @@ Simulate the following errors:
 
 还有 Tracing，比如说我一个 query 过来，然后经过这么多层，经过这么多机器，然后在不同的地方，不同环节耗时多久，实际上这个在分布式系统里面，有个专门的东西做 Tracing ，就是 distribute tracing tools。它可以用一条线来表达你的请求在各个阶段耗时多长，如果有几段，那么分到几个机器，分别并行的时候好了多长时间。大体的结构是这样的：
 
-![](http://static.zybuluo.com/zyytop/dtla8gkdbpqigym0kvzio04b/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-12-07%20%E4%B8%8B%E5%8D%882.19.33.png)
+![](media/distributed-system-test-3/4.png)
+
 
 这里是一个具体的例子：
 
-![](http://static.zybuluo.com/zyytop/akcaktnflk9fajbr8skrrhrx/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-12-07%20%E4%B8%8B%E5%8D%882.20.13.png)
+![](media/distributed-system-test-3/5.png)
 
 很清晰，一看就知道了，不用去看 log，这事其实一点也不新鲜，Google 十几年前就做了一个分布式追踪的工具。然后开源社区要做一个实现叫做 Zipkin，好像是 java 还是什么写的，又出了新的叫 OpenTracing，是 Go 写的。我们现在正准备上这个系统，用来追踪 TiDB 的请求在各个阶段的响应时间。
 
