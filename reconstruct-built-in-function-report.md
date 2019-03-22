@@ -186,13 +186,11 @@ func (s *testPlanSuite) TestInferType(c *C) {
 
 1. 提交 PR
 2. PR提交之后，请耐心等待维护者进行 Review。
-目前一般在一到两个工作日内都会进行 Review，如果当前的 PR 堆积数量较多可能回复会比较慢。
-代码提交后 CI 会执行我们内部的测试，你需要保证所有的单元测试是可以通过的。期间可能有其它的提交会与当前 PR 冲突，这时需要修复冲突。
-维护者在 Review 过程中可能会提出一些修改意见。修改完成之后如果 reviewer 认为没问题了，你会收到 LGTM(looks good to me) 的回复。当收到两个及以上的 LGTM 后，该 PR 将会被合并。
+   - 目前一般在一到两个工作日内都会进行 Review，如果当前的 PR 堆积数量较多可能回复会比较慢。
+   - 代码提交后 CI 会执行我们内部的测试，你需要保证所有的单元测试是可以通过的。期间可能有其它的提交会与当前 PR 冲突，这时需要修复冲突。
+   - 维护者在 Review 过程中可能会提出一些修改意见。修改完成之后如果 reviewer 认为没问题了，你会收到 LGTM(looks good to me) 的回复。当收到两个及以上的 LGTM 后，该 PR 将会被合并。
 3. 合并 PR 后自动成为 Contributor，会收到来自 PingCAP Team 的感谢邮件，请查收邮件并填写领取表单
-
- - 表单填写地址：[http://cn.mikecrm.com/01wE8tX](http://cn.mikecrm.com/01wE8tX)
-
+   - 表单填写地址：[http://cn.mikecrm.com/01wE8tX](http://cn.mikecrm.com/01wE8tX)
 4. 后台 AI 核查 GitHub ID 及资料信息，确认无误后随即便快递寄出属于你的限量版马克杯
 5. 期待你分享自己参与开源项目的感想和经验，TiDB Contributor Club 将和你一起分享开源的力量
 
