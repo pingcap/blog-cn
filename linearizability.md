@@ -27,7 +27,7 @@ tags: ['TiDB', 'knossos', 'Linearizability']
 
 ### 什么是 Linearizability？
 
-  首先我们需要引入*历史*（history）的概念，*历史*是并发系统中由 invocation 事件和 response 事件组成的有限序列。
+  首先我们需要引入*历史*（history）的概念，历史是并发系统中由 invocation 事件和 response 事件组成的有限序列。
 
   > - invocation: `\<x op(args\*) A\>`，`x` 表示被执行对象的名称；`op` 表示操作名称，如读和写；`args*` 表示一系列参数值；`A` 表示进程的名称。
   >
@@ -52,7 +52,7 @@ tags: ['TiDB', 'knossos', 'Linearizability']
 
   这里的 res 和 inv 分别对应 response 和 invocation。
 
-  当*历史* H 可以通过增加 >=0 个 response 事件被延长时成为 H' 并且满足以下两个条件时，则这个*历史*是**线性化（linearizable）**的。
+  当*历史* H 可以通过增加 >=0 个 response 事件被延长时成为 H' 并且满足以下两个条件时，则这个*历史*是线性化（linearizable）的。
 
   > - L1: `complete(H')` 与某个合法的顺序化历史 S 相等
   >
@@ -95,7 +95,7 @@ tags: ['TiDB', 'knossos', 'Linearizability']
 
 ## 验证 Linearizability
 
-**正确（correctness）**的定义
+**正确（correctness）的定义**
 
 > 一段历史 H 由两种对象组成，representation(REP) 和 abstract(ABS)。abstract 是被实现的类型，而 representation 类型则是用于实现 ABS 的类型。这两种对象在以下条件下进行交互：
 >
