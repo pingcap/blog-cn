@@ -95,7 +95,7 @@ dmctl 的具体命令处理实现在 [`dm/ctl`](https://github.com/pingcap/dm/bl
 
 *   `master`：dmctl 与 DM-master 交互的命令，是当前 DM 推荐的命令交互方式。
 
-*   `worker`：dmctl 与 DM-worker 交互的命令，主要用于开发过程中进行 debug，当前并没有实际所有 DM-worker 支持的命令，未来可能废弃。
+*   `worker`：dmctl 与 DM-worker 交互的命令，主要用于开发过程中进行 debug，当前并没有实现所有 DM-worker 支持的命令，未来可能废弃。
 
 *   `common`：多个命令依赖的通用操作及 dmctl 依赖的配置信息等。
 
