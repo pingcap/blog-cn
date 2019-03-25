@@ -69,7 +69,7 @@ DM-worker 的结构与 DM-master 类似，其入口代码在 [`cmd/dm-worker/mai
 
 *   `relayPurger`：根据用户配置及相关策略，尝试定期对 relay log 进行 purge 操作。
 
-数据同步子任务管理的代码实现主要在 [`dm/worker/subtask.go`](https://github.com/pingcap/dm/blob/3fcf24daa5/dm/worker/subtask.go) 中， relay 处理单元管理的代码实现主要在 [`dm/worker/relay.go`](https://github.com/pingcap/dm/blob/3fcf24daa5/relay/purger/) 中，对 relay log 进行 purge 操作的代码实现主要在 [`relay/purger`](https://github.com/pingcap/dm/blob/3fcf24daa5/relay/purger/) pkg 中。在本篇文章中，我们暂时只关注 DM 架构相关的实现，上述各功能的具体实现将在后续的相关文章中展开介绍。
+数据同步子任务管理的代码实现主要在 [`dm/worker/subtask.go`](https://github.com/pingcap/dm/blob/3fcf24daa5/dm/worker/subtask.go) 中， relay 处理单元管理的代码实现主要在 [`dm/worker/relay.go`](https://github.com/pingcap/dm/blob/3fcf24daa5/dm/worker/relay.go) 中，对 relay log 进行 purge 操作的代码实现主要在 [`relay/purger`](https://github.com/pingcap/dm/blob/3fcf24daa5/relay/purger/) pkg 中。在本篇文章中，我们暂时只关注 DM 架构相关的实现，上述各功能的具体实现将在后续的相关文章中展开介绍。
 
 `Worker` 的入口方法为 [`Start`](https://github.com/pingcap/dm/blob/3fcf24daa5/dm/worker/worker.go#L93)，其中的主要操作包括：
 
