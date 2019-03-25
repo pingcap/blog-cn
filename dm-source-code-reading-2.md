@@ -101,11 +101,11 @@ dmctl 的具体命令处理实现在 [`dm/ctl`](https://github.com/pingcap/dm/bl
 
 每个 dmctl 命令，其主要对应的实现包括 3 个部分：
 
-1.  在各命令对应的实现源文件中，通过方法名为 `New***Cmd` 形式的方法创建 `cobra.Command` 对象。
+1.  在各命令对应的实现源文件中，通过 `New***Cmd` 形式的方法创建 `cobra.Command` 对象。
 
 2.  在 `dm/ctl/ctl.go` 中通过调用 `rootCmd.AddCommand` 添加该命令。
 
-3.  在各命令对应的实现源文件中，通过方法名为 `***Func` 形式的方法实现参数验证、RPC 调用等具体功能。
+3.  在各命令对应的实现源文件中，通过 `***Func` 形式的方法实现参数验证、RPC 调用等具体功能。
 
 ## 任务管理调用链示例
 
