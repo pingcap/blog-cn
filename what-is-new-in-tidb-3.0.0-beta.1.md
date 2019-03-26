@@ -2,11 +2,11 @@
 title: What’s New in TiDB 3.0.0 beta.1
 date: 2019-03-26
 author: ['申砾']
-summary: 今年 1 月份，我们发布了 TiDB 3.0.0 Beta 版本，DevCon 上也对这个版本做了介绍，经过两个月的努力，今天推出了下一个 beta 版本 3.0.0 beta.1。让我们看一下这个版本相比于之前有什么改进。
+summary: 今年 1 月份，我们发布了 TiDB 3.0.0 Beta 版本，DevCon 上也对这个版本做了介绍，经过两个月的努力，今天推出了下一个 beta 版本 3.0.0 beta.1。
 tags: ['TiDB']
 ---
 
-今年 1 月份，我们发布了 TiDB 3.0.0 Beta 版本，DevCon 上也对这个版本做了介绍，经过两个月的努力，今天推出了下一个 beta 版本 3.0.0 beta.1。让我们看一下这个版本相比于之前有什么改进。
+今年 1 月份，我们发布了 [TiDB 3.0.0 Beta 版本](https://github.com/pingcap/docs-cn/blob/master/releases/3.0beta.md)，DevCon 上也对这个版本做了介绍，经过两个月的努力，今天推出了下一个 beta 版本 3.0.0 beta.1。让我们看一下这个版本相比于之前有什么改进。
 
 ## 新增特性解读
 
@@ -28,7 +28,7 @@ tags: ['TiDB']
 
 ### Window Function
 
-MySQL 所支持的 Window Function TiDB 3.0.0 beta.1版本已经全都支持，这为 TiDB 向 MySQL 8 兼容迈出了一大步。想体验功能的可以下载版本尝鲜，但是不建议在生产中使用，这项功能还需要大量的测试，欢迎大家测试并反馈问题。
+MySQL 所支持的 Window Function TiDB 3.0.0 beta.1 版本已经全都支持，这为 TiDB 向 MySQL 8 兼容迈出了一大步。想体验功能的可以下载版本尝鲜，但是不建议在生产中使用，这项功能还需要大量的测试，欢迎大家测试并反馈问题。
 
 ### 热点调度策略可配置化
 
@@ -36,7 +36,7 @@ MySQL 所支持的 Window Function TiDB 3.0.0 beta.1版本已经全都支持，�
 
 ### 优化 Coprocessor 计算执行框架
 
-目前已经完成 TableScan 算子,  单 TableScan 即扫表性能提升 5% ~ 30%，接下来会对 IndexScan、Filter、Aggregation 等算子以及表达式计算框架进行优化。
+目前已经完成 TableScan 算子，单 TableScan 即扫表性能提升 5% ~ 30%，接下来会对 IndexScan、Filter、Aggregation 等算子以及表达式计算框架进行优化。
 
 ### TiDB Lightning 性能优化
 
@@ -45,7 +45,7 @@ Lightning 是将大量数据导入 TiDB 的最佳方式，在特定表结构，�
 ### 易用性相关的特性
 
 * 使用 `/debug/zip` HTTP 接口， 可以方便地一键获取当前 TiDB 实例的信息，便于诊断问题。
-* 新增通过 SQL 语句方式管理 pump/drainer状态，简化 pump/drainer状态管理，当前仅支持查看状态。
+* 新增通过 SQL 语句方式管理 pump/drainer 状态，简化 pump/drainer 状态管理，当前仅支持查看状态。
 * 支持通过配置文件管理发送 binlog 策略, 丰富 binlog 管理方式。
 
 更多的改进可以参见 Release Notes，除了这些已经完成的特性之外，还有一些正在做的事情，比如 RBAC、Plan Management 都在密集开发中，希望在下一个 beta 版本或者 rc 版本中能与大家见面。
