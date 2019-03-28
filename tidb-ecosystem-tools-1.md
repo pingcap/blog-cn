@@ -15,7 +15,7 @@ TiDB-Binlog 组件用于收集 TiDB 的 binlog，并提供实时备份和同步�
 
 TiDB-Binlog 这个组件已经发布了 2 年多时间，经历过几次架构演进，去年十月到现在大规模使用的是 Kafka 版本，架构图如下：
 
-![TiDB-Binlog 架构演进](https://upload-images.jianshu.io/upload_images/542677-e9e331c9a004886b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![TiDB-Binlog 架构演进](media/tidb-ecosystem-tools-1/1.png)
 
 Kafka 版本的 TiDB-Binlog 主要包括两个组件：
 
@@ -41,7 +41,7 @@ Drainer： 从 Kafka 中收集 binlog，并按照 TiDB 中事务的提交顺序�
 
 **以上这些问题我们很难在已有的框架下进行优化，因此我们对 TiDB-Binlog 进行了重构，最新版本的 TiDB-Binlog 的总体架构如下图所示：**
 
-![TiDB-Binlog 总体架构](https://upload-images.jianshu.io/upload_images/542677-b8e1e0ff80189a16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![TiDB-Binlog 总体架构](media/tidb-ecosystem-tools-1/2.png)
 
 新版本 TiDB-Binlog 不再使用 Kafka 存储 binlog，仍然保留了 Pump 和 Drainer 两个组件，但是对功能进行了调整：
 
@@ -259,7 +259,7 @@ Drainer 从各个 Pump 中获取 binlog，归并后按照顺序解析 binlog、�
 
 集群中已经存在 Pump1 和 Pump2，Drainer 读取 Pump1 和 Pump2 的数据并进行归并：
 
-![](https://upload-images.jianshu.io/upload_images/542677-2363aaf1b1199a22.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-ecosystem-tools-1/3.png)
 
 Pump1 存储的 binlog 为｛ 1，3，5，7，9 ｝，Pump2 存储的 binlog 为｛2，4，6，10｝。Drainer 从两个 Pump 获取 binlog，假设当前已经读取到了｛1，2，3，4，5，6，7｝这些 binlog，已处理的 binlog 的位置为 7。此时 Pump3 加入集群，从 Pump3 上报自己的上线信息到 PD，到 Drainer 从 PD 中获取到 Pump3 信息需要一定的时间，如果 Pump3 没有通知 Drainer 就直接提供写 binlog 服务，写入了 binlog｛8，12｝，Drainer 在此期间继续读取 Pump1 和 Pump2 的 binlog，假设读取到了 9，之后才识别到了 Pump3 并将 Pump3 加入到归并排序中，此时 Pump3 的 binlog 8 就丢失了。为了避免这种情况，需要让 Pump3 通知 Drainer 自己已经上线，Drainer 收到通知后将 Pump3 加入到归并排序，并返回成功给 Pump3，然后 Pump3 才能提供写 binlog 的服务。
 
