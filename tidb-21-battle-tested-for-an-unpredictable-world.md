@@ -82,7 +82,7 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 
 我们针对 OLTP 场景中，点查占多数的特点进行了针对性的优化。当通过 Unique Key 或者 Primary Key 进行数据访问时，在优化器和执行引擎中都做了改进，使得语句的执行效率更高，通过 [2.1 和 2.0 版本的 Sysbench 对比](https://github.com/pingcap/docs/blob/master/benchmark/sysbench-v3.md) 可以看到，点查性能提升 50%。
 
-![](https://upload-images.jianshu.io/upload_images/542677-7e9ea063c035f603.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-21-battle-tested-for-an-unpredictable-world/1.png)
 
 ### OLAP
 
@@ -90,7 +90,7 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 
 我们在相同的场景下，对 2.1 和 2.0 进行了 [对比测试](https://github.com/pingcap/docs/blob/master/benchmark/tpch-v2.md)。从下图可以看到（纵坐标是 Query 的响应时间，越低越好），之前的两个慢 Query 的运行时间大幅缩短，其他的 Query 也有一定程度的提升。这些提升一方面得益于查询优化器以及执行引擎的改进，另一方面 得益于 TiKV 对连续数据扫描的性能优化。
 
-![](https://upload-images.jianshu.io/upload_images/542677-b4df48e3f3d6695a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-21-battle-tested-for-an-unpredictable-world/2.png)
 
 
 ## 完善的生态工具
