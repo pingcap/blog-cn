@@ -168,7 +168,7 @@ select * from p3 where id < MAXVALUE)
 
 通过观察 `EXPLAIN` 的结果可以证实上面的例子，如图 1，最终物理执行计划中有四个 Table Reader 因为 employees 表中有四个分区，`Table Reader` 表示在 TiDB 端从 TiKV 端读取，`cop task` 是指被下推到 TiKV 端分布式执行的计算任务。
 
-![EXPLAN 输出.png](https://upload-images.jianshu.io/upload_images/542677-79484bc60f7a3edc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![EXPLAN 输出.png](media/tidb-source-code-reading-20/1.png)
 
 <center>图 1：EXPLAIN 输出</center>
 
