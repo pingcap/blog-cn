@@ -23,7 +23,7 @@ TiDB 作为一个开源的分布式数据库产品，具有多副本强一致性
 
 上面的这三个组件，每个角色都是一个多节点组成的集群，所以最终 TiDB 的架构看起来是这样的。
 
-![TiDB-架构.png](https://upload-images.jianshu.io/upload_images/542677-07e435ea2eeaa00c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![TiDB-架构.png](media/tidb-operator-introduction/1.png)
 
 Kubernetes 最早是作为一个纯粹的容器编排系统而诞生的，用户部署好 Kubernetes 集群之后，直接使用其内置的各种功能部署应用服务。 
 
@@ -57,7 +57,7 @@ Kubernetes 直到 v1.7 才试验性引入本地 PV，在这之前只有网络 PV
 
 Operator 本质上是 Kubernetes 的控制器（Controller），其核心思想是用户给定一个 Spec 描述文件，Controller 根据 Spec 的变化，在 Kubernetes 集群中创建对应资源，并且不断调整资源使其状态满足用户预期的 Spec。
 
-![TiDB-Operator.png](https://upload-images.jianshu.io/upload_images/542677-bc69ec093f27ad80.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![TiDB-Operator.png](media/tidb-operator-introduction/2.png)
 
 
 上图是 TiDB Operator 工作流程原理图，其中 TidbCluster 是通过 CRD（Custom Resource Definition）扩展的内置资源类型：
