@@ -151,15 +151,15 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
 
     其生成的最初执行计划片段会是：
 
-    ![1.png](https://upload-images.jianshu.io/upload_images/542677-d01f93be2416556f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![1.png](media/tidb-source-code-reading-21/1.png)
 
     `LogicalSelection` 提升后会变成如下片段：
 
-    ![2.png](https://upload-images.jianshu.io/upload_images/542677-7d11730db1688b53.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![2.png](media/tidb-source-code-reading-21/2.png)
 
     到此 inner plan 中不再包含相关列，于是 `LogicalApply` 会被转换为如下 LogicalJoin ：
 
-    ![3.png](https://upload-images.jianshu.io/upload_images/542677-9b7df1ed09ba348d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![3.png](media/tidb-source-code-reading-21/3.png)
 
 * **inner plan 的根节点是 `LogicalMaxOneRow`**
 
@@ -185,15 +185,15 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
 
     其最初生成的执行计划片段会是：
 
-    ![4.png](https://upload-images.jianshu.io/upload_images/542677-c812770e277e0a4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![4.png](media/tidb-source-code-reading-21/4.png)
 
     将聚合提升到 `LogicalApply` 后的执行计划片段会是：
 
-    ![5.png](https://upload-images.jianshu.io/upload_images/542677-400e0ce5a3d138ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![5.png](media/tidb-source-code-reading-21/5.png)
 
     即先对 `t1` 和 `t2` 做连接，再在连接结果上按照 `t1.pk` 分组后做聚合。这里有两个关键变化：第一是不管提升前 `LogicalApply` 的连接类型是 inner join 还是 left join ，提升后必须被改为 left join ；第二是提升后的聚合新增了 `Group By` 的列，即要按照 outer plan 传进 inner plan 中的相关列做分组。这两个变化背后的原因都会在后面进行阐述。因为提升后 inner plan 不再包含相关列，去相关后最终生成的执行计划片段会是：
 
-    ![6.png](https://upload-images.jianshu.io/upload_images/542677-9d4e39e7aed7422e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![6.png](media/tidb-source-code-reading-21/6.png)
 
     聚合提升有很多限定条件：
 
@@ -213,15 +213,15 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
 
     其生成的最初的执行计划片段会是：
 
-    ![7.png](https://upload-images.jianshu.io/upload_images/542677-16b0cdcf345577a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![7.png](media/tidb-source-code-reading-21/7.png)
 
     因为聚合函数是 `count(*)` ，不满足当输入为 `null` 时输出也为 `null` 的条件，所以它不能被提升到 `LogicalApply` 之上，但它可以被改写成：
 
-    ![8.png](https://upload-images.jianshu.io/upload_images/542677-74c87be3a4c518a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![8.png](media/tidb-source-code-reading-21/8.png)
 
     注意 `LogicalAggregation` 的 `Group By` 新加了 `t2.a` ，这一步将原本的先做过滤再做聚合转换为了先按照 `t2.a` 分组做聚合，再将聚合结果与 `t1` 做连接。 `LogicalSelection` 提升后 inner plan 已经不再依赖 outer plan 的结果了，整个查询去相关后将会变为：
 
-   ![9.png](https://upload-images.jianshu.io/upload_images/542677-a952d01bac1b0258.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+   ![9.png](media/tidb-source-code-reading-21/9.png)
 
 ## 总结
 
