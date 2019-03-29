@@ -28,7 +28,7 @@ TiDB 主要分为两个模块对计划进行优化：
 
 TiDB 一个查询语句的简单流程：一个语句经过 parser 后会得到一个抽象语法树（AST），首先用经过合法性检查后的 AST 生成一个逻辑计划，接着会进行去关联化、谓词下推、聚合下推等规则化优化，然后通过统计数据计算代价选择最优的物理计划，最后执行。流程如下图 1。
 
-![图 1](http://upload-images.jianshu.io/upload_images/542677-4654aac61268e6e9?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 1](media/tidb-source-code-reading-8/1.jpeg)
 
 <center> 图 1 </center>
 
@@ -38,7 +38,7 @@ TiDB 一个查询语句的简单流程：一个语句经过 parser 后会得到�
 
 这里会简单介绍一些逻辑算子可选择的物理算子。例如语句：`select sum(*) from t join s on t.c = s.c group by a`。此语句中逻辑算子有 DataSource、Aggregation、Join 和 Projection，接下来会对其中几个典型的逻辑算子对应的物理算子进行一个简单介绍，如下表：
 
-![表 1](https://upload-images.jianshu.io/upload_images/542677-e5281340c82cc499.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![表 1](media/tidb-source-code-reading-8/2.png)
 
 ## CBO 流程
 
@@ -97,7 +97,7 @@ select sum(s.a),count(t.b) from s join t on s.a = t.a and s.c < 100 and t.c > 10
 
 此语句就是基于此语句的 on 条件对表 s 和表 t 做 join，然后对 join 结果做聚合。将其用图表示如图 2（此处为了与图 3 对比，此处省略 Projection 算子）。
 
-![图 2](http://upload-images.jianshu.io/upload_images/542677-e233e570690f1d36?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 2](media/tidb-source-code-reading-8/3.jpeg)
 
 <center> 图 2 </center>
 
@@ -129,7 +129,7 @@ for _, pp := range p.self.genPhysPlansByReqProp(prop) {
 
 篇幅有限这里只对左侧的路径做了描述。这个例子最后一层比较是 `HA + HJ + idx(c)` 和 `SA + MJ + idx(a)` 的比较，具体也是通过统计信息就算出代价，选取最优解。
 
-![图 3](http://upload-images.jianshu.io/upload_images/542677-b593c8594c464e0c?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 3](media/tidb-source-code-reading-8/4.jpeg)
 
 <center> 图 3 </center>
 
@@ -230,7 +230,7 @@ expected count 表示整个 SQL 结束前此算子期望读取的行数。例如
 
 *   后者在 TopN 的时候虽然知道它需要读取 3 行，但是它是按 id 列有序，所以它的 expected count 为 Max，在 IndexScan 的时候 expected count 是 `count * f (σ(c1<5)`。
 
-![图 4](http://upload-images.jianshu.io/upload_images/542677-6d4170e93aa18123?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图 4](media/tidb-source-code-reading-8/5.jpeg)
 
 <center> 图 4 </center>
 
