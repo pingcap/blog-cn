@@ -16,7 +16,7 @@ tags: ['TiKV', 'Raft']
 
 TiKV 的整体架构比较简单，如下：
 
-![](http://static.zybuluo.com/zyytop/rmudjvx02boh2g413hhkcqnu/1%E7%9A%84%E5%89%AF%E6%9C%AC.png)
+![](media/tikv-how-to-use-raft/1.png)
 
 **Placement Driver :** Placement Driver (PD) 负责整个集群的管理调度。
 **Node :** Node 可以认为是一个实际的物理机器，每个 Node 负责一个或者多个 Store。
@@ -42,17 +42,17 @@ Raft 库是一个独立的库，用户也可以非常方便的将其直接嵌入
 
 首先，我们需要定义自己的 Storage，Storage 主要用来存储 Raft 相关数据，trait 定义如下：
 
-![](http://static.zybuluo.com/zyytop/cujwa5b279h5j1b2vk9xmprn/111.png)
+![](media/tikv-how-to-use-raft/2.png)
 
 我们需要实现自己的 Storage trait，这里详细解释一下各个接口的含义：
 
 initial_state：初始化 Raft Storage 的时候调用，它会返回一个 RaftState，RaftState 的定义如下：
 
-![](http://static.zybuluo.com/zyytop/ew1m7ljmt86b75mnj427b09o/222.png)
+![](media/tikv-how-to-use-raft/3.png)
 
 HardState 和 ConfState 是 protobuf，定义：
 
-![](http://static.zybuluo.com/zyytop/dkzhqvy3mlgyjjjhfv2n46x8/333.png)
+![](media/tikv-how-to-use-raft/4.png)
 
 在 HardState 里面，保存着该 Raft 节点最后一次保存的 term 信息，之前 vote 的哪一个节点，以及已经 commit 的 log index。而 ConfState 则是保存着 Raft 集群所有的节点 ID 信息。
 
@@ -70,7 +70,7 @@ HardState 和 ConfState 是 protobuf，定义：
 
 在使用 Raft 之前，我们需要知道 Raft 一些相关的配置，在 Config 里面定义，这里只列出需要注意的：
 
-![](http://static.zybuluo.com/zyytop/d1atkdbeickd5ot72a8sdial/444.png)
+![](media/tikv-how-to-use-raft/5.png)
 
 id: Raft 节点的唯一标识，在一个 Raft 集群里面，id 是不可能重复的。在 TiKV 里面，id 的通过 PD 来保证全局唯一。
 
@@ -90,7 +90,7 @@ id: Raft 节点的唯一标识，在一个 Raft 集群里面，id 是不可能�
 
 我们通过 RawNode 来使用 Raft，RawNode 的构造函数如下：
 
-![](http://static.zybuluo.com/zyytop/o5vatbhte13pj4dzr6w48vkj/555.png)
+![](media/tikv-how-to-use-raft/6.png)
 
 我们需要定义 Raft 的 Config，然后传入一个实现好的 Storage，peers 这个参数只是用于测试，实际要传空。生成好 RawNode 对象之后，我们就可以使用 Raft 了。我们关注如下几个函数：
 
@@ -112,7 +112,7 @@ id: Raft 节点的唯一标识，在一个 Raft 集群里面，id 是不可能�
 
 对于 RawNode，我们这里重点关注下 ready 的概念，ready 的定义如下：
 
-![](http://static.zybuluo.com/zyytop/vhbn404oaqmt7au3sn0bb01b/666.png)
+![](media/tikv-how-to-use-raft/7.png)
 
 **ss:** 如果 SoftState 变更，譬如添加，删除节点，ss 就不会为空。
 
