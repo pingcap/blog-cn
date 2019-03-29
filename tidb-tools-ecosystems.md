@@ -28,33 +28,33 @@ TiDB 作为一个可以弹性水平扩展的分布式数据库，天生为云而
 
 **Operator** 包含一些 TiDB 扩展的 Controller 和 Scheduler，但还不够，我们需要在上面包装一层，以暴露出来统一的运维和管理接口，这就是 Cloud Manager。Cloud Manager 对外暴露标准化的接口，用于和云平台的前端控制台对接，这样就通过前台可以完成 K8s 以及 TiDB 集群的相关资源的综合管理。
 
-![]( http://img1.ph.126.net/bG9DgXomUxUJ_ld7uEL9rA==/6597667900984222603.png )
+![](media/tidb-tools-ecosystems/1.png)
 
 DBaaS 结构图可以看到 Cloud TiDB 的分层架构。最下层是容器云，中间一层是 K8s 自身的服务管理和 API Server。我们在此基础上进行扩展，实现各种 Controller 和调度器，自己本地存储管理 Volume Manager，最终通过 Cloud Manager 提供的 RESTful API 进行暴露。可以很容易接一个前端的 Dashboard，或者直接使用 CLI 命令行工具，完成 TiDB 集群实例的统一化管理。
  
- ![]( http://img0.ph.126.net/dZtHAqgKVHW9J3NLIV3mbQ==/6631599929330597259.png )
+ ![](media/tidb-tools-ecosystems/2.png)
  
 这个图就是前面讲的一些细节。这里面可以看到，左半边是 Kube 本身的组件，右侧是我们的扩展出来组件，另外，我们也自己定义了一些 TiDB 的资源类型放在 CDR 里面。比如说 TiDB Cluster，在这个资源对象上可以描述要启动多少个 TiKV，多少个 TiDB。另外还有 TiDB Set / TiKV Set / PD Set 等一系列对象，来分别描述某个服务的配置。
 
 这是在腾讯云上面的一个截图，现在这两个产品都在公测，
 
-![]( http://img2.ph.126.net/BnUuwWrQ72dKNNUw4Qgfsw==/2985323603093413649.png )
+![](media/tidb-tools-ecosystems/3.png)
 
 这是UCloud的截图
 
-![]( http://img2.ph.126.net/BnUuwWrQ72dKNNUw4Qgfsw==/2985323603093413649.png )
+![](media/tidb-tools-ecosystems/4.png)
 
 有兴趣的同学可以关注一下。
 
 此外，我们提供了 Operator Chart 的安装方式，使用 Helm 工具可以一键通过 Operator 拉起来一套 TiDB 实例。
 
-![]( http://img1.ph.126.net/X9B0ta_5Jsp-qE123TyJiA==/2962242655003303768.png )
+![](media/tidb-tools-ecosystems/5.png)
 
 这种方式在 K8s 上就更像是一个 RPM 包的方式部署服务，并且管理服务之间依赖。只需要一行命令，就可以获得到官方的 Cloud TiDB 的核心组件。如果你有一个 K8s 集群，或者你在使用一个公有云提供的 K8s 集群，用上面的命令，就可以快速运行 TiDB Operator 和 TiDB 集群。
 
 这是一个配置的例子，打开 charts 压缩包可以找到对应的配置 yaml 文件。
 
-![]( http://img1.ph.126.net/zy9QgS6GduaG7-4B8THrmg==/6598003252030699537.png )
+![](media/tidb-tools-ecosystems/6.png)
 
 我们对每一行的配置做了详细的注释。比如可以设定一些参数：像副本数、CPU 内存使用限制、TiDB 起多少个、TiKV 起多少个，等等。
 
@@ -76,33 +76,33 @@ TiDB Binlog 还可以用于数据增量备份，可以找到最近的一个全�
 
 另外介绍一个工具就是 **Lightning**， Lightning可能大家都没有用到过，因为我们还在最后的测试和优化阶段，这是一个快速的 TiDB 导入工具，之前我们提供的工具是 MyDumper，MyDumper 是 MySQL 通用的一个数据导出的工具。它同时还有一个 MyLoader，我们在这个基础上又做了一个 TiDB Loader，但这个东西本质上还是去执行 SQL。就是说 MyDumper 输出的数据文件是很多的 SQL 文本。那么用 Loader 导入到 TiDB 这个过程中大家可能会觉得导数据比较慢。这是因为这种方式的数据导入，TiKV 底层存储的 region 要不断的分裂和搬移，而且一般顺序写数据，表的主键往往是递增的，这样会导致写入热点，不能同时把所有 TiKV 节点都调动起来，失去了分布式的优势。那么 Lightning 是怎么做的呢？首先我们会直接把输入的数据格式绕过 SQL 解析器和优化器直接转换成有序的 KV 键值对，并分批进行处理，根据 PD 预先计算好新插入数据的 Region 分布，然后直接生成 SST 文件 Ingest 到 TiKV 中，非常接近物理数据导入。我们在内部测试比之前的 Loader 方式要快 7 到 10 倍，1T 的数据将近在 5 个小时之内完成导入，预计很快会跟大家见面。
 
-![]( http://img1.ph.126.net/TWg5Sq7vzKxdJTGvsCFyTA==/282037926764427202.png )
+![](media/tidb-tools-ecosystems/7.png)
 
 MyDumper 格式的文件作为输入，首先完成 SQL 到 KV 的转换，它是由若干分布式 worker 来完成，多机并行执行。同时绕过了优化器，生成连续的 KV 流，再通过一个专门的 Ingest Server 对 KV 进行全局排序。同时可以预计算 region，通过 PD 提前安排调度到哪个节点，所以整个的流程是非常高效的。
 
 接下来介绍一个我们商业化工具，叫作 **Wormhole**。这个可以理解为是一个带控制面板的 Syncer，但比 Syncer 强大。它支持多源多目的地的数据同步。而且本身也是分布式结构，具有高可用、并行执行的特点。另外它对于分库分表支持的更好，配置可视化。在同步前检查也更为严格，比如说同步 MySQL，会提前检查表结构和 TiDB 的兼容性，是否开启 row 模式的 binlog 等等，避免在运行过程中发现了再报异常。另外 Wormhole 也支持一些简单的 ETL 转换规则，比如在同步过程中对表的某些字段进行简单映射计算和 UDF。比如对于分库分表的合并，如果每张分表都有自己的自增主键，合表之后插入 TiDB 就可能遇到主键冲突。Wormhole 通过配置就可以完成主键的合并，也可以新增一个字段作为真正的主键，原表的主键保留名字，去掉唯一性约束。
 
-![]( http://img1.ph.126.net/ZcTn5-ofCoGpy1QxtXU5cA==/1259881995857282935.png )
+![](media/tidb-tools-ecosystems/8.png)
 
 我截了一些界面的图，可以看到整个数据同步过程中的进度，包括全量、增量的同步速度，以及我随时可以把它暂停下来，或者进行一些特定的操作。对于多源/目的地这样同步，像这个配置，我可以直接把数据库里面的表结构全部读出来，用在界面上就可以决定同步表和数据库以及字段映射关系。
 
 接下来第三部分，说说 TiDB 的数据可视化。TiDB Vision 这个项目是开源的，我们会在 PD 提供的接口上，来实现数据可视化。
 
-![]( http://img1.ph.126.net/o_p2LeOcMJWo0sUXkIebPA==/1876312194853677436.png)
+![](media/tidb-tools-ecosystems/9.png)
 
 从图中可以清楚的看到在不同节点上 region 的分布，以及 region leader 的关系。图中环上的每一段，代表一个 TiKV store。每个 store 的每一个小格代表一个 region，绿色代表是 leader ，中间的这些线段在运行过程中是有动画效果的，当 Leader 发生分裂，迁移，还有 Leader transfer，都有不同颜色的动画来表示。从而反映一个真实 PD 产生调度的过程，我们可以通过可视化很直观的看到。另外就是热点，这个图里可能没有体现，如果某一个 region 出现热点，在界面上就可以看到一些红色的点。另外，这个边缘展示的是每个 PD 调度的一些网络流量，TiKV 的一些流量的信息我们也是实时的展示。如果某一个结点挂了，在这个边缘，它会有一定的颜色表示，比如说 TiKV 下线，熟悉 TiDB 的人知道，下线 TiKV 并不是立即就下线了，它会先变成下线中，然后变成 Tombstone 的状态，这个在图上都可以直观的反映出来。这个工具非常简单，就在 TiDB Vision 开源项目，有兴趣的同学，可以给 TiDB 做更多的皮肤。让这个展示更 cool，对业务监控更有帮助。
 
 这个是我们在做的一个企业版的 **Dashboard** ，这个可能跟大家看到的 Grafana 还有现有开源的界面不太相同，这里截了一些局部的图。大家可以看到，每个节点上面每个进程的状态，包括节点运行时日志，和服务健康状态。通过 Dashboard 就可以把整个的集群的拓扑和运行状态，全部展示出来。在这个界面它可以选择去创建多少个 TiDB 多少个 TiKV 节点，并且选择规格。左边可以选择升级的 TiDB 组件版本，完成滚动升级这样的事情。
 
-![]( http://img0.ph.126.net/EcBoL6PVcJBCex4FNQvtNQ==/5717514340505288937.png )
+![](media/tidb-tools-ecosystems/10.png)
 
 最后说一下 TiDB 的监控。监控我们后台用的 **Prometheus** 这个非常出名的项目，通过它来做存储数据库各个服务的 metrics。每个 TiDB、TiKV 组件都会把自己的状态上报到 Prometheus（实际是 pull 的模式），我们通过 Node Exporter 来采集每台主机的状态。而对于 K8s 集群，是通过 cAdvisor 进行收集，把 metrics 在 Prometheus 进行汇总。通过 Grafana 来做监控和可视化。我们配置好的 Grafana 面板点击编辑按钮，都可以看到对应的 Prometheus 查询表达式，通过一种类似 SQL 的查询语句，你就可以很方便的从 Prometheus 拉取监控数据然后对接到自己的监控平台。 Alert manager 也是 Prometheus 生态里面的一个工具，它可以去接受 Prometheus 发出的报警事件，然后通过各种报警方式推送出来。日志方面我们也是用比较流行的 EFK 套件。在 K8s 集群中，采集每个 Pod 的日志，存放到 ES 里面再通过 Kibana 进行展示。
 
-![]( http://img2.ph.126.net/pL13q8CQBc2uWKBZFBzqkg==/2050545205437548375.png )	
+![](media/tidb-tools-ecosystems/11.png)	
 	
 这个是监控的几个截图，这个大家可能都比较熟悉了。
 
-![]( http://img2.ph.126.net/XNQl6KvXZ3FYm9ewzFVU-w==/6597573342984234512.png )	
+![](media/tidb-tools-ecosystems/12.png)	
 
 最后简单聊一下 TiDB 生态，因为 TiDB 最大的优势是兼容 MySQL 协议。所以不光是命令行工具，包括比如 MySQL 自己的 MySQL Workbench 这样的工具，还有大家用传统的 Navicat 这样的产品工具，还有就是一个老牌的 phpMyAdmin 这样的 Web 管理工具，都可以直接连到一个 TiDB 实例。我们同时也在不断的优化 TiDB 兼容性，因为毕竟它跟 MySQL 有些区别。像这些工具，它可能会去读 MySQL 的一些系统表，我们会尽量会跟 MySQL 保持兼容。还有一些很方便的功能，比如把 schema 抓出来，绘制 ER 图，其实我们也希望在 TiDB 上跑的很顺畅。这样习惯使用 MySQL 各种管理工具的用户，可以非常平滑的切换到 TiDB。
 
