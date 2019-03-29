@@ -25,7 +25,7 @@ Titan 作为 TiKV 的一个子项目，首要的设计目标便是兼容 RocksDB
 
 Titan 的基本架构如下图所示：
 
-![1-Architecture.jpg](https://upload-images.jianshu.io/upload_images/542677-5c8157a5aa00e4bf.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![1-Architecture.jpg](media/titan-design-and-implementation/1.jpg)
 
 > 图 1：Titan 在 Flush 和 Compaction 的时候将 value 分离出 `LSM-tree`，这样做的好处是写入流程可以和 RockDB 保持一致，减少对 `RocksDB` 的侵入性改动。
 
@@ -35,7 +35,7 @@ Titan 的核心组件主要包括：`BlobFile`、`TitanTableBuilder`、`Version`
 
 `BlobFile` 是用来存放从 `LSM-tree` 中分离出来的 value 的文件，其格式如下图所示：
 
-![2-BlobFile.jpg](https://upload-images.jianshu.io/upload_images/542677-950bebfe8cc494db.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![2-BlobFile.jpg](media/titan-design-and-implementation/2.jpg)
 
 > 图 2：`BlobFile` 主要由 blob record 、meta block、meta index block 和 footer 组成。其中每个 blob record 用于存放一个 key-value 对；meta block 支持可扩展性，可以用来存放和 `BlobFile` 相关的一些属性等；meta index block 用于检索 meta block。
 
@@ -49,7 +49,7 @@ Titan 的核心组件主要包括：`BlobFile`、`TitanTableBuilder`、`Version`
 
 `TitanTableBuilder` 是实现分离 key-value 的关键。我们知道 RocksDB 支持使用用户自定义 table builder 创建 `SST`，这使得我们可以不对 build table 流程做侵入性的改动就可以将 value 从 `SST` 中分离出来。下面将介绍 `TitanTableBuilder` 的主要工作流程：
 
-![3-TitanTableBuilder.jpg](https://upload-images.jianshu.io/upload_images/542677-da5902882270f61a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![3-TitanTableBuilder.jpg](media/titan-design-and-implementation/3.jpg)
 
 > 图 3：`TitanTableBuilder` 通过判断 value size 的大小来决定是否将 value 分离到 `BlobFile` 中去。如果 value size 大于等于 `min_blob_size` 则将 value 分离到 `BlobFile` ，并生成 index 写入 `SST`；如果 value size 小于 `min_blob_size` 则将 value 直接写入 `SST`。
 
@@ -62,7 +62,7 @@ Titan 和 [`Badger`](https://github.com/dgraph-io/badger) 的设计有很大区�
 
 Titan 使用 `Version` 来代表某个时间点所有有效的 `BlobFile`，这是从 `LevelDB` 中借鉴过来的管理数据文件的方法，其核心思想便是 [`MVCC`](https://en.wikipedia.org/wiki/Multiversion_concurrency_control)，好处是在新增或删除文件的同时，可以做到并发读取数据而不需要加锁。每次新增文件或者删除文件的时候，`Titan` 都会生成一个新的 `Version` ，并且每次读取数据之前都要获取一个最新的 `Version`。
 
-![4-Version.png](https://upload-images.jianshu.io/upload_images/542677-02a5fdef509e9912.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![4-Version.png](media/titan-design-and-implementation/4.jpg)
 
 > 图 4：新旧 `Version` 按顺序首尾相连组成一个双向链表，`VersionSet` 用来管理所有的 `Version`，它持有一个 `current` 指针用来指向当前最新的 `Version`。
 
@@ -79,7 +79,7 @@ Titan 使用 RocksDB 提供的两个特性来解决这两个问题，这两个�
 
 RocksDB 允许我们使用自定义的 `TablePropertiesCollector` 来搜集 `SST` 上的 properties 并写入到对应文件中去。`Titan` 通过一个自定义的 `TablePropertiesCollector` —— `BlobFileSizeCollector` 来搜集每个 `SST` 中有多少数据是存放在哪些 `BlobFile` 上的，我们将它收集到的 properties 命名为 `BlobFileSizeProperties`，它的工作流程和数据格式如下图所示：
 
-![5-BlobFileSizeProperties.jpg](https://upload-images.jianshu.io/upload_images/542677-c96a4dfc696ec3f5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![5-BlobFileSizeProperties.jpg](media/titan-design-and-implementation/5.jpg)
 
 > 图 5：左边 `SST` 中 Index 的格式为：第一列代表 `BlobFile` 的文件 ID，第二列代表 blob record 在 `BlobFile` 中的 offset，第三列代表 blob record 的 size。右边 `BlobFileSizeProperties` 中的每一行代表一个 `BlobFile` 以及 `SST` 中有多少数据保存在这个 `BlobFile` 中，第一列代表 `BlobFile` 的文件 ID，第二列代表数据大小。
 
@@ -87,7 +87,7 @@ RocksDB 允许我们使用自定义的 `TablePropertiesCollector` 来搜集 `SST
 
 我们知道 RocksDB 是通过 Compaction 来丢弃旧版本数据以回收空间的，因此每次 Compaction 完成后 Titan 中的某些 `BlobFile` 中便可能有部分或全部数据过期。因此我们便可以通过监听 Compaction 事件来触发 GC，通过搜集比对 Compaction 中输入输出 `SST` 的 `BlobFileSizeProperties` 来决定挑选哪些 `BlobFile` 进行 GC。其流程大概如下图所示：
 
-![6-EventListener.jpg](https://upload-images.jianshu.io/upload_images/542677-18640cc4433c7cac.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![6-EventListener.jpg](media/titan-design-and-implementation/6.jpg)
 
 
 > 图 6：inputs 代表参与 Compaction 的所有 `SST` 的 `BlobFileSizeProperties`，outputs 代表 Compaction 生成的所有 `SST` 的 `BlobFileSizeProperties`，discardable size 是通过计算 inputs 和 outputs 得出的每个 `BlobFile` 被丢弃的数据大小，第一列代表 `BlobFile` 的文件 ID，第二列代表被丢弃的数据大小。
@@ -127,23 +127,23 @@ Titan 会为每个有效的 `BlobFile` 在内存中维护一个 discardable size
 
 ### 测试结果
 
-![7-Data Loading Performance.jpg](https://upload-images.jianshu.io/upload_images/542677-e1c2053bd817ee07.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![7-Data Loading Performance.jpg](media/titan-design-and-implementation/7.jpg)
 
 > 图 7 Data Loading Performance：Titan 在写场景中的性能要比 RocksDB 高 70% 以上，并且随着 value size 的变大，这种性能的差异会更加明显。值得注意的是，数据在写入 KV Engine 之前会先写入 Raft Log，因此 Titan 的性能提升会被摊薄，实际上裸测 RocksDB 和 Titan 的话这种性能差异会更大。
 
-![8-Update Performance.jpg](https://upload-images.jianshu.io/upload_images/542677-4030eb2998541f5a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![8-Update Performance.jpg](media/titan-design-and-implementation/8.jpg)
 
 > 图 8 Update Performance：Titan 在更新场景中的性能要比 RocksDB 高 180% 以上，这主要得益于 Titan 优秀的读性能和良好的 GC 算法。
 
-![9-Output Size.jpg](https://upload-images.jianshu.io/upload_images/542677-cc2f1225f3bcc8c3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![9-Output Size.jpg](media/titan-design-and-implementation/9.jpg)
 
 > 图 9 Output Size：Titan 的空间放大相比 RocksDB 略高，这种差距会随着 Key 数量的减少有略微的缩小，这主要是因为 `BlobFile` 中需要存储 Key 而造成的写放大。
 
-![10-Random Key Lookup.jpg](https://upload-images.jianshu.io/upload_images/542677-9595ef767ea5659a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![10-Random Key Lookup.jpg](media/titan-design-and-implementation/10.jpg)
 
 > 图 10 Random Key Lookup： Titan 拥有比 RocksDB 更卓越的点读性能，这主要得益与将 value 分离出 `LSM-tree` 的设计使得 `LSM-tree` 变得更小，因此 Titan 在使用同样的内存量时可以将更多的 `index` 、`filter` 和 `DataBlock` 缓存到 Block Cache 中去。这使得点读操作在大多数情况下仅需要一次 IO 即可（主要是用于从 `BlobFile` 中读取数据）。
 
-![11-Sorted Range Iteration.jpg](https://upload-images.jianshu.io/upload_images/542677-b65d7ba9eb92037b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![11-Sorted Range Iteration.jpg](media/titan-design-and-implementation/11.jpg)
 
 > 图 11 Sorted Range Iteration：Titan 的范围查询性能目前和 RocksDB 相比还是有一定的差距，这也是我们未来优化的一个重要方向。
 
