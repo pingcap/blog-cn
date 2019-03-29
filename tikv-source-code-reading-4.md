@@ -144,12 +144,12 @@ rust-prometheus 中 Counter 和 Histogram 指标支持 `local()` 函数，该函
 普通的全局指标使用流程如下图所示，多个线程直接利用原子操作更新全局指标：
 
 
-![normal_metrics](https://upload-images.jianshu.io/upload_images/542677-4988249c80094124.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![normal_metrics](media/tikv-source-code-reading-4/1.png)
 
 本地指标使用流程如下图所示，每个要用到该指标的线程都保存一份本地指标。更新本地指标操作开销很小，可以在频繁的操作中使用。随后，只需再定期将这个本地指标 flush 到全局指标，就能使得指标的更新操作真正生效。
 
 
-![local_metrics](https://upload-images.jianshu.io/upload_images/542677-76c3720e430298ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![local_metrics](media/tikv-source-code-reading-4/2.png)
 
 TiKV 中大量运用了本地指标提升性能。例如，[TiKV 的线程池](https://github.com/tikv/tikv/blob/56c1c6c2fbf6e357e0778b81f41343c52c91fddf/src/util/futurepool.rs)一般都提供 [`Context`](https://github.com/tikv/tikv/blob/56c1c6c2fbf6e357e0778b81f41343c52c91fddf/src/util/futurepool.rs#L284) 变量，`Context` 中存储了本地指标。线程池上运行的任务都能访问到一个和当前 worker thread 绑定的 `Context`，因此它们都可以安全地更新 `Context` 中的这些本地指标。最后，线程池一般提供 [`tick()`](https://github.com/tikv/tikv/blob/56c1c6c2fbf6e357e0778b81f41343c52c91fddf/src/util/futurepool.rs#L50) 函数，允许以一定间隔触发任务，[在 `tick()` 中 TiKV 会对这些 `Context` 中的本地指标进行 `flush()`](https://github.com/tikv/tikv/blob/56c1c6c2fbf6e357e0778b81f41343c52c91fddf/src/coprocessor/readpool_context.rs#L50)。
 
