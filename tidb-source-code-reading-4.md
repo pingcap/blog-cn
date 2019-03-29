@@ -150,7 +150,7 @@ writeBufs.RowValBuf, err = tablecodec.EncodeRow(ctx.GetSessionVars().StmtCtx, ro
 
 Insert 语句在诸多 DML 语句中算是最简单的语句，本文也没有涉及 Insert 语句中更复杂的情况，所以相对比较好理解。上面讲了这么多代码，让我们用一幅图来再回顾一下整个流程。
 
-![Insert.png](https://upload-images.jianshu.io/upload_images/542677-276fce09300cecc6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Insert.png](media/tidb-source-code-reading-4/1.png)
 
 最后给大家留一个思考题，本文描述了如何写入数据，那么 TiDB 是如何删除数据的呢？也就是 Delete 语句的执行流程是什么样子的，请大家追踪源码，调研一下这个流程，有兴趣的读者可以仿照本文写一篇源码解析文档，投稿给我们。
 
