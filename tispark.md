@@ -12,7 +12,7 @@ TiSpark 是 PingCAP 推出的为了解决用户复杂 OLAP 需求的产品。借
 
 TiSpark 是将 Spark SQL 直接运行在 TiDB 存储引擎 TiKV 上的 OLAP 解决方案。TiSpark 架构图如下：
 
-![](http://static.zybuluo.com/zyytop/03syymm3l22pbllgl3z3nwfn/%E5%9B%BE%E7%89%87%201.png "TiSpark 架构图")
+![](media/tispark/1.png)
 
 
 + TiSpark 深度整合了 Spark Catalyst 引擎, 可以对计算提供精确的控制，使 Spark 能够高效的读取 TiKV 中的数据，提供索引支持以实现高速的点查；
