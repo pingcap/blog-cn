@@ -49,7 +49,7 @@ Hello World~
 thread 'main' panicked at 'failpoint before_print panic' ...
 ```
 
-可以看到最终只打印出一个 `Hello World～`，而在打印第二个之前就 panic 了。这是因为我们在第一次打印完后才指定了这个 fail point 行为是 panic，因此第一次在 fail point 不做任何事情之后正常输出而第二次在执行到 fail point 时就会根据配置的行为 panic 掉！
+可以看到最终只打印出一个 `Hello World～`，而在打印第二个之前就 panic 了。这是因为我们在第一次打印完后才指定了这个 fail point 行为是 panic，因此第一次在 fail point 不做任何事情之后正常输出，而第二次在执行到 fail point 时就会根据配置的行为 panic 掉！
 
 ### Fail point 行为
 
