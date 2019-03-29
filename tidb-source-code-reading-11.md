@@ -69,7 +69,7 @@ TiDB 的 ILJ 算子是一个多线程的实现，主要的线程有： Main Thea
 
 TiDB 中 ILJ 的执行阶段可划分为如下图所示的 5 步：
 
-![image](http://upload-images.jianshu.io/upload_images/542677-1a392938a82c05bd?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-source-code-reading-11/1.jpeg)
 
 **1\. 启动 Outer Worker 及 Inner Workers**
 
@@ -143,4 +143,4 @@ select /*+ TIDB_INLJ(t) */ * from t left join s on t.a = s.a;
 
 查询语句的一种可能的执行流程如下图所示，其中由上往下箭头表示时间线：
 
-![image](http://upload-images.jianshu.io/upload_images/542677-ad9213db4de39b57?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-source-code-reading-11/2.jpeg)
