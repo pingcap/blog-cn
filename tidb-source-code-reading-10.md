@@ -63,7 +63,7 @@ Column 里面的字段非常多，这里先简单介绍一下：
 
 一个定长类型的 Column 可以用如下图表示:
 
-![](http://upload-images.jianshu.io/upload_images/542677-3018640216f50994?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-source-code-reading-10/1.png)
 
 
 我们以 [appendInt64](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L378 ) 为例来看看如何追加一个定长类型的数据：
@@ -80,7 +80,7 @@ Column 里面的字段非常多，这里先简单介绍一下：
 
 而一个变长的 Column 可以用下图表示：
 
-![](http://upload-images.jianshu.io/upload_images/542677-5710e000f91e42a0?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-source-code-reading-10/2.png)
 
 我们以 [appendString](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L404 ) 为例来看看如何追加一个变长类型的数据：
 
@@ -104,7 +104,7 @@ Column 里面的字段非常多，这里先简单介绍一下：
 
 ### 2. Row
 
-![](http://upload-images.jianshu.io/upload_images/542677-26cf4ca3ff336c51?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-source-code-reading-10/3.jpeg)
 
 如上图所示：Chunk 中的 [Row](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L456) 是一个逻辑上的概念：Row 中的数据存储在 Chunk 的各个 Column 中，同一个 Row 中的数据在内存中没有连续存储在一起，我们在获取一个 Row 对象的时候也不需要进行数据拷贝。提供 Row 的概念是因为算子运行过程中，大多数情况都是以 Row 为单位访问和操作数据，比如聚合，排序等。 
 
@@ -121,7 +121,7 @@ Row 提供了获取 Chunk 中数据的方法，比如 [GetInt64](https://github.
 在重构前，TiDB 1.0 中使用的执行框架会不断调用 Child 的 [Next](https://github.com/pingcap/tidb/blob/source-code/executor/executor.go#L191) 函数获取一个由 Datum 组成的 Row（和刚才介绍的 Chunk Row 是两个数据结构），这种执行方式的特点是：每次函数调用只返回一行数据，且不管是什么类型的数据都用 Datum 这个结构体来封装。
 
 
-![](http://upload-images.jianshu.io/upload_images/542677-681f227e520ea2e5?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-source-code-reading-10/4.png)
 
 这种方法的优点是：简单、易用。缺点是：
 
@@ -139,7 +139,7 @@ Row 提供了获取 Chunk 中数据的方法，比如 [GetInt64](https://github.
 
 在重构后，TiDB 2.0 中使用的执行框架会不断调用 Child 的 [NextChunk](https://github.com/pingcap/tidb/blob/source-code/executor/executor.go#L198) 函数，获取一个 [Chunk](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L32) 的数据。
 
-![](http://upload-images.jianshu.io/upload_images/542677-398aaac6970e0147?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-source-code-reading-10/5.png)
 
 这种执行方式的特点是：
 
