@@ -24,7 +24,7 @@ fail-rs 的设计启发于 FreeBSD 的 [failpoints](https://www.freebsd.org/cgi/
 
 在详细介绍之前，先举一个简单的例子给大家一个直观的认识。
 
-还是那个老生常谈的 HelloWorld：
+还是那个老生常谈的 Hello World：
 
 ```rust
 #[macro_use]
@@ -72,7 +72,7 @@ thread 'main' panicked at 'failpoint before_print panic' ...
     - delay(arg)：和 sleep 类似，但是让 CPU 空转 arg 毫秒
 + args：行为的参数
 
-比如我们想在`before_print`处先 sleep 1s 然后有 1% 的机率 panic，那么就可以这么写：
+比如我们想在 `before_print` 处先 sleep 1s 然后有 1% 的机率 panic，那么就可以这么写：
 
 ```text
 "sleep(1000)->1%panic"
@@ -195,6 +195,6 @@ pub fn eval<R, F: FnOnce(Option<String>) -> R>(name: &str, f: F) -> Option<R> {
 
 ## 小结
 
-至此，关于 fail-rs 背后的秘密也就清清楚楚了。关于在 TiKV 中使用 fail point 的测试详见 [https://github.com/tikv/tikv/tree/master/tests/failpoints](https://github.com/tikv/tikv/tree/master/tests/failpoints)，大家感兴趣可以看看在 TiKV 中是如何来构建异常情况的。
+至此，关于 fail-rs 背后的秘密也就清清楚楚了。关于在 TiKV 中使用 fail point 的测试详见 [github.com/tikv/tikv/tree/master/tests/failpoints](https://github.com/tikv/tikv/tree/master/tests/failpoints)，大家感兴趣可以看看在 TiKV 中是如何来构建异常情况的。
 
 同时，fail-rs 计划支持 HTTP API，欢迎感兴趣的小伙伴提交 PR。
