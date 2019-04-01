@@ -1,7 +1,7 @@
 ---
 title: Kubernetes 中如何保证优雅地停止 Pod
 date: 2019-04-01
-author: "吴叶磊"
+author: ["吴叶磊"]
 summary: "很多场景下 PreStop Hook 并不能很好地完成需求，这篇文章就简单分析一下“优雅地停止 Pod”这回事儿。"
 tags: ["Kubernetes", "TiDB Operator", "TiDB"]
 ---
