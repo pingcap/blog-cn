@@ -27,7 +27,7 @@ tags: ["Kubernetes", "TiDB Operator", "TiDB"]
 - 优雅退出的逻辑有 BUG，自己死循环了。
 - 代码写得野，根本不理会 SIGTERM。
 
-因此，K8s 的 Pod 终止流程中还有一个“最多可以容忍的时间”，即 grace period（在 pod 的 `.spec.terminationGracePeriodSeconds` 字段中定义），这个值默认是 30 秒，我们在执行 `kubectl delete` 的时候也可通过 `--grace-period` 参数显式指定一个优雅退出时间来覆盖 pod 中的配置。而当 grace period 超出之后，k8s 就只能选择 SIGKILL 强制干掉 Pod 了。
+因此，K8s 的 Pod 终止流程中还有一个“最多可以容忍的时间”，即 grace period（在 pod 的 `.spec.terminationGracePeriodSeconds` 字段中定义），这个值默认是 30 秒，我们在执行 `kubectl delete` 的时候也可通过 `--grace-period` 参数显式指定一个优雅退出时间来覆盖 pod 中的配置。而当 grace period 超出之后，K8s 就只能选择 SIGKILL 强制干掉 Pod 了。
 
 很多场景下，除了把 Pod 从 K8s 的 Service 上摘下来以及进程内部的优雅退出之外，我们还必须做一些额外的事情，比如说从 K8s 外部的服务注册中心上反注册。这时就要用到 PreStop hook 了，K8s 目前提供了 `Exec` 和 `HTTP` 两种 PreStop hook，实际用的时候，需要通过 Pod 的 `.spec.containers[].lifecycle.preStop` 字段为 Pod 中的每个容器单独配置，比如：
 
@@ -41,11 +41,11 @@ spec:
           command: ["/bin/sh"，"-c"，"/pre-stop.sh"]
 ```
 
-`/pre-stop.sh` 脚本里就可以写我们自己的清理逻辑.
+`/pre-stop.sh` 脚本里就可以写我们自己的清理逻辑。
 
 最后我们串起来再整个表述一下 Pod 退出的流程（[官方文档里更严谨哦](https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods)）：
 
-1. 用户删除 Pod
+1. 用户删除 Pod。
 2. 
     - 2.1. Pod 进入 Terminating 状态。 
     - 2.2. 与此同时，K8s 会将 Pod 从对应的 service 上摘除。
@@ -86,7 +86,7 @@ spec:
 - `DefaultStorageClass`，为没有声明 storageClass 的 PVC 自动设置 storageClass。
 - `ResourceQuota`，校验 Pod 的资源使用是否超出了对应 Namespace 的 Quota。
 
-虽然说这是插件化的，但在 1.7 之前，所有的 plugin 都需要写到 apiserver 的代码中一起编译，很不灵活。而在 1.7 中 K8s 就引入了 [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) 机制，允许用户向 apiserver 注册 webhook，而 apiserver 则通过 webhook 调用外部 server 来实现 filter 逻辑。1.9 中，这个特性进一步做了优化，把 webhook 分成了两类: `MutatingAdmissionWebhook` 和 `ValidatingAdmissionWebhook`，顾名思义，前者就是操作 api 对象的，比如上文例子中的 `DefaultStroageClass`，而后者是校验 api 对象的，比如 `ResourceQuota`。拆分之后，apiserver 就能保证在校验(Validating)之前先做完所有的修改(Mutating)，下面这个示意图非常清晰：
+虽然说这是插件化的，但在 1.7 之前，所有的 plugin 都需要写到 apiserver 的代码中一起编译，很不灵活。而在 1.7 中 K8s 就引入了 [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) 机制，允许用户向 apiserver 注册 webhook，而 apiserver 则通过 webhook 调用外部 server 来实现 filter 逻辑。1.9 中，这个特性进一步做了优化，把 webhook 分成了两类: `MutatingAdmissionWebhook` 和 `ValidatingAdmissionWebhook`，顾名思义，前者就是操作 api 对象的，比如上文例子中的 `DefaultStroageClass`，而后者是校验 api 对象的，比如 `ResourceQuota`。拆分之后，apiserver 就能保证在校验(Validating)之前先做完所有的修改（Mutating），下面这个示意图非常清晰：
 
 ![](media/tidb-opeartor-webhook/1.jpg)
 
@@ -100,7 +100,7 @@ spec:
 2. controller-manager watch 到对象变更。
 3. controller-manager 开始同步对象状态，尝试删除第一个 Pod。
 4. apiserver 调用外部 webhook。
-5. webhook server 请求集群做 tikv-1 节点下线前的准备工作(这个请求是幂等的)，并查询准备工作是否完成，假如准备完成，允许删除，假如没有完成，则拒绝，整个流程会因为 controller manager 的控制循环回到第 2 步。
+5. webhook server 请求集群做 tikv-1 节点下线前的准备工作（这个请求是幂等的），并查询准备工作是否完成，假如准备完成，允许删除，假如没有完成，则拒绝，整个流程会因为 controller manager 的控制循环回到第 2 步。
 
 好像一下子所有东西都清晰了，这个 webhook 的逻辑很清晰，就是要保证所有相关的 Pod 删除操作都要先完成优雅退出前的准备，完全不用关心外部的控制循环是怎么跑的，也因此**它非常容易编写和测试**，非常优雅地满足了我们“保证优雅关闭（否则不关闭）”的需求，目前我们正在考虑用这种方式替换线上的旧方案。
 
