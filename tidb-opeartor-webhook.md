@@ -6,7 +6,7 @@ summary: 很多场景下 PreStop Hook 并不能很好地完成需求，这篇文
 tags: ["Kubernetes", "TiDB Operator", "TiDB"]
 ---
 
-一直以来我对优雅地停止 Pod 这件事理解得很单纯：不就利用是 [PreStop hook](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks) 做优雅退出吗？但这周听了组里小伙伴的分享之后，发现很多场景下 PreStop Hook 并不能很好地完成需求，这篇文章就简单分析一下“优雅地停止 Pod”这回事儿。
+一直以来我对优雅地停止 Pod 这件事理解得很单纯：不就利用是 [PreStop hook](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks) 做优雅退出吗？但最近发现很多场景下 PreStop Hook 并不能很好地完成需求，这篇文章就简单分析一下“优雅地停止 Pod”这回事儿。
 
 ## 何谓优雅停止？
 
@@ -86,11 +86,11 @@ spec:
 - `DefaultStorageClass`，为没有声明 storageClass 的 PVC 自动设置 storageClass。
 - `ResourceQuota`，校验 Pod 的资源使用是否超出了对应 Namespace 的 Quota。
 
-虽然说这是插件化的，但在 1.7 之前，所有的 plugin 都需要写到 apiserver 的代码中一起编译，很不灵活。而在 1.7 中 K8s 就引入了 [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) 机制，允许用户向 apiserver 注册 webhook，而 apiserver 则通过 webhook 调用外部 server 来实现 filter 逻辑。1.9 中，这个特性进一步做了优化，把 webhook 分成了两类: `MutatingAdmissionWebhook` 和 `ValidatingAdmissionWebhook`，顾名思义，前者就是操作 api 对象的，比如上文例子中的 `DefaultStroageClass`，而后者是校验 api 对象的，比如 `ResourceQuota`。拆分之后，apiserver 就能保证在校验(Validating)之前先做完所有的修改（Mutating），下面这个示意图非常清晰：
+虽然说这是插件化的，但在 1.7 之前，所有的 plugin 都需要写到 apiserver 的代码中一起编译，很不灵活。而在 1.7 中 K8s 就引入了 [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) 机制，允许用户向 apiserver 注册 webhook，而 apiserver 则通过 webhook 调用外部 server 来实现 filter 逻辑。1.9 中，这个特性进一步做了优化，把 webhook 分成了两类: `MutatingAdmissionWebhook` 和 `ValidatingAdmissionWebhook`，顾名思义，前者就是操作 api 对象的，比如上文例子中的 `DefaultStroageClass`，而后者是校验 api 对象的，比如 `ResourceQuota`。拆分之后，apiserver 就能保证在校验（Validating）之前先做完所有的修改（Mutating），下面这个示意图非常清晰：
 
 ![](media/tidb-opeartor-webhook/1.jpg)
 
-而我们的办法就是，利用 `ValidatingAdmissionWebhook`，在重要的 Pod 收到删除请求时，先在 webhook server 上请求集群进行下线前的清理和准备工作，并直接返回拒绝。这时候重点来了，Control Loop 为了达到目标状态（比如说升级到新版本），会不断地进行 reconcile，尝试删除 Pod，而我们的 webhook 则会不断拒绝，除非**集群已经完成了所有的清理和准备工作.**
+而我们的办法就是，利用 `ValidatingAdmissionWebhook`，在重要的 Pod 收到删除请求时，先在 webhook server 上请求集群进行下线前的清理和准备工作，并直接返回拒绝。这时候重点来了，Control Loop 为了达到目标状态（比如说升级到新版本），会不断地进行 reconcile，尝试删除 Pod，而我们的 webhook 则会不断拒绝，除非**集群已经完成了所有的清理和准备工作**。
 
 下面是这个流程的分步描述：
 
