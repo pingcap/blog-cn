@@ -1,14 +1,14 @@
 ---
-title: "Kubernetes 中如何保证优雅地停止 Pod"
+title: Kubernetes 中如何保证优雅地停止 Pod
 date: 2019-04-01
 author: "吴叶磊"
-summary: 很多场景下 PreStop hook 并不能很好地完成需求，这篇文章就简单分析一下“优雅地停止 Pod”这回事儿。
+summary: 很多场景下 PreStop Hook 并不能很好地完成需求，这篇文章就简单分析一下“优雅地停止 Pod”这回事儿。
 tags: ["Kubernetes", "TiDB Operator", "TiDB"]
 ---
 
-一直以来我对优雅地停止 Pod 这件事理解得很单纯：不就利用是 [PreStop hook](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks) 做优雅退出吗? 但这周听了组里小伙伴的分享之后，发现很多场景下 PreStop hook 并不能很好地完成需求，这篇文章就简单分析一下“优雅地停止 Pod”这回事儿。
+一直以来我对优雅地停止 Pod 这件事理解得很单纯：不就利用是 [PreStop hook](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks) 做优雅退出吗？但这周听了组里小伙伴的分享之后，发现很多场景下 PreStop Hook 并不能很好地完成需求，这篇文章就简单分析一下“优雅地停止 Pod”这回事儿。
 
-## 何谓优雅停止?
+## 何谓优雅停止？
 
 优雅停止（Graceful shutdown）这个说法来自于操作系统，我们执行关机之后都得 OS 先完成一些清理操作，而与之相对的就是硬中止（Hard shutdown），比如拔电源。
 
@@ -27,9 +27,9 @@ tags: ["Kubernetes", "TiDB Operator", "TiDB"]
 - 优雅退出的逻辑有 BUG，自己死循环了。
 - 代码写得野，根本不理会 SIGTERM。
 
-因此，K8s 的 Pod 终止流程中还有一个“最多可以容忍的时间”，即 grace period（在 pod 的 `.spec.terminationGracePeriodSeconds` 字段中定义），这个值默认是 30 秒，我们在执行 `kubectl delete` 的时候也可通过 `--grace-period` 参数显式指定一个优雅退出时间来覆盖 pod 中的配置。而当 grace period 超出之后，K8s 就只能选择 SIGKILL 强制干掉 Pod 了。
+因此，K8s 的 Pod 终止流程中还有一个“最多可以容忍的时间”，即 grace period（在 Pod 的 `.spec.terminationGracePeriodSeconds` 字段中定义），这个值默认是 30 秒，我们在执行 `kubectl delete` 的时候也可通过 `--grace-period` 参数显式指定一个优雅退出时间来覆盖 Pod 中的配置。而当 grace period 超出之后，K8s 就只能选择 SIGKILL 强制干掉 Pod 了。
 
-很多场景下，除了把 Pod 从 K8s 的 Service 上摘下来以及进程内部的优雅退出之外，我们还必须做一些额外的事情，比如说从 K8s 外部的服务注册中心上反注册。这时就要用到 PreStop hook 了，K8s 目前提供了 `Exec` 和 `HTTP` 两种 PreStop hook，实际用的时候，需要通过 Pod 的 `.spec.containers[].lifecycle.preStop` 字段为 Pod 中的每个容器单独配置，比如：
+很多场景下，除了把 Pod 从 K8s 的 Service 上摘下来以及进程内部的优雅退出之外，我们还必须做一些额外的事情，比如说从 K8s 外部的服务注册中心上反注册。这时就要用到 PreStop Hook 了，K8s 目前提供了 `Exec` 和 `HTTP` 两种 PreStop Hook，实际用的时候，需要通过 Pod 的 `.spec.containers[].lifecycle.preStop` 字段为 Pod 中的每个容器单独配置，比如：
 
 ```yaml
 spec:
@@ -49,11 +49,11 @@ spec:
 2. 
     - 2.1. Pod 进入 Terminating 状态。 
     - 2.2. 与此同时，K8s 会将 Pod 从对应的 service 上摘除。
-    - 2.3. 与此同时，针对有 preStop hook 的容器，kubelet 会调用每个容器的 preStop hook，假如 preStop hook 的运行时间超出了 grace period，kubelet 会发送 SIGTERM 并再等 2 秒。
-    - 2.4. 与此同时，针对没有 preStop hook 的容器，kubelet 发送 SIGTERM。
+    - 2.3. 与此同时，针对有 PreStop Hook 的容器，kubelet 会调用每个容器的 PreStop Hook，假如 PreStop Hook 的运行时间超出了 grace period，kubelet 会发送 SIGTERM 并再等 2 秒。
+    - 2.4. 与此同时，针对没有 PreStop Hook 的容器，kubelet 发送 SIGTERM。
 3. grace period 超出之后，kubelet 发送 SIGKILL 干掉尚未退出的容器。
 
-这个过程很不错，但它存在一个问题就是我们无法预测 Pod 会在多久之内完成优雅退出，也无法优雅地应对"优雅退出"失败的情况。而在我们的产品 [TiDB Operator](https://github.com/pingcap/tidb-operator) 中，这就是一个无法接受的事情.
+这个过程很不错，但它存在一个问题就是我们无法预测 Pod 会在多久之内完成优雅退出，也无法优雅地应对“优雅退出”失败的情况。而在我们的产品 [TiDB Operator](https://github.com/pingcap/tidb-operator) 中，这就是一个无法接受的事情。
 
 ## 有状态分布式应用的挑战
 
@@ -65,7 +65,7 @@ spec:
 
 得益于系统的良好设计，大多数时候这类操作都很快，然而分布式系统中异常是家常便饭，优雅退出耗时过长甚至失败的场景是我们必须要考虑的。假如类似的事情发生了，**为了业务稳定和数据安全，我们就不能强制关闭 Pod，而应该停止操作过程，通知工程师介入。** 这时，上面所说的 Pod 退出流程就不再适用了。
 
-## 小心翼翼: 手动控制所有流程
+## 小心翼翼：手动控制所有流程
 
 这个问题其实 K8s 本身没有开箱即用的解决方案，于是我们在自己的 Controller 中（TiDB 对象本身就是一个 CRD）与非常细致地控制了各种操作场景下的服务启停逻辑。
 
@@ -75,7 +75,7 @@ spec:
 
 但这种办法存在一个问题就是实现起来比较复杂，我们需要自己实现一个控制器，在其中实现细粒度的控制逻辑并且在 Controller 的控制循环中不断去检查能否安全停止 Pod。
 
-## 另辟蹊径: 解耦 Pod 删除的控制流
+## 另辟蹊径：解耦 Pod 删除的控制流
 
 复杂的逻辑总是没有简单的逻辑好维护，同时写 CRD 和 Controller 的开发量也不小，能不能有一种更简洁，更通用的逻辑，能实现“保证优雅关闭（否则不关闭）”的需求呢？
 
