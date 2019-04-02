@@ -10,6 +10,7 @@ tags: ['TiDB 源码阅读','社区']
 在先前的 [TiDB 源码阅读系列文章（四）]( https://pingcap.com/blog-cn/tidb-source-code-reading-4/ ) 中，我们介绍了 Insert 语句，想必大家已经了解了 TiDB 是如何写入数据，本篇文章介绍一下 Select 语句是如何执行。相比 Insert，Select 语句的执行流程会更复杂，本篇文章会第一次进入优化器、Coprocessor 模块进行介绍。
 
 ## 表结构和语句
+
 表结构沿用上篇文章的：
 
 ```sql
@@ -188,6 +189,7 @@ columnPruner（列裁剪） 规则，会将不需要的列裁剪掉，考虑这�
 其中 `FROM t` 变成了 DataSource 算子，`WHERE age > 10` 变成了 Selection 算子，这里留一个思考题，`SELECT name` 中的列选择去哪里了？
 
 ### 物理优化
+
 在物理优化阶段，会考虑数据的分布，决定如何选择物理算子，比如对于 `FROM t WHERE age > 10` 这个语句，假设在 age 字段上有索引，需要考虑是通过 TableScan + Filter 的方式快还是通过 IndexScan 的方式比较快，这个选择取决于统计信息，也就是 age > 10 这个条件究竟能过滤掉多少数据。
 
 我们看一下 [dagPhysicalOptimize](https://github.com/pingcap/tidb/blob/source-code/plan/optimizer.go#L148) 这个函数：
@@ -273,7 +275,7 @@ type task interface {
 
 如果了解过 TiDB 的 Explain 结果，那么可以看到每个 Operator 都会标明属于哪种 Task，比如下面这个例子：
 
-![explain.jpg](media/tidb-source-code-reading-6/2.png)
+![explain.jpg](media/tidb-source-code-reading-6/2.jpg)
 
 
 整个流程是一个树形动态规划的算法，大家有兴趣可以跟一下相关的代码自行研究或者等待后续的文章。
@@ -366,8 +368,10 @@ type SelectResult interface {
 selectResult 实现了 SelectResult 这个接口，代表了一次查询的所有结果的抽象，计算是以 Region 为单位进行，所以这里全部结果会包含所有涉及到的 Region 的结果。调用 Chunk 方法可以读到一个 Chunk 的数据，通过不断调用 NextChunk 方法，直到 Chunk 的 NumRows 返回 0 就能拿到所有结果。NextChunk 的实现会不断获取每个 Region 返回的 SelectResponse，把结果写入 Chunk。
 
 #### Root Executor
+
 能推送到 TiKV 上的计算请求目前有 TableScan、IndexScan、Selection、TopN、Limit、PartialAggregation 这样几个，其他更复杂的算子，还是需要在单个 tidb-server 上进行处理。所以整个计算是一个多 tikv-server 并行处理 + 单个 tidb-server 进行汇总的模式。 
 
 
 ## 总结
+
 Select 语句的处理过程中最复杂的地方有两点，一个是查询优化，一个是如何分布式地执行，这两部分后续都会有文章来更进一步介绍。下一篇文章会脱离具体的 SQL 逻辑，介绍一下如何看懂某一个特定的模块。
