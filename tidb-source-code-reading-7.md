@@ -14,13 +14,13 @@ tags: ['TiDB 源码阅读','社区']
 
 在写具体的优化规则之前，先简单介绍查询计划里面的一些逻辑算子。
 
-- DataSource 这个就是数据源，也就是表，`select * from t` 里面的 t
+- DataSource 这个就是数据源，也就是表，`select * from t` 里面的 t。
 
-- Selection 选择，例如 `select xxx from t where xx = 5` 里面的 where 过滤条件
+- Selection 选择，例如 `select xxx from t where xx = 5` 里面的 where 过滤条件。
 
-- Projection 投影， `select c from t` 里面的取 c 列是投影操作
+- Projection 投影， `select c from t` 里面的取 c 列是投影操作。
 
-- Join 连接， `select xx from t1, t2 where t1.c = t2.c` 就是把 t1 t2 两个表做 Join
+- Join 连接， `select xx from t1, t2 where t1.c = t2.c` 就是把 t1 t2 两个表做 Join。
 
 选择，投影，连接（简称 SPJ） 是最基本的算子。其中 Join 有内连接，左外右外连接等多种连接方式。
 
@@ -32,11 +32,11 @@ select b from t1, t2 where t1.c = t2.c and t1.a > 5
 
 ![](media/tidb-source-code-reading-7/1.png)
 
-- Sort 就是 `select xx from xx order by` 里面的 `order by`
+- Sort 就是 `select xx from xx order by` 里面的 `order by`。
 
-- Aggregation，在 `select sum(xx) from xx group by yy` 中的 `group by` 操作，按某些列分组。分组之后，可能带一些聚合函数，比如 Max/Min/Sum/Count/Average 等，这个例子里面是一个 sum
+- Aggregation，在 `select sum(xx) from xx group by yy` 中的 `group by` 操作，按某些列分组。分组之后，可能带一些聚合函数，比如 Max/Min/Sum/Count/Average 等，这个例子里面是一个 sum。
 
-- Apply 这个是用来做子查询的
+- Apply 这个是用来做子查询的。
 
 ## 列裁剪
 
@@ -122,8 +122,8 @@ func eliminate(p Plan, canEliminate bool) {
 
 简单解释就是，一个 Projection 节点是否可消除：
 
-- 一方面由它父节点告诉它，它是否是一个冗余的 Projection 操作
-- 另一方面由它自己和子节点的输入列做比较，输出相同则可消除
+- 一方面由它父节点告诉它，它是否是一个冗余的 Projection 操作。
+- 另一方面由它自己和子节点的输入列做比较，输出相同则可消除。
 
 ## 谓词下推
 
@@ -184,13 +184,13 @@ DataSource 算子很简单，会直接把过滤条件加入到 CopTask 里面。
 
 如果一个节点输出肯定只有一行，这个节点会设置一个 MaxOneRow 属性。哪些情况节点输出只有一行呢？
 
-- 如果一个算子的子节点是 MaxOneRow 算子
+- 如果一个算子的子节点是 MaxOneRow 算子。
 
-- 如果是 Limit 1，可以设置 MaxOneRow
+- 如果是 Limit 1，可以设置 MaxOneRow。
 
-- 如果是 Selection，并且过滤条件是一个唯一索引列等于某常量
+- 如果是 Selection，并且过滤条件是一个唯一索引列等于某常量。
 
-- Join 算子，如果它的左右子节点都是 MaxOneRow 属性
+- Join 算子，如果它的左右子节点都是 MaxOneRow 属性。
 
 ## 总结
 
