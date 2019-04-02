@@ -23,11 +23,14 @@ TiDB 是一个完全分布式的关系型数据库，从诞生的第一天起，
 为了完整地解释 Syncer 的在线同步实现，我们需要有一些额外的内容需要了解。
 
 ## MySQL Replication
+
 我们先看看 MySQL 原生的 Replication 复制方案，其实原理上也很简单：
 
-1）MySQL Master 将数据变化记录到 Binlog (Binary Log),
-2) MySQL Slave 的 I/O Thread 将 MySQL Master 的 Binlog 同步到本地保存为 Relay Log
-3）MySQL Slave 的 SQL Thread 读取本地的 Relay Log，将数据变化同步到自身
+1）MySQL Master 将数据变化记录到 Binlog (Binary Log)。
+
+2) MySQL Slave 的 I/O Thread 将 MySQL Master 的 Binlog 同步到本地保存为 Relay Log。
+
+3）MySQL Slave 的 SQL Thread 读取本地的 Relay Log，将数据变化同步到自身。
 
 ![](media/tidb-syncer/2.jpg)
 
@@ -36,23 +39,27 @@ TiDB 是一个完全分布式的关系型数据库，从诞生的第一天起，
 MySQL 的 Binlog 分为几种不同的类型，我们先来大概了解下，也看看具体的优缺点。
 
 1）Row
+
 MySQL Master 将详细记录表的每一行数据变化的明细记录到 Binlog。
 优点：完整地记录了行数据的变化信息，完全不依赖于存储过程，函数和触发器等等，不会出现因为一些依赖上下文信息而导致的主从数据不一致的问题。
 缺点：所有的增删改查操作都会完整地记录在 Binlog 中，会消耗更大的存储空间。
 
 
 2）Statement
+
 MySQL Master 将每一条修改数据的 SQL 都会记录到 Binlog。
 优点：相比 Row 模式，Statement 模式不需要记录每行数据变化，所以节省存储量和 IO，提高性能。
 缺点：一些依赖于上下文信息的功能，比如  auto increment id，user define function, on update current_timestamp/now 等可能导致的数据不一致问题。
 
 
 3）Mixed
+
 MySQL Master 相当于 Row 和 Statement 模式的融合。
 优点：根据 SQL 语句，自动选择 Row 和 Statement 模式，在数据一致性，性能和存储空间方面可以做到很好的平衡。
 缺点：两种不同的模式混合在一起，解析处理起来会相对比较麻烦。
 
 ### MySQL Binlog Event
+
 了解了 MySQL Replication 和 MySQL Binlog 模式之后，终于进入到了最复杂的 MySQL Binlog Event 协议解析阶段了。
 
 
@@ -208,6 +215,7 @@ column def 定义了该列的数据类型，对于一些特定的类型，譬如
 
 
 `XID_EVENT`
+
 在事务提交时，不管是 Statement 还是 Row 模式的 Binlog，都会在末尾添加一个 `XID_EVENT` 事件代表事务的结束，里面包含事务的 ID 信息。
 
 
@@ -217,15 +225,18 @@ column def 定义了该列的数据类型，对于一些特定的类型，譬如
 
 
 ## Syncer
+
 介绍完了 MySQL Replication 和 MySQL Binlog Event 之后，理解 Syncer 就变的比较容易了，上面已经介绍过基本的架构和功能了，在 Syncer 中， 解析和同步 MySQL Binlog，我们使用的是我们首席架构师唐刘的 go-mysql 作为核心 lib，这个 lib 已经在 github 和 bilibili 线上使用了，所以是非常安全可靠的。所以这部分我们就跳过介绍了，感兴趣的话，可以看下 github 开源的代码。这里面主要介绍几个核心问题：
 
 
 ### MySQL Binlog 模式的选择
+
 在 Syncer 的设计中，首先考虑的是可靠性问题，即使 Syncer 异常退出也可以直接重启起来，也不会对线上数据一致性产生影响。为了实现这个目标，我们必须处理数据同步的可重入问题。
 对于 Mixed 模式来说，一个 insert 操作，在 Binlog 中记录的是 insert SQL，如果 Syncer 异常退出的话，因为 Savepoint 还没有来得及更新，会导致重启之后继续之前的 insert SQL，就会导致主键冲突问题，当然可以对 SQL 进行改写，将 insert 改成 replace，但是这里面就涉及到了 SQL 的解析和转换问题，处理起来就有点麻烦了。另外一点就是，最新版本的 MySQL  5.7 已经把 Row 模式作为默认的 Binlog 格式了。所以，在 Syncer 的实现中，我们很自然地选择 Row 模式作为 Binlog 的数据同步模式。
 
 
 ### Savepoint 的选取
+
 对于 Syncer 本身来说，我们更多的是考虑让它尽可能的简单和高效，所以每次 Syncer 重启都要尽可能从上次同步的 Binlog Pos 的地方做类似断点续传的同步。如何选取 Savepoint 就是一个需要考虑的问题了。
 对于一个 DML 操作来说(以 Insert SQL 操作举例来看)，基本的 Binlog Event 大概是下面的样子：
 
@@ -244,6 +255,7 @@ XID_EVENT
 
 
 ### 断点数据同步
+
 在上面我们已经抛出过这个问题了，对于 Row 模式的 MySQL Binlog 来说，实现这点相对来说也是比较容易的。举例来说，对于一个包含 3 行 insert row 的 Txn 来说，event 大概是这样的：
 
 ```
