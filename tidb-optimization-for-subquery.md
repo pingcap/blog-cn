@@ -38,7 +38,7 @@ TiDB 沿袭了 SQL Server 对子查询的处理思想，引入 Apply 算子将�
 
 Apply 算子的语义是：
 
-![](http://static.zybuluo.com/zyytop/d33ip11f4i69dbosfxdsir1m/1.png)
+![](media/tidb-optimization-for-subquery/1.png)
 
 公式中的 E 代表一个“参数化”的子查询。在每一次执行中，Apply 算子会向关系 R 取一条记录 r，作为参数传入 E 中，然后让 r 和 E(r) 做 ⊗ 操作。⊗ 会根据子查询类型的不同而不同，通常是半连接 ⋉。
 
@@ -50,7 +50,7 @@ EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 ```
 它的 Apply 算子表示是：
 
-![](http://static.zybuluo.com/zyytop/j3bd2utrbeqeaw4hr43ydpxd/2.png)
+![](media/tidb-optimization-for-subquery/2.png)
 
 对于出现在 `SELECT` 列表中、`GROUP BY` 列表中的子查询，道理也是类似的。所以 Apply 是可以表示出现在任意位置的子查询的。
 
@@ -58,7 +58,7 @@ EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 
 引入了 Apply，我们就可以将子查询去关联化了。去关联化的规则如下：
 
-![](http://static.zybuluo.com/zyytop/4ehtrm40su82a1zfr35k8cq2/3.png)
+![](media/tidb-optimization-for-subquery/3.png)
 
 根据上述规则，你可以将所有的确定性 SQL 子查询去关联化。例如 SQL 语句：
 
@@ -71,19 +71,19 @@ FROM ORDER WHERE O_CUSTKEY = C_CUSTKEY)
 
 其中两个 `CUSTKEY` 均为主键。转换成 Apply 之后的表达式为：
 
-![](http://static.zybuluo.com/zyytop/y6o28jwzzn1dnnx4sbfa3q8j/4.png)
+![](media/tidb-optimization-for-subquery/4.png)
 
 因为主键的存在，利用规则（9），可以转化为：
 
-![](http://static.zybuluo.com/zyytop/nhwbswuiwwybhdj2qj8r90i6/5.png)
+![](media/tidb-optimization-for-subquery/5.png)
 
 此时根据规则（2），我们可以彻底消除 Apply，转化为只有连接的 SQL 表达式：
 
-![](http://static.zybuluo.com/zyytop/dtwp9s0xcqzfn8qf9zzi6sn1/6.png)
+![](media/tidb-optimization-for-subquery/6.png)
 
 再根据外连接化简的原则，可以进一步化简为：
 
-![](http://static.zybuluo.com/zyytop/m5eci39o6eyqeucgvzp561xl/7.png)
+![](media/tidb-optimization-for-subquery/7.png)
 
 利用上述九条规则，理论上已经解决去关联化的问题了。是不是对于所有的情况，去关联化都是最好的呢？答案是否定的。如果 SQL 的结果很小，同时子查询可以利用索引，有时候使用 correlated execution 是最好的。是否去关联化还需要统计信息的帮助。而到了这一步，普通的优化器已经无能为力了。只有 Volcano 或 Cascade Style 的优化器，可以同时考虑逻辑等价规则和代价选择。因此，想要完美解决子查询的问题，要需要优秀的优化器框架的支撑。
 
@@ -98,7 +98,7 @@ EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 
 TiDB 做出的 Plan 为：
 
-![](http://static.zybuluo.com/zyytop/yuw7v761re6dclra4lvpg3bi/8.png)
+![](media/tidb-optimization-for-subquery/8.png)
 
 当子查询出现在 SELECT 子句当中时：
 
@@ -110,6 +110,6 @@ THEN 1 ELSE 2 END FROM SRC
 
 Projection 算子需要知道 Exists 结果是 True 或者 False。这时需要左外半连接，当然外表匹配时，有一个辅助列 aux 输出 True，当不匹配时，输出 False。
 
-![](http://static.zybuluo.com/zyytop/2klgi6syt4e8tlzawxd32c07/9.png)
+![](media/tidb-optimization-for-subquery/9.png)
 
 对于半连接的算法实现，其实和 Join 差别不大，可以选择 MergeSortJoin，HashJoin，IndexLoopUpJoin，NestedLoop 等等。确定使用 SemiJoin 之后，优化器会根据统计信息选择最合适的算法，这里不再赘述。

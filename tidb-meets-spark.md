@@ -20,7 +20,7 @@ tags: ['TiDB', 'TiSpark', 'Spark']
 
 然后什么是 TiKV，可能我们今天要说很多次了。TiKV 其实是 TiDB 这个产品底下的数据库存储引擎，更形象，更具体一点，这是一个架构图。
 
-![](http://static.zybuluo.com/zyytop/7wgvtdo71rs6h5i0o9zuuw1y/%E6%9E%B6%E6%9E%84%E5%9B%BE.png)
+![](media/tidb-meets-spark/1.png)
 
 大家可以看到，TiDB 做为一个完整的数据库来说，它是这样的一个架构，上层是 DB 层，DB 层是负责做 DB 相关的东西，比如说一部分的 Transaction，SQL 的解析，然后执行 Query Processing 相关的一些东西。
 
@@ -37,7 +37,7 @@ CBO 这里有两部分，一部分是说，因为我们有索引，所以在这�
 
 现在开始说一下整个架构是什么样的。后面会有一个具体的解说，先看一下架构图。
 
-![](http://static.zybuluo.com/zyytop/qy1de5t3z0hds4g3x17zheo0/%E5%9B%BE%E7%89%87%201.png)
+![](media/tidb-meets-spark/2.png)
 
 在 Spark Driver 上，需要接入 TiSpark 的接口，现在 TiSpark 也支持 JDBC。Worker / Executor 那边也需要一个这样的架构。 整个部署，采用 Spark 外接 JAR 的方式，并没有说需要到我整个把 Spark 部署全都换掉属于我们的版本，只需要提交一个 JAR 包就可以。每个 TiSpark 组件会与 TiKV 进行通讯，Driver 这边会和 Placement Driver 进行通讯，然后这边具体干了什么，后面会解释。
 
@@ -63,7 +63,7 @@ CBO 这里有两部分，一部分是说，因为我们有索引，所以在这�
 
 刚才说的有几种可能比较抽象，现在来一个具体的例子，具体看这个东西怎么 Work，可以看一个具体的例子。
 
-![](http://static.zybuluo.com/zyytop/047uw1uxxjavorh23zqs1604/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-08-29%20%E4%B8%8B%E5%8D%884.31.50.png)
+![](media/tidb-meets-spark/3.png)
 
 这是一个查询，根据所给的学号和学院等条件计算学生平均值。这张表上，有两个索引，一个索引是主键索引，另外一个索引是在 Secondary Index ，建立在 School 上。lottery 是一个用户自定义函数，并不在 TiDB 和 TiKV 的支持范围之内。
 
@@ -86,7 +86,7 @@ TiDB 本身是有收集统计信息的， TiSpark 现在正在实现统计信息
 
 还是刚才的 SQL 查询:
 
-![](http://static.zybuluo.com/zyytop/z2xmfso7q9yhp0rmlmvt0zk0/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-08-29%20%E4%B8%8B%E5%8D%884.33.24.png)
+![](media/tidb-meets-spark/4.png)
 
 这个例子稍微有一点特殊，因为他是计算平均值，为什么特殊，因为没有办法直接在 TiKV 做 AVG 平均值计算，然后直接在 Spark 再做直接聚合计算，因此这种情况会有一个改写，将 AVG 拆解成 SUM 和 COUNT，然后会把他们分别下推到 Coprocessor，最后在 Spark 继续做聚合计算。
 
