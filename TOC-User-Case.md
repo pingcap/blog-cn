@@ -14,8 +14,6 @@
   - [摩拜单车(二)](user-case-mobike-2.md)
   - [易果集团](user-case-yiguo.md)
   - [同程艺龙](user-case-tongcheng.md)
-  - [饿了么（一）](user-case-eleme-1.md)
-  - [饿了么（二）](user-case-eleme-2.md)
   - [今日头条](user-case-toutiao.md)
   - [量化派](user-case-lianghuapai.md)
   - [去哪儿网](user-case-qunar.md)
