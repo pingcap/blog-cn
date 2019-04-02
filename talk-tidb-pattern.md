@@ -86,7 +86,7 @@ tags: ['TiDB', '分布式数据库']
 
 第二种扩展模型是 Region Base。这张图是我项目里面扒出来的图。
 
-![](http://static.zybuluo.com/zyytop/bg3uirvl9o4wbg6mu1ydc2pp/1.png)
+![](media/talk-tidb-pattern/1.png)
 
 它整个思路有点像 Bigtable，它相当于把底下的存储层分开，数据在最底层存储上已经没有表、行这样结构的划分，每一块数据都由一个固定的 size 比如 64 M、128 M 连续的 Key-value pairs 组成。其实这个模型背后最早的系统应该是谷歌在 06 年发表的 Bigtable 这篇论文里面去描述的。这个模型有什么好处呢？一是它能真正实现这种弹性的扩展。第二个，它是一个真正高度去中心化。去中心化这个事情，对于一个大的 Cluster 来说是一个非常重要的特性。
 

@@ -41,7 +41,7 @@ tags: ['TiDB']
 
 完成上述两项改动之后，TiDB 在 OLAP 场景下的性能有了大幅的质的提升，从 TPC-H 的对比结果[https://github.com/pingcap/docs-cn/blob/master/benchmark/tpch.md](https://github.com/pingcap/docs-cn/blob/master/benchmark/tpch.md) 来看，所有的 Query 在 2.0 中都运行得更快，一些 Query 大多数都有几倍甚至数量级的提升，特别是一些 1.0 中跑不出结果的 Query 在 2.0 中都能顺利执行。
 
-![](https://upload-images.jianshu.io/upload_images/542677-6a17e01659fbcc62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/tidb-2.0-ga-release-detail/1.png)
 
 
 ## 易用性和可运维性
