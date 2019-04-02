@@ -15,23 +15,23 @@ TiDB 是一个完全分布式的关系型数据库，从诞生的第一天起，
 
 首先我们看下 Syncer 的整体架构图, 对于 Syncer 的作用和定位有一个直观的印象。
 
-![](media/syncer.png)
+![](media/tidb-syncer/1.png)
 
 从整体的架构可以看到，Syncer 主要是通过把自己注册为一个 MySQL Slave 的方式，和 MySQL Master 进行通信，然后不断读取 MySQL Binlog，进行 Binlog Event 解析，规则过滤和数据同步。从工程的复杂度上来看，相对来说还是非常简单的，相对麻烦的地方主要是 Binlog Event 解析和各种异常处理，也是容易掉坑的地方。
 
 
 为了完整地解释 Syncer 的在线同步实现，我们需要有一些额外的内容需要了解。
 
-### MySQL Replication
+## MySQL Replication
 我们先看看 MySQL 原生的 Replication 复制方案，其实原理上也很简单：
 
 1）MySQL Master 将数据变化记录到 Binlog (Binary Log),
 2) MySQL Slave 的 I/O Thread 将 MySQL Master 的 Binlog 同步到本地保存为 Relay Log
 3）MySQL Slave 的 SQL Thread 读取本地的 Relay Log，将数据变化同步到自身
 
-![](media/mysql_replication.jpg)
+![](media/tidb-syncer/2.jpg)
 
-#### MySQL Binlog
+### MySQL Binlog
 
 MySQL 的 Binlog 分为几种不同的类型，我们先来大概了解下，也看看具体的优缺点。
 
@@ -52,7 +52,7 @@ MySQL Master 相当于 Row 和 Statement 模式的融合。
 优点：根据 SQL 语句，自动选择 Row 和 Statement 模式，在数据一致性，性能和存储空间方面可以做到很好的平衡。
 缺点：两种不同的模式混合在一起，解析处理起来会相对比较麻烦。
 
-#### MySQL Binlog Event
+### MySQL Binlog Event
 了解了 MySQL Replication 和 MySQL Binlog 模式之后，终于进入到了最复杂的 MySQL Binlog Event 协议解析阶段了。
 
 
@@ -216,16 +216,16 @@ column def 定义了该列的数据类型，对于一些特定的类型，譬如
 `QUERY_EVENT` 主要用于记录具体执行的 SQL 语句，MySQL 所有的 DDL 操作都记录在这个 event 里面。
 
 
-### Syncer
+## Syncer
 介绍完了 MySQL Replication 和 MySQL Binlog Event 之后，理解 Syncer 就变的比较容易了，上面已经介绍过基本的架构和功能了，在 Syncer 中， 解析和同步 MySQL Binlog，我们使用的是我们首席架构师唐刘的 go-mysql 作为核心 lib，这个 lib 已经在 github 和 bilibili 线上使用了，所以是非常安全可靠的。所以这部分我们就跳过介绍了，感兴趣的话，可以看下 github 开源的代码。这里面主要介绍几个核心问题：
 
 
-#### MySQL Binlog 模式的选择
+### MySQL Binlog 模式的选择
 在 Syncer 的设计中，首先考虑的是可靠性问题，即使 Syncer 异常退出也可以直接重启起来，也不会对线上数据一致性产生影响。为了实现这个目标，我们必须处理数据同步的可重入问题。
 对于 Mixed 模式来说，一个 insert 操作，在 Binlog 中记录的是 insert SQL，如果 Syncer 异常退出的话，因为 Savepoint 还没有来得及更新，会导致重启之后继续之前的 insert SQL，就会导致主键冲突问题，当然可以对 SQL 进行改写，将 insert 改成 replace，但是这里面就涉及到了 SQL 的解析和转换问题，处理起来就有点麻烦了。另外一点就是，最新版本的 MySQL  5.7 已经把 Row 模式作为默认的 Binlog 格式了。所以，在 Syncer 的实现中，我们很自然地选择 Row 模式作为 Binlog 的数据同步模式。
 
 
-#### Savepoint 的选取
+### Savepoint 的选取
 对于 Syncer 本身来说，我们更多的是考虑让它尽可能的简单和高效，所以每次 Syncer 重启都要尽可能从上次同步的 Binlog Pos 的地方做类似断点续传的同步。如何选取 Savepoint 就是一个需要考虑的问题了。
 对于一个 DML 操作来说(以 Insert SQL 操作举例来看)，基本的 Binlog Event 大概是下面的样子：
 
@@ -243,7 +243,7 @@ XID_EVENT
 所以，Syncer 处于性能和安全性的考虑，我们会定期和遇到 DDL 的时候进行 Save。大家可能也注意到了，Savepoint 目前是存储在本地的，也就是存在一定程度的单点问题，暂时还在我们的 TODO 里面。
 
 
-#### 断点数据同步
+### 断点数据同步
 在上面我们已经抛出过这个问题了，对于 Row 模式的 MySQL Binlog 来说，实现这点相对来说也是比较容易的。举例来说，对于一个包含 3 行 insert row 的 Txn 来说，event 大概是这样的：
 
 ```
