@@ -14,11 +14,11 @@ PAX 的论文可以看看 「[Weaving Relations for Cache Performance](http://re
 
 在谈 PAX 之前，NSM 和 DSM 还是绕不开的话题，NSM 就是通常说的行存，对于现阶段很多偏重 OLTP 的数据，譬如 MySQL 等，都采用的这种方式存储的数据。而 DSM，则是通常的说的列存，几乎所有的 OLAP 系统，都采用的这种方式来存储的底层数据。
 
-![](http://static.zybuluo.com/zyytop/do8i87t06yh45es90i7l7xpe/NSM.png "NSM")
+![](media/pax/1.png)
 
 NSM 会将 record 依次在磁盘 page 里面存放，每个 page 的末尾会存放 record 的 offset，便于快速的定位到实际的 record。如果我们每次需要得到一行 record，或者 scan 所有 records，这种格式非常的高效。但如果我们的查询，仅仅是要拿到 record 里面的一列数据，譬如 `select name from R where age < 40`，那么对于每次 age 的遍历，除了会将无用的其他数据一起读入，每次读取 record，都可能会引起 cache miss。
 
-![](http://static.zybuluo.com/zyytop/2gy3wbsioufb2pubjb3wpf0a/DSM.png "DSM")
+![](media/pax/2.png)
 
 不同于 NSM，DSM 将数据按照不同的 attributes 分别存放到不同的 page 里面。对于上面只需要单独根据某一个 attribute 进行查询的情况，我们会直接读出 page，遍历处理，这个对 cache 也是非常高效友好的。
 
@@ -30,11 +30,11 @@ NSM 会将 record 依次在磁盘 page 里面存放，每个 page 的末尾会�
 
 PAX 全称是 Partition Attributes Across，它在 page 里面使用了一种 mini page 的方式，将 record 切到不同的 mini page 里面。
 
-![](http://static.zybuluo.com/zyytop/htshi0pon1nl9vcnj48mklxo/PAX.png "PAX")
+![](media/pax/3.png)
 
 假设有 n 个 attributes，PAX 就会将 page 分成 n 个 mini pages，然后将第一个 attribute 放在第一个 mini page 上面，第二个放在第二个 mini page，以此类推。
 
-![](http://static.zybuluo.com/zyytop/ni7j9pjenm0ptpx3wp52akrw/page.png "page")
+![](media/pax/4.png)
 
 在每个 page 的开头，会存放每个 mini page 的 offset，mini page 对于 Fixed-length attribute 的数据，会使用 F-minipage ，而对于 variable-length attribute 的数据，则会使用 V-minipage。对于 F-minipage 来说，最后会有一个 bit vector 来存放 null value。而对于 V-minipage 来说，最后会保存每个 value 在 mini page 里面的 offset。
 

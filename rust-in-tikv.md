@@ -56,7 +56,7 @@ More seriously, CGO has heavy expenses, but we need to call RocksDB API without 
 
 Rust is a system programming language, maintained by Mozilla. It is a very powerful language, however, you can see the curve, the learning curve is very very steep.
 
-![](http://upload-images.jianshu.io/upload_images/542677-a53267369623bb20?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/rust-in-tikv/1.png)
 
 I have been using many programming languages, like C++, Go, python, lua, etc. and Rust is the hardest language for me to master. In PingCAP, we will let the new colleague spend at least one month to learn Rust, to struggle with the compiling errors, and then to rise above it. This would never happen for Go.
 
@@ -76,7 +76,7 @@ Rust has no GC expenses, so we won’t meet the “stop the world” problem. Ca
 
 ## TiKV Timeline
 
-![](http://upload-images.jianshu.io/upload_images/542677-e25be5a9ff8f2e20?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/rust-in-tikv/2.jpg)
 
 Here you can see the TiKV timeline. We first began to develop TiKV January 1st, 2016, and made it open source on April 1st, 2016, and this is not a joke like Gmail at All April Fool’s Day. TiKV was first used in production in October, 2016, when we had not even released a beta version. In November, 2016, we released the first beta version; then RC1 in December, 2016, RC2 in February, this year. Later we plan to release RC3 in April and the first GA version in June.
 
@@ -84,7 +84,7 @@ As you can see, the development of TiKV is very fast and the released versions o
 
 ## TiKV Architecture
 
-![](http://upload-images.jianshu.io/upload_images/542677-5bc5b974a7cff9a7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/rust-in-tikv/3.png)
 
 Now let’s go deep into TiKV. You can see from the TiKV architecture that the hierarchy of TiKV is clear and easy to understand.
 
@@ -100,7 +100,7 @@ On the top layer, it is the KV and coprocessor API layer for handling client req
 
 ## Multi-Raft
 
-![](http://upload-images.jianshu.io/upload_images/542677-f15b6fd11a10d1f8?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/rust-in-tikv/4.jpg)
 
 Here is an example of Multi-Raft.
 
@@ -110,7 +110,7 @@ You can see that there are four TiKV nodes. Within each store, we have several r
 
 ### Scale-out (initial state)
 
-![](http://upload-images.jianshu.io/upload_images/542677-cb7e23819d99b9ba?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/rust-in-tikv/5.jpg)
 
 Here is an example of horizontal scalability. At first, we have four nodes, Node A has three regions, others have two regions.
 
@@ -118,23 +118,23 @@ Of course, Node A is busier than other nodes, and we want to reduce its stress.
 
 ### Scale-out (add new node)
 
-![](http://upload-images.jianshu.io/upload_images/542677-8ad09403969051e1?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/rust-in-tikv/6.jpg)
 
 So we add a new Node E, and begin to move the region 1 in Node A to Node E. But here we find that the leader of region 1 is in Node A, so we will first transfer the leader from Node A to Node B.
 
 ### Scale-out (balancing)
 
-![](http://upload-images.jianshu.io/upload_images/542677-4d4fe66f9a79189f?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/rust-in-tikv/7.jpg)
 
 After that, the leader of region 1 is in Node B now, then we add a new replica of region 1 in Node E.
 
-![](http://upload-images.jianshu.io/upload_images/542677-226fab958122e342?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/rust-in-tikv/8.jpg)
 
 Then we remove the replica of region 1 from Node A. All these are executed by the Placement Driver automatically. What we only need is to add node, if we find the system is busy. Very easy, right?
 
 ## A simple write flow
 
-![](http://upload-images.jianshu.io/upload_images/542677-b164cfef044ba3f3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/rust-in-tikv/9.jpg)
 
 Here is a simple write flow: when a client sends a write request to TiKV, TiKV first parses the protocol and then dispatches the request to the KV thread, then the KV thread executes some transaction logics and sends the request to Raft thread, after TiKV replicates the Raft log and applies it to RocksDB, the write request is finished.
 
@@ -168,7 +168,7 @@ Ok, that’s what we have done and are doing. Here are what we will do in the fu
 
 - Be a strong advocate of Rust in China.
 
-![](http://upload-images.jianshu.io/upload_images/542677-7230992f2d7534ef?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](media/rust-in-tikv/10.jpg)
 
 
 
