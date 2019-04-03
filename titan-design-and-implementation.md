@@ -62,7 +62,7 @@ Titan 和 [`Badger`](https://github.com/dgraph-io/badger) 的设计有很大区�
 
 Titan 使用 `Version` 来代表某个时间点所有有效的 `BlobFile`，这是从 `LevelDB` 中借鉴过来的管理数据文件的方法，其核心思想便是 [`MVCC`](https://en.wikipedia.org/wiki/Multiversion_concurrency_control)，好处是在新增或删除文件的同时，可以做到并发读取数据而不需要加锁。每次新增文件或者删除文件的时候，`Titan` 都会生成一个新的 `Version` ，并且每次读取数据之前都要获取一个最新的 `Version`。
 
-![4-Version.png](media/titan-design-and-implementation/4.jpg)
+![4-Version.png](media/titan-design-and-implementation/4.png)
 
 > 图 4：新旧 `Version` 按顺序首尾相连组成一个双向链表，`VersionSet` 用来管理所有的 `Version`，它持有一个 `current` 指针用来指向当前最新的 `Version`。
 
