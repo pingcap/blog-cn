@@ -25,13 +25,13 @@ PD 是一个非常重要的中心节点，它通过集成 etcd，自动的支持
 
 PD 的 Client trait 非常简单，多数都是对集群元信息的 set/get 操作，需要额外注意的几个：
 
-**bootstrap\_cluster：**当我们启动一个 TiKV 服务的时候，首先需要通过 is\_cluster\_bootstrapped 来判断整个 TiKV 集群是否已经初始化，如果还没有初始化，我们就会在该 TiKV 服务上面创建第一个 region。
+**bootstrap\_cluster**：当我们启动一个 TiKV 服务的时候，首先需要通过 is\_cluster\_bootstrapped 来判断整个 TiKV 集群是否已经初始化，如果还没有初始化，我们就会在该 TiKV 服务上面创建第一个 region。
 
-**region\_heartbeat：**定期 Region 向 PD 汇报自己的相关信息，供 PD 做后续的调度。譬如，如果一个 Region 给 PD 上报的 peers 的数量小于预设的副本数，那么 PD 就会给这个 Region 添加一个新的副本 Peer。
+**region\_heartbeat**：定期 Region 向 PD 汇报自己的相关信息，供 PD 做后续的调度。譬如，如果一个 Region 给 PD 上报的 peers 的数量小于预设的副本数，那么 PD 就会给这个 Region 添加一个新的副本 Peer。
 
-**store_heartbeat：**定期 store 向 PD 汇报自己的相关信息，供 PD 做后续调度。譬如，Store 会告诉 PD 当前的磁盘大小，以及剩余空间，如果 PD 发现空间不够了，就不会考虑将其他的 Peer 迁移到这个 Store 上面。
+**store_heartbeat**：定期 store 向 PD 汇报自己的相关信息，供 PD 做后续调度。譬如，Store 会告诉 PD 当前的磁盘大小，以及剩余空间，如果 PD 发现空间不够了，就不会考虑将其他的 Peer 迁移到这个 Store 上面。
 
-**ask\_split/report\_split：**当 Region 发现自己需要 split 的时候，就 ask\_split 告诉 PD，PD 会生成新分裂 Region 的 ID ，当 Region 分裂成功之后，会 report\_split 通知 PD。
+**ask\_split/report\_split**：当 Region 发现自己需要 split 的时候，就 ask\_split 告诉 PD，PD 会生成新分裂 Region 的 ID ，当 Region 分裂成功之后，会 report\_split 通知 PD。
 
 注意，后面我们会让 PD 支持 gRPC 协议，所以 Client API 到时候可能会有变更。
 
