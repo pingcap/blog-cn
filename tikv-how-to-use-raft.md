@@ -65,7 +65,7 @@ HardState 和 ConfState 是 protobuf，定义：
 
 **term，first_index** 和 **last_index** 分别是得到当前的 term，以及最小和最后的 log index。
 
-**snapshot：**得到当前的 Storage 的一个 snapshot，有时候，当前的 Storage 数据量已经比较大，生成 snapshot 会比较耗时，所以我们可能得在另一个线程异步去生成，而不用阻塞当前 Raft 线程，这时候，可以返回 SnapshotTemporarilyUnavailable 错误，这时候，Raft 就知道正在准备 snapshot，会一段时间之后再次尝试。
+**snapshot：** 得到当前的 Storage 的一个 snapshot，有时候，当前的 Storage 数据量已经比较大，生成 snapshot 会比较耗时，所以我们可能得在另一个线程异步去生成，而不用阻塞当前 Raft 线程，这时候，可以返回 SnapshotTemporarilyUnavailable 错误，这时候，Raft 就知道正在准备 snapshot，会一段时间之后再次尝试。
 
 需要注意，上面的 Storage 接口只是 Raft 库需要的，实际我们还会用这个 Storage 存储 raft log 等数据，所以还需要单独提供其他的接口。在 Raft storage.rs 里面，我们提供了一个 MemStorage，用于测试，大家也可以参考 MemStorage 来实现自己的 Storage。
 
@@ -77,9 +77,9 @@ HardState 和 ConfState 是 protobuf，定义：
 
 **id:** Raft 节点的唯一标识，在一个 Raft 集群里面，id 是不可能重复的。在 TiKV 里面，id 的通过 PD 来保证全局唯一。
 
-**election_tick：**当 follower 在 election_tick 的时间之后还没有收到 leader 发过来的消息，那么就会重新开始选举，TiKV 默认使用 50。
+**election_tick：** 当 follower 在 election_tick 的时间之后还没有收到 leader 发过来的消息，那么就会重新开始选举，TiKV 默认使用 50。
 
-**heartbeat_tick:**  leader 每隔 hearbeat_tick 的时间，都会给 follower 发送心跳消息。默认 10。
+**heartbeat_tick:** leader 每隔 hearbeat_tick 的时间，都会给 follower 发送心跳消息。默认 10。
 
 **applied:** applied 是上一次已经被 applied 的 log index。
 
