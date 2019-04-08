@@ -79,7 +79,7 @@ tags: ['TiDB']
 
 源码地址：[https://github.com/pingcap/tidb](https://github.com/pingcap/tidb)
 
-** 如今，在社区和 PingCAP 技术团队的共同努力下，TiDB 1.1 Beta 版已发布，在此感谢社区小伙伴们长久以来的参与和贡献。**
+**如今，在社区和 PingCAP 技术团队的共同努力下，TiDB 1.1 Beta 版已发布，在此感谢社区小伙伴们长久以来的参与和贡献。**
 
 
 
