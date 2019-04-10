@@ -40,7 +40,7 @@ Task 数据同步流程初始化操作步骤：
 
 ## 运行逻辑
 
-DM 数据处理单元 interface 定义在 [dm/unit](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/unit/unit.go)，relay log、dump、load、binlog replication（sync）都实现了该 interface（[golang interface 介绍](https://golang.org/doc/effective_go.html#interfaces)）。
+DM 数据处理单元 interface 定义在 [`dm/unit`](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/unit/unit.go)，relay log、dump、load、binlog replication（sync）都实现了该 interface（[golang interface 介绍](https://golang.org/doc/effective_go.html#interfaces)）。
 
 实际上 DM-worker 中的数据处理单元分为两类：
 
@@ -66,7 +66,7 @@ subtask 独享数据同步处理单元使用逻辑相关代码在 [dm/worker/sub
 
 主要的逻辑有：
 
-* 初始化 subtask 对象实例的时候会 [编排数据同步处理单元的运行先后顺序](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L39) 。所有的数据同步处理单元都实现了  [dm/unit](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/unit/unit.go) interface，所以接下来的运行中就不需要关心具体的数据同步处理单元的类型，可以按照统一的 interface 方法来运行数据同步处理单元，以及对其进行状态监控。
+* 初始化 subtask 对象实例的时候会 [编排数据同步处理单元的运行先后顺序](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L39) 。所有的数据同步处理单元都实现了 [`dm/unit`](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/unit/unit.go) interface，所以接下来的运行中就不需要关心具体的数据同步处理单元的类型，可以按照统一的 interface 方法来运行数据同步处理单元，以及对其进行状态监控。
 
 * [初始化各个数据同步处理单元](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L93)，subtask 在运行前集中地初始化所有的数据同步处理单元，我们计划之后优化成在各个数据同步处理单元运行前再进行初始化，这样子减少资源的提前或者无效的占用。
 
@@ -82,7 +82,7 @@ subtask 独享数据同步处理单元使用逻辑相关代码在 [dm/worker/sub
 
 ## 小结
 
-在本篇文章中主要介绍了数据同步处理单元实现了什么功能，数据同步流程、运行逻辑，以及数据同步处理单元的 interface 设计。后续会分三篇文章详细地介绍数据同步处理单元的实现：
+在本篇文章中主要介绍了数据同步处理单元实现了什么功能，数据同步流程、运行逻辑，以及数据同步处理单元的 interface 设计。后续会分三篇文章详细地介绍数据同步处理单元的实现，包括：
 
 * dump/load 全量同步实现
 * binlog replication 增量同步实现
