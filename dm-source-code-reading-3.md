@@ -72,13 +72,13 @@ subtask 独享数据同步处理单元使用逻辑相关代码在 [`dm/worker/su
 
 * [数据同步处理单元运行状态监控](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L167)。通过监控当前运行的数据同步处理单元的结果，将 subtask 的 stage 设置为 Paused/Stopped/Finished。
 
-* 如果 [当前的数据同步处理单元工作已经完成](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L190)，则会根据 units 来 [选取下一个需要运行的数据处理单元](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L216)，如果没有需要的数据处理单元，那么会将 subtask 的 stage 设置为 Finished。这里有个注意点，因为 binlog replication 单元永远不会结束，所以不会有 Finished 的状态。
+    * 如果 [当前的数据同步处理单元工作已经完成](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L190)，则会根据 units 来 [选取下一个需要运行的数据处理单元](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L216)，如果没有需要的数据处理单元，那么会将 subtask 的 stage 设置为 Finished。这里有个注意点，因为 binlog replication 单元永远不会结束，所以不会有 Finished 的状态。
 
-* 如果 [返回的 result 里面包含有错误信息](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L192)，则会将 subtask 的 stage 设置为 Paused，并且打印具体的错误信息。
+    * 如果 [返回的 result 里面包含有错误信息](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L192)，则会将 subtask 的 stage 设置为 Paused，并且打印具体的错误信息。
 
-* 如果是用户手动暂停或者停止，则会将 subtask 的 stage 设置为 Paused/Stopped。这里有个注意点，这个时候 stage=Paused 是没有错误信息的。
+   * 如果是用户手动暂停或者停止，则会将 subtask 的 stage 设置为 Paused/Stopped。这里有个注意点，这个时候 stage=Paused 是没有错误信息的。
 
-* [数据同步处理单元之间的运行交接处理逻辑](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L606)：部分数据同步处理单元在开始工作的时候需要满足一些前置条件，例如 binlog replication（sync）的运行需要等待 relay log 处理单元已经储存下来其开始同步需要的 binlog 文件，否则 subtask 将处于 stage=Paused 的暂停等待状态。
+* [数据同步处理单元之间的运行交接处理逻辑](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L606)。部分数据同步处理单元在开始工作的时候需要满足一些前置条件，例如 binlog replication（sync）的运行需要等待 relay log 处理单元已经储存下来其开始同步需要的 binlog 文件，否则 subtask 将处于 stage=Paused 的暂停等待状态。
 
 ## 小结
 
