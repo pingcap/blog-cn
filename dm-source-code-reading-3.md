@@ -52,7 +52,7 @@ DM 数据处理单元 interface 定义在 [`dm/unit`](https://github.com/pingcap
 
 relay log 相关使用代码在 [`dm/worker/relay.go`](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/relay.go) 、具体功能实现代码在 [`relay/relay.go`](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/relay/relay.go)，有兴趣的同学也可以先行阅读一下相关代码，relay log 的代码注释也是比较丰富，并且简单易懂。
 
-subtask 独享数据同步处理单元使用逻辑相关代码在 [dm/worker/subtask.go](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go)。subtask 对象包含的主要属性有：
+subtask 独享数据同步处理单元使用逻辑相关代码在 [`dm/worker/subtask.go`](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go)。subtask 对象包含的主要属性有：
 
 * units：初始化后要运行的数据同步处理单元。
 
@@ -66,19 +66,19 @@ subtask 独享数据同步处理单元使用逻辑相关代码在 [dm/worker/sub
 
 主要的逻辑有：
 
-* 初始化 subtask 对象实例的时候会 [编排数据同步处理单元的运行先后顺序](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L39) 。所有的数据同步处理单元都实现了 [`dm/unit`](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/unit/unit.go) interface，所以接下来的运行中就不需要关心具体的数据同步处理单元的类型，可以按照统一的 interface 方法来运行数据同步处理单元，以及对其进行状态监控。
+* 初始化 subtask 对象实例的时候会 [编排数据同步处理单元的运行先后顺序](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L39)。所有的数据同步处理单元都实现了 [`dm/unit`](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/unit/unit.go) interface，所以接下来的运行中就不需要关心具体的数据同步处理单元的类型，可以按照统一的 interface 方法来运行数据同步处理单元，以及对其进行状态监控。
 
-* [初始化各个数据同步处理单元](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L93)，subtask 在运行前集中地初始化所有的数据同步处理单元，我们计划之后优化成在各个数据同步处理单元运行前再进行初始化，这样子减少资源的提前或者无效的占用。
+* [初始化各个数据同步处理单元](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L93)。subtask 在运行前集中地初始化所有的数据同步处理单元，我们计划之后优化成在各个数据同步处理单元运行前再进行初始化，这样子减少资源的提前或者无效的占用。
 
-* [数据同步处理单元运行状态监控](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L167)，通过监控当前运行的数据同步处理单元的结果，将 subtask 的 stage 设置为 Paused/Stopped/Finished。
+* [数据同步处理单元运行状态监控](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L167)。通过监控当前运行的数据同步处理单元的结果，将 subtask 的 stage 设置为 Paused/Stopped/Finished。
 
-* 如果[当前的数据同步处理单元工作已经完成](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L190)，则会根据 units 来[选取下一个需要运行的数据处理单元](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L216)，如果没有需要的数据处理单元，那么会将 subtask 的 stage 设置为 Finished。这里有个注意点，因为 binlog replication 单元永远不会结束，所以不会有 Finished 的状态。
+* 如果 [当前的数据同步处理单元工作已经完成](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L190)，则会根据 units 来 [选取下一个需要运行的数据处理单元](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L216)，如果没有需要的数据处理单元，那么会将 subtask 的 stage 设置为 Finished。这里有个注意点，因为 binlog replication 单元永远不会结束，所以不会有 Finished 的状态。
 
-* 如果[返回的 result 里面包含有错误信息](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L192)，则会将 subtask 的 stage 设置为 Paused，并且打印具体的错误信息。
+* 如果 [返回的 result 里面包含有错误信息](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L192)，则会将 subtask 的 stage 设置为 Paused，并且打印具体的错误信息。
 
 * 如果是用户手动暂停或者停止，则会将 subtask 的 stage 设置为 Paused/Stopped。这里有个注意点，这个时候 stage=Paused 是没有错误信息的。
 
-* [数据同步处理单元之间的运行交接处理逻辑](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L606)，部分数据同步处理单元在开始工作的时候需要满足一些前置条件，例如 binlog replication（sync） 的运行需要等待 relay log 处理单元已经储存下来其开始同步需要的 binlog 文件，否则 subtask 将处于 stage=Paused 的暂停等待状态。
+* [数据同步处理单元之间的运行交接处理逻辑](https://github.com/pingcap/dm/blob/6855ea4e40bb5e3775709054a59a55c628a0922f/dm/worker/subtask.go#L606)：部分数据同步处理单元在开始工作的时候需要满足一些前置条件，例如 binlog replication（sync）的运行需要等待 relay log 处理单元已经储存下来其开始同步需要的 binlog 文件，否则 subtask 将处于 stage=Paused 的暂停等待状态。
 
 ## 小结
 
