@@ -122,8 +122,8 @@ tags: ['TiDB']
     * [查询指定 store 的 Region 信息](https://github.com/pingcap/docs-cn/blob/release-2.1/tools/pd-control.md#region-store-store_id)
     * [查询按 version 排序的 topN 的 Region 列表](https://github.com/pingcap/docs-cn/blob/release-2.1/tools/pd-control.md#region-topconfver-limit)
     * [查询按 size 排序的 topN 的 Region 列表](https://github.com/pingcap/docs-cn/blob/release-2.1/tools/pd-control.md#region-topsize-limit)
-    * [更精确的 TSO 解码](https://github.com/pingcap/docs-cn/blob/release-2.1/tools/pd-control.md#tso)
-* [pd-recover](https://github.com/pingcap/docs-cn/blob/release-2.1/tools/pd-recover.md) 不再需要提供 max-replica 参数
+    * [更精确的 TSO 解码](https://github.com/pingcap/pd/pull/1242)
+* [pd-recover](https://github.com/pingcap/docs-cn/blob/master/v2.1/tools/pd-recover.md) 不再需要提供 max-replica 参数
 
 ### 监控
 
