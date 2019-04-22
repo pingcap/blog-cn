@@ -6,7 +6,7 @@ summary: 现有集群已经使用 100 多个 Syncer 同步上游 MySQL 数据，
 tags: ['金融']
 category: case
 url: /cases-cn/user-case-beikejinfu/
-weight: 1
+weight: 2
 logo: /images/blog-cn/customers/beikejinfu-logo.png
 ---
 
