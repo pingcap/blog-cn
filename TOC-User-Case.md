@@ -34,6 +34,7 @@
   - [株式会社 FUNYOURS JAPAN](user-case-funyours-japan.md)
 - 金融
   - [北京银行](user-case-beijing-bank.md)
+  - [贝壳金服](user-case-beikejinfu.md)
   - [Ping++](user-case-ping++.md)
   - [360 金融](user-case-360.md)
 - 大型企业
