@@ -88,9 +88,11 @@ var(
 
 至此我们已经聊完了如何将 Table 映射到 KV 上面，这里再举个简单的例子，便于大家理解，还是以上面的表结构为例。假设表中有 3 行数据：
 
+```
 1, "TiDB", "SQL Layer", 10
 2, "TiKV", "KV Engine", 20
 3, "PD", "Manager", 30
+```
 
 那么首先每行数据都会映射为一个 Key-Value pair，注意这个表有一个 Int 类型的 Primary Key，所以 RowID 的值即为这个 Primary Key 的值。假设这个表的 Table ID 为 10，其 Row 的数据为：
 
