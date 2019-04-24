@@ -31,7 +31,7 @@ fn Raft::step_leader(&mut self, mut m: Message) -> Result<()> {
 }
 ```
 
-这段代码中 `append_entry` 的参数是一个可变引用，这是因为在 `append_entry` 函数中会为每一个 Entry 赋予正确的  term 和 index。term 由选举产生，在一个 Raft 系统中，每选举出一个新的 Leader，便会产生一个更高的 term。而 index 则是 Entry 在 Raft 日志中的下标。Entry 需要带上 term 和 index 的意义是，在其他副本上的 Raft 日志是可能跟 Leader 不同的，例如一个旧 Leader 在相同的位置（即 Raft 日志中具有相同 index 的地方）广播了一条过期的 Entry，那么当其他副本收到了重叠的、但是具有更高 term 的消息时，便可以用它们替换旧的消息，以便达成与最新的 Leader 一致的状态。
+这段代码中 `append_entry` 的参数是一个可变引用，这是因为在 `append_entry` 函数中会为每一个 Entry 赋予正确的  term 和 index。term 由选举产生，在一个 Raft 系统中，每选举出一个新的 Leader，便会产生一个更高的 term。而 index 则是 Entry 在 Raft 日志中的下标。Entry 需要带上 term 和 index 的原因是，在其他副本上的 Raft 日志是可能跟 Leader 不同的，例如一个旧 Leader 在相同的位置（即 Raft 日志中具有相同 index 的地方）广播了一条过期的 Entry，那么当其他副本收到了重叠的、但是具有更高 term 的消息时，便可以用它们替换旧的消息，以便达成与最新的 Leader 一致的状态。
 
 在 Leader 将新的写入追加到自己的 Raft log 中之后，便可以调用 `bcast_append` 将它们广播到其他副本了。注意这个函数并没有任何参数，那么 Leader 如何知道应该给每一个副本从哪一个位置开始广播呢？原来在 Leader 上对每一个副本，都关联维护了一个 Progress，该结构体定义如下：
 
@@ -100,9 +100,7 @@ fn Raft::handle_append_response(&mut self, m: &Message, …) {
 
 ## pipeline 优化和流量控制机制
 
-上一节我们重点观察了 MsgAppend 及 MsgAppendResponse 消息的处理流程，
-
-原理是非常简单、清晰的。然而，这个未经任何优化的实现能够工作的前提是在 Leader 收到某个副本的 MsgAppendResponse 之前，不再给它发送任何 MsgAppend。由于等待响应的时间取决于网络的 TTL，这在实际应用中是非常低效的，因此我们需要引入 pipeline 优化，以及配套的流量控制机制来避免“优化”带来的网络壅塞。
+上一节我们重点观察了 MsgAppend 及 MsgAppendResponse 消息的处理流程，原理是非常简单、清晰的。然而，这个未经任何优化的实现能够工作的前提是在 Leader 收到某个副本的 MsgAppendResponse 之前，不再给它发送任何 MsgAppend。由于等待响应的时间取决于网络的 TTL，这在实际应用中是非常低效的，因此我们需要引入 pipeline 优化，以及配套的流量控制机制来避免“优化”带来的网络壅塞。
 
 Pipeline 在 `Raft::prepare_send_entries` 函数中被引入。这个函数在 `Raft::send_append` 中被调用，内部会直接修改对目标副本的 `next_idex` 值，这样，后续的 MsgAppend 便可以在此基础上继续发送了。而一旦之前的 MsgAppend 被该目标副本拒绝掉了，也可以通过上一节中介绍的 `maybe_decr_to` 机制将 `next_idx` 重置为正确的值。我们来看一下这段代码：
 
