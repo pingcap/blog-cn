@@ -6,7 +6,7 @@ summary: 本文将对数据冗余复制的过程进行详细展开，特别是�
 tags: ['TiKV 源码解析','社区']
 ---
 
-[上一篇关于 raft-rs 的源码解析](https://pingcap.com/blog-cn/tikv-source-code-reading-2/) 中主要介绍了 raft-rs 的基本 API 使用，其中，与应用程序进行交互的主要 API 是：
+在 [《TiKV 源码解析（二）raft-rs proposal 示例情景分析》 ](https://pingcap.com/blog-cn/tikv-source-code-reading-2/) 中，我们主要介绍了 raft-rs 的基本 API 使用，其中，与应用程序进行交互的主要 API 是：
 
 1. RawNode::propose 发起一次新的提交，尝试在 Raft 日志中追加一个新项；
 
@@ -56,7 +56,6 @@ pub struct Progress {
 如代码注释中所说的那样，Leader 在给副本广播新的日志时，会从对应的副本的 `next_idx` 开始。这就蕴含了两个问题：
 
 1.  在刚开始启动的时候，所有副本的 `next_idx` 应该如何设置？
-
 2.  在接收并处理完成 Leader 广播的新写入后，其他副本应该如何向 Leader 更新 `next_idx`？
 
 第一个问题的答案在 `Raft::reset` 函数中。这个函数会在 Raft 完成选举之后选出的 Leader 上调用，会将 Leader 的所有其他副本的 `next_idx` 设置为跟 Leader 相同的值。之后，Leader 就可以会按照 Raft 论文里的规定，广播一条包含了自己的 term 的空 Entry 了。
