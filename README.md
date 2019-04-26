@@ -19,7 +19,7 @@ draft: true
 - `url` 表示本篇文章在 PingCAP 官网中指定的 `url`， 而不是 HUGO 生成器默认生成的 `/blog-cn/filename/` 格式的 `url`
 - `aliases` 表示可跳转到本篇文章在 PingCAP 官网中相应页面的 url list
 
-其中 `title` `author` 是 **必填项**，另请务必 **不要** 自行添加除以上之外的 meta 信息，并且新增或者没有必要重定向的文章不需要添加 `aliases` 属性。
+其中 `title` `author` 是 **必填项**，另请务必 **不要** 自行添加除以上之外的 meta 信息，新增或者没有必要重定向的文章不需要添加 `aliases` 属性。
 
 ```yml
 ---
