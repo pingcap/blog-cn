@@ -92,7 +92,7 @@ load 处理单元的代码位于 [github.com/pingcap/dm/loader](https://github.c
 
 + [主线程读取 `checkpoint` 信息，结合数据文件信息创建 fileJob 随机分发任务给一个工作子线程](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/loader/loader.go#L944-L1015)，fileJob 任务的结构如下所示	：
 	
-	```
+	```go
 	type fileJob struct {
 	   schema    string
 	   table         string
