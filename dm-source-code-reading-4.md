@@ -12,7 +12,7 @@ tags: ['DM 源码阅读','社区']
 
 dump 处理单元的代码位于 [github.com/pingcap/dm/mydumper](https://github.com/pingcap/dm/tree/master/mydumper) 包内，作用是从上游 MySQL 将表结构和数据导出到逻辑 SQL 文件，由于该处理单元总是运行在任务的第一个阶段（full 模式和 all 模式），该处理单元每次运行不依赖于其他处理单元的处理结果。另一方面，如果在 dump 运行过程中被强制终止（例如在dmctl 中执行 pause-task 或者 stop-task），也不会记录已经 dump 数据的 checkpoint 等信息。不记录 checkpoint 是因为每次运行 mydumper 从上游导出数据，上游的数据都可能发生变更，为了能得到一致的数据和 metadata 信息，每次恢复任务或重新运行任务时该处理单元会 [清理旧的数据目录](https://github.com/pingcap/dm/blob/092b5e4378ce42cf6c2488dd06498792190a091b/mydumper/mydumper.go#L68)，重新开始一次完整的数据 dump。
 
-导出表结构和数据的逻辑并不是在 DM 内部直接实现，而是 [通过 `os/exec` 包调用外部 mydumper 二进制文件](https://github.com/pingcap/dm/blob/ 092b5e4378ce42cf6c2488dd06498792190a091b/mydumper/mydumper.go#L104) 来完成。在 mydumper 内部，我们需要关注以下几个问题：
+导出表结构和数据的逻辑并不是在 DM 内部直接实现，而是 [通过 `os/exec` 包调用外部 mydumper 二进制文件](https://github.com/pingcap/dm/blob/092b5e4378ce42cf6c2488dd06498792190a091b/mydumper/mydumper.go#L104) 来完成。在 mydumper 内部，我们需要关注以下几个问题：
 
 * 数据导出时的并发模型是如何实现的。
 
