@@ -1,12 +1,12 @@
 ---
-title: TiKV 源码解析（六）raft-rs 日志复制过程分析
+title: TiKV 源码解析系列文章（六）raft-rs 日志复制过程分析
 author: ['屈鹏']
 date: 2019-04-24
 summary: 本文将对数据冗余复制的过程进行详细展开，特别是关于 snapshot 及流量控制的机制，帮助读者更深刻地理解 Raft 的原理。
 tags: ['TiKV 源码解析','社区']
 ---
 
-在 [《TiKV 源码解析（二）raft-rs proposal 示例情景分析》 ](https://pingcap.com/blog-cn/tikv-source-code-reading-2/) 中，我们主要介绍了 raft-rs 的基本 API 使用，其中，与应用程序进行交互的主要 API 是：
+在 [《TiKV 源码解析系列文章（二）raft-rs proposal 示例情景分析》 ](https://pingcap.com/blog-cn/tikv-source-code-reading-2/) 中，我们主要介绍了 raft-rs 的基本 API 使用，其中，与应用程序进行交互的主要 API 是：
 
 1. RawNode::propose 发起一次新的提交，尝试在 Raft 日志中追加一个新项；
 
