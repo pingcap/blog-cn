@@ -104,7 +104,7 @@ load 处理单元的代码位于 [github.com/pingcap/dm/loader](https://github.c
 
 + 在每个工作线程内部，有一个循环不断从自己 `fileJobQueue` 获取任务，每次获取任务后会对文件进行解析，并将解析后的结果分批次打包为 SQL 语句分发给线程内部的另外一个工作协程，该工作协程负责处理 SQL 语句的执行。工作流程的伪代码如下所示，完整的代码参考 [`func (w *Worker) run()`](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/loader/loader.go#L114-L173)：
 
-	```
+	```go
 	// worker 工作线程内分发给内部工作协程的任务结构
 	type dataJob struct {
 	   sql               string   // insert 语句, insert into <table> values (x, y, z), (x2, y2, z2), … (xn, yn, zn);
