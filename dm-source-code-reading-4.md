@@ -95,10 +95,10 @@ load 处理单元的代码位于 [github.com/pingcap/dm/loader](https://github.c
 	```go
 	type fileJob struct {
 	   schema    string
-	   table         string
-	   dataFile   string
-	   offset       int64            // 表示读取文件的起始 offset，如果没有 checkpoint 断点信息该值为 0
-	   info           *tableInfo  // 保存原库表，目标库表，列名，insert 语句 column 名字列表等信息
+	   table     string
+	   dataFile  string
+	   offset    int64 // 表示读取文件的起始 offset，如果没有 checkpoint 断点信息该值为 0
+	   info      *tableInfo // 保存原库表，目标库表，列名，insert 语句 column 名字列表等信息
 	}
 	```
 
