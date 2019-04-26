@@ -104,14 +104,14 @@ load 处理单元的代码位于 [github.com/pingcap/dm/loader](https://github.c
 
 + 在每个工作线程内部，有一个循环不断从自己 `fileJobQueue` 获取任务，每次获取任务后会对文件进行解析，并将解析后的结果分批次打包为 SQL 语句分发给线程内部的另外一个工作协程，该工作协程负责处理 SQL 语句的执行。工作流程的伪代码如下所示，完整的代码参考 [`func (w *Worker) run()`](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/loader/loader.go#L114-L173)：
 
-	```
+	```go
 	// worker 工作线程内分发给内部工作协程的任务结构
 	type dataJob struct {
-	   sql               string   // insert 语句, insert into <table> values (x, y, z), (x2, y2, z2), … (xn, yn, zn);
-	   schema      string  // 目标数据库
-	   file               string  // SQL 文件名
-	   offset         int64   // 本次导入数据在 SQL 文件的偏移量
-	   lastOffset int64   // 上一次已导入数据对应 SQL 文件偏移量
+	   sql         string // insert 语句, insert into <table> values (x, y, z), (x2, y2, z2), … (xn, yn, zn);
+	   schema      string // 目标数据库
+	   file        string // SQL 文件名
+	   offset      int64 // 本次导入数据在 SQL 文件的偏移量
+	   lastOffset  int64 // 上一次已导入数据对应 SQL 文件偏移量
 	}
 	
 	// SQL 语句执行协程
@@ -122,11 +122,11 @@ load 处理单元的代码位于 [github.com/pingcap/dm/loader](https://github.c
 	           return
 	       case job := <-jobQueue:
 	           sqls := []string{
-	               fmt.Sprintf("USE `%s`;", job.schema),       // 指定插入数据的 schema
+	               fmt.Sprintf("USE `%s`;", job.schema), // 指定插入数据的 schema
 	               job.sql,
-	               checkpoint.GenSQL(job.file, job.offset),  // 更新 checkpoint 的 SQL 语句
+	               checkpoint.GenSQL(job.file, job.offset), // 更新 checkpoint 的 SQL 语句
 	           }
-	           executeSQLInOneTransaction(sqls)              // 在一个事务中执行上述 3 条 SQL 语句
+	           executeSQLInOneTransaction(sqls) // 在一个事务中执行上述 3 条 SQL 语句
 	       }
 	   }
 	}
@@ -149,7 +149,7 @@ load 处理单元的代码位于 [github.com/pingcap/dm/loader](https://github.c
 
     - 库表路由：这种场景下只需要 [替换源表到目标表](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/loader/loader.go#L263) 即可。
 
-+ 在工作线程执行一个批次的 SQL 语句之前，[会首先根据文件 `offset` 信息生成一条更新 checkpoint 的语句，加入到打包的 SQL 语句中](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/loader/loader.go#L132-L137)，具体执行时这些语句会[在一个事务中提交](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/loader/db.go#L152-L195)，这样就保证了断点信息的准确性，如果导入过程暂停或中断，恢复任务后从断点重新同步可以保证数据一致。
++ 在工作线程执行一个批次的 SQL 语句之前，[会首先根据文件 `offset` 信息生成一条更新 checkpoint 的语句，加入到打包的 SQL 语句中](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/loader/loader.go#L132-L137)，具体执行时这些语句会 [在一个事务中提交](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/loader/db.go#L152-L195)，这样就保证了断点信息的准确性，如果导入过程暂停或中断，恢复任务后从断点重新同步可以保证数据一致。
 
 ## 小结
 
