@@ -2,11 +2,11 @@
 title: DM 源码阅读系列文章（四）dump/load 全量同步的实现
 author: ['杨非']
 date: 2019-04-26
-summary: 本文将详细介绍 dump 和 load 两个数据同步处理单元的设计实现。重点关注数据同步处理单元 interface 的实现，数据导入并发模型的设计，以及导入任务在暂停或出现异常后如何恢复。
+summary: 本文将详细介绍 dump 和 load 两个数据同步处理单元的设计实现，重点关注数据同步处理单元 interface 的实现，数据导入并发模型的设计，以及导入任务在暂停或出现异常后如何恢复。
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 DM 源码阅读系列文章的第四篇，[上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-3/) 介绍了数据同步处理单元实现的功能，数据同步流程的运行逻辑以及数据同步处理单元的 interface 设计，本篇文章在此基础上展开，详细介绍 dump 和 load 两个数据同步处理单元的设计实现。重点关注数据同步处理单元 interface 的实现，数据导入并发模型的设计，以及导入任务在暂停或出现异常后如何恢复。
+本文为 DM 源码阅读系列文章的第四篇，[上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-3/) 介绍了数据同步处理单元实现的功能，数据同步流程的运行逻辑以及数据同步处理单元的 interface 设计，本篇文章在此基础上展开，详细介绍 dump 和 load 两个数据同步处理单元的设计实现，重点关注数据同步处理单元 interface 的实现，数据导入并发模型的设计，以及导入任务在暂停或出现异常后如何恢复。
 
 ## dump 处理单元
 
@@ -52,7 +52,7 @@ mydumper 的一次完整的运行流程从主线程开始，主线程按照以�
 
 工作线程的并发控制包括了两个层面，一层是在不同表级别的并发，另一层是同一张表级别的并发。mydumper 的主线程会将一次同步任务拆分为多个同步子任务，并将每个子任务分发给同一个异步队列 `conf.queue_less_locking/conf.queue`，工作子线程从队列中获取任务并执行。具体的子任务划分包括以下策略：
 
-+ 开启 `less-locking` 选项，非 InnoDB 表的处理。
++ 开启 `less-locking` 选项的非 InnoDB 表的处理。
     - [先将所有 `non_innodb_table` 分为 `num_threads` 组，分组方式是遍历这些表，依此将遍历到的表加入到当前数据量最小的分组，尽量保证每个分组内的数据量相近](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L1574-L1586)。
     - 上述得到的每个分组内会包含一个或多个非 InnoDB 表，如果配置了 `rows-per-file` 选项，会对每张表进行 `chunks` 估算，[对于每一张表，如果估算结果包含多个 chunks，会将子任务进一步按照 `chunks` 进行拆分，分发 `chunks` 数量个子任务](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L3033-L3046)，[如果没有 `chunks` 划分，分发为一个独立的子任务](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L3047-L3057)。
     - 注意，在该模式下，子任务会 [发送到 `queue_less_locking`](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L3059)，并在编号为 `num_threads` ~ 2 * `num_threads` 的子线程中处理任务。
