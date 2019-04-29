@@ -25,7 +25,7 @@ Etcd 团队在 2016 年开发了 [gofail](https://github.com/etcd-io/gofail/) �
 
 * 使用注释在程序中注入一个 failpoint：
 
-	```
+	```go
 	// gofail: var FailIfImportedChunk int
 	// if merger, ok := scp.merger.(*ChunkCheckpointMerger); ok && merger.Checksum.SumKVS() >= uint64(FailIfImportedChunk) {
 	// rc.checkpointsWg.Done()
@@ -82,7 +82,7 @@ Etcd 团队在 2016 年开发了 [gofail](https://github.com/etcd-io/gofail/) �
 
 理想中的 failpoint 应该是使用代码定义并且对业务逻辑无侵入，如果在一个支持宏的语言中 (比如 Rust)，我们可以定义一个 `fail_point` 宏来定义 failpoint：
 
-```
+```go
 fail_point!("transport_on_send_store", |sid| if let Some(sid) = sid {
     let sid: u64 = sid.parse().unwrap();
     if sid == store_id {
@@ -200,7 +200,7 @@ failpoint.Inject("mock-panic", func() error {
 
 最佳实践是以下这样：
 
-```
+```go
 failpoint.Enable("mock-panic", "panic")
 failpoint.Inject("mock-panic", nil)
 // GENERATED CODE
@@ -329,7 +329,7 @@ outer:
 	    })
 	
 	```
-*   break and continue 只能在循环上下文中使用，在闭包中使用。
+* break and continue 只能在循环上下文中使用，在闭包中使用。
 
 ### 一些复杂的注入示例
 
@@ -508,7 +508,7 @@ if ok, val := failpoint.Eval(_curpkg_("the-original-failpoint-name")); ok {...}
 * 保证名字在包内是唯一的。
 * 使用一个自解释的名字。
     * 可以通过环境变量来激活 failpoint：
-    ```
+    ```go
     GO_FAILPOINTS="github.com/pingcap/tidb/ddl/renameTableErr=return(100);github.com/pingcap/tidb/planner/core/illegalPushDown=return(true);github.com/pingcap/pd/server/schedulers/balanceLeaderFailed=return(true)"
     ```
 
