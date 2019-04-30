@@ -2,7 +2,7 @@
 title: Golang Failpoint 的设计与实现
 author: ['龙恒']
 date: 2019-04-30
-summary: Failpoint 项目是 FreeBSD 的 Golang 实现，允许在代码中注入错误或异常行为， 并由环境变量或代码动态激活来触发这些异常行为。Failpoint 能用于各种复杂系统中模拟错误处理来提高系统的容错性、正确性和稳定性。
+summary: Failpoint 项目是 FreeBSD Failpoints 的 Golang 实现，允许在代码中注入错误或异常行为， 并由环境变量或代码动态激活来触发这些异常行为。Failpoint 能用于各种复杂系统中模拟错误处理来提高系统的容错性、正确性和稳定性。
 tags: ['Failpoint']
 ---
 
@@ -46,6 +46,7 @@ Etcd 团队在 2016 年开发了 [gofail](https://github.com/etcd-io/gofail/) �
 	
 	// gofail: RETURN2:
 	```
+
 * 使用 gofail enable 转换后的代码：
 
 	```go
@@ -82,7 +83,7 @@ Etcd 团队在 2016 年开发了 [gofail](https://github.com/etcd-io/gofail/) �
 
 理想中的 failpoint 应该是使用代码定义并且对业务逻辑无侵入，如果在一个支持宏的语言中 (比如 Rust)，我们可以定义一个 `fail_point` 宏来定义 failpoint：
 
-```go
+```rust
 fail_point!("transport_on_send_store", |sid| if let Some(sid) = sid {
     let sid: u64 = sid.parse().unwrap();
     if sid == store_id {
@@ -127,7 +128,7 @@ Failpoint 是一个代码片段，并且仅在对应的 failpoint name 激活的
 func saveTo(path string) error {
     failpoint.Inject("mock-permission-deny", func() error {
          // It's OK to access outer scope variable
-                    return fmt.Errorf("mock permission deny: %s", path)
+         return fmt.Errorf("mock permission deny: %s", path)
     })
 }
 ```
@@ -492,14 +493,14 @@ default:
 
 ## Failpoint 命名最佳实践
 
-上面生成的代码中会自动添加一个 	`_curpkg_` 调用在 `failpoint-name` 上，是因为名字是全局的，为了避免命名冲突，所以会在最终的名字包包名，`_curpkg_` 相当一个宏，在运行的时候自动使用包名进行展开。你并不需要在自己的应用程序中实现 `_curpkg_`，它在 `failpoint-ctl enable` 的自动生成以及自动添加，并在 `failpoint-ctl disable` 的时候被删除。
+上面生成的代码中会自动添加一个 `_curpkg_` 调用在 `failpoint-name` 上，是因为名字是全局的，为了避免命名冲突，所以会在最终的名字包包名，`_curpkg_` 相当一个宏，在运行的时候自动使用包名进行展开。你并不需要在自己的应用程序中实现 `_curpkg_`，它在 `failpoint-ctl enable` 的自动生成以及自动添加，并在 `failpoint-ctl disable` 的时候被删除。
 
 ```go
 package ddl // ddl’s parent package is `github.com/pingcap/tidb`
 
 func demo() {
-// _curpkg_("the-original-failpoint-name") will be expanded as `github.com/pingcap/tidb/ddl/the-original-failpoint-name`
-if ok, val := failpoint.Eval(_curpkg_("the-original-failpoint-name")); ok {...}
+	// _curpkg_("the-original-failpoint-name") will be expanded as `github.com/pingcap/tidb/ddl/the-original-failpoint-name`
+	if ok, val := failpoint.Eval(_curpkg_("the-original-failpoint-name")); ok {...}
 }
 ```
 
@@ -508,6 +509,7 @@ if ok, val := failpoint.Eval(_curpkg_("the-original-failpoint-name")); ok {...}
 * 保证名字在包内是唯一的。
 * 使用一个自解释的名字。
     * 可以通过环境变量来激活 failpoint：
+    
     ```go
     GO_FAILPOINTS="github.com/pingcap/tidb/ddl/renameTableErr=return(100);github.com/pingcap/tidb/planner/core/illegalPushDown=return(true);github.com/pingcap/pd/server/schedulers/balanceLeaderFailed=return(true)"
     ```
