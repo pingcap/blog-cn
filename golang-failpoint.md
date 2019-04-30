@@ -152,6 +152,7 @@ AST 重写阶段标记需要被重写的部分，主要有以下功能：
 * `func Goto(label string) {}`
 * `func Continue(label ...string) {}`
 * `func Fallthrough() {}`
+* `func Return(results ...interface{}) {}`
 * `func Label(label string) {}`
 
 ## 如何在你的程序中使用 failpoint 进行注入？
