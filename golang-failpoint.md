@@ -510,8 +510,9 @@ func demo() {
 * 使用一个自解释的名字。
     * 可以通过环境变量来激活 failpoint：
     
-```    GO_FAILPOINTS="github.com/pingcap/tidb/ddl/renameTableErr=return(100);github.com/pingcap/tidb/planner/core/illegalPushDown=return(true);github.com/pingcap/pd/server/schedulers/balanceLeaderFailed=return(true)"
-```
+    ```    
+     GO_FAILPOINTS="github.com/pingcap/tidb/ddl/renameTableErr=return(100);github.com/pingcap/tidb/planner/core/illegalPushDown=return(true);github.com/pingcap/pd/server/schedulers/balanceLeaderFailed=return(true)"
+     ```
 
 ## 致谢
 
