@@ -3,7 +3,7 @@ title: 当我们在谈论 TiDB DevCon2018 时我们在谈论什么
 author: ['PingCAP']
 date: 2018-01-22
 summary: 在 TiDB DevCon2018 上，我们为大家分享了 TiDB 最新的项目进展以及 2018 年的 Roadmap。
-tags: ['devcon2018']
+category: ['devcon']
 image: /images/media/DevCon2018/15.JPG
 ---
 
@@ -44,7 +44,7 @@ image: /images/media/DevCon2018/15.JPG
 
 ## 合作
 
-目前，PingCAP 已与腾讯云、 UCloud 达成合作，大家可以从这些网站的一级入口看到 TiDB，2018 年预计还会增加 2 到 3 个  Cloud 合作伙伴。
+目前，PingCAP 已与多家云厂商达成合作，2018 年预计还会增加 2 到 3 个 Cloud 合作伙伴。
 
 活动现场，我们也邀请了来自 Mobike、今日头条、SpeedyCloud、去哪儿、饿了么的小伙伴，为大家分享他们对 TiDB 的实践经验。
 
