@@ -9,6 +9,8 @@ image: /images/media/DevCon2018-liyulai/1.jpg
 
 >本文为 TiDB DevCon2018 实录系列第一篇，是由 TiDB Committer 李雨来分享的《Query Cache in TiDB》的完整视频及文字实录。enjoy~~
 
++ [视频 | Query Cache in TiDB 完整视频](https://v.qq.com/x/page/q0549wlsfop.html)
+
 ![](media/DevCon2018-liyulai/1.jpg)
 
 大家好，我叫李雨来，是 SpeedyCloud 的架构师。同时也是 TiDB 的一个 Contributor，我今天帮大家介绍一下在业余时间里帮 TiDB 做的一个 commit，这个功能包含了一个和查询缓存相关的一个功能。
