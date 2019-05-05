@@ -4,7 +4,7 @@ author: ['吴镝']
 date: 2018-03-16
 summary: 本文整理自今日头条数据库中间件/分布式数据库负责人吴镝（知乎 ID：吴镝）在 TiDB DevCon2018 上的分享内容。
 tags: ['devcon2018']
-image： /images/media/DevCon2018-wudi/1.jpeg
+image: /images/media/DevCon2018-wudi/1.jpeg
 ---
 
 ![](media/DevCon2018-wudi/1.jpeg)

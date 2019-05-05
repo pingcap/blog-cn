@@ -4,7 +4,7 @@ author: ['李雨来']
 date: 2018-02-09
 summary: 本文为 TiDB DevCon2018 实录系列第一篇，是由 TiDB Committer 李雨来分享的《Query Cache in TiDB》的完整视频及文字实录。
 tags: ['devcon2018']
-image： /images/media/DevCon2018-liyulai/1.jpg
+image: /images/media/DevCon2018-liyulai/1.jpg
 ---
 
 >本文为 TiDB DevCon2018 实录系列第一篇，是由 TiDB Committer 李雨来分享的《Query Cache in TiDB》的完整视频及文字实录。enjoy~~
