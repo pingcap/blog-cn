@@ -3,7 +3,7 @@ title: 当我们在谈论 TiDB DevCon2018 时我们在谈论什么
 author: ['PingCAP']
 date: 2018-01-22
 summary: 在 TiDB DevCon2018 上，我们为大家分享了 TiDB 最新的项目进展以及 2018 年的 Roadmap。
-category: ['devcon']
+category: devcon
 image: /images/media/DevCon2018/15.JPG
 ---
 
