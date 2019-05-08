@@ -98,7 +98,95 @@ message Binlog {
 }
 ```
 
-binlog 及相关的数据结构定义见: [binlog.proto](https://github.com/pingcap/tipb/blob/master/proto/binlog/binlog.proto)
+binlog 及相关的数据结构定义:(代码链接：[binlog.proto](https://github.com/pingcap/tipb/blob/master/proto/binlog/binlog.proto))
+
+```
+syntax = "proto2";
+
+package binlog;
+
+import "gogoproto/gogo.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+enum MutationType {
+    Insert = 0;
+    Update = 1;
+    DeleteID = 2; // Obsolete field.
+    DeletePK = 3; // Obsolete field.
+    DeleteRow = 4;
+}
+
+// TableMutation contains mutations in a table.
+message TableMutation {
+    optional int64 table_id      = 1 [(gogoproto.nullable) = false];
+
+    // The inserted row contains all column values.
+    repeated bytes inserted_rows = 2;
+
+    // The updated row contains old values and new values of the row.
+    repeated bytes updated_rows  = 3;
+
+    // Obsolete field.
+    repeated int64 deleted_ids   = 4;
+
+    // Obsolete field.
+    repeated bytes deleted_pks   = 5;
+
+    // The row value of the deleted row.
+    repeated bytes deleted_rows  = 6;
+
+    // Used to apply table mutations in original sequence.
+    repeated MutationType sequence = 7;
+}
+
+message PrewriteValue {
+    optional int64         schema_version = 1 [(gogoproto.nullable) = false];
+    repeated TableMutation mutations      = 2 [(gogoproto.nullable) = false];
+}
+
+enum BinlogType {
+    Prewrite = 0; // has start_ts, prewrite_key, prewrite_value.
+    Commit   = 1; // has start_ts, commit_ts.
+    Rollback = 2; // has start_ts.
+    PreDDL   = 3; // has ddl_query, ddl_job_id.
+    PostDDL  = 4; // has ddl_job_id.
+}
+
+// Binlog contains all the changes in a transaction, which can be used to reconstruct SQL statement, then export to
+// other systems.
+message Binlog {
+    optional BinlogType    tp             = 1 [(gogoproto.nullable) = false];
+
+    // start_ts is used in Prewrite, Commit and Rollback binlog Type.
+    // It is used for pairing prewrite log to commit log or rollback log.
+    optional int64         start_ts       = 2 [(gogoproto.nullable) = false];
+
+    // commit_ts is used only in binlog type Commit.
+    optional int64         commit_ts      = 3 [(gogoproto.nullable) = false];
+
+    // prewrite key is used only in Prewrite binlog type.
+    // It is the primary key of the transaction, is used to check that the transaction is
+    // commited or not if it failed to pair to commit log or rollback log within a time window.
+    optional bytes         prewrite_key   = 4;
+
+    // prewrite_data is marshalled from PrewriteData type,
+    // we do not need to unmarshal prewrite data before the binlog have been successfully paired.
+    optional bytes         prewrite_value = 5;
+
+    // ddl_query is the original ddl statement query, used for PreDDL type.
+    optional bytes         ddl_query      = 6;
+
+    // ddl_job_id is used for PreDDL and PostDDL binlog type.
+    // If PreDDL has matching PostDDL with the same job_id, we can execute the DDL right away, otherwise,
+    // we can use the job_id to check if the ddl statement has been successfully added to DDL job list.
+    optional int64         ddl_job_id     = 7 [(gogoproto.nullable) = false];
+}
+
+``` 
+
 
 其中 `start_ts` 为事务开始时的 ts，`commit_ts` 为事务提交的 ts。ts 是由物理时间和逻辑时间转化而成的，在 TiDB 中是唯一的，由 PD 来统一提供。在开始一个事务时，TiDB 会请求 PD，获取一个 ts 作为事务的 `start_ts`，在事务提交时则再次请求 PD 获取一个 ts 作为 `commit_ts`。 我们在 Pump 和 Drainer 中就是根据 binlog 的 `commit_ts` 来对 binlog 进行排序的。
 
