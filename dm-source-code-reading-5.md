@@ -6,9 +6,7 @@ summary: 本篇文章将会详细地介绍 DM 核心处理单元 Binlog replicat
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 DM 源码阅读系列文章的第五篇，[上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-4/) 介绍了 dump 和 load 两个数据同步处理单元的设计实现，对核心 interface 实现、数据导入并发模型、数据导入暂停或中断的恢复进行了分析。**本篇文章将详细地介绍 DM 核心处理单元 Binlog replication，内容包含 binlog 读取、过滤、路由、转换，以及执行等逻辑。**
-
-其中涉及到 shard merge 相关逻辑功能，如 column mapping、shard DDL 同步处理会在 shard merge 篇单独详细讲解，这里就不赘述了。
+本文为 DM 源码阅读系列文章的第五篇。[上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-4/) 介绍了 dump 和 load 两个数据同步处理单元的设计实现，对核心 interface 实现、数据导入并发模型、数据导入暂停或中断的恢复进行了分析。**本篇文章将详细地介绍 DM 核心处理单元 Binlog replication，内容包含 binlog 读取、过滤、路由、转换，以及执行等逻辑。**文内涉及到 shard merge 相关逻辑功能，如 column mapping、shard DDL 同步处理，会在 shard merge 篇单独详细讲解，这里就不赘述了。
 
 ## Binlog replication 处理流程
 
@@ -88,7 +86,7 @@ binlog 过滤完成之后，对于需要同步的表就会根据过滤步骤获�
 
 `query event` 转换处理：
 
-+ 因为 TiDB 目前不支持一条 DDL 语句包含多个 DDL 操作，query event 转换处理会首先将尝试将 **包含多个 DDL 变更操作的单条 DDL 语句** 拆分成 **只包含一个 DDL 操作的多条 DDL 语句**（[具体代码实现](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1411)）。
++ 因为 TiDB 目前不支持一条 DDL 语句包含多个 DDL 操作，query event 转换处理会首先尝试将 **包含多个 DDL 变更操作的单条 DDL 语句** 拆分成 **只包含一个 DDL 操作的多条 DDL 语句**（[具体代码实现](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1411)）。
 
 + 使用 parser 将 DDL statement 对应的 ast 结构里面的库名和表名替换成对应的目标库名和表名（[具体代码实现](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1442)）。
 
@@ -102,7 +100,7 @@ binlog 过滤完成之后，对于需要同步的表就会根据过滤步骤获�
 
 ### 冲突检测
 
-binlog 顺序同步模型要求按照 binlog 顺序一个一个来同步 binlog event，这样的顺序同步势必不能满足高 QPS 低同步延迟的同步需求， 并且不是所有的 binlog 涉及到的操作都存在冲突。Binlog replication 采用冲突检测机制，鉴别出来需要顺序执行的 jobs，在确保这些 jobs 的顺序执行的基础上，最大程度地保持其他 job 的并发执行来满足性能方面的要求。
+binlog 顺序同步模型要求按照 binlog 顺序一个一个来同步 binlog event，这样的顺序同步势必不能满足高 QPS 低同步延迟的同步需求，并且不是所有的 binlog 涉及到的操作都存在冲突。Binlog replication 采用冲突检测机制，鉴别出来需要顺序执行的 jobs，在确保这些 jobs 的顺序执行的基础上，最大程度地保持其他 job 的并发执行来满足性能方面的要求。
 
 冲突检测流程如下：
 
