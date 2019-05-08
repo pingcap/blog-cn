@@ -22,7 +22,7 @@ tags: ['DM 源码阅读','社区']
 	
 	| 操作 | 说明 |
 	|:-------|:-----------------|
-	| Filter | 根据 [库/表同步黑白名单](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#black-white-table-lists) 对库/表进行过滤；根据 [库/表 binlog event 类型过滤 binlog event](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#binlog-event-filter)。|
+	| Filter | 根据 [库/表同步黑白名单](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#black-white-table-lists) 对库/表进行过滤；根据 [binlog event 类型过滤](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#binlog-event-filter)。|
 	| Routing | 根据 [库/表 路由规则](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#table-routing) 对库/表名进行转换，用于合库合表。 |
 	| Convert | 将  binlog 转换为 [job 对象](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/job.go)，发送到 executor。 |
 	
@@ -49,7 +49,7 @@ Binlog replication 支持两种方式读取 binlog events:
 处理程序拿到解析好的 binlog event 后，[根据 binlog 的类型来对 binlog 进行分类处理](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1133)。Binlog replication 主要关心以下类型的 binlog event ：
 
 | 类型 | 说明 |
-|----------------|:---------------------|
+|:------------------|:---------------------|
 | `rotate event` | 消费完一个 binlog 文件，开始消费下一个 binlog 文件，用于更新 checkpoint 的 binlog position。 |
 | `row event` | 包含  insert/update/delete DML 数据。 |
 | `query event` | 包含 DDL 或者 statement DML 等数据。 |
