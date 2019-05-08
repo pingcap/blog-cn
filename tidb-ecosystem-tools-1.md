@@ -98,7 +98,7 @@ message Binlog {
 }
 ```
 
-binlog 及相关的数据结构定义:(代码链接：[binlog.proto](https://github.com/pingcap/tipb/blob/master/proto/binlog/binlog.proto))
+binlog 及相关数据结构定义的代码链接参见：[binlog.proto](https://github.com/pingcap/tipb/blob/master/proto/binlog/binlog.proto)
 
 ```
 syntax = "proto2";
