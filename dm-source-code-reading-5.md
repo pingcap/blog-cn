@@ -51,7 +51,7 @@ Binlog replication 支持两种方式读取 binlog events:
 | `rotate event` | 消费完一个 binlog 文件，开始消费下一个 binlog 文件，用于更新 checkpoint 的 binlog position。 |
 | `row event` | 包含  insert/update/delete DML 数据。 |
 | `query event` | 包含 DDL 或者 statement DML 等数据。 |
-| `xid event` | 代表一个 transaction 的 commit，经过  [go-mysql 的处理后带有对应 transaction 结束位置的  binlog position 和 gtid](https://github.com/siddontang/go-mysql/blob/b3fc2b70c8a8ea9128d51c968bcab03802d95343/replication/binlogsyncer.go#L751) ，可以用来保存 checkpoint。 |
+| `xid event` | 代表一个 transaction 的 commit，经过  [go-mysql 的处理后带有对应 transaction  <br />  结束位置的  binlog position 和 gtid](https://github.com/siddontang/go-mysql/blob/b3fc2b70c8a8ea9128d51c968bcab03802d95343/replication/binlogsyncer.go#L751) ，可以用来保存 checkpoint。 |
 
 Binlog replication 数据处理单元会对每一类 binlog event 进行以下的处理步骤，具体实现的处理顺序可能略有差异，以代码实现为准。
 
