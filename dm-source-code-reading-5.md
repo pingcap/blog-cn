@@ -22,7 +22,7 @@ tags: ['DM 源码阅读','社区']
 	
 	| 操作 | 说明 |
 	|:-----|:-----------------|
-	| Filter | 根据 [库/表同步黑白名单](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#black-white-table-lists) 对库/表进行过滤；根据 [库/表 binlog event 类型过滤 binlog event](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#binlog-event-filter) 。|
+	| Filter | 根据 [库/表同步黑白名单](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#black-white-table-lists) 对库/表进行过滤；根据 [库/表 binlog event 类型过滤 binlog event](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#binlog-event-filter)。|
 	| Routing | 根据 [库/表 路由规则](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#table-routing) 对库/表名进行转换，用于合库合表。 |
 	| Convert | 将  binlog 转换为 [job 对象](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/job.go)，发送到 executor。 |
 	
@@ -37,7 +37,7 @@ Binlog replication 支持两种方式读取 binlog events:
 + [从远程的 MySQL/MariaDB](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1032)
 + [从 DM-worker 的本地 relay log](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1036)
 
-两种方式都提供了同样的读取方法，处理核心都是 [go-mysql](https://github.com/siddontang/go-mysql) 。该库主要提供了两个功能：
+两种方式都提供了同样的读取方法，处理核心都是 [go-mysql](https://github.com/siddontang/go-mysql)。该库主要提供了两个功能：
 
 + 注册为 MySQL/MariaDB 的 slave server ，从 MySQL/MariaDB 顺序读取 raw binlog events。
 + 解析 raw binlog events。
@@ -67,12 +67,12 @@ Binlog replication 会从两个维度对 binlog event 来进行过滤：
 [`row event` 过滤处理](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/filter.go#L147) 和 [`query event` 过滤处理](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/filter.go#L96) 的实现在逻辑上面存在一些差异：
 
 + `row event` 包含 [库名和表名](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1167) 信息；`query event` 需要通过 [tidb parser](https://github.com/pingcap/parser) [解析 event 里面包含的 query statement 来获取需要的库名，表名以及其他信息](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1365)。
-+ tidb parser 不是完全 100% 兼容 MySQL 语法，当遇到 parser 不支持的 query statement 时候，解析就会报错，从而无法获取到对应的库名和表名信息。Binlog replication 提供了一些 [内置的不支持的 query statement 正则表达式](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/filter.go#L32) , 配合 [使用 `[schema-pattern: *, table-pattern: *] `的 binlog event 过滤规则](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/filter.go#L123)，来跳过 parser 不支持的 query statement。
++ tidb parser 不是完全 100% 兼容 MySQL 语法，当遇到 parser 不支持的 query statement 时候，解析就会报错，从而无法获取到对应的库名和表名信息。Binlog replication 提供了一些 [内置的不支持的 query statement 正则表达式](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/filter.go#L32)，配合 [使用 `[schema-pattern: *, table-pattern: *] `的 binlog event 过滤规则](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/filter.go#L123)，来跳过 parser 不支持的 query statement。
 + `query event` 里面也会包含 statement format binlog event，此时 Binlog replication 就可以利用 parser 解析出来具体的 statement 类型，对不支持的 statement format binlog event 作出相应的处理： [对于需要同步的表，进行报错处理](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/ddl.go#L117)；[不需要同步的表，忽略继续同步](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/ddl.go#L108)。
 
 ### 路由
 
-binlog 过滤完成之后，对于需要同步的表就会根据过滤步骤获得的库名和表名，通过  [路由规则](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L116) [转换得到需要同步到的目标库名和表名](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1960)，在接下来的转换步骤来使用目标库名和表名来转换出正确的 DML 和 DDL statement。
+binlog 过滤完成之后，对于需要同步的表就会根据过滤步骤获得的库名和表名，通过 [路由规则](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L116) [转换得到需要同步到的目标库名和表名](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1960)，在接下来的转换步骤来使用目标库名和表名来转换出正确的 DML 和 DDL statement。
 
 ### 转换
 
@@ -84,13 +84,13 @@ binlog 过滤完成之后，对于需要同步的表就会根据过滤步骤获�
 + [`generate update sqls`](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1294)：
     - `safe mode = true`，[将 update rows event 转换为 delete + replace statements](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/dml.go#L193)。
     - `safe mode = false`，[将 update row event 转换为 update statements](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/dml.go#L231)。
-+ [`generate delete sqls`](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1327)：将 `delete rows event` 转换为 `delete statements`。
++ [`generate delete sqls`](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1327)：将 delete rows event 转换为 delete statements。
 
 `query event` 转换处理：
 
-+ 因为 TiDB 目前不支持一条 DDL 语句包含多个 DDL 操作，query event 转换处理会首先将尝试将 **包含多个 DDL 变更操作的单条 DDL 语句** 拆分成 **只包含一个 DDL 操作的多条 DDL 语句**，[具体代码实现](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1411)。
++ 因为 TiDB 目前不支持一条 DDL 语句包含多个 DDL 操作，query event 转换处理会首先将尝试将 **包含多个 DDL 变更操作的单条 DDL 语句** 拆分成 **只包含一个 DDL 操作的多条 DDL 语句**（[具体代码实现](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1411)）。
 
-+ 使用 parser 将 DDL statement 对应的 ast 结构里面的库名和表名替换成对应的目标库名和表名，[具体代码实现](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1442)。
++ 使用 parser 将 DDL statement 对应的 ast 结构里面的库名和表名替换成对应的目标库名和表名（[具体代码实现](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1442)）。
 
 通过转换处理之后，将不同的 binlog event 包装成不同的 job 发送到 executor 执行：
 
@@ -107,7 +107,7 @@ binlog 顺序同步模型要求按照 binlog 顺序一个一个来同步 binlog 
 冲突检测流程如下：
 
 + 遇到 DDL job，[等待前面已经分发出来的所有 DML jobs 执行完成后](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L642)，然后单独执行该 DDL job，执行完成之后保存 checkpoint 信息。
-+ 遇到 DML job，会[先检测并且尝试解决冲突](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1712)。如果检测到冲突（即存在两个 executor  的 worker 的 jobs 都需要与当前的 job 保持顺序执行），[会发送一个 flush job 来等待已经分发的所有 DML jobs 执行完成](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1730)，然后再将  job 分发到对应的 worker，[并且记录该分发信息到内存](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1735)。在没有冲突的情况下，如果不需要与已经分发出去的 job 保持顺序的话，发送 job 到任意 worker 上；如果需要保持顺序的话，那么根据内存储存的历史分发信息，发送 job 到对应的 worker 上。
++ 遇到 DML job，会 [先检测并且尝试解决冲突](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1712)。如果检测到冲突（即存在两个 executor  的 worker 的 jobs 都需要与当前的 job 保持顺序执行），[会发送一个 flush job 来等待已经分发的所有 DML jobs 执行完成](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1730)，然后再将  job 分发到对应的 worker，[并且记录该分发信息到内存](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1735)。在没有冲突的情况下，如果不需要与已经分发出去的 job 保持顺序的话，发送 job 到任意 worker 上；如果需要保持顺序的话，那么根据内存储存的历史分发信息，发送 job 到对应的 worker 上。
 
 冲突检测实现比较简单，根据转换步骤获得每条 statement 对应的 `primary/unique key` 信息，来进行交集检测，如果存在交集那么认定是需要顺序的执行两条 statement，请参考 [具体实现代码](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/causality.go)。
 
