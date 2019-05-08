@@ -6,7 +6,9 @@ summary: 本篇文章将会详细地介绍 DM 核心处理单元 Binlog replicat
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 DM 源码阅读系列文章的第五篇，[上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-4/) 介绍了 dump 和 load 两个数据同步处理单元的设计实现，对核心 interface 实现、数据导入并发模型、数据导入暂停或中断的恢复进行了分析。本篇文章将详细地介绍 DM 核心处理单元 Binlog replication，内容包含 binlog 读取、过滤、路由、转换，以及执行等逻辑。其中涉及到 shard merge 相关逻辑功能，如 column mapping 、shard DDL 同步处理会在 shard merge 篇单独详细讲解，本文就不赘述了。
+本文为 DM 源码阅读系列文章的第五篇，[上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-4/) 介绍了 dump 和 load 两个数据同步处理单元的设计实现，对核心 interface 实现、数据导入并发模型、数据导入暂停或中断的恢复进行了分析。**本篇文章将详细地介绍 DM 核心处理单元 Binlog replication，内容包含 binlog 读取、过滤、路由、转换，以及执行等逻辑。**
+
+其中涉及到 shard merge 相关逻辑功能，如 column mapping、shard DDL 同步处理会在 shard merge 篇单独详细讲解，这里就不赘述了。
 
 ## Binlog replication 处理流程
 
@@ -78,11 +80,11 @@ binlog 过滤完成之后，对于需要同步的表就会根据过滤步骤获�
 
 `row event` 转换处理通过三个转换函数生成对应的 statements：
 
-+ [`generate insert sqls`](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1261) ：将 write rows event 转换为 replace into statements。
++ [`generate insert sqls`](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1261) ：将 `write rows event` 转换为 `replace into statements`。
 + [`generate update sqls`](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1294)：
     - `safe mode = true`，[将 update rows event 转换为 delete + replace statements](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/dml.go#L193)。
     - `safe mode = false`，[将 update row event 转换为 update statements](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/dml.go#L231)。
-+ [`generate delete sqls`](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1327)：将 delete rows event 转换为 delete statements。
++ [`generate delete sqls`](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L1327)：将 `delete rows event` 转换为 `delete statements`。
 
 `query event` 转换处理：
 
