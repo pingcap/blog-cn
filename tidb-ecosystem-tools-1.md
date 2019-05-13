@@ -98,7 +98,7 @@ message Binlog {
 }
 ```
 
-binlog 及相关的数据结构定义见: [binlog.proto](https://github.com/WangXiangUSTC/tipb/blob/master/proto/binlog/binlog.proto)
+binlog 及相关的数据结构定义见:[binlog.proto](https://github.com/pingcap/tipb/blob/535e1abaa330653c8955cb3484261ea9f229e926/proto/binlog/binlog.proto)
 
 其中 `start_ts` 为事务开始时的 ts，`commit_ts` 为事务提交的 ts。ts 是由物理时间和逻辑时间转化而成的，在 TiDB 中是唯一的，由 PD 来统一提供。在开始一个事务时，TiDB 会请求 PD，获取一个 ts 作为事务的 `start_ts`，在事务提交时则再次请求 PD 获取一个 ts 作为 `commit_ts`。 我们在 Pump 和 Drainer 中就是根据 binlog 的 `commit_ts` 来对 binlog 进行排序的。
 
@@ -237,7 +237,7 @@ Pump Client 根据 Pump 上报到 PD 的信息以及写 binlog 请求的实际�
 
 需要注意的地方是，以上的策略只是针对 Prewrite binlog，对于 Commit binlog，Pump Client 会将它发送到对应的 Prewrite binlog 所选择的 Pump，这样做是因为在 Pump 中需要将包含 Prewrite binlog 和 Commit binlog 的完整 binlog（即执行成功的事务的 binlog）提供给 Drainer，将 Commit binlog 发送到其他 Pump 没有意义。
 
-Pump Client 向 Pump 提交写 binlog 的请求接口为 [pump.proto](https://github.com/WangXiangUSTC/tipb/blob/master/proto/binlog/pump.proto) 中的 WriteBinlog，使用 grpc 发送 binlog 请求。
+Pump Client 向 Pump 提交写 binlog 的请求接口为 [pump.proto](https://github.com/pingcap/tipb/blob/535e1abaa330653c8955cb3484261ea9f229e926/proto/binlog/pump.proto) 中的 WriteBinlog，使用 grpc 发送 binlog 请求。
 
 ### Pump
 
@@ -247,7 +247,7 @@ Pump 内置了 leveldb 用于存储 binlog 的元信息。在 Pump 收到 binlog
 
 当 Drainer 向 Pump 请求获取指定 ts 之后的 binlog 时，Pump 则查询 leveldb 中大于该 ts 的 binlog 的元数据，如果当前数据为 Prewrite binlog，则必须找到对应的 Commit binlog；如果为 Commit binlog 则继续向前推进。这里有个问题，在 binlog 一节中提到，如果 TiKV 成功写入了数据，并且 Pump 成功接收到了 Prewrite binlog，则该事务就提交成功了，那么如果在 TiDB 发送 Commit binlog 到 Pump 前发生了一些异常（例如 TiDB 异常退出，或者强制终止了 TiDB 进程），导致 Pump 没有接收到 Commit binlog，那么 Pump 中就会一直找不到某些 Prewrite binlog 对应的 Commit binlog。这里我们在 Pump 中做了处理，如果某个 Prewrite binlog 超过了十分钟都没有找到对应的 Commit binlog，则通过 binlog 数据中的 `prewrite_key` 去查询 TiKV 该事务是否提交，如果已经提交成功，则 TiKV 会返回该事务的 `commit_ts`；否则 Pump 就丢弃该条 Prewrite binlog。
 
-binlog 元数据中提供了数据存储的文件和位置，可以通过这些信息读取 binlog 文件的指定位置获取到数据。因为 binlog 数据基本上是按顺序写入到文件中的，因此我们只需要顺序地读 binlog 文件即可，这样就保证了不会因为频繁地读取文件而影响 Pump 的性能。最终，Pump 以 `commit_ts` 为排序标准将 binlog 数据传输给 Drainer。Drainer 向 Pump 请求 binlog 数据的接口为 [pump.proto](https://github.com/WangXiangUSTC/tipb/blob/master/proto/binlog/pump.proto) 中的 PullBinlogs，以 grpc streaming 的形式传输 binlog 数据。
+binlog 元数据中提供了数据存储的文件和位置，可以通过这些信息读取 binlog 文件的指定位置获取到数据。因为 binlog 数据基本上是按顺序写入到文件中的，因此我们只需要顺序地读 binlog 文件即可，这样就保证了不会因为频繁地读取文件而影响 Pump 的性能。最终，Pump 以 `commit_ts` 为排序标准将 binlog 数据传输给 Drainer。Drainer 向 Pump 请求 binlog 数据的接口为 [pump.proto](https://github.com/pingcap/tipb/blob/535e1abaa330653c8955cb3484261ea9f229e926/proto/binlog/pump.proto) 中的 PullBinlogs，以 grpc streaming 的形式传输 binlog 数据。
 
 值得一提的是，Pump 中有一个 fake binlog 机制。Pump 会定时（默认三秒）向本地存储中写入一条数据为空的 binlog，在生成该 binlog 前，会向 PD 中获取一个 ts，作为该 binlog 的 `start_ts` 与 `commit_ts`，这种 binlog 我们叫作 fake binlog。这样做的原因在 Drainer 中介绍。
 
