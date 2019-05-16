@@ -2,7 +2,7 @@
 title: Golang Failpoint 的设计与实现
 author: ['龙恒']
 date: 2019-04-30
-summary: Failpoint 项目是 FreeBSD Failpoints 的 Golang 实现，允许在代码中注入错误或异常行为， 并由环境变量或代码动态激活来触发这些异常行为。Failpoint 能用于各种复杂系统中模拟错误处理来提高系统的容错性、正确性和稳定性。
+summary: Failpoint 项目是 FreeBSD Failpoints 的 Golang 实现，允许在代码中注入错误或异常行为，并由环境变量或代码动态激活来触发这些异常行为。Failpoint 能用于各种复杂系统中模拟错误处理来提高系统的容错性、正确性和稳定性。
 tags: ['Failpoint']
 ---
 
@@ -11,7 +11,7 @@ tags: ['Failpoint']
 **[Failpoint 项目](https://github.com/pingcap/failpoint) 就是为此而生，它是 FreeBSD [failpoints](http://www.freebsd.org/cgi/man.cgi?query=fail) 的 Golang 实现，允许在代码中注入错误或异常行为， 并由环境变量或代码动态激活来触发这些异常行为。Failpoint 能用于各种复杂系统中模拟错误处理来提高系统的容错性、正确性和稳定性，比如：**
 
 * 微服务中某个服务出现随机延迟、某个服务不可用。
-* 存储系统磁盘 IO 延迟增加、IO 吞吐量过低、落盘时间长。
+* 存储系统磁盘 I/O 延迟增加、I/O 吞吐量过低、落盘时间长。
 * 调度系统中出现热点，某个调度指令失败。
 * 充值系统中模拟第三方重复请求充值成功回调接口。
 * 游戏开发中模拟玩家网络不稳定、掉帧、延迟过大等，以及各种异常输入（外挂请求）情况下系统是否正确工作。
@@ -19,7 +19,7 @@ tags: ['Failpoint']
 
 ## 为什么要重复造轮子？
 
-Etcd 团队在 2016 年开发了 [gofail](https://github.com/etcd-io/gofail/) 极大地简化了错误注入，为 Golang 生态做出了巨大贡献。我们在 2018 年已经引入了 gofail 进行错误注入测试，但是我们在使用中发现了一些功能性以及便利性的问题，所以我们决定造一个更好的「轮子」。
+etcd 团队在 2016 年开发了 [gofail](https://github.com/etcd-io/gofail/) 极大地简化了错误注入，为 Golang 生态做出了巨大贡献。我们在 2018 年已经引入了 gofail 进行错误注入测试，但是我们在使用中发现了一些功能性以及便利性的问题，所以我们决定造一个更好的「轮子」。
 
 ### 如何使用 gofail
 
@@ -47,7 +47,7 @@ Etcd 团队在 2016 年开发了 [gofail](https://github.com/etcd-io/gofail/) �
 	// gofail: RETURN2:
 	```
 
-* 使用 gofail enable 转换后的代码：
+* 使用 `gofail enable` 命令将注释转换为代码：
 
 	```go
 	if vFailIfImportedChunk, __fpErr := __fp_FailIfImportedChunk.Acquire(); __fpErr == nil { defer __fp_FailIfImportedChunk.Release(); FailIfImportedChunk, __fpTypeOK := vFailIfImportedChunk.(int); if !__fpTypeOK { goto __badTypeFailIfImportedChunk} 
@@ -122,7 +122,7 @@ fail_point!("transport_on_send_store", |sid| if let Some(sid) = sid {
 
 ### Failpoint
 
-Failpoint 是一个代码片段，并且仅在对应的 failpoint name 激活的情况下才会执行，如果通过 `failpoint.Disable("failpoint-name-for-demo")` 禁用后， 那么对应的的 failpoint 永远不会触发。所有 failpoiint 代码片段不会编译到最终的二进制文件中，比如我们模拟文件系统权限控制：
+Failpoint 是一个代码片段，并且仅在对应的 failpoint name 激活的情况下才会执行，如果通过 `failpoint.Disable("failpoint-name-for-demo")` 禁用后，那么对应的的 failpoint 永远不会触发。所有 failpoint 代码片段不会编译到最终的二进制文件中，比如我们模拟文件系统权限控制：
 
 ```go
 func saveTo(path string) error {
@@ -140,7 +140,7 @@ AST 重写阶段标记需要被重写的部分，主要有以下功能：
 * 提示 Rewriter 重写为一个相等的 IF 语句。
     * 标记函数的参数是重写过程中需要用到的参数。
     * 标记函数是一个空函数，编译过程会被 inline，进一步被消除。
-    * 标记函数中注入的 failpoint 是一个闭包，如果闭包访问外部作用于变量，闭包语法允许捕获外部作用域变量，不会出现编译错误， 同时转换后的的代码是一个 IF 语句，IF 语句访问外部作用域变量不会产生任何问题，所以闭包捕获只是为了语法合法，最终不会有任何额外开销。
+    * 标记函数中注入的 failpoint 是一个闭包，如果闭包访问外部作用域变量，闭包语法允许捕获外部作用域变量，则不会出现编译错误，同时转换后的的代码是一个 IF 语句，IF 语句访问外部作用域变量不会产生任何问题，所以闭包捕获只是为了语法合法，最终不会有任何额外开销。
 * 简单、易读、易写。
 * 引入编译器检测，如果 Marker 函数的参数不正确，程序不能通过编译的，进而保证转换后的代码正确性。
 
@@ -151,19 +151,21 @@ AST 重写阶段标记需要被重写的部分，主要有以下功能：
 * `func Break(label ...string) {}`
 * `func Goto(label string) {}`
 * `func Continue(label ...string) {}`
+* `func Return(results ...interface{}) {}`
 * `func Fallthrough() {}`
 * `func Return(results ...interface{}) {}`
 * `func Label(label string) {}`
 
 ## 如何在你的程序中使用 failpoint 进行注入？
 
-**最简单的方式是使用 `failpoint.Inject` 在调用的地方注入一个 failpoint，最终 `failpoint.Inject` 调用会重写为一个 IF 语句， 其中 `mock-io-error` 用来判断是否触发，`failpoint-closure` 中的逻辑会在触发后执行。** 比如我们在一个读取文件的函数中注入一个 IO 错误：
+**最简单的方式是使用 `failpoint.Inject` 在调用的地方注入一个 failpoint，最终 `failpoint.Inject` 调用会重写为一个 IF 语句，其中 `mock-io-error` 用来判断是否触发，`failpoint-closure` 中的逻辑会在触发后执行。** 比如我们在一个读取文件的函数中注入一个 I/O 错误：
 
 ```go
 failpoint.Inject("mock-io-error", func(val failpoint.Value) error {
     return fmt.Errorf("mock error: %v", val.(string))
 })
 ```
+
 最终转换后的代码如下：
 
 ```go
@@ -172,9 +174,9 @@ if ok, val := failpoint.Eval(_curpkg_("mock-io-error")); ok {
 }
 ```
 
-通过 `failpoint.Enable("mock-io-error", "return("disk error")")` 激活程序中的 failpoint，如果需要给 `failpoint.Value` 赋一个自定义的值，则需要传入一个 failpoint expression，比如这里 `return("disk error")`，更多语法可以参考 [failpoint语法](http://www.freebsd.org/cgi/man.cgi?query=fail)。
+通过 `failpoint.Enable("mock-io-error", "return("disk error")")` 激活程序中的 failpoint，如果需要给 `failpoint.Value` 赋一个自定义的值，则需要传入一个 failpoint expression，比如这里 `return("disk error")`，更多语法可以参考 [failpoint 语法](http://www.freebsd.org/cgi/man.cgi?query=fail)。
 
-**闭包可以为 `nil` ，比如 `failpoint.Enable("mock-delay", "sleep(1000)")`，目的是在注入点休眠一秒，不需要执行额外的逻辑。**
+**闭包可以为 `nil`，比如 `failpoint.Enable("mock-delay", "sleep(1000)")`，目的是在注入点休眠一秒，不需要执行额外的逻辑。**
 
 ```go
 failpoint.Inject("mock-delay", nil)
@@ -188,7 +190,7 @@ failpoint.Eval(_curpkg_("mock-delay"))
 failpoint.Eval(_curpkg_("mock-delay"))
 ```
 
-**如果我们只想在 failpoint 中执行一个 panic，不需要接收 `failpoint.Value`，则我们可以在闭包的参数中忽略这个值。** 例如：
+**如果我们只想在 failpoint 中执行一个 panic，不需要接收 `failpoint.Value`，则我们可以在闭包的参数中忽略这个值。**例如：
 
 ```go
 failpoint.Inject("mock-panic", func(_ failpoint.Value) error {
@@ -209,7 +211,7 @@ failpoint.Inject("mock-panic", nil)
 failpoint.Eval(_curpkg_("mock-panic"))
 ```
 
-**为了可以在并行测试中防止不同的测试任务之间的干扰，可以在 `context.Context` 中包含一个回调函数，用于精细化控制 failpoint 的激活与关闭** ：
+**为了可以在并行测试中防止不同的测试任务之间的干扰，可以在 `context.Context` 中包含一个回调函数，用于精细化控制 failpoint 的激活与关闭**：
 
 ```go
 failpoint.InjectContext(ctx, "failpoint-name", func(val failpoint.Value) {
@@ -317,7 +319,7 @@ outer:
     }
 ```
 
-**对于为什么会有 label, break, continue 和 fallthrough 相关 Marker 函数保持疑问，为什么不直接使用关键字？**
+**为什么会有 `label`、`break`、`continue` 和 `fallthrough` 相关 Marker 函数? 为什么不直接使用关键字？**
 
 * Golang 中如果某个变量或则标签未使用，是不能通过编译的。
 
@@ -331,11 +333,11 @@ outer:
 	    })
 	
 	```
-* break 和 continue 只能在循环上下文中使用，在闭包中使用。
+* `break` 和 `continue` 只能在循环上下文中使用，在闭包中使用。
 
 ### 一些复杂的注入示例
 
-**示例一：在 IF 语句的 INITIAL 和 CONDITIONAL 中注入 failpoint**
+**示例一：在 IF 语句的 `INITIAL` 和 `CONDITIONAL` 中注入 failpoint**
 
 ```go
 if a, b := func() {
@@ -385,7 +387,7 @@ if a, b := func() {
 }
 ```
 
-**示例二：在 SELECT 语句的 CASE 中注入 failpoint 来动态控制某个 case 是否被阻塞**
+**示例二：在 `SELECT` 语句的 CASE 中注入 failpoint 来动态控制某个 case 是否被阻塞**
 
 ```go
 func (s *StoreService) ExecuteStoreTask() {
@@ -483,9 +485,9 @@ default:
 
 除了上面的例子之外，还可以写的更加复杂的情况：
 
-* 循环的 INITIAL 语句, CONDITIONAL 表达式，以及 POST 语句
-* FOR RANGE 语句
-* SWITCH INITIAL 语句
+* 由 `INITIAL` 语句、`CONDITIONAL` 表达式，以及 `POST` 语句组成的循环
+* `FOR RANGE` 语句
+* `SWITCH INITIAL` 语句
 * Slice 的构造和索引
 * 结构体动态初始化
 * ……
@@ -494,7 +496,7 @@ default:
 
 ## Failpoint 命名最佳实践
 
-上面生成的代码中会自动添加一个 `_curpkg_` 调用在 `failpoint-name` 上，是因为名字是全局的，为了避免命名冲突，所以会在最终的名字包包名，`_curpkg_` 相当一个宏，在运行的时候自动使用包名进行展开。你并不需要在自己的应用程序中实现 `_curpkg_`，它在 `failpoint-ctl enable` 的自动生成以及自动添加，并在 `failpoint-ctl disable` 的时候被删除。
+上面生成的代码中会自动添加一个 `_curpkg_` 调用在 `failpoint-name` 上，是因为名字是全局的，为了避免命名冲突，所以会在最终的名字中包含包名，`_curpkg_` 相当一个宏，在运行的时候自动使用包名进行展开。你并不需要在自己的应用程序中实现 `_curpkg_`，它在执行 `failpoint-ctl enable` 命令的时候自动生成以及自动添加，并在执行 `failpoint-ctl disable` 命令的时候被删除。
 
 ```go
 package ddl // ddl’s parent package is `github.com/pingcap/tidb`
@@ -509,15 +511,16 @@ func demo() {
 
 * 保证名字在包内是唯一的。
 * 使用一个自解释的名字。
-    * 可以通过环境变量来激活 failpoint：
+
+可以通过环境变量来激活 failpoint：
     
-    ```    
-     GO_FAILPOINTS="github.com/pingcap/tidb/ddl/renameTableErr=return(100);github.com/pingcap/tidb/planner/core/illegalPushDown=return(true);github.com/pingcap/pd/server/schedulers/balanceLeaderFailed=return(true)"
-     ```
+```    
+GO_FAILPOINTS="github.com/pingcap/tidb/ddl/renameTableErr=return(100);github.com/pingcap/tidb/planner/core/illegalPushDown=return(true);github.com/pingcap/pd/server/schedulers/balanceLeaderFailed=return(true)"
+```
 
 ## 致谢
 
 * 感谢 [gofail](https://github.com/etcd-io/gofail) 提供最初实现，给我们提供了灵感，让我们能站在巨人的肩膀上对 failpoint 进行迭代。
-* 感谢 FreeBSD 定义 [语法规范](http://www.freebsd.org/cgi/man.cgi?query=fail)。
+* 感谢 FreeBSD 定义[语法规范](http://www.freebsd.org/cgi/man.cgi?query=fail)。
 
 最后，欢迎大家和我们交流讨论，一起完善 [Failpoint 项目](https://github.com/pingcap/failpoint)。
