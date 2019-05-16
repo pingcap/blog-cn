@@ -17,16 +17,16 @@ gRPC 使用 protobuf 定义一个服务，之后调用相关的代码生成工�
 #[derive(Clone)]
 struct MyHelloService {}
 impl Hello for MyHelloService {
-	// trait 中的函数签名由 grpc-rs 生成，内部实现需要用户自己填写
-	fn hello(&mut self, ctx: RpcContext, req: HelloRequest, sink: UnarySink<HelloResponse>) {
-    	let mut resp = HelloResponse::new();
-    	resp.set_to(req.get_from());
-    	ctx.spawn(
-        	sink.success(resp)
-            	.map(|_| println!("send hello response back success"))
-            	.map_err(|e| println!("send hello response back fail: {}", e))
-    	);
-	}
+    // trait 中的函数签名由 grpc-rs 生成，内部实现需要用户自己填写
+    fn hello(&mut self, ctx: RpcContext, req: HelloRequest, sink: UnarySink<HelloResponse>) {
+        let mut resp = HelloResponse::new();
+        resp.set_to(req.get_from());
+        ctx.spawn(
+            sink.success(resp)
+                .map(|_| println!("send hello response back success"))
+                .map_err(|e| println!("send hello response back fail: {}", e))
+        );
+    }
 }
 ```
 
@@ -36,19 +36,19 @@ impl Hello for MyHelloService {
 
 ```rust
 fn main() {
-            // 创建一个 Environment，里面包含一个 Completion Queue
-	let env = Arc::new(EnvBuilder::new().cq_count(4).build());
-	let channel_args = ChannelBuilder::new(env.clone()).build_args();
-	let my_service = MyHelloWorldService::new();
-	let mut server = ServerBuilder::new(env.clone())
-            // 使用 MyHelloWorldService 作为服务端的实现，注册到 gRPC server 中
-    	.register_service(create_hello(my_service))
-    	.bind("0.0.0.0", 44444)
-    	.channel_args(channel_args)
-    	.build()
-    	.unwrap();
-	server.start();
-	thread::park();
+    // 创建一个 Environment，里面包含一个 Completion Queue
+    let env = Arc::new(EnvBuilder::new().cq_count(4).build());
+    let channel_args = ChannelBuilder::new(env.clone()).build_args();
+    let my_service = MyHelloWorldService::new();
+    let mut server = ServerBuilder::new(env.clone())
+        // 使用 MyHelloWorldService 作为服务端的实现，注册到 gRPC server 中
+        .register_service(create_hello(my_service))
+        .bind("0.0.0.0", 44444)
+        .channel_args(channel_args)
+        .build()
+        .unwrap();
+    server.start();
+    thread::park();
 }
 ```
 
@@ -63,18 +63,18 @@ fn main() {
 ```rust
 // event loop
 fn poll_queue(cq: Arc<CompletionQueueHandle>) {
-	let id = thread::current().id();
-	let cq = CompletionQueue::new(cq, id);
-	loop {
-    	let e = cq.next();
-    	match e.event_type {
-        	    EventType::QueueShutdown => break,
-        	    EventType::QueueTimeout => continue,
-        	    EventType::OpComplete => {}
-    	}
-    	let tag: Box<CallTag> = unsafe { Box::from_raw(e.tag as _) };
-    	tag.resolve(&cq, e.success != 0);
-	}
+    let id = thread::current().id();
+    let cq = CompletionQueue::new(cq, id);
+    loop {
+        let e = cq.next();
+        match e.event_type {
+            EventType::QueueShutdown => break,
+            EventType::QueueTimeout => continue,
+            EventType::OpComplete => {}
+        }
+        let tag: Box<CallTag> = unsafe { Box::from_raw(e.tag as _) };
+        tag.resolve(&cq, e.success != 0);
+    }
 }
 ```
 
@@ -83,23 +83,23 @@ fn poll_queue(cq: Arc<CompletionQueueHandle>) {
 ```rust
 /// Start the server.
 pub fn start(&mut self) {
-	unsafe {
-    	grpc_sys::grpc_server_start(self.core.server);
-    	for cq in self.env.completion_queues() {
-        	let registry = self
-            	.handlers
-            	.iter()
-            	.map(|(k, v)| (k.to_owned(), v.box_clone()))
-            	.collect();
-        	let rc = RequestCallContext {
-            	server: self.core.clone(),
-            	registry: Arc::new(UnsafeCell::new(registry)),
-        	};
-        	for _ in 0..self.core.slots_per_cq {
-            	request_call(rc.clone(), cq);
-        	}
-    	}
-	}
+    unsafe {
+        grpc_sys::grpc_server_start(self.core.server);
+        for cq in self.env.completion_queues() {
+            let registry = self
+                .handlers
+                .iter()
+                .map(|(k, v)| (k.to_owned(), v.box_clone()))
+                .collect();
+            let rc = RequestCallContext {
+                server: self.core.clone(),
+                registry: Arc::new(UnsafeCell::new(registry)),
+            };
+            for _ in 0..self.core.slots_per_cq {
+                request_call(rc.clone(), cq);
+            }
+        }
+    }
 }
 ```
 
