@@ -495,7 +495,7 @@ default:
 
 ## Failpoint 命名最佳实践
 
-上面生成的代码中会自动添加一个 `_curpkg_` 调用在 `failpoint-name` 上，是因为名字是全局的，为了避免命名冲突，所以会在最终的名字中包含包名，`_curpkg_` 相当一个宏，在运行的时候自动使用包名进行展开。你并不需要在自己的应用程序中实现 `_curpkg_`，它在 `failpoint-ctl` enable 的时候自动生成以及自动添加，并在 `failpoint-ctl` disable 的时候被删除。
+上面生成的代码中会自动添加一个 `_curpkg_` 调用在 `failpoint-name` 上，是因为名字是全局的，为了避免命名冲突，所以会在最终的名字中包含包名，`_curpkg_` 相当一个宏，在运行的时候自动使用包名进行展开。你并不需要在自己的应用程序中实现 `_curpkg_`，它在执行 `failpoint-ctl enable` 命令的时候自动生成以及自动添加，并在执行 `failpoint-ctl disable` 命令的时候被删除。
 
 ```go
 package ddl // ddl’s parent package is `github.com/pingcap/tidb`
