@@ -140,7 +140,7 @@ AST 重写阶段标记需要被重写的部分，主要有以下功能：
 * 提示 Rewriter 重写为一个相等的 IF 语句。
     * 标记函数的参数是重写过程中需要用到的参数。
     * 标记函数是一个空函数，编译过程会被 inline，进一步被消除。
-    * 标记函数中注入的 failpoint 是一个闭包，如果闭包访问外部作用域变量，闭包语法允许捕获外部作用域变量，则不会出现编译错误， 同时转换后的的代码是一个 IF 语句，IF 语句访问外部作用域变量不会产生任何问题，所以闭包捕获只是为了语法合法，最终不会有任何额外开销。
+    * 标记函数中注入的 failpoint 是一个闭包，如果闭包访问外部作用域变量，闭包语法允许捕获外部作用域变量，则不会出现编译错误，同时转换后的的代码是一个 IF 语句，IF 语句访问外部作用域变量不会产生任何问题，所以闭包捕获只是为了语法合法，最终不会有任何额外开销。
 * 简单、易读、易写。
 * 引入编译器检测，如果 Marker 函数的参数不正确，程序不能通过编译的，进而保证转换后的代码正确性。
 
@@ -158,13 +158,14 @@ AST 重写阶段标记需要被重写的部分，主要有以下功能：
 
 ## 如何在你的程序中使用 failpoint 进行注入？
 
-**最简单的方式是使用 `failpoint.Inject` 在调用的地方注入一个 failpoint，最终 `failpoint.Inject` 调用会重写为一个 IF 语句， 其中 `mock-io-error` 用来判断是否触发，`failpoint-closure` 中的逻辑会在触发后执行。** 比如我们在一个读取文件的函数中注入一个 IO 错误：
+**最简单的方式是使用 `failpoint.Inject` 在调用的地方注入一个 failpoint，最终 `failpoint.Inject` 调用会重写为一个 IF 语句， 其中 `mock-io-error` 用来判断是否触发，`failpoint-closure` 中的逻辑会在触发后执行。** 比如我们在一个读取文件的函数中注入一个 I/O 错误：
 
 ```go
 failpoint.Inject("mock-io-error", func(val failpoint.Value) error {
     return fmt.Errorf("mock error: %v", val.(string))
 })
 ```
+
 最终转换后的代码如下：
 
 ```go
@@ -173,7 +174,7 @@ if ok, val := failpoint.Eval(_curpkg_("mock-io-error")); ok {
 }
 ```
 
-通过 `failpoint.Enable("mock-io-error", "return("disk error")")` 激活程序中的 failpoint，如果需要给 `failpoint.Value` 赋一个自定义的值，则需要传入一个 failpoint expression，比如这里 `return("disk error")`，更多语法可以参考 [failpoint语法](http://www.freebsd.org/cgi/man.cgi?query=fail)。
+通过 `failpoint.Enable("mock-io-error", "return("disk error")")` 激活程序中的 failpoint，如果需要给 `failpoint.Value` 赋一个自定义的值，则需要传入一个 failpoint expression，比如这里 `return("disk error")`，更多语法可以参考 [failpoint 语法](http://www.freebsd.org/cgi/man.cgi?query=fail)。
 
 **闭包可以为 `nil` ，比如 `failpoint.Enable("mock-delay", "sleep(1000)")`，目的是在注入点休眠一秒，不需要执行额外的逻辑。**
 
@@ -210,7 +211,7 @@ failpoint.Inject("mock-panic", nil)
 failpoint.Eval(_curpkg_("mock-panic"))
 ```
 
-**为了可以在并行测试中防止不同的测试任务之间的干扰，可以在 `context.Context` 中包含一个回调函数，用于精细化控制 failpoint 的激活与关闭** ：
+**为了可以在并行测试中防止不同的测试任务之间的干扰，可以在 `context.Context` 中包含一个回调函数，用于精细化控制 failpoint 的激活与关闭**：
 
 ```go
 failpoint.InjectContext(ctx, "failpoint-name", func(val failpoint.Value) {
@@ -318,7 +319,7 @@ outer:
     }
 ```
 
-**对于为什么会有 label, break, continue 和 fallthrough 相关 Marker 函数保持疑问，为什么不直接使用关键字？**
+**为什么会有 `label`、`break`、`continue` 和 `fallthrough` 相关 Marker 函数? 为什么不直接使用关键字？**
 
 * Golang 中如果某个变量或则标签未使用，是不能通过编译的。
 
@@ -332,11 +333,11 @@ outer:
 	    })
 	
 	```
-* break 和 continue 只能在循环上下文中使用，在闭包中使用。
+* `break` 和 `continue` 只能在循环上下文中使用，在闭包中使用。
 
 ### 一些复杂的注入示例
 
-**示例一：在 IF 语句的 INITIAL 和 CONDITIONAL 中注入 failpoint**
+**示例一：在 IF 语句的 `INITIAL` 和 `CONDITIONAL` 中注入 failpoint**
 
 ```go
 if a, b := func() {
@@ -386,7 +387,7 @@ if a, b := func() {
 }
 ```
 
-**示例二：在 SELECT 语句的 CASE 中注入 failpoint 来动态控制某个 case 是否被阻塞**
+**示例二：在 `SELECT` 语句的 CASE 中注入 failpoint 来动态控制某个 case 是否被阻塞**
 
 ```go
 func (s *StoreService) ExecuteStoreTask() {
@@ -484,9 +485,9 @@ default:
 
 除了上面的例子之外，还可以写的更加复杂的情况：
 
-* 循环的 INITIAL 语句, CONDITIONAL 表达式，以及 POST 语句
-* FOR RANGE 语句
-* SWITCH INITIAL 语句
+* 由 `INITIAL` 语句、`CONDITIONAL` 表达式，以及 `POST` 语句组成的循环
+* `FOR RANGE` 语句
+* `SWITCH INITIAL` 语句
 * Slice 的构造和索引
 * 结构体动态初始化
 * ……
@@ -520,6 +521,6 @@ GO_FAILPOINTS="github.com/pingcap/tidb/ddl/renameTableErr=return(100);github.com
 ## 致谢
 
 * 感谢 [gofail](https://github.com/etcd-io/gofail) 提供最初实现，给我们提供了灵感，让我们能站在巨人的肩膀上对 failpoint 进行迭代。
-* 感谢 FreeBSD 定义 [语法规范](http://www.freebsd.org/cgi/man.cgi?query=fail)。
+* 感谢 FreeBSD 定义[语法规范](http://www.freebsd.org/cgi/man.cgi?query=fail)。
 
 最后，欢迎大家和我们交流讨论，一起完善 [Failpoint 项目](https://github.com/pingcap/failpoint)。
