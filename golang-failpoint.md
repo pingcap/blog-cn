@@ -122,7 +122,7 @@ fail_point!("transport_on_send_store", |sid| if let Some(sid) = sid {
 
 ### Failpoint
 
-Failpoint 是一个代码片段，并且仅在对应的 failpoint name 激活的情况下才会执行，如果通过 `failpoint.Disable("failpoint-name-for-demo")` 禁用后， 那么对应的的 failpoint 永远不会触发。所有 failpoint 代码片段不会编译到最终的二进制文件中，比如我们模拟文件系统权限控制：
+Failpoint 是一个代码片段，并且仅在对应的 failpoint name 激活的情况下才会执行，如果通过 `failpoint.Disable("failpoint-name-for-demo")` 禁用后，那么对应的的 failpoint 永远不会触发。所有 failpoint 代码片段不会编译到最终的二进制文件中，比如我们模拟文件系统权限控制：
 
 ```go
 func saveTo(path string) error {
@@ -158,7 +158,7 @@ AST 重写阶段标记需要被重写的部分，主要有以下功能：
 
 ## 如何在你的程序中使用 failpoint 进行注入？
 
-**最简单的方式是使用 `failpoint.Inject` 在调用的地方注入一个 failpoint，最终 `failpoint.Inject` 调用会重写为一个 IF 语句， 其中 `mock-io-error` 用来判断是否触发，`failpoint-closure` 中的逻辑会在触发后执行。** 比如我们在一个读取文件的函数中注入一个 I/O 错误：
+**最简单的方式是使用 `failpoint.Inject` 在调用的地方注入一个 failpoint，最终 `failpoint.Inject` 调用会重写为一个 IF 语句，其中 `mock-io-error` 用来判断是否触发，`failpoint-closure` 中的逻辑会在触发后执行。** 比如我们在一个读取文件的函数中注入一个 I/O 错误：
 
 ```go
 failpoint.Inject("mock-io-error", func(val failpoint.Value) error {
@@ -176,7 +176,7 @@ if ok, val := failpoint.Eval(_curpkg_("mock-io-error")); ok {
 
 通过 `failpoint.Enable("mock-io-error", "return("disk error")")` 激活程序中的 failpoint，如果需要给 `failpoint.Value` 赋一个自定义的值，则需要传入一个 failpoint expression，比如这里 `return("disk error")`，更多语法可以参考 [failpoint 语法](http://www.freebsd.org/cgi/man.cgi?query=fail)。
 
-**闭包可以为 `nil` ，比如 `failpoint.Enable("mock-delay", "sleep(1000)")`，目的是在注入点休眠一秒，不需要执行额外的逻辑。**
+**闭包可以为 `nil`，比如 `failpoint.Enable("mock-delay", "sleep(1000)")`，目的是在注入点休眠一秒，不需要执行额外的逻辑。**
 
 ```go
 failpoint.Inject("mock-delay", nil)
@@ -190,7 +190,7 @@ failpoint.Eval(_curpkg_("mock-delay"))
 failpoint.Eval(_curpkg_("mock-delay"))
 ```
 
-**如果我们只想在 failpoint 中执行一个 panic，不需要接收 `failpoint.Value`，则我们可以在闭包的参数中忽略这个值。** 例如：
+**如果我们只想在 failpoint 中执行一个 panic，不需要接收 `failpoint.Value`，则我们可以在闭包的参数中忽略这个值。**例如：
 
 ```go
 failpoint.Inject("mock-panic", func(_ failpoint.Value) error {
