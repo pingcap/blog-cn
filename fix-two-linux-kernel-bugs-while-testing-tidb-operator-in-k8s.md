@@ -2,11 +2,11 @@
 title: 诊断修复 TiDB Operator 在 K8s 测试中遇到的 Linux 内核问题
 author: ['张文博']
 date: 2019-05-23
-summary: 
+summary: 我们在 K8s 中测试 TiDB Operator 时发现了两个 Linux 内核错误，这些错误已经困扰我们很长一段时间，并没有在整个 K8s 社区中彻底修复。经过广泛的调查和诊断，我们已经确定了处理这些问题的方法。
 tags: ['K8s', 'TiDB Operator','Linux']
 ---
 
-[Kubernetes](https://en.wikipedia.org/wiki/Kubernetes)（K8s）是一个开源容器编排系统，可自动执行应用程序部署、扩展和管理。它是云原生世界的操作系统。 K8s 或操作系统中的任何缺陷都可能使用户进程存在风险。作为 PingCAP EE（效率工程）团队，我们在 K8s 中测试 [TiDB Operator](https://pingcap.com/blog-cn/tidb-operator-introduction/)（一个创建和管理 TiDB 集群的工具）时，我们发现了两个 Linux 内核错误。这些错误已经困扰我们很长一段时间，并没有在整个 K8s 社区中彻底修复。
+[Kubernetes](https://en.wikipedia.org/wiki/Kubernetes)（K8s）是一个开源容器编排系统，可自动执行应用程序部署、扩展和管理。它是云原生世界的操作系统。 K8s 或操作系统中的任何缺陷都可能使用户进程存在风险。作为 PingCAP EE（效率工程）团队，我们在 K8s 中测试 [TiDB Operator](https://pingcap.com/blog-cn/tidb-operator-introduction/)（一个创建和管理 TiDB 集群的工具）时，发现了两个 Linux 内核错误。这些错误已经困扰我们很长一段时间，并没有在整个 K8s 社区中彻底修复。
 
 经过广泛的调查和诊断，我们已经确定了处理这些问题的方法。在这篇文章中，我们将与大家分享这些解决方法。不过，尽管这些方法很有用，但我们认为这只是权宜之策，相信未来会有更优雅的解决方案，也期望 K8s 社区、RHEL 和 CentOS 可以在不久的将来彻底修复这些问题。
 
@@ -75,14 +75,14 @@ tags: ['K8s', 'TiDB Operator','Linux']
 	
 	但如果 kubelet 版本是 v1.13 及以下，则无法通过在编译 kubelet 的时候加 Build Tags 来关闭，需要重新编译 kubelet：
 	
-	首先下载 kubernetes 代码：
+	首先下载 Kubernetes 代码：
 	
 	```
 	$ git clone --branch v1.12.8 --single-branch --depth 1 https://github.com/kubernetes/kubernetes
 	$ cd kubernetes
 	```
 	
-	然后手工将开启 kmem account 功能的 [两个函数](https://github.com/kubernetes/kubernetes/blob/release-1.12/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/memory.go#L70-L106) 替换成 [下面这样](https://github.com/kubernetes/kubernetes/blob/release-1.14/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/kmem_disabled.go#L5-L11)：
+	然后手动将开启 kmem account 功能的 [两个函数](https://github.com/kubernetes/kubernetes/blob/release-1.12/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/memory.go#L70-L106) 替换成 [下面这样](https://github.com/kubernetes/kubernetes/blob/release-1.14/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/kmem_disabled.go#L5-L11)：
 	
 	```
 	func EnableKernelMemoryAccounting(path string) error {
@@ -101,7 +101,7 @@ tags: ['K8s', 'TiDB Operator','Linux']
 	$ KUBE_GIT_VERSION=v1.12.8 ./build/run.sh make kubelet
 	```
 	
-	编译好的 kubelet 在 `./_output/dockerized/bin/$GOOS/$GOARCH/kubelet`。
+	编译好的 kubelet 在 `./_output/dockerized/bin/$GOOS/$GOARCH/kubelet` 中。
 
 2. 同时需要升级 docker-ce 到 18.09.1 以上，此版本 docker 已经将 runc 的 kmem account 功能关闭。
 
@@ -191,6 +191,6 @@ cat: memory.kmem.slabinfo: Input/output error
 	kpatch list (Checks the loaded module)
 	```
 
-### 总结
+## 总结
 
 虽然我们修复了这些内核错误，但是未来应该会有更好的解决方案。对于 Bug＃1，我们希望 K8s 社区可以为 kubelet 提供一个参数，以允许用户禁用或启用 kmem account 功能。对于 Bug＃2，最佳解决方案是由 RHEL 和 CentOS 修复内核错误，希望 TiDB 用户将 CentOS 升级到新版后，不必再担心这个问题。
