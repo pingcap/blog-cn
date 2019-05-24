@@ -73,7 +73,7 @@ tags: ['K8s', 'TiDB Operator','Linux']
 	$ KUBE_GIT_VERSION=v1.14.1 ./build/run.sh make kubelet GOFLAGS="-tags=nokmem"
 	```
 	
-	但如果 kubelet 版本是 v1.13 及以下，则无法通过在编译 kubelet 的时候加 Build Tags 来关闭，需要重新编译 kubelet：
+	但如果 kubelet 版本是 v1.13 及以下，则无法通过在编译 kubelet 的时候加 Build Tags 来关闭，需要重新编译 kubelet，步骤如下。
 	
 	首先下载 Kubernetes 代码：
 	
@@ -171,7 +171,7 @@ cat: memory.kmem.slabinfo: Input/output error
 	
 	```
 
-2. 安装  [kpatch](https://github.com/dynup/kpatch) 及 kpatch-build：
+2. 安装 [kpatch](https://github.com/dynup/kpatch) 及 kpatch-build：
 
 	```
 	git clone https://github.com/dynup/kpatch && cd kpatch
