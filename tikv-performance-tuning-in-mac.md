@@ -113,7 +113,7 @@ iconv -f ISO-8859-1 -t UTF-8 out.mem_stacks| ./gprof2dot.py -f dtrace | dot -Tsv
 
 ![](media/tikv-performance-tuning-in-mac/8.png)
 
-具体可以参考 [这篇文章](https://gist.github.com/siddontang/af37155035a5d5641e6a601fef661f4c) 在 Mac 上面安装使用相关的工具。悲催的是，DTrace 虽然强大，但 Mac 最近的版本，引入了更强大的安全机制 - System Integrity Protection (SIP) ，导致很多 DTrace 的功能不能使用，所以我们要显示的关掉 SIP，可以参考 [这篇文章](http://jimtechstuff.blogspot.com/2015/10/dtrace-broken-under-el-capitan.html)，不过幸运的是上面提到的 CPU 和 Memory 的 tracing 是能直接使用的，所以并不需要关闭 SIP。
+具体可以参考 [这篇文章](https://gist.github.com/siddontang/af37155035a5d5641e6a601fef661f4c) 在 Mac 上面安装使用相关的工具。悲催的是，DTrace 虽然强大，但 Mac 最近的版本，引入了更强大的安全机制 - System Integrity Protection (SIP) ，导致很多 DTrace 的功能不能使用，所以我们要先关掉 SIP，可以参考 [这篇文章](http://jimtechstuff.blogspot.com/2015/10/dtrace-broken-under-el-capitan.html)，不过幸运的是，上面提到的 CPU 和 Memory 的 tracing 是能直接使用的，所以并不需要关闭 SIP。
 
 ## 总结
 
