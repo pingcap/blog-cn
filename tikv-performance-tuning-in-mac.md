@@ -6,7 +6,7 @@ summary: 很多同学的开发机是基于 Mac OSX，很不方便的是大家在
 tags: ['TiKV','调优','MAC']
 ---
 
-在多数时候，我们都只会在 Linux 系统上面去运行 TiKV，所以很多的调优经验都是基于 Linux 的，譬如如何使用 perf，如果使用 bcc 相关的工具，还有 ftrace 和 eBPF 这些，但在我们 team，很多同学的开发机是基于 Mac OSX，所以这里就出现了一个不方便的场景，大家在 Mac 上面给 TiKV 开发了 feature，想看看效果好不好，可能就需要登录到 Linux 服务器上面去运行，再用工具看看是否有性能问题。
+在多数时候，我们都只会在 Linux 系统上面去运行 TiKV，所以很多的调优经验都是基于 Linux 的，譬如如何使用 perf，如果使用 bcc 相关的工具，还有 ftrace 和 eBPF 这些，但在我们 team 很多同学的开发机是基于 Mac OSX，所以这里就出现了一个不方便的场景，大家在 Mac 上面给 TiKV 开发了 feature，想看看效果好不好，可能就需要登录到 Linux 服务器上面去运行，再用工具看看是否有性能问题。
 
 多数时候，我们其实不需要进行那种超大规模压力的性能测试，很多问题通过常规量小的性能测试就能够跑出来，加上现在大家的 Mac 机器配置其实是非常的好，所以我一直觉得如果很多工作能在 Mac 上面去解决，就不需要再额外跑到服务器上面去折腾了。其实，Mac 上面早就给我们提供了非常强大的工具。
 
@@ -113,7 +113,7 @@ iconv -f ISO-8859-1 -t UTF-8 out.mem_stacks| ./gprof2dot.py -f dtrace | dot -Tsv
 
 ![](media/tikv-performance-tuning-in-mac/8.png)
 
-具体可以参考 [这篇文章](https://gist.github.com/siddontang/af37155035a5d5641e6a601fef661f4c) 在 Mac 上面安装使用相关的工具。悲催的是，DTrace 虽然强大，但 Mac 最近的版本，引入了更强大的安全机制 - System Integrity Protection (SIP) ，导致很多 DTrace 的功能不能使用，所以我们要先关掉 SIP，可以参考 [这篇文章](http://jimtechstuff.blogspot.com/2015/10/dtrace-broken-under-el-capitan.html)，不过幸运的是，上面提到的 CPU 和 Memory 的 tracing 是能直接使用的，所以并不需要关闭 SIP。
+具体可以参考 [这篇文章](https://gist.github.com/siddontang/af37155035a5d5641e6a601fef661f4c) 在 Mac 上面安装使用相关的工具。悲催的是，DTrace 虽然强大，但 Mac 最近的版本，引入了更强大的安全机制 - System Integrity Protection (SIP) ，导致很多 DTrace 的功能不能使用，所以我们要先关掉 SIP，可以参考 [这篇文章](http://jimtechstuff.blogspot.com/2015/10/dtrace-broken-under-el-capitan.html)。不过幸运的是，上面提到的 CPU 和 Memory 的 tracing 是能直接使用的，所以并不需要关闭 SIP。
 
 ## 总结
 
