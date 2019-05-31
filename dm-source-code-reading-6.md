@@ -2,7 +2,7 @@
 title: DM 源码阅读系列文章（六）relay log 的实现
 author: ['张学程']
 date: 2019-05-31
-summary: 本篇文章将会详细地介绍 DM 核心处理单元 Binlog replication，内容包含 binlog 读取、过滤、路由、转换，以及执行等逻辑。 
+summary: 本篇文章的内容包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。 
 tags: ['DM 源码阅读','社区']
 ---
 
@@ -75,7 +75,7 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 在 relay 处理单元中，对于从上游读取到的 binlog event，我们需要判断是否需要写进 relay log file 及是否需要更新对应的 `relay.meta` 内的断点信息。因此在通过 [Reader interface](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L30) 读取到 binlog event 后，通过调用 [Transformer interface](https://github.com/pingcap/dm/blob/f6f0566424/relay/transformer/transformer.go#L37) 来对 binlog event 进行相关的转换处理。
 
-当前对 Transformer interface 的实现为 [transformer](https://github.com/pingcap/dm/blob/f6f0566424/relay/transformer/transformer.go#L49)，其主要通过在 [Transform](https://github.com/pingcap/dm/blob/f6f0566424/relay/transformer/transformer.go#L61) 方法中 [对 binlog event 的类型进行判断](https://github.com/pingcap/dm/blob/f6f0566424/relay/transformer/transformer.go#L67) 后再进行相应处理，包括：
+当前对 Transformer interface 的实现为 [transformer](https://github.com/pingcap/dm/blob/f6f0566424/relay/transformer/transformer.go#L49)，其主要通过在 [`Transform`](https://github.com/pingcap/dm/blob/f6f0566424/relay/transformer/transformer.go#L61) 方法中 [对 binlog event 的类型进行判断](https://github.com/pingcap/dm/blob/f6f0566424/relay/transformer/transformer.go#L67) 后再进行相应处理，包括：
 
 | binlog event 类型 | 是否过滤 | 是否需要更新 relay.meta |
 |:-----------|:------------|:------------|
