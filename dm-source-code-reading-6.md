@@ -135,7 +135,7 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 2.  [打开该 event 需要写入到的 relay log file](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L182) 作为当前活跃的 relay log file。
 
-3.  [检查当前 relay log file 中是否存在 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L190)（fe `bin`），如果不存在则为其 [写入 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L194)。
+3.  [检查当前 relay log file 中是否存在 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L190)（``` fe `bin` ```），如果不存在则为其 [写入 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L194)。
 
 4.  [检查当前 relay log file 中是否存在 `FormatDescriptionEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L201)，如果不存在则为其 [写入该 FormatDescriptionEvent](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L205)。
 
