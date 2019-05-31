@@ -165,7 +165,7 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 ## 主从切换支持
 
-为支持将 relay 处理单元连接的上游 master server 在 replica group 内的不同 server 间进行切换（也包括 relay 处理单元连接的上游 VIP 指向的实际 server 发生了改变），relay 处理单元会尝试将从不同上游 server 读取到的 binlog event 保存到不同的 relay log 子目录中，目录与文件结构可以参考前文的 [relay log 目录结构](https://docs.google.com/document/d/14Aj9IwsaWcMgYmdaqYSzeChdM6MxbuT3npWZZ4gAJis/edit#heading=h.fkyotsq7d5sh)。
+为支持将 relay 处理单元连接的上游 master server 在 replica group 内的不同 server 间进行切换（也包括 relay 处理单元连接的上游 VIP 指向的实际 server 发生了改变），relay 处理单元会尝试将从不同上游 server 读取到的 binlog event 保存到不同的 relay log 子目录中，目录与文件结构可以参考前文的 [relay log 目录结构](#relay-log-目录结构)。
 
 为支持上述功能，relay 处理单元在读取 binlog event 前主要执行以下操作：
 
@@ -177,7 +177,7 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 relay 处理单元用于从上游读取 binlog event 并将其写入到本地的 relay log file 中。当执行增量数据复制时，binlog replication 处理单元需要通过 [`streamer pkg`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/) 读取 relay log file 并从中解析获取需要同步的数据，其中执行读取的对象为 [`BinlogReader`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L55)。
 
-由前文介绍过的主从切换支持可知我们会将具体的 relay log 数据存储在可能的多个子目录中，因此在读取 relay log 时，我们也 需要考虑按序依次读取，主要操作包括：
+由前文介绍过的主从切换支持可知我们会将具体的 relay log 数据存储在可能的多个子目录中，因此在读取 relay log 时，我们也需要考虑按序依次读取，主要操作包括：
 
 1.  [调用 `parseRelay`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L114) 开始从 relay log 的根目录执行解析读取。
 
