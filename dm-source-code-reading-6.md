@@ -119,7 +119,7 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 需要注意的是，我们不能确保 master server 会将其 binlog file 中的所有 event 都发送给 slave（如当 MariaDB 未设置 [`BINLOG_SEND_ANNOTATE_ROWS_EVENT`](https://mariadb.com/kb/en/library/com_binlog_dump/) flag 时，master 就不会向 slave 发送 [`ANNOTATE_ROWS_EVENT`](https://mariadb.com/kb/en/library/annotate_rows_event/)），因此在写入 event 到文件前，需要通过 [`handleFileHoleExist`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L319) 判断如果将 event 写入到文件是否会存在 hole。如果存在 hode，则通过 [`event.GenDummyEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L347) 生成相应 size 的 dummy event [对 hole 进行填充](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L353)。
 
-另外需要注意的是，我们不能确保 master server 不会将其已经发送给 slave 并写入到了 relay log file 的 event 再次发送给 slave（如 master 在开始发送 slave 请求的 binlog event 前，会先发送 `FormatDescriptionEvent` 与 `PreviousGTIDsEvent` 等给 slave），因此在写入 event 到文件前，需要通过 [handleDuplicateEventsExist](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L357) 判断该 event 是否已经存在于 relay log file 中。
+另外需要注意的是，我们不能确保 master server 不会将其已经发送给 slave 并写入到了 relay log file 的 event 再次发送给 slave（如 master 在开始发送 slave 请求的 binlog event 前，会先发送 `FormatDescriptionEvent` 与 `PreviousGTIDsEvent` 等给 slave），因此在写入 event 到文件前，需要通过 [`handleDuplicateEventsExist`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L357) 判断该 event 是否已经存在于 relay log file 中。
 
 #### FormatDescriptionEvent
 
@@ -135,7 +135,7 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 2.  [打开该 event 需要写入到的 relay log file](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L182) 作为当前活跃的 relay log file。
 
-3.  [检查当前 relay log file 中是否存在 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L190)（fe `bin`），如果不存在则为其[写入 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L194)。
+3.  [检查当前 relay log file 中是否存在 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L190)（fe `bin`），如果不存在则为其 [写入 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L194)。
 
 4.  [检查当前 relay log file 中是否存在 `FormatDescriptionEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L201)，如果不存在则为其 [写入该 FormatDescriptionEvent](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L205)。
 
@@ -149,7 +149,7 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 ### 2. Recover relay log file
 
-在写入 binlog event 到 relay log file 时，尽管可以通过 [Flush](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L130) 方法强制将缓冲中的数据刷新到磁盘文件中，但仍然可能出现 DM-worker 进程异常退出时部分数据未能刷新到磁盘文件中的情况，造成 relay log file 内部分 event 数据缺失。
+在写入 binlog event 到 relay log file 时，尽管可以通过 [`Flush`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L130) 方法强制将缓冲中的数据刷新到磁盘文件中，但仍然可能出现 DM-worker 进程异常退出时部分数据未能刷新到磁盘文件中的情况，造成 relay log file 内部分 event 数据缺失。
 
 另外，对于一个事务对应的多个 binlog event，可能出现仅写入了其中一部分 event 时 DM-worker 发生退出的情况，造成 relay log file 中部分事务缺失部分 event。
 
@@ -189,7 +189,7 @@ relay 处理单元用于从上游读取 binlog event 并将其写入到本地的
 
 5.  在 `parseFileAsPossible` 中，反复返回 [调用 `parseFile`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L244) 进行 binlog event 的读取，直到 [发生错误](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L246) 或 [检测到需要切换到新的 relay log 文件或子目录](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L253)。
 
-6.  对于是否需要切换到新的 relay log 文件或子目录的检测通过在 parseFile 内[调用 `needSwitchSubDir`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L345) 与[调用 `relaySubDirUpdated`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L356) 实现。
+6.  对于是否需要切换到新的 relay log 文件或子目录的检测通过在 parseFile 内 [调用 `needSwitchSubDir`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L345) 与 [调用 `relaySubDirUpdated`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L356) 实现。
 
 ## 小结
 
