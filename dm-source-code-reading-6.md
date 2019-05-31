@@ -165,7 +165,7 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 ## 主从切换支持
 
-为支持将 relay 处理单元连接的上游 master server 在 replica group 内的不同 server 间进行切换（也包括 relay 处理单元连接的上游 VIP 指向的实际 server 发生了改变），relay 处理单元会尝试将从不同上游 server 读取到的 binlog event 保存到不同的 relay log 子目录中，目录与文件结构可以参考前文的 [relay log 目录结构](https://docs.google.com/document/d/14Aj9IwsaWcMgYmdaqYSzeChdM6MxbuT3npWZZ4gAJis/edit#heading=h.fkyotsq7d5sh)。
+为支持将 relay 处理单元连接的上游 master server 在 replica group 内的不同 server 间进行切换（也包括 relay 处理单元连接的上游 VIP 指向的实际 server 发生了改变），relay 处理单元会尝试将从不同上游 server 读取到的 binlog event 保存到不同的 relay log 子目录中，目录与文件结构可以参考前文的 [relay log 目录结构](#relay-log-目录结构)。
 
 为支持上述功能，relay 处理单元在读取 binlog event 前主要执行以下操作：
 
