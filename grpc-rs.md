@@ -236,7 +236,7 @@ pub fn unary_async<P, Q>(channel: &Channel,
 
 ## 写在最后
 
-这篇简单介绍了 gRPC Core 的实现和 gRPC-rs 的封装，详细的用法，在这就不做过多介绍了，大家如果感兴趣可以查看 [examples]。 gRPC-rs 深入使用了 Future，里面有很多神奇的用法，比如 Futures in gRPC-rs 那节最后的 `executer`， gRPC-rs 利用 CQ 实现了一个能并发执行 Future 的 `executer`（类似 furtures-rs 中的 [Executer]），大幅减少 context switch，性能得到了显著提升。如果你对 gRPC 和 rust 都很感兴趣，欢迎参与开发，目前还有一些工作没完成，详情请点击 [https://github.com/pingcap/grpc-rs](gRPC-rs)
+这篇简单介绍了 gRPC Core 的实现和 gRPC-rs 的封装，详细的用法，在这就不做过多介绍了，大家如果感兴趣可以查看 [examples]。 gRPC-rs 深入使用了 Future，里面有很多神奇的用法，比如 Futures in gRPC-rs 那节最后的 `executer`， gRPC-rs 利用 CQ 实现了一个能并发执行 Future 的 `executer`（类似 furtures-rs 中的 [Executer]），大幅减少 context switch，性能得到了显著提升。如果你对 gRPC 和 rust 都很感兴趣，欢迎参与开发，目前还有一些工作没完成，详情请点击 [https://github.com/pingcap/grpc-rs](https://github.com/pingcap/grpc-rs)。
 
 参考资料：
 
