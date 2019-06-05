@@ -6,7 +6,9 @@ summary: 本篇文章介绍了 DM 的定制化数据同步功能中库表路由�
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 DM 源码阅读系列文章的第七篇，在 [上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-6/) 中我们介绍了 relay log 的实现，主要包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。本篇文章我们将会对 DM 的定制化数据同步功能进行详细的讲解。在一般的数据同步中，上下游的数据是一一对应的，即上下游的库名、表名、列名以及每一列的值都是相同的，但是很多用户因为业务的原因希望 DM 在同步数据到 TiDB 时进行一些定制化的转化。
+本文为 DM 源码阅读系列文章的第七篇，在 [上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-6/) 中我们介绍了 relay log 的实现，主要包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。
+
+**本篇文章我们将会对 DM 的定制化数据同步功能进行详细的讲解。** 在一般的数据同步中，上下游的数据是一一对应的，即上下游的库名、表名、列名以及每一列的值都是相同的，但是很多用户因为业务的原因希望 DM 在同步数据到 TiDB 时进行一些定制化的转化。
 
 下面我们将主要介绍数据同步定制化中的库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。值得注意的是，由于其他一些工具（例如 TiDB Lightning 和 TiDB Binlog）也需要类似的功能，所以这四个功能都以 package 的形式维护在 [tidb-tools](https://github.com/pingcap/tidb-tools/tree/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg) 项目下，这样方便使用和维护。
 
@@ -69,7 +71,7 @@ Selector 的底层实现是 [`trieSelector`](https://github.com/pingcap/tidb-too
 
 列值转化功能用于对指定列的值做一些转化，主要用于分库分表的同步场景。比较典型的场景是：在上游分表中使用自增列作为主键，这样数据在同步到 TiDB 的一个表时会出现主键冲突，因此我们需要根据一定规则对主键做转化，保证每个主键在全局仍然是唯一的。
 
-该功能实现在 [`pkg/column-mapping`](https://github.com/pingcap/tidb-tools/tree/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping) 中的 [PartitionID](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L438)：修改列的值的最高几位为 `PartitionID` 的值（只能作用于 Int64 类型的列）。
+该功能实现在 [`pkg/column-mapping`](https://github.com/pingcap/tidb-tools/tree/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping) 中的 [`PartitionID`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L438)：修改列的值的最高几位为 `PartitionID` 的值（只能作用于 Int64 类型的列）。
 
 代码中使用 [Rule](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L77) 来设置 column mapping 的规则，Rule 的属性及说明如下表所示：
 
@@ -79,7 +81,7 @@ Selector 的底层实现是 [`trieSelector`](https://github.com/pingcap/tidb-too
 | [`PatternTable`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L79) | 匹配规则的表的模式 | 可以设置为指定的表名，也可以使用通配符 “\*” 和 “?” |
 | [`SourceColumn`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L80) | 需要转化的列 | 列名 |
 | [`TargetColumn`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L81) | 转化后的值保存到哪个列 | 列名 |
-| [`Expression`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L82) | 转化表达式 | 目前只支持 [PartitionID](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L49) |
+| [`Expression`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L82) | 转化表达式 | 目前只支持 [`PartitionID`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L49) |
 | [`Arguments`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L83) | 转化所需要的参数 | Expression 为 `PartitionID`，参数为 `InstanceID`、schema 名称前缀、table 名称前缀以及前缀与 ID 的分割符号 |
 
 Expression 为 `PartitionID` 的配置和转化的计算方式都较为复杂，下面举个例子说明。
