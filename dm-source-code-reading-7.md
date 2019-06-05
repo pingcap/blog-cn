@@ -2,11 +2,11 @@
 title: DM 源码阅读系列文章（七）定制化数据同步功能的实现
 author: ['王相']
 date: 2019-06-05
-summary: 本篇文章介绍了 DM 中的定制化数据同步功能中的库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。
+summary: 本篇文章介绍了 DM 的定制化数据同步功能中库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 DM 源码阅读系列文章的第七篇，在 [上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-6/) 中我们介绍了 relay log 的实现，主要包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。本篇文章我们将会对 DM 中的定制化数据同步功能进行详细的讲解。在一般的数据同步中，上下游的数据是一一对应的，即上下游的库名、表名、列名以及每一列的值都是相同的，但是很多用户因为业务的原因希望 DM 在同步数据到 TiDB 时进行一些定制化的转化。
+本文为 DM 源码阅读系列文章的第七篇，在 [上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-6/) 中我们介绍了 relay log 的实现，主要包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。本篇文章我们将会对 DM 的定制化数据同步功能进行详细的讲解。在一般的数据同步中，上下游的数据是一一对应的，即上下游的库名、表名、列名以及每一列的值都是相同的，但是很多用户因为业务的原因希望 DM 在同步数据到 TiDB 时进行一些定制化的转化。
 
 下面我们将主要介绍数据同步定制化中的库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。值得注意的是，由于其他一些工具（例如 TiDB Lightning 和 TiDB Binlog）也需要类似的功能，所以这四个功能都以 package 的形式维护在 [tidb-tools](https://github.com/pingcap/tidb-tools/tree/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg) 项目下，这样方便使用和维护。
 
@@ -144,4 +144,4 @@ filter-partition-rule:
 
 ## 小结
 
-以上就是定制化数据同步功能中库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）这四个主要功能的实现介绍。欢迎大家阅读相关代码深入了解，也欢迎给我们提 pr 优化代码。下一篇我们将介绍 DM 是如何支持上游 online DDL 工具（pt-osc, gh-ost）的 DDL 同步场景的。
+以上就是定制化数据同步功能中库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）的实现介绍。欢迎大家阅读相关代码深入了解，也欢迎给我们提 pr 优化代码。下一篇我们将介绍 DM 是如何支持上游 online DDL 工具（pt-osc，gh-ost）的 DDL 同步场景的。
