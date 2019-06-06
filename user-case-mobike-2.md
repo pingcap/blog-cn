@@ -69,7 +69,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 解决方案：
 
-- 通过设置 [`SHARD_ROW_ID_BITS`](https://github.com/pingcap/docs/blob/master/sql/tidb-specific.md#shard_row_id_bits)，可以把 rowid 打散写入多个不同的 Region，缓解写入热点问题：`ALTER TABLE table_name SHARD_ROW_ID_BITS = 8;`。
+- 通过设置 [`SHARD_ROW_ID_BITS`](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables/#shard_row_id_bits)，可以把 rowid 打散写入多个不同的 Region，缓解写入热点问题：`ALTER TABLE table_name SHARD_ROW_ID_BITS = 8;`。
 
 **2.3.3 异地机房由于网络延迟相对比较高，设计中赋予它的主要职责是灾备，并不提供服务。曾经出现过一次大约持续 10s 的网络抖动，TiDB 端发现大量的 no Leader 日志，Region follower 节点出现网络隔离情况，隔离节点 term 自增，重新接入集群时候会导致 Region 重新选主，较长时间的网络波动，会让上面的选主发生多次，而选主过程中无法提供正常服务，最后可能导致雪崩。**
 
