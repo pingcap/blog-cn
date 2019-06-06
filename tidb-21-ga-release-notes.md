@@ -35,7 +35,7 @@ tags: ['TiDB']
 * TiDB 插入和更新宽表，性能提升接近 20 倍
 * 支持在配置文件中设置单个查询的内存使用上限
 * 优化 `Hash Join` 的执行过程，当 Join 类型为 `Inner Join` 或者 `Semi Join` 时，如果内表为空，不再读取外表数据，快速返回结果
-* 支持 [`EXPLAIN ANALYZE`](https://github.com/pingcap/docs/blob/master/sql/understanding-the-query-execution-plan.md#explain-analyze-output-format) 语句，用于查看 Query 执行过程中各个算子的运行时间，返回结果行数等运行时统计信息
+* 支持 [`EXPLAIN ANALYZE`](https://pingcap.com/docs-cn/dev/reference/performance/understanding-the-query-execution-plan/#span-id-explain-analyze-output-format-explain-analyze-输出格式-span) 语句，用于查看 Query 执行过程中各个算子的运行时间，返回结果行数等运行时统计信息
 
 ### 统计信息
 
@@ -107,7 +107,7 @@ tags: ['TiDB']
 * 优化 Coordinator 的启动，减少重启 PD 时带来的不必要调度
 * 优化 Balance Scheduler 频繁调度小 Region 的问题
 * 优化 Region merge，调度时考虑 Region 中数据的行数
-* [新增一些控制调度策略的开关](https://github.com/pingcap/docs-cn/blob/master/tools/pd-control.md#config-show--set--)
+* [新增一些控制调度策略的开关](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#config-show--set--)
 * 完善[调度模拟器](https://github.com/pingcap/pd/tree/release-2.1/tools/pd-simulator)，添加调度场景模拟
 
 ### API 及运维工具
@@ -117,11 +117,11 @@ tags: ['TiDB']
 * 新增 [`GCSafePoint` 接口](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L64-L66)，用于支持 TiDB 并发分布式 GC
 * 新增 [`GetAllStores` 接口](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L32)，用于支持 TiDB 并发分布式 GC
 * pd-ctl 新增：
-    * [使用统计信息进行 Region split](https://github.com/pingcap/docs-cn/blob/release-2.1/tools/pd-control.md#operator-show--add--remove)
-    * [调用 `jq` 来格式化 JSON 输出](https://github.com/pingcap/docs-cn/blob/release-2.1/tools/pd-control.md#jq-%E6%A0%BC%E5%BC%8F%E5%8C%96-json-%E8%BE%93%E5%87%BA%E7%A4%BA%E4%BE%8B)
-    * [查询指定 store 的 Region 信息](https://github.com/pingcap/docs-cn/blob/release-2.1/tools/pd-control.md#region-store-store_id)
-    * [查询按 version 排序的 topN 的 Region 列表](https://github.com/pingcap/docs-cn/blob/release-2.1/tools/pd-control.md#region-topconfver-limit)
-    * [查询按 size 排序的 topN 的 Region 列表](https://github.com/pingcap/docs-cn/blob/release-2.1/tools/pd-control.md#region-topsize-limit)
+    * [使用统计信息进行 Region split](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#operator-show--add--remove)
+    * [调用 `jq` 来格式化 JSON 输出](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#jq-格式化-json-输出示例)
+    * [查询指定 store 的 Region 信息](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-store-store_id)
+    * [查询按 version 排序的 topN 的 Region 列表](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-topconfver-limit)
+    * [查询按 size 排序的 topN 的 Region 列表](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-topsize-limit)
     * [更精确的 TSO 解码](https://github.com/pingcap/pd/pull/1242)
 * [pd-recover](https://github.com/pingcap/docs-cn/blob/master/v2.1/tools/pd-recover.md) 不再需要提供 max-replica 参数
 
