@@ -163,7 +163,7 @@ Hash Aggregation 的执行阶段可分为如下图所示的 5 步：
 
 ![](media/tidb-source-code-reading-22/4.png)
 
-在 TiDB 中，使用 [EXPLAIN ANALYZE](https://github.com/pingcap/docs-cn/blob/master/sql/understanding-the-query-execution-plan.md#explain-analyze-%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F) 可以获取 SQL 的执行统计信息。因篇幅原因此处仅贴出 TPC-H query-17 部分算子的 EXPLAIN ANALYZE 结果。
+在 TiDB 中，使用 [EXPLAIN ANALYZE](https://pingcap.com/docs-cn/dev/reference/performance/understanding-the-query-execution-plan/#span-id-explain-analyze-output-format-explain-analyze-输出格式-span) 可以获取 SQL 的执行统计信息。因篇幅原因此处仅贴出 TPC-H query-17 部分算子的 EXPLAIN ANALYZE 结果。
 
 `HashAgg` 单线程计算时：
 
