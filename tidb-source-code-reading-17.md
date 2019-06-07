@@ -136,4 +136,4 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 ## End
 
-TiDB 目前一共支持 [十多种 DDL](https://github.com/pingcap/tidb/blob/source-code/model/ddl.go#L32)，具体以及和 MySQL 兼容性对比可以看 [这里](https://github.com/pingcap/docs-cn/blob/master/sql/ddl.md)。剩余其它类型的 DDL 源码实现读者可以自行阅读，流程和上述几种 DDL 类似。
+TiDB 目前一共支持 [十多种 DDL](https://github.com/pingcap/tidb/blob/source-code/model/ddl.go#L32)，具体以及和 MySQL 兼容性对比可以看 [这里](https://pingcap.com/docs-cn/dev/reference/sql/statements/ddl/)。剩余其它类型的 DDL 源码实现读者可以自行阅读，流程和上述几种 DDL 类似。
