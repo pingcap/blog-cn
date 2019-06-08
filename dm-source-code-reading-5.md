@@ -20,8 +20,8 @@ tags: ['DM 源码阅读','社区']
 	
 	| 操作 | 说明 |
 	|:-------|:-----------------|
-	| Filter | 根据 [库/表同步黑白名单](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#black-white-table-lists) 对库/表进行过滤；根据 [binlog event 类型过滤](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#binlog-event-filter)。|
-	| Routing | 根据 [库/表 路由规则](https://pingcap.com/docs-cn/tools/dm/data-synchronization-features/#table-routing) 对库/表名进行转换，用于合库合表。 |
+	| Filter | 根据 [库/表同步黑白名单](https://pingcap.com/docs-cn/dev/reference/tools/data-migration/features/overview/#black-white-table-lists) 对库/表进行过滤；根据 [binlog event 类型过滤](https://pingcap.com/docs-cn/dev/reference/tools/data-migration/features/overview/#binlog-event-filter)。|
+	| Routing | 根据 [库/表 路由规则](https://pingcap.com/docs-cn/dev/reference/tools/data-migration/features/overview/#table-routing) 对库/表名进行转换，用于合库合表。 |
 	| Convert | 将  binlog 转换为 [job 对象](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/job.go)，发送到 executor。 |
 	
 3.  executor 对 job 进行冲突检测，然后根据固定规则分发给对应的 worker 执行。
