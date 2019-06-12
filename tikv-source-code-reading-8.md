@@ -37,13 +37,13 @@ ASSERT_EQ(ev.tag, tag);
 ASSERT(strcmp(buffer, "Hello gRPC"));
 ```
 
-可以看到，对 `grpc_call` 的操作是通过一次 `grpc_call_start_batch` 来指定的。这个 start batch 会将指定的操作放在内存 buffer 当中，然后通过 `grpc_completion_queue_next` 来实际执行相关操作，如收发消息。这里需要注意的是 `tag` 这个变量。当这些操作都完成以后，`grpc_completion_queue_next` 会返回一个包含 tag 的消息来通知这个操作完成了。所以在代码的末尾就可以在先前指定的 buffer 读出预期的字符串。
+可以看到，对 `grpc_call` 的操作是通过一次 `grpc_call_start_batch` 来指定的。这个 start batch 会将指定的操作放在内存 buffer 当中，然后通过 `grpc_completion_queue_next` 来实际执行相关操作，如收发消息。这里需要注意的是 `tag` 这个变量。当这些操作都完成以后，`grpc_completion_queue_next` 会返回一个包含 tag 的消息来通知这个操作完成了。所以在代码的末尾就可以在先前指定的 `buffer` 读出预期的字符串。
 
 由于篇幅有限，对于 gRPC C Core 的解析就不再深入了，对这部分很感兴趣的朋友也可以在 [github.com/grpc/grpc](https://github.com/grpc/grpc) 阅读相关文档和源码。
 
 ## 封装与实现细节
 
-通过上文的分析可以明显看到，gRPC C Core 的通知机制其实和 Rust Future 的通知机制非常类似。Rust Future 提供一个 poll 方法来检验当前 Future 是否已经 ready。如果尚未 ready，poll 方法会注册一个通知钩子 `task`。等到 ready 时，`task` 会被调用，从而触发对这个 Future 的再次 poll，获取结果。`task` 其实和上文中的 `tag` 正好对应起来了。所以在 grpc-rs 中，`tag` 就是一个储存了 `task` 的 enum。
+通过上文的分析可以明显看到，gRPC C Core 的通知机制其实和 Rust Future 的通知机制非常类似。Rust Future 提供一个 poll 方法来检验当前 Future 是否已经 ready。如果尚未 ready，poll 方法会注册一个通知钩子 `task`。等到 ready 时，`task` 会被调用，从而触发对这个 Future 的再次 poll，获取结果。`task` 其实和上文中的 `tag` 正好对应起来了，而在 grpc-rs 中，`tag` 就是一个储存了 `task` 的 enum。
 
 ```rust
 pub enum CallTag {
