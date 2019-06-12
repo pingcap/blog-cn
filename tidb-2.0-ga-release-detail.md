@@ -54,7 +54,7 @@ tags: ['TiDB']
 
 ## 版本升级
 
-从 TiDB 1.0 到 2.0 可以进行滚动升级，具体步骤可以参考 [这篇文档](https://pingcap.com/docs-cn/op-guide/tidb-v2-upgrade-guide/)。
+从 TiDB 1.0 到 2.0 可以进行滚动升级，具体步骤可以参考 [这篇文档](https://github.com/pingcap/docs-cn/blob/master/op-guide/tidb-v2.0-upgrade-guide.md)。
 
 ## One more thing
 
