@@ -6,7 +6,7 @@ summary: 本篇将带大家深入到 grpc-rs 这个库里，查看 RPC 请求是
 tags: ['TiKV 源码解析','社区']
 ---
 
-上一篇《[TiKV 源码解析（七）gRPC Server 的初始化和启动流程](https://pingcap.com/blog-cn/tikv-source-code-reading-7/)》为大家介绍了 gRPC Server 的初始化和启动流程，本篇将带大家深入到 [grpc-rs](https://github.com/pingcap/grpc-rs) 这个库里，查看 RPC 请求是如何被封装和派发的，以及它是怎么和 Rust Future 进行结合的。
+上一篇《[gRPC Server 的初始化和启动流程](https://pingcap.com/blog-cn/tikv-source-code-reading-7/)》为大家介绍了 gRPC Server 的初始化和启动流程，本篇将带大家深入到 [grpc-rs](https://github.com/pingcap/grpc-rs) 这个库里，查看 RPC 请求是如何被封装和派发的，以及它是怎么和 Rust Future 进行结合的。
 
 ## gRPC C Core
 
