@@ -124,9 +124,9 @@ impl BatchPromise {
 }
 ```
 
-上面代码中的 `ctx` 是用来储存响应的字段，包括响应头、数据之类的。当 `next` 返回时，gRPC C Core 会将对应内容填充到这个结构体里。`inner` 储存的是 task 和收到的消息。当 resolve 被调用时，先判断这个 tag 要执行的是什么任务。`BatchType::CheckRead` 表示是一问一答式的读取任务，`Batch::Finish` 表示的是没有返回数据的任务，`BatchType::Read` 表示的是流式响应里读取单个消息的任务。拿 CheckRead 举例，它会将拉取到的数据存放在 `inner` 里，并通知 task。而 task 对应的 Future 再被 poll 时就可以拿到对应的数据了。这个 Future 的定义如下：
+上面代码中的 `ctx` 是用来储存响应的字段，包括响应头、数据之类的。当 `next` 返回时，gRPC C Core 会将对应内容填充到这个结构体里。`inner` 储存的是 task 和收到的消息。当 resolve 被调用时，先判断这个 tag 要执行的是什么任务。`BatchType::CheckRead` 表示是一问一答式的读取任务，`Batch::Finish` 表示的是没有返回数据的任务，`BatchType::Read` 表示的是流式响应里读取单个消息的任务。拿 `CheckRead` 举例，它会将拉取到的数据存放在 `inner` 里，并通知 task。而 task 对应的 Future 再被 poll 时就可以拿到对应的数据了。这个 Future 的定义如下：
 
-```
+```rust
 /// A future object for task that is scheduled to `CompletionQueue`.
 pub struct CqFuture<T> {
     inner: Arc<Inner<T>>,
@@ -161,7 +161,7 @@ impl<T> Future for CqFuture<T> {
 
 下面是 `RequestCallback` 的定义和 resolve 方法。
 
-```
+```rust
 pub struct RequestCallback {
    ctx: RequestContext,
 }
@@ -184,9 +184,9 @@ impl RequestCallback {
 
 上面代码中的 `ctx` 是用来储存请求的字段，主要包括请求头。和 `BatchPromise` 类似，`ctx` 的内容也是在调用 `next` 方法时被填充。在 resolve 时，如果失败，则再次调用 `request_call` 来接受下一个 RPC，否则会调用对应的 RPC 方法。
 
-handle_stream_req 的定义如下：
+`handle_stream_req` 的定义如下：
 
-```
+```rust
 pub fn handle_stream_req(
    self,
    cq: &CompletionQueue,
