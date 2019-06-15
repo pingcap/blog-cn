@@ -190,7 +190,7 @@ for i from 0 to 23:
 了解一个系统或者解决使用中的问题最好的方法是阅读文档，明白实现原理，TiDB 有大量的官方文档，希望大家在遇到问题的时候能先尝试通过文档或者搜索 Issue list 寻找解决方案。官方文档在[这里](https://github.com/pingcap/docs-cn)。如果希望阅读英文文档，可以看[这里](https://github.com/pingcap/docs)。
 
 其中的 [FAQ](https://github.com/pingcap/docs-cn/blob/master/FAQ.md)
-和[故障诊断](https://github.com/pingcap/docs-cn/blob/master/trouble-shooting.md)章节建议大家仔细阅读。另外 TiDB 还有一些不错的工具，也有配套的文档，具体的见各项工具的 GitHub 页面。
+和[故障诊断](https://pingcap.com/docs-cn/dev/how-to/troubleshoot/cluster-setup/)章节建议大家仔细阅读。另外 TiDB 还有一些不错的工具，也有配套的文档，具体的见各项工具的 GitHub 页面。
 
 除了文档之外，还有很多不错的文章介绍 TiDB 的各项技术细节内幕，大家可以关注下面这些文章发布渠道：
 
