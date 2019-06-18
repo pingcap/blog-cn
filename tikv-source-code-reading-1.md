@@ -56,7 +56,7 @@ TiKV 使用的是 [gRPC](https://grpc.io/) 作为通讯框架，我们直接把 
 
 ### Prometheus
 
-TiKV 使用 [Prometheus](https://prometheus.io/) 作为其监控系统， [rust-prometheus](https://github.com/pingcap/rust-prometheus) 这个库是 Prometheus 的 Rust client。在这个库里面，我们会介绍如果支持不同的 Prometheus 的数据类型（Coutner，Gauge，Historgram）。
+TiKV 使用 [Prometheus](https://prometheus.io/) 作为其监控系统， [rust-prometheus](https://github.com/pingcap/rust-prometheus) 这个库是 Prometheus 的 Rust client。在这个库里面，我们会介绍如果支持不同的 Prometheus 的数据类型（Counter，Gauge，Historgram）。
 
 另外，我们会重点介绍我们是如何通过使用 Rust 的 Macro 来支持 Prometheus 的 Vector metrics 的。
 
