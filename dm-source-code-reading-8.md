@@ -26,11 +26,11 @@ tags: ['DM 源码阅读','社区']
 3. gh-ost 自身变为 MySQL replica slave，将原表的全量数据和 binlog 增量变更数据同步到 ghost 表；
 4. 数据同步完成之后执行 `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换 pt-online-schema-change 通过 trigger 的方式来实现数据同步，剩余流程类似。
 
-在 DM 的 task 配置中可以通过设置 `[online-ddl-scheme](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/dm/config/task.go#L244)` 来配置的 online schema change 方案，目前仅支持 [gh-ost/pt](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/dm/config/task.go#L32) 两个配置选项。
+在 DM 的 task 配置中可以通过设置 [`online-ddl-scheme`](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/dm/config/task.go#L244) 来配置的 online schema change 方案，目前仅支持 [gh-ost/pt](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/dm/config/task.go#L32) 两个配置选项。
 
 ## DM Online Schema Change 同步方案
 
-根据上个章节介绍的流程，pt 和 gh-ost 除了 replicate 数据的方式不一样之外，其他流程都类似，并且这种 native 的模式可以使得 binlog replication 几乎不需要修改就可以同步数据。但是 DM 为了减少同步的数据量，简化一些场景下（shard tables merge）的处理流程，并做了额外的优化，即，不同步 ghost 表的数据。
+根据上个章节介绍的流程，pt 和 gh-ost 除了 replicate 数据的方式不一样之外，其他流程都类似，并且这种 native 的模式可以使得 binlog replication 几乎不需要修改就可以同步数据。但是 DM 为了减少同步的数据量，简化一些场景（如 shard tables merge）下的处理流程，并做了额外的优化，即，不同步 ghost 表的数据。
 
 继续分析 online schema change 的流程，从数据同步的角度看有下面这些需要关注的点：
 
@@ -58,8 +58,8 @@ DM 将 [同步的表分为三类](https://github.com/pingcap/dm/blob/25f95ee08d0
 * real table - [对 rename table statement 进行模式检查，直接返回执行](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L55)
 * trash table - [对 rename table statement 做一些模式检查，直接忽略同步](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L70)
 * ghost table
-    * 如果 DDL 是 [create/drop table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L86)  ，则 [清空内存中的残余信息后忽略这个 DDL 继续同步](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L87)
-    * 如果 DDL 是 [rename table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L96) ， 则 [返回内存中保存的 ghost table 的 DDLs](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L103)
+    * 如果 DDL 是 [create/drop table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L86) ，则 [清空内存中的残余信息后忽略这个 DDL 继续同步](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L87)
+    * 如果 DDL 是 [rename table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L96) ，则 [返回内存中保存的 ghost table 的 DDLs](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L103)
     * 如果是其他类型 DDL，[则把这些 DDL 保存在内存中](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L119)
 
 下面是一个执行示例，方便大家对照着来理解上面的代码逻辑：
