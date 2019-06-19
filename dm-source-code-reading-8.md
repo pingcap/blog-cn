@@ -2,14 +2,14 @@
 title: DM 源码阅读系列文章（八）Online Schema Change 同步支持
 author: ['Ian']
 date: 2019-06-19
-summary: 本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些第三方的 online schema change 方案同步，内容包括 online schema change 方案的简单介绍，online schema change 同步方案，以及同步实现细节。
+summary: 本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些 MySQL 上的第三方 online schema change 方案同步，内容包括 online schema change 方案的简单介绍，online schema change 同步方案，以及同步实现细节。
 tags: ['DM 源码阅读','社区']
 ---
 
 
 本文为 DM 源码阅读系列文章的第八篇，[上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-7/) 对 DM 中的定制化数据同步功能进行详细的讲解，包括库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。
 
-本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些第三方的 online schema change 方案同步，内容包括 online schema change 方案的简单介绍，online schema change 同步方案，以及同步实现细节。
+本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些 MySQL 上的第三方 online schema change 方案同步，内容包括 online schema change 方案的简单介绍，online schema change 同步方案，以及同步实现细节。
 
 ## MySQL 的 Online Schema Change 方案
 
@@ -24,7 +24,9 @@ tags: ['DM 源码阅读','社区']
 1. 在操作目标数据库上使用 `create table ghost table like origin table` 来创建 ghost 表；
 2. 按照需求变更表结构，比如 `add column/index`；
 3. gh-ost 自身变为 MySQL replica slave，将原表的全量数据和 binlog 增量变更数据同步到 ghost 表；
-4. 数据同步完成之后执行 `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换 pt-online-schema-change 通过 trigger 的方式来实现数据同步，剩余流程类似。
+4. 数据同步完成之后执行 `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换 
+
+pt-online-schema-change 通过 trigger 的方式来实现数据同步，剩余流程类似。
 
 在 DM 的 task 配置中可以通过设置 [`online-ddl-scheme`](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/dm/config/task.go#L244) 来配置的 online schema change 方案，目前仅支持 [gh-ost/pt](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/dm/config/task.go#L32) 两个配置选项。
 
