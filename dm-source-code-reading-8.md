@@ -2,7 +2,7 @@
 title: DM 源码阅读系列文章（八）Online Schema Change 同步支持
 author: ['Ian']
 date: 2019-06-19
-summary: 本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些第三方的 online schema change 方案同步，内容包括 online schema change 方案的简单介绍，online schema change 同步方案，以及同步实现细节。
+summary: 本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些 MySQL 上的第三方 online schema change 方案同步，内容包括 online schema change 方案的简单介绍，online schema change 同步方案，以及同步实现细节。
 tags: ['DM 源码阅读','社区']
 ---
 
