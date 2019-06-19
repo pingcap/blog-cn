@@ -77,4 +77,4 @@ DM 将 [同步的表分为三类](https://github.com/pingcap/dm/blob/25f95ee08d0
 
 ## 小结
 
-本篇文章详细地介绍 DM 对 online schema change 方案的同步支持，内容包含 online schema change 方案的简单介绍， online schema change 同步方案 ，以同步实现细节。下一章会对 DM 的 shard DDL merge 方案进行详细的讲解，敬请期待。
+本篇文章详细地介绍 DM 对 online schema change 方案的同步支持，内容包含 online schema change 方案的简单介绍， online schema change 同步方案，以及同步实现细节。下一章会对 DM 的 shard DDL merge 方案进行详细的讲解，敬请期待。
