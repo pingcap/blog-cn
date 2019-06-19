@@ -15,14 +15,14 @@ tags: ['DM 源码阅读','社区']
 
 目前有一些第三方工具支持在 MySQL 上面进行 Online Schema Change，比较主流的包括 [pt-online-schema-change](https://www.percona.com/doc/percona-toolkit/LATEST/pt-online-schema-change.html) 和 [gh-ost](https://github.com/github/gh-ost)。
 
-这些工具的实现原理比较类似，本文会以 gh-ost 作为案例来进行分析讲解。
+这些工具的实现原理比较类似，本文会以 gh-ost 为例来进行分析讲解。
 
 ![](media/dm-source-code-reading-8/1.png)
 
 从上图可以大致了解到 gh-ost 的逻辑处理流程：
 
 1. 在操作目标数据库上使用 `create table ghost table like origin table` 来创建 ghost 表；
-2. 按照需求变更表结构，比如 add column/index；
+2. 按照需求变更表结构，比如 `add column/index`；
 3. gh-ost 自身变为 MySQL replica slave，将原表的全量数据和 binlog 增量变更数据同步到 ghost 表；
 4. 数据同步完成之后执行 `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换 pt-online-schema-change 通过 trigger 的方式来实现数据同步，剩余流程类似。
 
@@ -59,7 +59,7 @@ DM 将 [同步的表分为三类](https://github.com/pingcap/dm/blob/25f95ee08d0
 * trash table - [对 rename table statement 做一些模式检查，直接忽略同步](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L70)
 * ghost table
     * 如果 DDL 是 [create/drop table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L86)  ，则 [清空内存中的残余信息后忽略这个 DDL 继续同步](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L87)
-    * 如果 DDL 是 [ rename table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L96) ， 则 [返回内存中保存的 ghost table 的 DDLs](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L103)
+    * 如果 DDL 是 [rename table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L96) ， 则 [返回内存中保存的 ghost table 的 DDLs](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L103)
     * 如果是其他类型 DDL，[则把这些 DDL 保存在内存中](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L119)
 
 下面是一个执行示例，方便大家对照着来理解上面的代码逻辑：
