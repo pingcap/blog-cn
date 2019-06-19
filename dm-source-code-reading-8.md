@@ -24,7 +24,9 @@ tags: ['DM 源码阅读','社区']
 1. 在操作目标数据库上使用 `create table ghost table like origin table` 来创建 ghost 表；
 2. 按照需求变更表结构，比如 `add column/index`；
 3. gh-ost 自身变为 MySQL replica slave，将原表的全量数据和 binlog 增量变更数据同步到 ghost 表；
-4. 数据同步完成之后执行 `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换 pt-online-schema-change 通过 trigger 的方式来实现数据同步，剩余流程类似。
+4. 数据同步完成之后执行 `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换 
+
+pt-online-schema-change 通过 trigger 的方式来实现数据同步，剩余流程类似。
 
 在 DM 的 task 配置中可以通过设置 `[online-ddl-scheme](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/dm/config/task.go#L244)` 来配置的 online schema change 方案，目前仅支持 [gh-ost/pt](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/dm/config/task.go#L32) 两个配置选项。
 
