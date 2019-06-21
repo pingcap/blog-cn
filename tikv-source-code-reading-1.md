@@ -6,7 +6,7 @@ summary: 在 TiDB DevCon 2019 上，我们宣布启动 TiKV 源码系列分享�
 tags: ['TiKV 源码解析','社区']
 ---
 
-[TiKV](https://github.com/tikv/tikv) 是一个支持事务的分布式 Key-Value 数据库，有很多社区开发者基于 TiKV 来开发自己的应用，譬如 [titan](https://github.com/meitu/titan)、[tidis](https://github.com/yongman/tidis)。尤其是在 TiKV 成为 [CNCF](https://www.cncf.io/) 的 [Sandbox](https://www.cncf.io/blog/2018/08/28/cncf-to-host-tikv-in-the-sandbox/) 项目之后，吸引了越来越多开发者的目光，很多同学都想参与到 TiKV 的研发中来。这时候，就会遇到两个比较大的拦路虎：
+[TiKV](https://github.com/tikv/tikv) 是一个支持事务的分布式 Key-Value 数据库，有很多社区开发者基于 TiKV 来开发自己的应用，譬如 [titan](https://github.com/distributedio/titan)、[tidis](https://github.com/yongman/tidis)。尤其是在 TiKV 成为 [CNCF](https://www.cncf.io/) 的 [Sandbox](https://www.cncf.io/blog/2018/08/28/cncf-to-host-tikv-in-the-sandbox/) 项目之后，吸引了越来越多开发者的目光，很多同学都想参与到 TiKV 的研发中来。这时候，就会遇到两个比较大的拦路虎：
 
 1. [Rust](https://www.rust-lang.org/) 语言：众所周知，TiKV 是使用 Rust 语言来进行开发的，而 Rust 语言的学习难度相对较高，有些人认为其学习曲线大于 C++，所以很多同学在这一步就直接放弃了。
 
@@ -56,7 +56,7 @@ TiKV 使用的是 [gRPC](https://grpc.io/) 作为通讯框架，我们直接把 
 
 ### Prometheus
 
-TiKV 使用 [Prometheus](https://prometheus.io/) 作为其监控系统， [rust-prometheus](https://github.com/pingcap/rust-prometheus) 这个库是 Prometheus 的 Rust client。在这个库里面，我们会介绍如果支持不同的 Prometheus 的数据类型（Coutner，Gauge，Historgram）。
+TiKV 使用 [Prometheus](https://prometheus.io/) 作为其监控系统， [rust-prometheus](https://github.com/pingcap/rust-prometheus) 这个库是 Prometheus 的 Rust client。在这个库里面，我们会介绍如果支持不同的 Prometheus 的数据类型（Counter，Gauge，Historgram）。
 
 另外，我们会重点介绍我们是如何通过使用 Rust 的 Macro 来支持 Prometheus 的 Vector metrics 的。
 
