@@ -23,7 +23,7 @@ TiDB Binlog 的实现主要分布在 [tidb-tools](https://github.com/pingcap/tid
 
 Repo: [https://github.com/pingcap/tidb-tools/](https://github.com/pingcap/tidb-tools/)
 
-这个仓库除了 TiDB Binlog 还有其他工具的组件，在这里与 TiDB Binlog 关系最密切的是 tidb-binlog/pump_client 这个 package。pump_client 实现了 Pump 的客户端接口，当 binlog 功能开启时，TiDB 就是使用它来给 pump [发送 binlog](https://github.com/pingcap/tidb-tools/blob/v3.0.0-rc.3/tidb-binlog/pump_client/client.go#L242) 的。
+这个仓库除了 TiDB Binlog 还有其他工具的组件，在这里与 TiDB Binlog 关系最密切的是 `tidb-binlog/pump_client` 这个 package。`pump_client` 实现了 Pump 的客户端接口，当 binlog 功能开启时，TiDB 就是使用它来给 pump [发送 binlog](https://github.com/pingcap/tidb-tools/blob/v3.0.0-rc.3/tidb-binlog/pump_client/client.go#L242) 的。
 
 #### 2. tidb-binlog
 
@@ -31,13 +31,13 @@ Repo: [https://github.com/pingcap/tidb-binlog](https://github.com/pingcap/tidb-b
 
 TiDB-Binlog 的核心组件都在这个仓库，下面是各个关键目录：
 
-1. `cmd`：包含 `pump`, `drainer`, `binlogctl`, `reparo`, `arbiter` 等 5 个子目录，分别对应 5 个同名命令行工具。这些子目录下面的 `main.go` 是对应命令行工具的入口，而主要功能的实现则依赖下面将介绍到的各个同名 packages。 
-2. `pump`：Pump 源码，主要入口是 [pump.NewServer](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pump/server.go#L103) 和 [Server.Start](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pump/server.go#L313)；服务启动后，主要的功能是 `WriteBinlog`（面向 TiDB/pump_client） 和 `PullBinlogs`（面向 Drainer）。
-3. `drainer`：Drainer 源码，主要入口是 [drainer.NewServer](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/drainer/server.go#L88) 和 [Server.Start](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/drainer/server.go#L238)；服务启动后，就会开始从发现到的 Pump 节点上面通过 PullBinlogs 同步 Binlog 到下游。目前支持的下游有：mysql/tidb, file（文件增量备份）, kafka 。
-4. `binlogctl`：Binlogctl 源码，实现一些常用的 Binlog 运维操作，例如用 `-cmd pumps` 参数可以查看当前注册的各个 Pump 节点信息，相应的实现就是 [QueryNodesByKind](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/binlogctl/nodes.go#L37)。
+1. `cmd`：包含 `pump`，`drainer`，`binlogctl`，`reparo`，`arbiter` 等 5 个子目录，分别对应 5 个同名命令行工具。这些子目录下面的 `main.go` 是对应命令行工具的入口，而主要功能的实现则依赖下面将介绍到的各个同名 packages。 
+2. `pump`：Pump 源码，主要入口是 [`pump.NewServer`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pump/server.go#L103) 和 [`Server.Start`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pump/server.go#L313)；服务启动后，主要的功能是 `WriteBinlog`（面向 `TiDB/pump_client`） 和 `PullBinlogs`（面向 `Drainer`）。
+3. `drainer`：Drainer 源码，主要入口是 [`drainer.NewServer`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/drainer/server.go#L88) 和 [Server.Start](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/drainer/server.go#L238)；服务启动后，就会开始从发现到的 Pump 节点上面通过 PullBinlogs 同步 Binlog 到下游。目前支持的下游有：mysql/tidb，file（文件增量备份），kafka 。
+4. `binlogctl`：Binlogctl 源码，实现一些常用的 Binlog 运维操作，例如用 `-cmd pumps` 参数可以查看当前注册的各个 Pump 节点信息，相应的实现就是 [`QueryNodesByKind`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/binlogctl/nodes.go#L37)。
 5. `reparo`：Reparo 源码，实现从备份文件（Drainer 选择 file 下游时保存的文件）恢复数据到指定数据库的功能。
-6. `arbiter`：Arbiter 源码，实现从 Kafka 消息队列中读取 binlog 同步到指定数据库的功能，binlog 在消息中以 [Protobuf](https://github.com/pingcap/tidb-tools/blob/v3.0.0-rc.3/tidb-binlog/slave_binlog_proto/proto/binlog.proto#L85) 格式编码。
-7. `pkg`：各个工具公用的一些辅助类的 packages，例如 `pkg/util` 下面有用于重试函数执行的 `[RetryOnError](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pkg/util/util.go#L145)`，pkg/version 下面有用于打印版本信息的 `[PrintVersionInfo](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pkg/version/version.go#L45)`。
+6. `arbiter`：Arbiter 源码，实现从 Kafka 消息队列中读取 binlog 同步到指定数据库的功能，binlog 在消息中以 [`Protobuf`](https://github.com/pingcap/tidb-tools/blob/v3.0.0-rc.3/tidb-binlog/slave_binlog_proto/proto/binlog.proto#L85) 格式编码。
+7. `pkg`：各个工具公用的一些辅助类的 packages，例如 `pkg/util` 下面有用于重试函数执行的 [`RetryOnError`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pkg/util/util.go#L145)，pkg/version 下面有用于打印版本信息的 [`PrintVersionInfo`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pkg/version/version.go#L45)。
 8. `tests`：集成测试。
 
 ## 启动测试集群
@@ -88,7 +88,7 @@ $ bin/binlogctl -pd-urls=localhost:2379 -cmd pumps
 ![](media/tidb-binlog-source-code-reading-2/3.png)
 
 
-上图的演示中创建了一个叫 hello_binlog 的 database，在里面新建了 user_info 表并插入了两行数据。完成上述操作后，就可以连接到端口为 3306 的下游数据库验证同步是否成功：
+上图的演示中创建了一个叫 `hello_binlog` 的 database，在里面新建了 `user_info` 表并插入了两行数据。完成上述操作后，就可以连接到端口为 3306 的下游数据库验证同步是否成功：
 
 ![](media/tidb-binlog-source-code-reading-2/4.png)
 
