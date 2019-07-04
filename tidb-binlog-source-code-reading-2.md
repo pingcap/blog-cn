@@ -23,7 +23,7 @@ TiDB Binlog 的实现主要分布在 [tidb-tools](https://github.com/pingcap/tid
 
 Repo: [https://github.com/pingcap/tidb-tools/](https://github.com/pingcap/tidb-tools/)
 
-这个仓库除了 TiDB Binlog 还有其他工具的组件，在这里与 TiDB Binlog 关系最密切的是 `tidb-binlog/pump_client` 这个 package。`pump_client` 实现了 Pump 的客户端接口，当 binlog 功能开启时，TiDB 就是使用它来给 pump [发送 binlog](https://github.com/pingcap/tidb-tools/blob/v3.0.0-rc.3/tidb-binlog/pump_client/client.go#L242) 的。
+这个仓库除了 TiDB Binlog 还有其他工具的组件，在这里与 TiDB Binlog 关系最密切的是 `tidb-binlog/pump_client` 这个 package。`pump_client` 实现了 Pump 的客户端接口，当 binlog 功能开启时，TiDB 使用它来给 pump [发送 binlog](https://github.com/pingcap/tidb-tools/blob/v3.0.0-rc.3/tidb-binlog/pump_client/client.go#L242) 。
 
 #### 2. tidb-binlog
 
@@ -56,7 +56,7 @@ TiDB-Binlog 的核心组件都在这个仓库，下面是各个关键目录：
 
 脚本依赖 MySQL 命令行客户端来确定 TiDB 已经成功启动，所以我们还需要安装一个 MySQL 客户端。
 
-准备好以上依赖，运行 `tests/run.sh --debug`，就可以启动一个测试集群。启动过程中会输出一些进度信息，看到以下几行就说明成功完成了：
+准备好以上依赖，运行 `tests/run.sh --debug`，就可以启动一个测试集群。启动过程中会输出一些进度信息，看到以下提示就说明亿成功启动：
 
 ```
 Starting Drainer...
