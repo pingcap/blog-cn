@@ -1,6 +1,6 @@
 ---
 title: TiDB Binlog 源码阅读系列文章（二）初识 TiDB Binlog 源码
-author: ['廖学聪']
+author: ['satoru']
 date: 2019-07-04
 summary: 本文介绍了 TiDB Binlog 相关源码仓库：tidb-tools 和 tidb-binlog，以及其中的目录，并且展示了如何启动测试集群。
 tags: ['TiDB Binlog 源码阅读','社区']
