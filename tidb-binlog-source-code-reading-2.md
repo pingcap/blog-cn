@@ -33,7 +33,7 @@ TiDB-Binlog 的核心组件都在这个仓库，下面是各个关键目录：
 
 1. `cmd`：包含 `pump`，`drainer`，`binlogctl`，`reparo`，`arbiter` 等 5 个子目录，分别对应 5 个同名命令行工具。这些子目录下面的 `main.go` 是对应命令行工具的入口，而主要功能的实现则依赖下面将介绍到的各个同名 packages。 
 2. `pump`：Pump 源码，主要入口是 [`pump.NewServer`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pump/server.go#L103) 和 [`Server.Start`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pump/server.go#L313)；服务启动后，主要的功能是 `WriteBinlog`（面向 `TiDB/pump_client`） 和 `PullBinlogs`（面向 `Drainer`）。
-3. `drainer`：Drainer 源码，主要入口是 [`drainer.NewServer`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/drainer/server.go#L88) 和 [Server.Start](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/drainer/server.go#L238)；服务启动后，就会开始从发现到的 Pump 节点上面通过 PullBinlogs 同步 Binlog 到下游。目前支持的下游有：mysql/tidb，file（文件增量备份），kafka 。
+3. `drainer`：Drainer 源码，主要入口是 [`drainer.NewServer`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/drainer/server.go#L88) 和 [`Server.Start`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/drainer/server.go#L238)；服务启动后，Drainer 会先找到所有 Pump 节点，然后调用 Pump 节点的 PullBinlogs 接口同步 binlog 到下游。目前支持的下游有：mysql/tidb，file（文件增量备份），kafka 。
 4. `binlogctl`：Binlogctl 源码，实现一些常用的 Binlog 运维操作，例如用 `-cmd pumps` 参数可以查看当前注册的各个 Pump 节点信息，相应的实现就是 [`QueryNodesByKind`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/binlogctl/nodes.go#L37)。
 5. `reparo`：Reparo 源码，实现从备份文件（Drainer 选择 file 下游时保存的文件）恢复数据到指定数据库的功能。
 6. `arbiter`：Arbiter 源码，实现从 Kafka 消息队列中读取 binlog 同步到指定数据库的功能，binlog 在消息中以 [`Protobuf`](https://github.com/pingcap/tidb-tools/blob/v3.0.0-rc.3/tidb-binlog/slave_binlog_proto/proto/binlog.proto#L85) 格式编码。
@@ -46,7 +46,7 @@ TiDB-Binlog 的核心组件都在这个仓库，下面是各个关键目录：
 
 启动测试集群前，需要在 `bin` 目录下准备好相关组件的可执行文件：
 
-1.  pd-server：下载链接 ([Linux](https://download.pingcap.org/pd-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/pd-master-darwin-amd64.tar.gz)）
+1.  pd-server：下载链接（[Linux](https://download.pingcap.org/pd-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/pd-master-darwin-amd64.tar.gz)）
 
 2.  tikv-server：下载链接（[Linux](https://download.pingcap.org/tikv-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tikv-master-darwin-amd64.tar.gz)）
 
@@ -94,4 +94,4 @@ $ bin/binlogctl -pd-urls=localhost:2379 -cmd pumps
 
 ## 小结
 
-本文简单介绍了 tidb-tools 和 tidb-binlog 及其中的目录，并且展示了如何启动测试集群。有了这些准备，大家就可以进一步了解各个功能的源码实现。下篇文章将会介绍 `pump_client` 如何将一条 Binlog 发送往 Pump Server。
+本文简单介绍了 tidb-tools 和 tidb-binlog 及其中的目录，并且展示了如何启动测试集群。有了这些准备，大家就可以进一步了解各个功能的源码实现。下篇文章将会介绍 `pump_client` 如何将一条 binlog 发送往 Pump Server。
