@@ -1,5 +1,5 @@
 ---
-title: TiKV 源码解析系列文章（八）Service 层处理流程解析
+title: TiKV 源码解析系列文章（九）Service 层处理流程解析
 author: ['周振靖']
 date: 2019-07-05
 summary: 之前的 TiKV 源码解析系列文章介绍了 TiKV 依赖的周边库，从本篇文章开始，我们将开始介绍 TiKV 自身的代码。本文重点介绍 TiKV 最外面的一层——Service 层。
@@ -13,10 +13,10 @@ TiKV 的 Service 层的代码位于 `src/server` 文件夹下，其职责包括�
 ## 整体结构
 
 位于 `src/server/server.rs` 文件中的 `Server` 是我们本次介绍的 Service 层的主体。它封装了 TiKV 在网络上提供服务和 Raft group 成员之间相互通信的逻辑。`Server` 本身的代码比较简短，大部分代码都被分离到 `RaftClient`，`Transport`，`SnapRunner` 和几个 gRPC service 中。上述组件的层次关系如下图所示：
+
 ![](media/tikv-source-code-reading-9/1.png)
 
 接下来，我们将详细介绍这些组件。
-
 
 ## Resolver
 
