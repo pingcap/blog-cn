@@ -30,7 +30,7 @@ pub trait StoreAddrResolver: Send + Clone {
 }
 ```
 
-其中 `Callback` 用于异步地返回结果。`PdStoreAddrResolver` 实现了该 trait，它的 `resolve` 方法的实现则是简单地将查询任务通过其 `sched` 成员发送给 `Runner`。而 `Runner` 则实现了 `Runnable<Task>`，其意义是 `Runner` 可以在自己的一个线程里运行，外界将会向 `Runner` 发送 `Task` 类型的消息，`Runner` 将对收到的 `Task` 进行处理。 这是使用了由 TiKV 的 util 提供的一个单线程 worker 框架，其在 TiKV 的很多处代码中都有应用。`Runner` 的 `store_addrs` 字段是个 cache，它在执行任务时首先尝试在这个 cache 中找，找不到则向 PD 发送 RPC 请求来进行查询，并将查询结果添加进 cache 里。
+其中 `Callback` 用于异步地返回结果。`PdStoreAddrResolver` 实现了该 trait，它的 `resolve` 方法的实现则是简单地将查询任务通过其 `sched` 成员发送给 `Runner`。而 `Runner` 则实现了 `Runnable<Task>`，其意义是 `Runner` 可以在自己的一个线程里运行，外界将会向 `Runner` 发送 `Task` 类型的消息，`Runner` 将对收到的 `Task` 进行处理。 这里使用了由 TiKV 的 util 提供的一个单线程 worker 框架，在 TiKV 的很多处代码中都有应用。`Runner` 的 `store_addrs` 字段是个 cache，它在执行任务时首先尝试在这个 cache 中找，找不到则向 PD 发送 RPC 请求来进行查询，并将查询结果添加进 cache 里。
 
 ## RaftClient
 
@@ -54,9 +54,9 @@ let batch_send_or_fallback = batch_sink
 client1.spawn(batch_send_or_fallback.map_err(/*...*/));
 ```
 
-这里向指定地址调用了 `batch_raft` 这个 gRPC 接口。`batch_raft` 和 `raft` 都是 stream 接口。对 `RaftClient` 调用 `send` 方法会将消息发送到对应的 `Conn` 的 `stream` 成员，即上述代码的 `tx` 中，而在 gRPC 的线程中则会从 `rx` 中取出这些消息（这些消息被 `BatchReceiver` 这一层 batch 起来以提升性能），并通过网络发送出去。
+上述代码向指定地址调用了 `batch_raft` 这个 gRPC 接口。`batch_raft` 和 `raft` 都是 stream 接口。对 `RaftClient` 调用 `send` 方法会将消息发送到对应的 `Conn` 的 `stream` 成员，即上述代码的 `tx` 中，而在 gRPC 的线程中则会从 `rx` 中取出这些消息（这些消息被 `BatchReceiver` 这一层 batch 起来以提升性能），并通过网络发送出去。
 
-如果对方不支持 batch，则会 fallback 到 `raft` 接口。这通常仅会在从旧版本升级的过程中发生。
+如果对方不支持 batch，则会 fallback 到 `raft` 接口。这种情况通常仅在从旧版本升级的过程中发生。
 
 ## RaftStoreRouter 与 Transport
 
@@ -64,7 +64,7 @@ client1.spawn(batch_send_or_fallback.map_err(/*...*/));
 
 `ServerRaftStoreRouter` 是在 TiKV 实际运行时将会使用的 `RaftStoreRouter` 的实现，它包含一个内层的、由 raftstore 提供的 `RaftRouter` 对象和一个 `LocalReader` 对象。收到的请求如果是一个只读的请求，则会由 `LocalReader` 处理；其它情况则是交给内层的 router 来处理。
 
-`ServerTransport` 则是 TiKV 实际运行时使用的 `Transport` 的实现 （`Transport` trait 的定义在 raftstore 中），其内部包含一个 `RaftClient` 用于。发送消息时，它使用上面说到的 Resolver 来将消息中的 store id 解析为地址，并将解析的结果存入 `raft_client.addrs` 中；下次向同一个 store 发送消息时便不再需要再次解析。另外由于解析是一个异步的操作，这里还将解析中的 store id 存入 `resolving` 中，并在解析完成后将其去除。这样如果另一个任务也在解析同一个 store id，便会避免掉不必要的 RPC。接下来，则是使用 `RaftClient` 进行 RPC 请求，将消息发送出去。
+`ServerTransport` 则是 TiKV 实际运行时使用的 `Transport` 的实现（`Transport` trait 的定义在 raftstore 中），其内部包含一个 `RaftClient` 用于进行 RPC 通信。发送消息时，`ServerTransport` 通过上面说到的 Resolver 将消息中的 store id 解析为地址，并将解析的结果存入 `raft_client.addrs` 中；下次向同一个 store 发送消息时便不再需要再次解析。另外由于解析是一个异步的操作，这里还将解析中的 store id 存入 `resolving` 中，并在解析完成后将其去除，因此如果另一个任务也在解析同一个 store id，就可以会避免掉不必要的 RPC。接下来，再通过 `RaftClient` 进行 RPC 请求，将消息发送出去。
 
 ## Node
 
@@ -76,9 +76,9 @@ client1.spawn(batch_send_or_fallback.map_err(/*...*/));
 
 TiKV 包含多个 gRPC service。其中，最重要的一个是 `KvService`，位于 `src/server/service/kv.rs` 文件中。
 
-`KvService` 定义了 TiKV 的 `kv_get`，`kv_scan`，`kv_prewrite`，`kv_commit` 等事务操作的 API，用于执行 TiDB 下推下来的复杂查询和计算的 `coprocessor` API，以及 `raw_get`，`raw_put` 等 Raw KV API。`batch_commands` 接口则是用于将上述的接口 batch 起来，以优化高吞吐量的场景。当我们要为 TiKV 添加一个新的 API 时，首先就要在我们的 kvproto 项目中添加相关消息体的定义，并在这里添加相关代码。另外，TiKV 的 Raft group 的各成员之间通信用到的 `raft` 和 `batch_raft` 接口也是在这里提供的。
+`KvService` 定义了 TiKV 的 `kv_get`，`kv_scan`，`kv_prewrite`，`kv_commit` 等事务操作的 API，用于执行 TiDB 下推下来的复杂查询和计算的 `coprocessor` API，以及 `raw_get`，`raw_put` 等 Raw KV API。`batch_commands` 接口则是用于将上述的接口 batch 起来，以优化高吞吐量的场景。当我们要为 TiKV 添加一个新的 API 时，首先就要在 kvproto 项目中添加相关消息体的定义，并在这里添加相关代码。另外，TiKV 的 Raft group 各成员之间通信用到的 `raft` 和 `batch_raft` 接口也是在这里提供的。
 
-我们以 `kv_prewrite` 为例，介绍一下 TiKV 处理一个请求的流程。首先，无论是直接调用还是通过 `batch_commands` 接口调用，都会调用 `future_prewrite` 函数，并在该函数返回的 future 附加上根据结果发送响应的操作，再将得到的 future spawn 到 `RpcContext`，也就是一个线程池里。`future_prewrite` 的逻辑如下：
+下面以 `kv_prewrite` 为例，介绍 TiKV 处理一个请求的流程。首先，无论是直接调用还是通过 `batch_commands` 接口调用，都会调用 `future_prewrite` 函数，并在该函数返回的 future 附加上根据结果发送响应的操作，再将得到的 future spawn 到 `RpcContext`，也就是一个线程池里。`future_prewrite` 的逻辑如下：
 
 ```rust
 // 从请求体中取出调用 prewrite 所需的参数
@@ -97,8 +97,8 @@ AndThenWith::new(res, f.map_err(Error::from)).map(|v| {
 })
 ```
 
-这里的 `paired_future_callback` 是我们的一个 util 函数，它返回一个闭包 `cb` 和一个 future `f`，当 `cb` 被调用时 `f` 就会返回被传入 `cb` 的值。上述代码会立刻返回，但 future 中的逻辑在 `async_prewrite` 中的异步操作完成之后才会执行。一旦 prewrite 操作完成，`cb` 便会被调用，将结果传给 `f`，接下来，我们写在 `future` 中的创建和发送 Response 的逻辑便会继续执行。
+这里的 `paired_future_callback` 是一个 util 函数，它返回一个闭包 `cb` 和一个 future `f`，当 `cb` 被调用时 `f` 就会返回被传入 `cb` 的值。上述代码会立刻返回，但 future 中的逻辑在 `async_prewrite` 中的异步操作完成之后才会执行。一旦 prewrite 操作完成，`cb` 便会被调用，将结果传给 `f`，接下来，我们写在 `future` 中的创建和发送 Response 的逻辑便会继续执行。
 
 ## 总结
 
-以上就是 TiKV 的 Service 层的代码解析。大家可以看到这些代码大量使用 trait 和泛型，这是为了方便将其中一些组件替换成另外一些实现，方便编写测试代码。另外，在 `src/server/snap.rs` 中，我们还有一个专门用于处理 Snapshot 的模块，由于 Snapshot 消息的特殊性，在其它模块中也有一些针对 snapshot 的代码。关于 Snapshot，我们将在另一篇文章里进行详细的讲解，敬请期待。
+以上就是 TiKV 的 Service 层的代码解析。大家可以看到这些代码大量使用 trait 和泛型，这是为了方便将其中一些组件替换成另外一些实现，方便编写测试代码。另外，在 `src/server/snap.rs` 中，我们还有一个专门用于处理 Snapshot 的模块，由于 Snapshot 消息的特殊性，在其它模块中也有一些针对 snapshot 的代码。关于 Snapshot，我们将在另一篇文章里进行详细讲解，敬请期待。
