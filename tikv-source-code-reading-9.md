@@ -64,7 +64,7 @@ client1.spawn(batch_send_or_fallback.map_err(/*...*/));
 
 `ServerRaftStoreRouter` 是在 TiKV 实际运行时将会使用的 `RaftStoreRouter` 的实现，它包含一个内层的、由 raftstore 提供的 `RaftRouter` 对象和一个 `LocalReader` 对象。收到的请求如果是一个只读的请求，则会由 `LocalReader` 处理；其它情况则是交给内层的 router 来处理。
 
-`ServerTransport` 则是 TiKV 实际运行时使用的 `Transport` 的实现（`Transport` trait 的定义在 raftstore 中），其内部包含一个 `RaftClient` 用于进行 RPC 通信。发送消息时，`ServerTransport` 通过上面说到的 Resolver 将消息中的 store id 解析为地址，并将解析的结果存入 `raft_client.addrs` 中；下次向同一个 store 发送消息时便不再需要再次解析。另外由于解析是一个异步的操作，这里还将解析中的 store id 存入 `resolving` 中，并在解析完成后将其去除，因此如果另一个任务也在解析同一个 store id，就可以会避免掉不必要的 RPC。接下来，再通过 `RaftClient` 进行 RPC 请求，将消息发送出去。
+`ServerTransport` 则是 TiKV 实际运行时使用的 `Transport` 的实现（`Transport` trait 的定义在 raftstore 中），其内部包含一个 `RaftClient` 用于进行 RPC 通信。发送消息时，`ServerTransport` 通过上面说到的 Resolver 将消息中的 store id 解析为地址，并将解析的结果存入 `raft_client.addrs` 中；下次向同一个 store 发送消息时便不再需要再次解析。接下来，再通过 `RaftClient` 进行 RPC 请求，将消息发送出去。
 
 ## Node
 
