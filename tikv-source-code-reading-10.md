@@ -165,7 +165,7 @@ fn snapshot(
 }
 ```
 
-与发送过程类似，也是直接构建 `SnapTask::Recv` 任务并转发给 `snap-worker` 了，这里会调用之前我们见到过的 `recv_snap()` 函数，[具体实现](https://github.com/tikv/tikv/blob/892c12039e0213989940d29c232bddee9cbe4686/src/server/snap.rs#L237-L291) 如下：
+与发送过程类似，也是直接构建 `SnapTask::Recv` 任务并转发给 `snap-worker` 了，这里会调用之前我们介绍过的 `recv_snap()` 函数，[具体实现](https://github.com/tikv/tikv/blob/892c12039e0213989940d29c232bddee9cbe4686/src/server/snap.rs#L237-L291) 如下：
 
 ```rust
 fn recv_snap<R: RaftStoreRouter + 'static>(
