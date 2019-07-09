@@ -2,7 +2,7 @@
 title: TiKV 源码解析系列文章（十）Snapshot 的发送和接收
 author: ['黄梦龙']
 date: 2019-07-09
-summary: TiKV 使用 Raft 算法来提供高可用且具有强一致性的存储服务。在 Raft 中，Snapshot 指的是整个 State Machine 数据的一份快照。
+summary: TiKV 针对 Snapshot 收发场景做了特殊处理，解决了消息包过大会导致的一系列问题
 tags: ['TiKV 源码解析','社区']
 ---
 
@@ -71,7 +71,7 @@ fn send_snapshot_sock(&self, addr: &str, msg: RaftMessage) {
 }
 ```
 
-从代码中可以看出，这里简单地把对应的 `RaftMessage` 包装成一个 `SnapTask::Send` 任务，并将其交给独立的 `snap-worker` 去处理。值得注意的是，这里的 `RaftMessage` 只包含 Snapshot 的元信息，而不包括真正的快照数据。TiKV 中有一个单独的模块叫做 `SnapManager` 来专门处理数据快照的生成与转存，稍后我们将会看到从 `SnapManager` 模块读取 Snapshot 数据块并进行发送的相关代码。
+从代码中可以看出，这里简单地把对应的 `RaftMessage` 包装成一个 `SnapTask::Send` 任务，并将其交给独立的 `snap-worker` 去处理。值得注意的是，这里的 `RaftMessage` 只包含 Snapshot 的元信息，而不包括真正的快照数据。TiKV 中有一个单独的模块叫做 `SnapManager` ，用来专门处理数据快照的生成与转存，稍后我们将会看到从 `SnapManager` 模块读取 Snapshot 数据块并进行发送的相关代码。
 
 我们不妨顺藤摸瓜来看看 `snap-worker` 是如何处理这个任务的，相关代码在 [server/snap.rs](https://github.com/tikv/tikv/blob/892c12039e0213989940d29c232bddee9cbe4686/src/server/snap.rs#L329-L398)，精简掉非核心逻辑后的代码引用如下：
 
@@ -145,7 +145,7 @@ fn send_snap(
 }
 ```
 
-这一段流程还是比较清晰的：先是用 Snapshot 元信息从 `SnapManager` 取到待发送的快照数据，然后将 `RaftMessage` 和 `Snap` 一起封装进 `SnapChunk` 结构，最后创建全新的 gRPC 连接及一个 Snapshot stream 并将 `SnapChunk` 写入。这里引入 `SnapChunk` 是为了避免将整块 Snapshot 快照一次性加载进内存，它 impl 了 `futures::Stream` trait 来达成按需加载流式发送的效果。如果感兴趣可以参考它的 [具体实现](https://github.com/tikv/tikv/blob/892c12039e0213989940d29c232bddee9cbe4686/src/server/snap.rs#L55-L92)，本文就暂不展开了。
+这一段流程还是比较清晰的：先是用 Snapshot 元信息从 `SnapManager` 取到待发送的快照数据，然后将 `RaftMessage` 和 `Snap` 一起封装进 `SnapChunk` 结构，最后创建全新的 gRPC 连接及一个 Snapshot stream 并将 `SnapChunk` 写入。这里引入 `SnapChunk` 是为了避免将整块 Snapshot 快照一次性加载进内存，它 impl 了 `futures::Stream` 这个 trait 来达成按需加载流式发送的效果。如果感兴趣可以参考它的 [具体实现](https://github.com/tikv/tikv/blob/892c12039e0213989940d29c232bddee9cbe4686/src/server/snap.rs#L55-L92)，本文就暂不展开了。
 
 ### Snapshot 的收取流程
 
@@ -165,7 +165,7 @@ fn snapshot(
 }
 ```
 
-与发送过程类似，也是直接构建 `SnapTask::Recv` 任务并转发给 `snap-worker` 了，这里会调用之前我们介绍过的 `recv_snap()` 函数，[具体实现](https://github.com/tikv/tikv/blob/892c12039e0213989940d29c232bddee9cbe4686/src/server/snap.rs#L237-L291) 如下：
+与发送过程类似，也是直接构建 `SnapTask::Recv` 任务并转发给 `snap-worker` 了，这里会调用上面出现过的 `recv_snap()` 函数，[具体实现](https://github.com/tikv/tikv/blob/892c12039e0213989940d29c232bddee9cbe4686/src/server/snap.rs#L237-L291) 如下：
 
 ```rust
 fn recv_snap<R: RaftStoreRouter + 'static>(
@@ -212,4 +212,4 @@ fn recv_snap<R: RaftStoreRouter + 'static>(
 
 ## 总结
 
-以上就是 TiKV 发送和接收 Snapshot 相关的代码解析了。这是 TiKV 代码库中较小的一个模块，它很好地解决了由于 Snapshot 消息特殊性所带来的一系列问题，充分应用了 `grpc-rs` 组件及 `futures`/`FuturePool` 模型，读者可以结合相关资料进一步拓展学习。
+以上就是 TiKV 发送和接收 Snapshot 相关的代码解析了。这是 TiKV 代码库中较小的一个模块，它很好地解决了由于 Snapshot 消息特殊性所带来的一系列问题，充分应用了 `grpc-rs` 组件及 `futures`/`FuturePool` 模型，大家可以结合本系列文章的 [第七篇](https://pingcap.com/blog-cn/tikv-source-code-reading-7/) 和 [第八篇](https://pingcap.com/blog-cn/tikv-source-code-reading-8/) 进一步拓展学习。
