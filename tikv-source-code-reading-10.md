@@ -43,7 +43,7 @@ message SnapshotChunk {
 message Done {}
 ```
 
-可以看出，Snapshot 被定义成 client streaming 调用，即对于每个 Call，客户端依次向服务器发送多个相同类型的请求，服务器接收并处理完所有请求后，向客户端返回处理结果。具体在这里，每个请求的类型是 `SnapshotChunk`，其中包含了 snapshot 对应的 `RaftMessage`，或者携带一段 snapshot 数据；回复消息是一个简单的空消息 `Done`，因为我们在这里实际不需要返回任何信息给客户端，只需要关闭对应的 stream。
+可以看出，Snapshot 被定义成 client streaming 调用，即对于每个 Call，客户端依次向服务器发送多个相同类型的请求，服务器接收并处理完所有请求后，向客户端返回处理结果。具体在这里，每个请求的类型是 `SnapshotChunk`，其中包含了 Snapshot 对应的 `RaftMessage`，或者携带一段 Snapshot 数据；回复消息是一个简单的空消息 `Done`，因为我们在这里实际不需要返回任何信息给客户端，只需要关闭对应的 stream。
 
 ### Snapshot 的发送流程
 
