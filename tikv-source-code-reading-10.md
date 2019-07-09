@@ -2,7 +2,7 @@
 title: TiKV 源码解析系列文章（十）Snapshot 的发送和接收
 author: ['黄梦龙']
 date: 2019-07-09
-summary: TiKV 针对 Snapshot 收发场景做了特殊处理，解决了消息包过大会导致的一系列问题
+summary: TiKV 针对 Snapshot 收发场景做了特殊处理，解决了消息包过大会导致的一系列问题。
 tags: ['TiKV 源码解析','社区']
 ---
 
