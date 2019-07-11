@@ -77,7 +77,7 @@ TiDB 的架构及原理在 [官网](https://pingcap.com/) 里有详细介绍，�
     - TiDB 限制单个事务大小，保持事务尽可能的小。
 + TiDB 支持绝大多数的 Online DDL。
 + 另，一些 MySQL 语法在 TiDB 中可以解析通过，不会产生任何作用，例如： create table 语句中 engine、partition 选项都是在解析后忽略。
-+ 详细信息可以访问官网：[https://pingcap.com/docs-cn/sql/mysql-compatibility/](https://pingcap.com/docs-cn/sql/mysql-compatibility/) 。
++ 详细信息可以访问官网：[与 MySQL 兼容性对比](https://pingcap.com/docs-cn/v3.0/reference/mysql-compatibility/)。
 
 ## 五、压测
 
