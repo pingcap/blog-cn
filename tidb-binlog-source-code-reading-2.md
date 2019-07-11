@@ -50,7 +50,7 @@ TiDB-Binlog 的核心组件都在这个仓库，下面是各个关键目录：
 
 2.  tikv-server：下载链接（[Linux](https://download.pingcap.org/tikv-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tikv-master-darwin-amd64.tar.gz)）
 
-3.  tidb-server：下载链接（[Linux](https://download.pingcap.org/tidb-master-linux-amd64.tar.g) / [macOS](https://download.pingcap.org/tidb-master-darwin-amd64.tar.gz)）
+3.  tidb-server：下载链接（[Linux](https://download.pingcap.org/tidb-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tidb-master-darwin-amd64.tar.gz)）
 
 4.  `pump`, `drainer`, `binlogctl`：在 tidb-binlog 目录执行 `make build`
 
