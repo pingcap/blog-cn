@@ -131,7 +131,7 @@ TiDB 支持完整的二级索引，并且是全局索引，很多查询可以通
 
 如果有 Unique Key 并且业务端可以保证数据中没有冲突，可以在 Session 内打开这个开关： `SET @@session.tidb_skip_constraint_check=1;`
 
-另外为了提高写入性能，可以对 TiKV 的参数进行调优，具体的文档在[这里](https://github.com/pingcap/docs-cn/blob/master/op-guide/tune-tikv.md)。
+另外为了提高写入性能，可以对 TiKV 的参数进行调优，具体的文档在[这里](https://pingcap.com/docs-cn/v3.0/reference/performance/tune-tikv/)。
 
 请特别注意这个参数：
 
@@ -179,7 +179,7 @@ for i from 0 to 23:
 
 ### 监控 & 日志
 
-**Metrics 系统是了解系统状态的最佳方法，建议所有的用户都部署监控系统。**TiDB [使用 Grafana+Prometheus 监控系统状态](https://github.com/pingcap/docs-cn/blob/master/op-guide/monitor.md#%E4%BD%BF%E7%94%A8-prometheusgrafana)，如果使用 TiDB-Ansible 部署集群，那么会自动部署和配置监控系统。
+**Metrics 系统是了解系统状态的最佳方法，建议所有的用户都部署监控系统。**TiDB [使用 Grafana+Prometheus 监控系统状态](https://pingcap.com/docs-cn/v3.0/how-to/monitor/overview/)，如果使用 TiDB-Ansible 部署集群，那么会自动部署和配置监控系统。
 
 监控系统中的监控项很多，大部分是给 TiDB 开发者查看的内容，如果没有对源代码比较深入的了解，并没有必要了解这些监控项。我们会精简出一些和业务相关或者是系统关键组件状态相关的监控项，放在一个独立的面板中，供用户使用。
 
