@@ -64,7 +64,7 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 #### DM-worker 间 shard DDL 协调流程
 
-我们基于在 [实现原理文章](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中展示过的仅包含两个 DM-worker 的 shard DDL 协调流程示例（如下图）来了解 DM 内部的具体实现。
+我们基于在 [这篇文章](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中展示过的仅包含两个 DM-worker 的 shard DDL 协调流程示例（如下图）来了解 DM 内部的具体实现。
 
 ![](media/dm-source-code-reading-9/1.png)
 
