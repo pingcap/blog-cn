@@ -4,7 +4,7 @@ author: ['张学程']
 date: 2019-07-18
 summary: 在本篇文章中，我们将对 shard DDL 同步机制以及 checkpoint 机制等进行详细的介绍，内容包括 shard group 的定义、shard DDL 的同步协调处理流程、checkpoint 机制以及与之相关的 safe mode 机制。
 tags: ['DM 源码阅读','社区']
---
+---
 
 本文为 DM 源码阅读系列文章的第九篇，在 [上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-8/) 中我们详细介绍了 DM 对 online schema change 方案的同步支持，对 online schema change 同步方案以及实现细节等逻辑进行了分析。
 
