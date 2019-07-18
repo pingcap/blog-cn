@@ -16,7 +16,7 @@ DM 中通过 [库表路由与列值转换](https://pingcap.com/blog-cn/dm-source
 
 ### shard group
 
-在 DM 的 [实现原理文章](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中，我们介绍了 DM 在处理 shard DDL 同步时引入了两级 shard group 的概念，即用于执行分表合并同步任务的各 DM-worker 组成的 shard group、每个 DM-worker 内需要进行合表同步的各上游分表组成的 shard group。
+在 [这篇文章](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中，我们介绍了 DM 在处理 shard DDL 同步时引入了两级 shard group 的概念，即用于执行分表合并同步任务的各 DM-worker 组成的 shard group、每个 DM-worker 内需要进行合表同步的各上游分表组成的 shard group。
 
 #### DM-worker 组成的 shard group
 
@@ -110,25 +110,25 @@ ShardingGroup 中各主要成员变量的作用如下：
   
 #### DM-worker 内 shard DDL 同步流程
 
-我们基于在 [实现原理文章](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中展示过的一个 DM-worker 内仅包含两个分表（table_1，table_2）的 shard DDL（仅一条 DDL）协调处理流程示例来了解 DM 内部的具体实现。
+我们基于在 [实现原理文章](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中展示过的一个 DM-worker 内仅包含两个分表 `（table_1，table_2）` 的 shard DDL（仅一条 DDL）协调处理流程示例来了解 DM 内部的具体实现。
 
-1. DM-worker 收到 table_1 的 DDL
+1. DM-worker 收到 `table_1` 的 DDL
 
   a. [根据 DDL 及 binlog event position 等信息更新对应的 shard group](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1659)
 
   b. [确保 binlog replication 过程已进入 safe mode](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1675)（后文介绍 checkpoint 机制时会再介绍 safe mode）
 
-  c. [更新 table_1 的 checkpoint](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1683)（后文会详细介绍 checkpoint 机制）
+  c. [更新 `table_1` 的 checkpoint](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1683)（后文会详细介绍 checkpoint 机制）
 
 2. DM-worker 继续解析后续的 binlog event
 
   a. 根据 step.1 时返回的更新后的 shard group 信息得知还[未收到 shard group 内所有分表对应的 shard DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1684)，不向下游同步 shard DDL 并[继续后续解析](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1686)
 
-3. 忽略 table_1 的 DML 并同步 table_2 的 DML
+3. 忽略 `table_1` 的 DML 并同步 `table_2` 的 DML
 
-  a. [由于 table_1 已收到 shard DDL 但 shard DDL 自身还未完成同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1331)，[忽略对 table_1 相关 DML 的同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1335)
+  a. [由于 `table_1` 已收到 shard DDL 但 shard DDL 自身还未完成同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1331)，[忽略对 `table_1` 相关 DML 的同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1335)
 
-4. DM-worker 收到 table_2 的 DDL（流程与 step.1 一致）
+4. DM-worker 收到 `table_2` 的 DDL（流程与 step.1 一致）
 
 5. DM-worker 向下游同步 shard DDL
 
@@ -152,9 +152,9 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 8. 对于不同表的 DML 做不同的处理
 
-  a. 对于 table_1 在 step.3 时忽略的 DML，解析后向下游同步
+  a. 对于 `table_1` 在 step.3 时忽略的 DML，解析后向下游同步
 
-  b. [对于 table_2 的 DML，根据 checkpoint 信息忽略向下游同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1310)
+  b. [对于 `table_2` 的 DML，根据 checkpoint 信息忽略向下游同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1310)
 
 9. 解析到达 step.4 时 DDL 对应的 binlog position，re-sync 阶段完成
 
@@ -164,7 +164,7 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 10. 继续进行后续的 DDL 与 DML 的同步
 
-需要注意的是，在上述 step.1 与 step.4 之间，如果有收到 table_1 的其他 DDL，则对于该 shard group，需要协调同步由一组 shard DDL 组成的 [ShardingSequence](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding-meta/shardmeta.go#L53)。当在 step.9 对其中某一条 shard DDL 同步完成后，[如果有更多的未同步的 shard DDL 需要协调处理](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1051)，则会[重定向到待处理的下一条 shard DDL 对应的位置重新开始解析 binlog event](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1057)。
+需要注意的是，在上述 step.1 与 step.4 之间，如果有收到 `table_1` 的其他 DDL，则对于该 shard group，需要协调同步由一组 shard DDL 组成的 [ShardingSequence](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding-meta/shardmeta.go#L53)。当在 step.9 对其中某一条 shard DDL 同步完成后，[如果有更多的未同步的 shard DDL 需要协调处理](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1051)，则会[重定向到待处理的下一条 shard DDL 对应的位置重新开始解析 binlog event](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1057)。
 
 ## checkpoint 机制的实现
 
@@ -178,22 +178,22 @@ DM 在 binlog replication 阶段以 binlog event 对应的 position 为 checkpoi
 
 2.  每个需要同步 table 的 checkpoint：对应该 table 已成功解析并同步到下游的 binlog event 的 position，主要用于在 re-sync 过程中避免对已同步的数据进行重复同步
 
-DM 的 checkpoint 信息保存在下游数据库中，通过 [RemoteCheckPoint](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L174) 对象进行读写，其主要成员变量包括：
+DM 的 checkpoint 信息保存在下游数据库中，通过 [`RemoteCheckPoint`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L174) 对象进行读写，其主要成员变量包括：
 
-*   [globalPoint](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L197)：用于保存全局 checkpoint
+*   [`globalPoint`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L197)：用于保存全局 checkpoint
 
-*   [points](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L189)：用于保存各 table 的 checkpoint
+*   [`points`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L189)：用于保存各 table 的 checkpoint
 
-checkpoint 信息在下游数据库中对应的 schema 通过 [createTable](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L453) 方法进行创建，其中各主要字段的含义为：
+checkpoint 信息在下游数据库中对应的 schema 通过 [`createTable`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L453) 方法进行创建，其中各主要字段的含义为：
 
 | 字段 | 含义 |
 |:-------------|:--------|
-| [id](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L456) | 标识待同步数据对应的上游数据源，当前该字段值对应为 source-id |
-| [cp_schema](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L457) | checkpoint 信息所属 table 对应的 schema 名称，[对于全局 checkpoint 该字段值为空字符串](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L40) |
-| [cp_table](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L458) | checkpoint 信息所属 table 的名称，[对于全局 checkpoint 该字段值为空字符串](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L41) |
-| [binlog_name](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L459) | checkpoint 信息的 binlog filename |
-| [binlog_pos](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L460) | checkpoint 信息的 binlog event position |
-| [is_global](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L461) |标识该条 checkpoint 信息是否是全局 checkpoint |
+| [`id`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L456) | 标识待同步数据对应的上游数据源，当前该字段值对应为 source-id |
+| [`cp_schema`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L457) | checkpoint 信息所属 table 对应的 schema 名称，[对于全局 checkpoint 该字段值为空字符串](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L40) |
+| [`cp_table`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L458) | checkpoint 信息所属 table 的名称，[对于全局 checkpoint 该字段值为空字符串](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L41) |
+| [`binlog_name`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L459) | checkpoint 信息的 binlog filename |
+| [`binlog_pos`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L460) | checkpoint 信息的 binlog event position |
+| [`is_global`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L461) |标识该条 checkpoint 信息是否是全局 checkpoint |
 
 对于全局 checkpoint，在以下情况下会更新内存中的信息：
 
@@ -223,11 +223,11 @@ checkpoint 信息在下游数据库中对应的 schema 通过 [createTable](http
 
 在 DM 的 binlog replication 阶段，通过增加 safe mode 机制确保了重复同步数据时的可重入，即：
 
-*   [将 INSERT 操作转为 REPLACE 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L132)
+*   [将 `INSERT` 操作转为 `REPLACE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L132)
 
-*   [将 UPDATE 操作转为 DELETE 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L195)和 [REPLACE 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L200)
+*   [将 `UPDATE` 操作转为 `DELETE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L195)和 [REPLACE 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L200)
 
-*   [对 DELETE 操作不进行转换仍保持为 DELETE](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L265)
+*   [对 `DELETE` 操作不进行转换仍保持为 `DELETE`](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L265)
 
 目前，safe mode 会在以下情况时启用：
 
