@@ -146,7 +146,7 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 6. 将 binlog 的解析位置重定向回 step.1 对应 DDL 后的 binlog event position 进入 re-sync 阶段
 
-   [根据 step.5 中保存的信息](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1074)，[将 binlog 的解析位置重定向回 step.1 对应的 DDL 后的 binlog event position](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1080)
+    [根据 step.5 中保存的信息](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1074)，[将 binlog 的解析位置重定向回 step.1 对应的 DDL 后的 binlog event position](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1080)
 
 7. 重新解析 binlog event
 
