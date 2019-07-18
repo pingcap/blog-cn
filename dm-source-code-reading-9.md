@@ -233,7 +233,7 @@ checkpoint 信息在下游数据库中对应的 schema 通过 [`createTable`](ht
 
 *   [启动或恢复任务时的前 5 分钟](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1023)，确保从 checkpoint 位置开始被重复同步的部分数据最终一致
 
-*   [DM-worker 内进行 shard DDL 同步协调时](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1675)（见前文 [DM-worker 内 shard DDL 同步流程](https://docs.google.com/document/d/1MTtvVj_EZczL12kUfqEbwXjVr0hFgScavASOG5w6dic/edit#heading=h.2uib872j30z6)），确保即使 shard DDL 协调过程中异常重启且 5 分钟内无法重复同步完之前已同步数据也能最终一致
+*   [DM-worker 内进行 shard DDL 同步协调时](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1675)（见前文 [DM-worker 内 shard DDL 同步流程](#dm-worker-内-shard-ddl-同步流程)），确保即使 shard DDL 协调过程中异常重启且 5 分钟内无法重复同步完之前已同步数据也能最终一致
 
 *   [用户在同步任务配置文件中指定了启用 safe mode](https://github.com/pingcap/dm/blob/369933f31b/syncer/mode.go#L33)，用于其他需要以 safe mode 同步超 5 分钟的场景
 
