@@ -30,12 +30,12 @@ Lock 中各主要成员变量的作用如下：
 
 | 成员变量 | 作用 |
 |:-------------|:--------|
-| [ID](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L27) | 用于标识一个 lock，由同步任务名、合并后同步到的目标表对应的 schema 及 table 名构造得到 |
-| [Task](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L28) | 该 lock 所对应的同步任务名 |
-| [Owner](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L29) | 该 lock 的 owner 对应的 ID，即第一个向 DM-master 上报 shard DDL 信息的 DM-worker 对应的 ID |
-| [remain](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L31) | 尚未上报待同步 shard DDL 信息的 DM-worker 数量 |
-| [ready](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L32) | 标识各 DM-worker 是否已上报过待同步 shard DDL 信息 |
-| [ddls](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L33) | 该 lock 对应的需要进行协调同步到下游的 DDL statements（[shard DDL 通过 TiDB parser 转换后可能会被分拆为多条 DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1491)） |
+| [`ID`](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L27) | 用于标识一个 lock，由同步任务名、合并后同步到的目标表对应的 schema 及 table 名构造得到 |
+| [`Task`](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L28) | 该 lock 所对应的同步任务名 |
+| [`Owner`](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L29) | 该 lock 的 owner 对应的 ID，即第一个向 DM-master 上报 shard DDL 信息的 DM-worker 对应的 ID |
+| [`remain`](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L31) | 尚未上报待同步 shard DDL 信息的 DM-worker 数量 |
+| [`ready`](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L32) | 标识各 DM-worker 是否已上报过待同步 shard DDL 信息 |
+| [`ddls`](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L33) | 该 lock 对应的需要进行协调同步到下游的 DDL statements（[shard DDL 通过 TiDB parser 转换后可能会被分拆为多条 DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1491)） |
 
 #### DM-worker 内分表组成的 shard group
 
@@ -49,10 +49,10 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 | 成员变量 | 作用 |
 |:-------------|:--------|
-| [sourceID](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L99) | 当前 DM-worker 对应于上游 MySQL 的 source-id |
-| [remain](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L95) | 尚未收到对应 shard DDL 的分表数量 |
-| [sources](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L96) | 标识是否已收到各上游分表对应的 shard DDL 信息 |
-| [meta](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L100) | 当前 shard group 内各分表收到的 DDL 相关信息 |
+| [`sourceID`](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L99) | 当前 DM-worker 对应于上游 MySQL 的 source-id |
+| [`remain`](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L95) | 尚未收到对应 shard DDL 的分表数量 |
+| [`sources`](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L96) | 标识是否已收到各上游分表对应的 shard DDL 信息 |
+| [`meta`](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L100) | 当前 shard group 内各分表收到的 DDL 相关信息 |
 
 ### shard DDL 同步流程
 
@@ -70,17 +70,17 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 1.  DM-worker-1 将 shard DDL 信息发送给 DM-master
 
-  a. 当 DM-worker-1 内部 shard DDL 协调完成时，[DM-worker-1 将对应的 shard DDL 信息保存在 channel 中](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1727)供 DM-master 通过 gRPC 获取
+    a. 当 DM-worker-1 内部 shard DDL 协调完成时，[DM-worker-1 将对应的 shard DDL 信息保存在 channel 中](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1727)供 DM-master 通过 gRPC 获取
 
-  b. DM-master 在 [fetchWorkerDDLInfo](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1243) 方法中[以 gRPC streaming 的方式读取到 DM-worker-1 的 shard DDL 信息](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1277)
+    b. DM-master 在 [fetchWorkerDDLInfo](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1243) 方法中[以 gRPC streaming 的方式读取到 DM-worker-1 的 shard DDL 信息](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1277)
 
-  c. [DM-master 调用 ShardingGroupKeeper 的 TrySync 方法创建对应的 lock 信息](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1308)，[并在 lock 中标记已收到 DM-worker-1 的 shard DDL 信息](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L77)
+    c. [DM-master 调用 ShardingGroupKeeper 的 TrySync 方法创建对应的 lock 信息](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1308)，[并在 lock 中标记已收到 DM-worker-1 的 shard DDL 信息](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L77)
 
 2.  DM-master 将 lock 信息发回给 DM-worker-1
 
-  a. [DM-master 以 gRPC streaming 的方式将 lock 信息发送给 DM-worker-1](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1319)
+    a. [DM-master 以 gRPC streaming 的方式将 lock 信息发送给 DM-worker-1](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1319)
 
-  b. [DM-worker-1 将来自 DM-master 的 lock 信息保存在内存中](https://github.com/pingcap/dm/blob/369933f31b/dm/worker/subtask.go#L535)用于在 DM-master 请求 DM-worker 执行/跳过 shard DDL 时进行验证
+    b. [DM-worker-1 将来自 DM-master 的 lock 信息保存在内存中](https://github.com/pingcap/dm/blob/369933f31b/dm/worker/subtask.go#L535)用于在 DM-master 请求 DM-worker 执行/跳过 shard DDL 时进行验证
 
 3. DM-worker-2 将 shard DDL 信息发送给 DM-master（流程与 step.1 一致）
 
@@ -88,25 +88,25 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 5. DM-master 协调 DM-worker-1 向下游同步 shard DDL
 
-  a. DM-master 根据 step.1 与 step.3 时收到的 shard DDL 信息[判定已经收到 shard group 内所有 DM-worker 的 shard DDL 信息](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L80)
+    a. DM-master 根据 step.1 与 step.3 时收到的 shard DDL 信息[判定已经收到 shard group 内所有 DM-worker 的 shard DDL 信息](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L80)
 
-  b. DM-master 在 [resolveDDLLock](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1360) 方法中[向 DM-worker-1 发送向下游同步 shard DDL 的请求](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1431)（[Exec 参数为 true](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1427)）
+    b. DM-master 在 [resolveDDLLock](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1360) 方法中[向 DM-worker-1 发送向下游同步 shard DDL 的请求](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1431)（[Exec 参数为 true](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1427)）
 
 6. DM-worker-1 向下游同步 shard DDL
 
-  a. [DM-worker-1 接收到来自 DM-master 的向下游执行 shard DDL 的请求](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1732)
+    a. [DM-worker-1 接收到来自 DM-master 的向下游执行 shard DDL 的请求](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1732)
 
-  b. [DM-worker-1 构造 DDL job 并添加到 DDL 执行队列中](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1773)
+    b. [DM-worker-1 构造 DDL job 并添加到 DDL 执行队列中](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1773)
 
-  c. [DM-worker-1 将 shard DDL 执行结果保存在 channel 中](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L874)供 DM-master 通过 gRPC 获取
+    c. [DM-worker-1 将 shard DDL 执行结果保存在 channel 中](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L874)供 DM-master 通过 gRPC 获取
 
 7. DM-worker-2 忽略向下游同步 shard DDL
 
-  a. [DM-master 获取 DM-worker-1 向下游同步 shard DDL 的结果](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1436)判断得知 DM-worker-1 同步 shard DDL 成功
+    a. [DM-master 获取 DM-worker-1 向下游同步 shard DDL 的结果](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1436)判断得知 DM-worker-1 同步 shard DDL 成功
 
-  b. [DM-master 向 DM-worker-2 发送忽略向下游同步 shard DDL 的请求](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1486)（[Exec 参数为 false](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1461)）
+    b. [DM-master 向 DM-worker-2 发送忽略向下游同步 shard DDL 的请求](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1486)（[Exec 参数为 false](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1461)）
 
-  c. [DM-worker-2 根据 DM-master 请求忽略向下游同步 shard DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L843)
+    c. [DM-worker-2 根据 DM-master 请求忽略向下游同步 shard DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L843)
   
 #### DM-worker 内 shard DDL 同步流程
 
@@ -114,53 +114,53 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 1. DM-worker 收到 `table_1` 的 DDL
 
-  a. [根据 DDL 及 binlog event position 等信息更新对应的 shard group](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1659)
+    a. [根据 DDL 及 binlog event position 等信息更新对应的 shard group](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1659)
 
-  b. [确保 binlog replication 过程已进入 safe mode](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1675)（后文介绍 checkpoint 机制时会再介绍 safe mode）
+    b. [确保 binlog replication 过程已进入 safe mode](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1675)（后文介绍 checkpoint 机制时会再介绍 safe mode）
 
-  c. [更新 `table_1` 的 checkpoint](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1683)（后文会详细介绍 checkpoint 机制）
+    c. [更新 `table_1` 的 checkpoint](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1683)（后文会详细介绍 checkpoint 机制）
 
 2. DM-worker 继续解析后续的 binlog event
 
-  a. 根据 step.1 时返回的更新后的 shard group 信息得知还[未收到 shard group 内所有分表对应的 shard DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1684)，不向下游同步 shard DDL 并[继续后续解析](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1686)
+    a. 根据 step.1 时返回的更新后的 shard group 信息得知还[未收到 shard group 内所有分表对应的 shard DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1684)，不向下游同步 shard DDL 并[继续后续解析](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1686)
 
 3. 忽略 `table_1` 的 DML 并同步 `table_2` 的 DML
 
-  a. [由于 `table_1` 已收到 shard DDL 但 shard DDL 自身还未完成同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1331)，[忽略对 `table_1` 相关 DML 的同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1335)
+    a. [由于 `table_1` 已收到 shard DDL 但 shard DDL 自身还未完成同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1331)，[忽略对 `table_1` 相关 DML 的同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1335)
 
 4. DM-worker 收到 `table_2` 的 DDL（流程与 step.1 一致）
 
 5. DM-worker 向下游同步 shard DDL
 
-  a. 根据 step.4 时返回的更新后的 shard group 信息得知已经收到 shard group 内所有分表对应的 shard DDL
+    a. 根据 step.4 时返回的更新后的 shard group 信息得知已经收到 shard group 内所有分表对应的 shard DDL
 
-  b. [尝试让 binlog replication 过程退出 safe mode](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1690)
+    b. [尝试让 binlog replication 过程退出 safe mode](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1690)
 
-  c. [将当前 shard DDL 同步完成后 re-sync 时重新同步 step.3 忽略的 DML 所需的相关信息保存在 channel 中](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1707)
+    c. [将当前 shard DDL 同步完成后 re-sync 时重新同步 step.3 忽略的 DML 所需的相关信息保存在 channel 中](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1707)
 
-  d. [等待已分发的所有 DML 同步完成](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1716)（确保等待并发同步的 DML 都同步到下游后再对下游 schema 进行变更）
+    d. [等待已分发的所有 DML 同步完成](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1716)（确保等待并发同步的 DML 都同步到下游后再对下游 schema 进行变更）
 
-  e. [将 shard DDL 相关信息保存在 channel 中以进行 DM-worker 间的同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1727)（见前文[DM-worker 间 shard DDL 协调流程](https://docs.google.com/document/d/1MTtvVj_EZczL12kUfqEbwXjVr0hFgScavASOG5w6dic/edit#heading=h.icl78k66qx4m)）
+    e. [将 shard DDL 相关信息保存在 channel 中以进行 DM-worker 间的同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1727)（见前文[DM-worker 间 shard DDL 协调流程](https://docs.google.com/document/d/1MTtvVj_EZczL12kUfqEbwXjVr0hFgScavASOG5w6dic/edit#heading=h.icl78k66qx4m)）
 
-  f. 待 DM-worker 间协调完成后，[向下游同步 shard DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L846)
+    f. 待 DM-worker 间协调完成后，[向下游同步 shard DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L846)
 
 6. 将 binlog 的解析位置重定向回 step.1 对应 DDL 后的 binlog event position 进入 re-sync 阶段
 
- a. [根据 step.5 中保存的信息](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1074)，[将 binlog 的解析位置重定向回 step.1 对应的 DDL 后的 binlog event position](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1080)
+   a. [根据 step.5 中保存的信息](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1074)，[将 binlog 的解析位置重定向回 step.1 对应的 DDL 后的 binlog event position](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1080)
 
 7. 重新解析 binlog event
 
 8. 对于不同表的 DML 做不同的处理
 
-  a. 对于 `table_1` 在 step.3 时忽略的 DML，解析后向下游同步
+    a. 对于 `table_1` 在 step.3 时忽略的 DML，解析后向下游同步
 
-  b. [对于 `table_2` 的 DML，根据 checkpoint 信息忽略向下游同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1310)
+    b. [对于 `table_2` 的 DML，根据 checkpoint 信息忽略向下游同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1310)
 
 9. 解析到达 step.4 时 DDL 对应的 binlog position，re-sync 阶段完成
 
-  a. [解析 binlog position 到达 step.4 的 DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1296)
+    a. [解析 binlog position 到达 step.4 的 DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1296)
 
-  b. [结束 re-sync 过程](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1298)
+    b. [结束 re-sync 过程](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1298)
 
 10. 继续进行后续的 DDL 与 DML 的同步
 
