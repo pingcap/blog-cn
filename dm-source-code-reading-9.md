@@ -122,11 +122,11 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 2. DM-worker 继续解析后续的 binlog event
 
-    a. 根据 step.1 时返回的更新后的 shard group 信息得知还[未收到 shard group 内所有分表对应的 shard DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1684)，不向下游同步 shard DDL 并[继续后续解析](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1686)
+    根据 step.1 时返回的更新后的 shard group 信息得知还[未收到 shard group 内所有分表对应的 shard DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1684)，不向下游同步 shard DDL 并[继续后续解析](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1686)
 
 3. 忽略 `table_1` 的 DML 并同步 `table_2` 的 DML
 
-    a. [由于 `table_1` 已收到 shard DDL 但 shard DDL 自身还未完成同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1331)，[忽略对 `table_1` 相关 DML 的同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1335)
+    [由于 `table_1` 已收到 shard DDL 但 shard DDL 自身还未完成同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1331)，[忽略对 `table_1` 相关 DML 的同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1335)
 
 4. DM-worker 收到 `table_2` 的 DDL（流程与 step.1 一致）
 
@@ -146,7 +146,7 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 6. 将 binlog 的解析位置重定向回 step.1 对应 DDL 后的 binlog event position 进入 re-sync 阶段
 
-   a. [根据 step.5 中保存的信息](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1074)，[将 binlog 的解析位置重定向回 step.1 对应的 DDL 后的 binlog event position](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1080)
+   [根据 step.5 中保存的信息](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1074)，[将 binlog 的解析位置重定向回 step.1 对应的 DDL 后的 binlog event position](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1080)
 
 7. 重新解析 binlog event
 
