@@ -225,7 +225,7 @@ checkpoint 信息在下游数据库中对应的 schema 通过 [`createTable`](ht
 
 *   [将 `INSERT` 操作转为 `REPLACE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L132)
 
-*   [将 `UPDATE` 操作转为 `DELETE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L195)和 [REPLACE 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L200)
+*   [将 `UPDATE` 操作转为 `DELETE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L195)和 [`REPLACE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L200)
 
 *   [对 `DELETE` 操作不进行转换仍保持为 `DELETE`](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L265)
 
