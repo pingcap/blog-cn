@@ -140,7 +140,7 @@ ShardingGroup 中各主要成员变量的作用如下：
 
     d. [等待已分发的所有 DML 同步完成](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1716)（确保等待并发同步的 DML 都同步到下游后再对下游 schema 进行变更）
 
-    e. [将 shard DDL 相关信息保存在 channel 中以进行 DM-worker 间的同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1727)（见前文[DM-worker 间 shard DDL 协调流程](https://docs.google.com/document/d/1MTtvVj_EZczL12kUfqEbwXjVr0hFgScavASOG5w6dic/edit#heading=h.icl78k66qx4m)）
+    e. [将 shard DDL 相关信息保存在 channel 中以进行 DM-worker 间的同步](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1727)（见前文[DM-worker 间 shard DDL 协调流程](#dm-worker-间-shard-ddl-协调流程)）
 
     f. 待 DM-worker 间协调完成后，[向下游同步 shard DDL](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L846)
 
