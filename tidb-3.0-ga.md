@@ -1,7 +1,7 @@
 ---
 title: TiDB 3.0 GA，稳定性和性能大幅提升
 author: ['段兵']
-date: 2018-06-28
+date: 2019-06-28
 summary: 2019 年 6 月 28 日，TiDB 3.0 GA 正式发布，请跟随我们的脚步看看 TiDB 3.0 有什么样的惊喜。
 tags: ['TiDB','版本']
 ---
