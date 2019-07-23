@@ -32,8 +32,7 @@ DM 完整的测试体系包括以下四个部分：
 
 我们通过以下的表格对比不同测试维度在测试体系中发挥的作用和它们之间的互补性。
 
-
-| 名称 | 测试方法 | 测试重点 | 测试周期 | 测试互补性 |
+| 测试名称 | 测试方法 | 测试重点 | 测试周期 | 测试互补性 |
 |:-------------:|:-----------|:-----------|:--------------|:----------|
 | 单元测试 | 白盒测试，确定性的输入、输出 | 模块和具体函数的正确性 | CI 自动化触发，新代码提交前必须通过 | 保证单个函数的正确性 |
 | 集成测试 | 确定性的同步场景和数据负载 | 模块之间整体交互的正确性，可以有针对性的测试特定数据同步场景。 | CI 自动化触发，新代码提交前必须通过测试 | 在单元测试的基础上，保证多个模块在一起组合起来工作的正确性 |
@@ -48,7 +47,7 @@ DM 完整的测试体系包括以下四个部分：
 
 #### mock golang interface
 
-在 golang 中只要调用者本身实现了接口的全部方法，就默认实现了该接口，这一特性使得使用接口方法调用的代码具有良好的扩展性，对于测试也提供了天然的 mock 方法。以 worker 内部各 subtask 的 [任务暂停、恢复的测试用例](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L258) 为例，测试过程中会涉及到 dump unit 和 load unit 的运行、出错、暂停和恢复等操作。我们定义 [MockUnit](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L67-L76) 并且实现了 [unit interface](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/unit/unit.go#L24) 的[全部方法](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L86-L124)，就可以在单元测试里模拟任务中 unit 的各类操作。还可以定义 [各类注入函数](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L126-L143)，实现控制某些逻辑流程中的出错测试和执行路径控制。
+在 golang 中只要调用者本身实现了接口的全部方法，就默认实现了该接口，这一特性使得使用接口方法调用的代码具有良好的扩展性，对于测试也提供了天然的 mock 方法。以 worker 内部各 subtask 的 [任务暂停、恢复的测试用例](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L258) 为例，测试过程中会涉及到 dump unit 和 load unit 的运行、出错、暂停和恢复等操作。我们定义 [MockUnit](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L67-L76) 并且实现了 [unit interface](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/unit/unit.go#L24) 的 [全部方法](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L86-L124)，就可以在单元测试里模拟任务中 unit 的各类操作。还可以定义 [各类注入函数](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L126-L143)，实现控制某些逻辑流程中的出错测试和执行路径控制。
 
 #### 自定义 binlog 生成工具
 
