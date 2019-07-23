@@ -22,7 +22,7 @@ DM 完整的测试体系包括以下四个部分：
 
 ### 3. 破坏性测试
 
-真实的软件运行环境中会遇到各种各样的问题，包括各类硬件故障、网络延迟和隔离、资源不足等等。DM 在数据同步过程中也同样会遇到这些问题，借助于 [PingCAP 内部的自动混沌测试平台 schrodinger](https://thenewstack.io/chaos-tools-and-techniques-for-testing-the-tidb-distributed-newsql-database/)，我们设计了多个破坏性测试用例，包括在同步过程中随机 kill DM-worker 节点，同步过程中重启部分 DM-worker 节点，分发不兼容 DDL 语句等测试场景。这一类测试的关注点是在各类破坏性操作之后数据同步能否正常恢复以及验证在这些场景下数据一致性的保证，测试用例通常以黑盒的形式去运行，并且长期、反复地进行测试。
+真实的软件运行环境中会遇到各种各样的问题，包括各类硬件故障、网络延迟和隔离、资源不足等等。DM 在数据同步过程中也同样会遇到这些问题，借助于 [PingCAP 内部的自动化混沌测试平台 schrodinger](https://thenewstack.io/chaos-tools-and-techniques-for-testing-the-tidb-distributed-newsql-database/)，我们设计了多个破坏性测试用例，包括在同步过程中随机 kill DM-worker 节点，同步过程中重启部分 DM-worker 节点，分发不兼容 DDL 语句等测试场景。这一类测试的关注点是在各类破坏性操作之后数据同步能否正常恢复以及验证在这些场景下数据一致性的保证，测试用例通常以黑盒的形式去运行，并且长期、反复地进行测试。
 
 ### 4. 稳定性测试
 
