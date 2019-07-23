@@ -6,7 +6,7 @@ summary: 本篇文章将从质量保证的角度来介绍 DM 测试框架的设�
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 DM 源码阅读系列文章的第十篇，之前的文章已经详细介绍过 DM 数据同步各组件的实现原理和代码解析，相信大家对 DM 的实现细节已经有了深入的了解。本篇文章将从质量保证的角度来介绍 DM 测试框架的设计和实现，探讨如何通过多维度的的测试方法保证 DM 的正确性和稳定性。
+本文为 DM 源码阅读系列文章的第十篇，之前的文章已经详细介绍过 DM 数据同步各组件的实现原理和代码解析，相信大家对 DM 的实现细节已经有了深入的了解。本篇文章将从质量保证的角度来介绍 DM 测试框架的设计和实现，探讨如何通过多维度的测试方法保证 DM 的正确性和稳定性。
 
 ## 测试体系
 
@@ -14,7 +14,7 @@ DM 完整的测试体系包括以下四个部分：
 
 ### 1. 单元测试
 
-主要用于测试每个 go 模块和具体函数实现的正确性，测试用例的编写依照 go 单元测试的标准，跟随代码一起发布。具体测试用例使用的 [pingcap/check](https://github.com/pingcap/check) 工具包，该工具包是在 go 原生测试工具基础上进行的扩展，[按照 suite 分组进行测试](https://github.com/pingcap/check/blob/67f458068fc864dabf17e38d4d337f28430d13ed/run.go#L98-L131)，提供包括更丰富的检测语法糖，并行测试，序列化测试在内的一些扩展特性。单元测试的设计出发点是白盒测试，测试用例中通过尽可能明确的测试输入得到期望的测试输出。
+主要用于测试每个 go 模块和具体函数实现的正确性，测试用例编写和测试运行方式依照 go 单元测试的标准，测试代码跟随项目源代码一起发布。具体测试用例编写使用 [pingcap/check](https://github.com/pingcap/check) 工具包，该工具包是在 go 原生测试工具基础上进行的扩展，[按照 suite 分组进行测试](https://github.com/pingcap/check/blob/67f458068fc864dabf17e38d4d337f28430d13ed/run.go#L98-L131)，提供包括更丰富的检测语法糖、并行测试、序列化测试在内的一些扩展特性。单元测试的设计出发点是白盒测试，测试用例中通过尽可能明确的测试输入得到期望的测试输出。
 
 ### 2. 集成测试
 
@@ -22,7 +22,7 @@ DM 完整的测试体系包括以下四个部分：
 
 ### 3. 破坏性测试
 
-真实的软件运行环境中会遇到各种各样的问题，包括各类硬件故障、网络延迟和隔离、资源不足等等。DM 在数据同步过程中也同样会遇到这些问题，借助于 [PingCAP 内部的自动混沌测试平台 schrodinger](https://thenewstack.io/chaos-tools-and-techniques-for-testing-the-tidb-distributed-newsql-database/)，我们设计了多个破坏性测试用例，包括在同步过程中随机 kill DM-worker 节点，同步过程中重启部分 DM-worker 节点，分发不兼容 DDL 语句等测试场景。这一类测试的关注点是在各类破坏性操作之后数据同步能否正常恢复以及验证在这些场景下数据一致性的保证，测试用例通常以黑盒的形式去运行，并且长期、反复地进行测试。
+真实的软件运行环境中会遇到各种各样的问题，包括各类硬件故障、网络延迟和隔离、资源不足等等。DM 在数据同步过程中也同样会遇到这些问题，借助于 [PingCAP 内部的自动化混沌测试平台 schrodinger](https://thenewstack.io/chaos-tools-and-techniques-for-testing-the-tidb-distributed-newsql-database/)，我们设计了多个破坏性测试用例，包括在同步过程中随机 kill DM-worker 节点，同步过程中重启部分 DM-worker 节点，分发不兼容 DDL 语句等测试场景。这一类测试的关注点是在各类破坏性操作之后数据同步能否正常恢复以及验证在这些场景下数据一致性的保证，测试用例通常以黑盒的形式去运行，并且长期、反复地进行测试。
 
 ### 4. 稳定性测试
 
@@ -45,7 +45,7 @@ DM 完整的测试体系包括以下四个部分：
 
 我们在单元测试运行过程中希望尽量减少外部环境或内部组件的依赖，譬如测试 relay 模块时我们并不希望从上游的 MySQL 拉取 binlog，或者测试到下游的一些数据库读写操作并不希望真正部署一个下游 TiDB，这时候我们就需要对测试 case 进行适当的 mock。在单元测试中针对不同的场景采用了多种 mock 方案。接下来我们选取几种具有代表性的方案进行介绍。
 
-#### mock golang interface
+#### Mock golang interface
 
 在 golang 中只要调用者本身实现了接口的全部方法，就默认实现了该接口，这一特性使得使用接口方法调用的代码具有良好的扩展性，对于测试也提供了天然的 mock 方法。以 worker 内部各 subtask 的 [任务暂停、恢复的测试用例](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L258) 为例，测试过程中会涉及到 dump unit 和 load unit 的运行、出错、暂停和恢复等操作。我们定义 [MockUnit](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L67-L76) 并且实现了 [unit interface](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/unit/unit.go#L24) 的 [全部方法](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L86-L124)，就可以在单元测试里模拟任务中 unit 的各类操作。还可以定义 [各类注入函数](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L126-L143)，实现控制某些逻辑流程中的出错测试和执行路径控制。
 
