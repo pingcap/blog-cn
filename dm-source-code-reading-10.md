@@ -46,7 +46,7 @@ DM 完整的测试体系包括以下四个部分：
 
 我们在单元测试运行过程中希望尽量减少外部环境或内部组件的依赖，譬如测试 relay 模块时我们并不希望从上游的 MySQL 拉取 binlog，或者测试到下游的一些数据库读写操作并不希望真正部署一个下游 TiDB，这时候我们就需要对测试 case 进行适当的 mock。在单元测试中针对不同的场景采用了多种 mock 方案。接下来我们选取几种具有代表性的方案进行介绍。
 
-#### mock golang interface
+#### Mock golang interface
 
 在 golang 中只要调用者本身实现了接口的全部方法，就默认实现了该接口，这一特性使得使用接口方法调用的代码具有良好的扩展性，对于测试也提供了天然的 mock 方法。以 worker 内部各 subtask 的 [任务暂停、恢复的测试用例](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L258) 为例，测试过程中会涉及到 dump unit 和 load unit 的运行、出错、暂停和恢复等操作。我们定义 [MockUnit](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L67-L76) 并且实现了 [unit interface](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/unit/unit.go#L24) 的[全部方法](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L86-L124)，就可以在单元测试里模拟任务中 unit 的各类操作。还可以定义 [各类注入函数](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/worker/subtask_test.go#L126-L143)，实现控制某些逻辑流程中的出错测试和执行路径控制。
 
