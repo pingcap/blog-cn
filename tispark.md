@@ -151,7 +151,7 @@ spark.tispark.pd.addresses 192.168.1.100:2379
 spark.sql.extensions org.apache.spark.sql.TiExtensions
 ```
 
-然后在 Spark-Shell 里像原生 Spark 一样输入下面的命令：
+然后在 Spark-Shell 里输入下面的命令：
 
 ```scala
 spark.sql("use tpch")
@@ -162,7 +162,7 @@ spark.sql("select count(*) from lineitem").show
 
 ```
 +-------------+
-| Count (1)   |
+| count (1)   |
 +-------------+
 | 600000000   |
 +-------------+
