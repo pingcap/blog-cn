@@ -91,13 +91,13 @@ Spark 的具体配置方式也请参考[官方说明](https://spark.apache.org/d
 
 ## 四、部署 TiSpark
 
-TiSpark 的 jar 包可以在[这里](https://download.pingcap.org/tispark-0.1.0-beta-SNAPSHOT-jar-with-dependencies.jar)下载。
+TiSpark 的 jar 包可以在[这里](https://github.com/pingcap/tispark/releases)下载。
 
 ### 4.1 已有 Spark 集群的部署方式
 
 在已有 Spark 集群上运行 TiSpark 无需重启集群。可以使用 Spark 的 --jars 参数将 TiSpark 作为依赖引入:
 
-`spark-shell --jars $PATH/tispark-0.1.0.jar`
+`spark-shell --jars $PATH/tispark-${name}.jar`
 
 如果想将 TiSpark 作为默认组件部署，只需要将 TiSpark 的 jar 包放进 Spark 集群每个节点的 jars 路径并重启 Spark 集群：
 
@@ -113,7 +113,7 @@ TiSpark 的 jar 包可以在[这里](https://download.pingcap.org/tispark-0.1.0-
 
 你可以在[这里](https://spark.apache.org/downloads.html)下载 Apache Spark。
 
-对于 Standalone 模式且无需 Hadoop 支持，请选择 Spark 2.1.x 且带有 Hadoop 依赖的 Pre-build with Apache Hadoop 2.x 任意版本。如你有需要配合使用的 Hadoop 集群，请选择对应的 Hadoop 版本号。你也可以选择从源代码[自行构建](https://spark.apache.org/docs/2.1.0/building-spark.html)以配合官方 Hadoop 2.6 之前的版本。请注意目前 TiSpark 仅支持 Spark 2.1.x 版本。
+对于 Standalone 模式且无需 Hadoop 支持，则选择 Spark 2.3.x 或者 Spark 2.4.x 且带有 Hadoop 依赖的 Pre-build with Apache Hadoop 2.x 任意版本。如有需要配合使用的 Hadoop 集群，则选择对应的 Hadoop 版本号。你也可以选择从源代码[自行构建](https://spark.apache.org/docs/latest/building-spark.html)以配合官方 Hadoop 2.x 之前的版本。
 
 假设你已经有了 Spark 二进制文件，并且当前 PATH 为 SPARKPATH。
 
@@ -142,29 +142,29 @@ cd $SPARKPATH
 
 ## 五、一个使用范例
 
-假设你已经按照上述步骤成功启动了 TiSpark 集群， 下面简单介绍如何使用 Spark SQL 来做 OLAP 分析。这里我们用名为 tpch 数据库中的 lineitem 表作为范例。
+假设你已经按照上述步骤成功启动了 TiSpark 集群，下面简单介绍如何使用 Spark SQL 来做 OLAP 分析。这里我们用名为 tpch 数据库中的 lineitem 表作为范例。
 
-在 Spark-Shell 里输入下面的命令,  假设你的 PD 节点位于 192.168.1.100，端口 2379：
-
-```
-import org.apache.spark.sql.TiContext
-
-val ti = new TiContext(spark, List("192.168.1.100:2379")
-
-ti.tidbMapDatabase("tpch")
-```
-之后你可以直接调用 Spark SQL
+假设你的 PD 节点位于 192.168.1.100，端口为 2379，在`$SPARK_HOME/conf/spark-defaults.conf`加入：
 
 ```
-	spark.sql("select count(*) from lineitem").show
+spark.tispark.pd.addresses 192.168.1.100:2379
+spark.sql.extensions org.apache.spark.sql.TiExtensions
 ```
+
+然后在 Spark-Shell 里输入下面的命令：
+
+```scala
+spark.sql("use tpch")
+spark.sql("select count(*) from lineitem").show
+```
+
 结果为：
 
 ```
 +-------------+
-| count(1)   |
+| count (1)   |
 +-------------+
-| 600000000  |
+| 600000000   |
 +-------------+
 ```
 
