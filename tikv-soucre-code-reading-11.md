@@ -27,9 +27,9 @@ TiKV 把底层 KV 存储引擎抽象成一个 Engine trait（trait 类似其他�
 
 ```rust
 pub trait Engine: Send + Clone + 'static {
-	type Snap: Snapshot;
-	fn async_write(&self, ctx: &Contect, batch: Vec<Modify>, callback: Callback<()>) -> Result<()>;
-	fn async_snapshot(&self, ctx: &Context, callback: Callback<Self::Snap>) -> Result<()>;
+    type Snap: Snapshot;
+    fn async_write(&self, ctx: &Contect, batch: Vec<Modify>, callback: Callback<()>) -> Result<()>;
+    fn async_snapshot(&self, ctx: &Context, callback: Callback<Self::Snap>) -> Result<()>;
 }
 ```
 
@@ -79,7 +79,7 @@ impl<E: Engine> Storage<E> {
 ```rust
 #[derive(Clone)]
 struct Latch {
-	pub waiting: VecDeque<u64>,
+    pub waiting: VecDeque<u64>,
 }
 ```
 
@@ -87,8 +87,8 @@ Latches 是一个包含多个 Latch 的结构体，内部包含一个固定长�
 
 ```rust
 pub struct Latches {
-	slots: Vec<Mutex<Latch>>,
-	size: usize,
+    slots: Vec<Mutex<Latch>>,
+    size: usize,
 }
 ```
 
@@ -125,12 +125,12 @@ Storage 定义在 `storage/mod.rs` 文件中，下面我们介绍下 Storage 几
 
 ```rust
 pub struct Storage<E: Engine> {
-	engine: E,
-	sched: Scheduler<E>,
-	read_pool: ReadPool,
-	gc_worker: GCWorker<E>,
-	pessimistic_txn_enabled: bool,
-	// Other fields...
+    engine: E,
+    sched: Scheduler<E>,
+    read_pool: ReadPool,
+    gc_worker: GCWorker<E>,
+    pessimistic_txn_enabled: bool,
+    // Other fields...
 }
 ```
 
@@ -140,18 +140,18 @@ pub struct Storage<E: Engine> {
 
 ```rust
 pub struct Scheduler<E: Engine> {
-	engine: Option<E>,
-	inner: Arc<SchedulerInner>,
+    engine: Option<E>,
+    inner: Arc<SchedulerInner>,
 }
 
 struct SchedulerInner {
-	id_alloc, AtomicU64,
-	task_contexts: Vec<Mutex<HashMap<u64, TaskContext>>>,
-	lathes: Latches,
-	sched_pending_write_threshold: usize,
-	worker_pool: SchedPool,
-	high_priority_pool: SchedPool,
-	// Some other fields...
+    id_alloc, AtomicU64,
+    task_contexts: Vec<Mutex<HashMap<u64, TaskContext>>>,
+    lathes: Latches,
+    sched_pending_write_threshold: usize,
+    worker_pool: SchedPool,
+    high_priority_pool: SchedPool,
+    // Some other fields...
 }
 ```
 
@@ -178,14 +178,14 @@ struct SchedulerInner {
 ```rust
 impl<E: Engine> Scheduler<E> {
 	fn try_to_wake_up(&self, cid: u64) {
-    	if self.inner.acquire_lock(cid) {
-        	self.get_snapshot(cid);
+	    if self.inner.acquire_lock(cid) {
+	        self.get_snapshot(cid);
     	}
 	}
 	fn release_lock(&self, lock: &Lock, cid: u64) {
-    	let wakeup_list = self.inner.latches.release(lock, cid);
-    	for wcid in wakeup_list {
-        	self.try_to_wake_up(wcid);
+	    let wakeup_list = self.inner.latches.release(lock, cid);
+	    for wcid in wakeup_list {
+	        self.try_to_wake_up(wcid);
     	}
 	}
 }
@@ -205,7 +205,7 @@ MVCC 下面有两个比较关键的结构体，分别为 `MvccReader` 和 `MvccT
 
 ```rust
 impl<S: Snapshot> MvccReader<S> {
-	pub fn get(&mut self, key: &Key, mut ts: u64) -> Result<Option<Value>>;
+    pub fn get(&mut self, key: &Key, mut ts: u64) -> Result<Option<Value>>;
 }
 ```
 
