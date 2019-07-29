@@ -19,7 +19,7 @@ KV 操作根据功能可以被划分为 Raw KV 操作以及 Txn KV 操作两大�
 
 ## 源码解析
 
-接下来我将从 Engine、Latches、Scheduler 和 MVCC 等几个方面来讲解下 Storage 相关的源码。
+接下来我们将从 Engine、Latches、Scheduler 和 MVCC 等几个方面来讲解 Storage 相关的源码。
 
 ### 1. Engine trait
 
@@ -33,7 +33,7 @@ pub trait Engine: Send + Clone + 'static {
 }
 ```
 
-只要实现了以上两个接口，都可以作为 TiKV 的底层 KV 存储引擎。在 3.0 版本中，TiKV 支持了三种不同的 KV 存储引擎，包括单机 RocksDB 引擎、内存 B 树引擎和 RaftKV 引擎，分别位于 storage/kv 文件夹下面的 `rocksdb_engine.rs`、`btree_engine.rs` 和 `raftkv.rs`。其中单机 RocksDB 引擎和内存红黑树引擎主要用于单元测试和分层 benchmark，TiKV 真正使用的是 RaftKV 引擎。当调用 RaftKV 的 `async_write` 进行写入操作时，如果 `async_write` 通过回调方式成功返回了，说明写入操作已经通过 raft 复制给了大多数副本，并且在 leader 节点（调用者所在 TiKV）完成写入了，后续 leader 节点上的读就能够看到之前写入的内容。
+只要实现了以上两个接口，都可以作为 TiKV 的底层 KV 存储引擎。在 3.0 版本中，TiKV 支持了三种不同的 KV 存储引擎，包括单机 RocksDB 引擎、内存 B 树引擎和 RaftKV 引擎，分别位于 `storage/kv` 文件夹下面的 `rocksdb_engine.rs`、`btree_engine.rs` 和 `raftkv.rs`。其中单机 RocksDB 引擎和内存红黑树引擎主要用于单元测试和分层 benchmark，TiKV 真正使用的是 RaftKV 引擎。当调用 RaftKV 的 `async_write` 进行写入操作时，如果 `async_write` 通过回调方式成功返回了，说明写入操作已经通过 raft 复制给了大多数副本，并且在 leader 节点（调用者所在 TiKV）完成写入了，后续 leader 节点上的读就能够看到之前写入的内容。
 
 ### 2. Raw KV 执行流程
 
@@ -192,13 +192,13 @@ impl<E: Engine> Scheduler<E> {
 
 3）获取 latch 成功之后会调用 Scheduler 的 `get_snapshot` 接口从 engine 获取数据库的快照。`get_snapshot` 内部实际上就是调用 engine 的 `async_snapshot` 接口。然后把 prewrite 请求以及刚刚获取到的数据库快照交给 `worker_pool` 进行处理。如果该 prewrite 请求优先级字段是 `high` 就会被分发到 `high_priority_pool` 进行处理。`high_priority_pool` 是为了那些高优先级请求而设计的，比如 TiDB 系统内部的一些请求要求 TiKV 快速返回，不能由于 `worker_pool` 繁忙而被卡住。需要注意的是，目前 `high_priority_pool` 与 `worker_pool` 仅仅是语义上不同的两个线程池，它们内部具有相同的操作系统调度优先级。
 
-4）`worker_pool` 收到 prewrite 请求之后，主要干的事情是从拿到的数据库快照里确认当前 prewrite 请求是否能够执行，比如是否已经有更大 ts 的事务已经对数据进行了修改，具体的细节可以参考 [Percolator 论文](https://ai.google/research/pubs/pub36726)，或者参考我们的官方博客 [TiKV 事务模型概览](https://pingcap.com/blog-cn/tidb-transaction-model/)。当判断 prewrite 是可以执行的，会调用 engine 的 `async_write` 接口执行真正的写入操作。这部分的具体的代码见 `storage/txn/process.rs` 中的 `process_write_impl` 函数。
+4）`worker_pool` 收到 prewrite 请求之后，主要干的事情是从拿到的数据库快照里确认当前 prewrite 请求是否能够执行，比如是否已经有更大 ts 的事务已经对数据进行了修改，具体的细节可以参考 [Percolator 论文](https://ai.google/research/pubs/pub36726)，或者参考我们的官方博客 [《TiKV 事务模型概览》](https://pingcap.com/blog-cn/tidb-transaction-model/)。当判断 prewrite 是可以执行的，会调用 engine 的 `async_write` 接口执行真正的写入操作。这部分的具体的代码见 `storage/txn/process.rs` 中的 `process_write_impl` 函数。
 
 5）当 `async_write` 执行成功或失败之后，会调用 Scheduler 的 `release_lock` 函数来释放 latch 并且唤醒等待在这些 latch 上的请求继续执行。
 
 ### 5. MVCC
 
-TiKV MVCC 相关的代码位于 `storage/mvcc` 文件夹下，强烈建议大家在阅读这部分代码之前先阅读下 [Percolator 论文](https://ai.google/research/pubs/pub36726)，或者我们的官方博客 [TiKV 事务模型概览](https://pingcap.com/blog-cn/tidb-transaction-model/)。
+TiKV MVCC 相关的代码位于 `storage/mvcc` 文件夹下，强烈建议大家在阅读这部分代码之前先阅读 [Percolator 论文](https://ai.google/research/pubs/pub36726)，或者我们的官方博客 [《TiKV 事务模型概览》](https://pingcap.com/blog-cn/tidb-transaction-model/)。
 
 MVCC 下面有两个比较关键的结构体，分别为 `MvccReader` 和 `MvccTxn`。`MvccReader` 位于 `storage/mvcc/reader/reader.rs` 文件中，它主要提供读功能，将多版本的处理细节隐藏在内部。比如 `MvccReader` 的 `get` 接口，传入需要读的 key 以及 ts，返回这个 ts 可以看到的版本或者返回 `key is lock` 错误等。
 
