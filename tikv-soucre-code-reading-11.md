@@ -193,7 +193,7 @@ impl<E: Engine> Scheduler<E> {
 
 3）获取 latch 成功之后会调用 Scheduler 的 `get_snapshot` 接口从 engine 获取数据库的快照。`get_snapshot` 内部实际上就是调用 engine 的 `async_snapshot` 接口。然后把 prewrite 请求以及刚刚获取到的数据库快照交给 `worker_pool` 进行处理。如果该 prewrite 请求优先级字段是 `high` 就会被分发到 `high_priority_pool` 进行处理。`high_priority_pool` 是为了那些高优先级请求而设计的，比如 TiDB 系统内部的一些请求要求 TiKV 快速返回，不能由于 `worker_pool` 繁忙而被卡住。需要注意的是，目前 `high_priority_pool` 与 `worker_pool` 仅仅是语义上不同的两个线程池，它们内部具有相同的操作系统调度优先级。
 
-4）`worker_pool` 收到 prewrite 请求之后，主要干的事情是从拿到的数据库快照里确认当前 prewrite 请求是否能够执行，比如是否已经有更大 ts 的事务已经对数据进行了修改，具体的细节可以参考 [Percolator 论文](https://ai.google/research/pubs/pub36726)，或者参考我们的官方博客 [《TiKV 事务模型概览》](https://pingcap.com/blog-cn/tidb-transaction-model/)。当判断 prewrite 是可以执行的，会调用 engine 的 `async_write` 接口执行真正的写入操作。这部分的具体的代码见 `storage/txn/process.rs` 中的 `process_write_impl` 函数。
+4）`worker_pool` 收到 prewrite 请求之后，主要工作是从拿到的数据库快照里确认当前 prewrite 请求是否能够执行，比如是否已经有更大 ts 的事务已经对数据进行了修改，具体的细节可以参考 [Percolator 论文](https://ai.google/research/pubs/pub36726)，或者参考我们的官方博客 [《TiKV 事务模型概览》](https://pingcap.com/blog-cn/tidb-transaction-model/)。当判断 prewrite 是可以执行的，会调用 engine 的 `async_write` 接口执行真正的写入操作。这部分的具体的代码见 `storage/txn/process.rs` 中的 `process_write_impl` 函数。
 
 5）当 `async_write` 执行成功或失败之后，会调用 Scheduler 的 `release_lock` 函数来释放 latch 并且唤醒等待在这些 latch 上的请求继续执行。
 
