@@ -53,17 +53,17 @@ impl<E: Engine> Storage<E> {
         value: Vec<u8>,
         callback: Callback<()>,
     ) -> Result<()> {
-    // Omit some limit checks about key and value here...
-    self.engine.async_write(
-        &ctx,
-        vec![Modify::Put(
-            Self::rawkv_cf(&cf),
-            Key::from_encoded(key),
-            value,
-        )],
-        Box::new(|(_, res)| callback(res.map_err(Error::from))),
-    )?;
-    Ok(())
+        // Omit some limit checks about key and value here...
+        self.engine.async_write(
+            &ctx,
+            vec![Modify::Put(
+                Self::rawkv_cf(&cf),
+                Key::from_encoded(key),
+                value,
+            )],
+            Box::new(|(_, res)| callback(res.map_err(Error::from))),
+        )?;
+        Ok(())
     }
 }
 ```
@@ -103,7 +103,7 @@ impl Latches {
         slots.sort();
         slots.dedup();
         Lock::new(slots)
-	}
+    }
 }
 ```
 
