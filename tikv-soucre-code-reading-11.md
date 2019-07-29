@@ -52,19 +52,19 @@ impl<E: Engine> Storage<E> {
         key: Vec<u8>,
         value: Vec<u8>,
         callback: Callback<()>,
-	) -> Result<()> {
-	// Omit some limit checks about key and value here...
-	self.engine.async_write(
-	    &ctx,
-	    vec![Modify::Put(
-	        Self::rawkv_cf(&cf),
-	        Key::from_encoded(key),
-	        value,
-	    )],
-	    Box::new(|(_, res)| callback(res.map_err(Error::from))),
-	)?;
-	Ok(())
-	}
+    ) -> Result<()> {
+    // Omit some limit checks about key and value here...
+    self.engine.async_write(
+        &ctx,
+        vec![Modify::Put(
+            Self::rawkv_cf(&cf),
+            Key::from_encoded(key),
+            value,
+        )],
+        Box::new(|(_, res)| callback(res.map_err(Error::from))),
+    )?;
+    Ok(())
+    }
 }
 ```
 
@@ -177,17 +177,17 @@ struct SchedulerInner {
 
 ```rust
 impl<E: Engine> Scheduler<E> {
-	fn try_to_wake_up(&self, cid: u64) {
-	    if self.inner.acquire_lock(cid) {
-	        self.get_snapshot(cid);
-    	}
-	}
-	fn release_lock(&self, lock: &Lock, cid: u64) {
-	    let wakeup_list = self.inner.latches.release(lock, cid);
-	    for wcid in wakeup_list {
-	        self.try_to_wake_up(wcid);
-    	}
-	}
+    fn try_to_wake_up(&self, cid: u64) {
+        if self.inner.acquire_lock(cid) {
+            self.get_snapshot(cid);
+        }
+    }
+    fn release_lock(&self, lock: &Lock, cid: u64) {
+        let wakeup_list = self.inner.latches.release(lock, cid);
+        for wcid in wakeup_list {
+            self.try_to_wake_up(wcid);
+        }
+    }
 }
 ```
 
