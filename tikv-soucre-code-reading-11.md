@@ -96,12 +96,13 @@ Latches 的 `gen_lock` 接口用于计算写入请求执行前所需要获取的
 
 ```rust
 impl Latches {
-	pub fn gen_lock<H: Hash>(&self, keys: &[H]) -> Lock {
-    	// prevent from deadlock, so we sort and deduplicate the index.
-    	let mut slots: Vec<usize> = keys.iter().map(|x| self.calc_slot(x)).collect();
-    	slots.sort();
-    	slots.dedup();
-    	Lock::new(slots)
+    pub fn gen_lock<H: Hash>(&self, keys: &[H]) -> Lock {
+        // prevent from deadlock, so we sort and deduplicate the index.
+        let mut slots: Vec<usize> = keys.iter().map(|x|
+        self.calc_slot(x)).collect();
+        slots.sort();
+        slots.dedup();
+        Lock::new(slots)
 	}
 }
 ```
