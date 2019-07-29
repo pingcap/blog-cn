@@ -45,25 +45,25 @@ raw put 操作不需要 Storage 模块做额外的工作，直接把要写的内
 
 ```rust
 impl<E: Engine> Storage<E> {
-	pub fn async_raw_put(
-    	&self,
-    	ctx: Context,
-    	cf: String,
-    	key: Vec<u8>,
-    	value: Vec<u8>,
-    	callback: Callback<()>,
+    pub fn async_raw_put(
+        &self,
+        ctx: Context,
+        cf: String,
+        key: Vec<u8>,
+        value: Vec<u8>,
+        callback: Callback<()>,
 	) -> Result<()> {
-    	// Omit some limit checks about key and value here...
-    	self.engine.async_write(
-        	&ctx,
-        	vec![Modify::Put(
-            	Self::rawkv_cf(&cf),
-            	Key::from_encoded(key),
-            	value,
-        	)],
-        	Box::new(|(_, res)| callback(res.map_err(Error::from))),
-    	)?;
-    	Ok(())
+	// Omit some limit checks about key and value here...
+	self.engine.async_write(
+	    &ctx,
+	    vec![Modify::Put(
+	        Self::rawkv_cf(&cf),
+	        Key::from_encoded(key),
+	        value,
+	    )],
+	    Box::new(|(_, res)| callback(res.map_err(Error::from))),
+	)?;
+	Ok(())
 	}
 }
 ```
