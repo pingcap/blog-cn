@@ -6,7 +6,7 @@ summary: TiDB 在微众银行的应用场景包括 OLAP、OLTP 及部分混合�
 tags: ['金融']
 category: case
 url: /cases-cn/user-case-webank/
-weight: 1
+weight: 3
 logo: /images/blog-cn/customers/webank-logo.png
 ---
 
