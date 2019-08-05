@@ -2,15 +2,15 @@
 title: TiDB Binlog 源码阅读系列文章（三）Pump client 介绍
 author: ['黄佳豪']
 date: 2019-08-05
-summary: 本篇将介绍 Pump client，希望大家了解 TiDB 是如何把 binlog 写到 Pump，以及输出的数据是怎么样的。
+summary: 本篇将介绍 Pump client，希望大家了解 TiDB 把 binlog 写到 Pump，以及输出的数据是怎么样的。
 tags: ['TiDB Binlog 源码阅读','社区']
 ---
 
-在前面章节我们介绍了 Pump 是如何存储 TiDB 产生的 binlog 的，本篇将介绍 Pump client，希望大家了解 TiDB 是如何把 binlog 写到 Pump，以及输出的数据的过程。
+在 [上篇文章](https://pingcap.com/blog-cn/tidb-binlog-source-code-reading-2/) 中，我们介绍了 Pump 的作用是存储 TiDB 产生的 binlog。本篇将介绍 Pump client，希望大家了解 TiDB 把 binlog 写到 Pump，以及输出数据的过程。
 
 ## gRPC API
 
-Pump client 的代码在 tidb-tools 下这个 [路径](https://github.com/pingcap/tidb-tools/tree/v3.0.0-rc.3/tidb-binlog/pump_client) ，TiDB 会直接 import 这个路径使用 Pump client package。TiDB 跟 Pump 之间使用 gRPC 通信，相关的 proto 文件定义在 [这里](https://github.com/pingcap/tipb/tree/87cb1e27ab4a86efc534fd4c5b62fda621e38465/proto/binlog) 。Pump server 提供以下两个接口：
+Pump client 的代码在 tidb-tools 下这个 [路径](https://github.com/pingcap/tidb-tools/tree/v3.0.0-rc.3/tidb-binlog/pump_client)，TiDB 会直接 import 这个路径使用 Pump client package。TiDB 跟 Pump 之间使用 gRPC 通信，相关的 proto 文件定义在 [这里](https://github.com/pingcap/tipb/tree/87cb1e27ab4a86efc534fd4c5b62fda621e38465/proto/binlog)。Pump server 提供以下两个接口：
 
 ```
 // Interfaces exported by Pump.
@@ -25,7 +25,7 @@ service Pump {
 ```
 
 
-本篇文章我们主要介绍 RPC `WriteBinlog` 这个接口，Pump client 会通过这个接口写 binlog 到 Pump。
+本文我们主要介绍 RPC `WriteBinlog` 这个接口，Pump client 会通过这个接口写 binlog 到 Pump。
 
 `WriteBinlogReq` 里面包含的 [binlog event](https://github.com/pingcap/tipb/blob/87cb1e27ab4a86efc534fd4c5b62fda621e38465/proto/binlog/binlog.proto#L57):
 
