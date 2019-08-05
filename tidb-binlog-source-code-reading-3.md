@@ -2,7 +2,7 @@
 title: TiDB Binlog 源码阅读系列文章（三）Pump client 介绍
 author: ['黄佳豪']
 date: 2019-08-05
-summary: 本篇将介绍 Pump client，希望大家了解 TiDB 把 binlog 写到 Pump，以及输出的数据是怎么样的。
+summary: 本篇将介绍 Pump client，希望大家了解 TiDB 把 binlog 写到 Pump，以及输出数据的过程。
 tags: ['TiDB Binlog 源码阅读','社区']
 ---
 
