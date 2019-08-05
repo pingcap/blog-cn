@@ -64,39 +64,39 @@ message Binlog {
 
 TiDB 的事务采用 2-phase-commit 算法，一次事务提交会分为 Prewrite 和 Commit 阶段，有兴趣的可以看下相关文章[《TiKV 事务模型概览，Google Spanner 开源实现》](https://pingcap.com/blog-cn/tidb-transaction-model/)。
 
-大家可以猜想一下 TiDB 是怎么写 binlog 的？
+大家可以先猜想一下 TiDB 是如何写 binlog 的？
 
-首先如果只写一条 binlog 的话可行吗？可以很容易想到，如果只写一条 binlog 的话必须确保写 binlog 操作和事务提交操作是一个原子操作，那么就要基于事务模型再构建一个复杂的 2PC 模型，从复杂度方面考虑这个方案几乎是不可行的。
+如果只写一条 binlog 的话可行吗？可以很容易想到，如果只写一条 binlog 的话必须确保写 binlog 操作和事务提交操作是一个原子操作，那么就要基于事务模型再构建一个复杂的 2PC 模型，从复杂度方面考虑这个方案几乎是不可行的。
 
-在 TiDB 的实现中，TiDB 会每个阶段分别写一条 binlog， 即：Prewrite binlog 和 Commit binlog，下面会简称 P-binlog 和 C-binlog ，具体写入流程如下：
+实际上，在 TiDB 的实现中，TiDB 会每个阶段分别写一条 binlog， 即：Prewrite binlog 和 Commit binlog，下面会简称 P-binlog 和 C-binlog ，具体写入流程如下：
 
 ![](media/tidb-binlog-source-code-reading-3/1.png)
 
 这里我们说的 P-binlog 和 C-binlog 都是通过 RPC `WriteBinlog` 接口写入，对应着参数 `WriteBinlogReq` 里面包含的 [binlog event](https://github.com/pingcap/tipb/blob/87cb1e27ab4a86efc534fd4c5b62fda621e38465/proto/binlog/binlog.proto#L57)，只是字段有些区别：
 
-*   P-binlog 对应的 `tp` 是 `Prewrite`，C-binlog 的 `tp` 是 `Commit` 或者 `Rollback`。
+* P-binlog 对应的 `tp` 是 `Prewrite`，C-binlog 的 `tp` 是 `Commit` 或者 `Rollback`。
 
-*   同个事务的 P-binlog 和 C-binlog 包含相同 `start_ts`。
+* 同个事务的 P-binlog 和 C-binlog 包含相同 `start_ts`。
 
-*   只有 P-binlog 包含对应事务修改数据 `prewrite_value`。
+* 只有 P-binlog 包含对应事务修改数据 `prewrite_value`。
 
-*   只有 C-binlog 包含事务的 `commit_ts`。
+* 只有 C-binlog 包含事务的 `commit_ts`。
 
 在 Prepare 的阶段，TiDB 会把 Prewrite 的数据发到 TiKV，同时并发写一条 P-binlog 到其中一个 Pump。 两个操作全部成功后才会进行 Commit 阶段，所以我们提交事务时就可以确定 P-binlog 已经成功保存。写 C-binlog 是在 TiKV 提交事务后异步发送的，告诉  Pump 这个事务提交了还是回滚了。
 
 ###  写 binlog 对事务延迟的影响
 
-*   Prepare 阶段：并发写 P-binlog 到 Pump 和 Prewrite data 到 TiKV，如果请求 Pump 写 P-binlog 的速度快于写 TiKV 的速度，那么对延迟没有影响。一般而言写入 Pump 会比写入 TiKV 更快。
+* Prepare 阶段：并发写 P-binlog 到 Pump 和 Prewrite data 到 TiKV，如果请求 Pump 写 P-binlog 的速度快于写 TiKV 的速度，那么对延迟没有影响。一般而言写入 Pump 会比写入 TiKV 更快。
 
-*   Commit 阶段：异步的去写 C-binlog，对延迟也没有影响。
+* Commit 阶段：异步的去写 C-binlog，对延迟也没有影响。
 
 ### 写 binlog 失败
 
-1.  写 P-binlog 失败，那么 transaction 不会 commit，不会对系统有任何影响。
+1. 写 P-binlog 失败，那么 transaction 不会 commit，不会对系统有任何影响。
 
-2.  写 C-binlog 失败，Pump 会等待最多 `max transaction timeout` 的时间（这是一个 TiDB/Pump 的配置，默认为 10 分钟），然后向 TiKV 去查询 transaction 的提交状态来补全 C-binlog，但是此时同步延迟也等于 `max transaction timeout` 。这种情况经常发生于 TiDB 进程重启或者挂掉的场景。
+2. 写 C-binlog 失败，Pump 会等待最多 `max transaction timeout` 的时间（这是一个 TiDB/Pump 的配置，默认为 10 分钟），然后向 TiKV 去查询 transaction 的提交状态来补全 C-binlog，但是此时同步延迟也等于 `max transaction timeout` 。这种情况经常发生于 TiDB 进程重启或者挂掉的场景。
 
-3.  写 P-binlog 成功，但是 Prewrite 失败，那么也会和 2 类似。
+3. 写 P-binlog 成功，但是 Prewrite 失败，那么也会和 2 类似。
 
 ## Pump client 源码
 
