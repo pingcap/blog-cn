@@ -1,7 +1,7 @@
 ---
 title: TiDB Binlog 源码阅读系列文章（三）Pump client 介绍
 author: ['黄佳豪']
-date: 2019-08-05
+date: 2019-08-06
 summary: 本篇将介绍 Pump client，希望大家了解 TiDB 把 binlog 写到 Pump，以及输出数据的过程。
 tags: ['TiDB Binlog 源码阅读','社区']
 ---
@@ -27,7 +27,7 @@ service Pump {
 
 本文我们主要介绍 RPC `WriteBinlog` 这个接口，Pump client 会通过这个接口写 binlog 到 Pump。
 
-`WriteBinlogReq` 里面包含的 [binlog event](https://github.com/pingcap/tipb/blob/87cb1e27ab4a86efc534fd4c5b62fda621e38465/proto/binlog/binlog.proto#L57):
+`WriteBinlogReq` 里面包含的 [binlog event](https://github.com/pingcap/tipb/blob/87cb1e27ab4a86efc534fd4c5b62fda621e38465/proto/binlog/binlog.proto#L57)：
 
 ```
 // Binlog contains all the changes in a transaction, which can be used to reconstruct SQL statement, then export to
@@ -104,7 +104,7 @@ Pump client 的代码维护在 [`pump_client`](https://github.com/pingcap/tidb-t
 
 1. watch etcd
 
-	Pump 在运行时会将自己的状态信息上报到 PD（etcd）中，并且定时更新自己的状态。在创建 Pump client 的时候，会[首先从 PD（etcd）中获取所有的 Pump 状态信息](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/client.go#L227)，根据 Pump 状态是否为 Online 初步判断 Pump 为 avaliable 或者 unavailable。然后 Pump client 会 [watch](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/client.go#L478) etcd 中的 Pump 状态变更，及时更新内存中维护的 Pump 状态。
+	Pump 在运行时会将自己的状态信息上报到 PD（etcd）中，并且定时更新自己的状态。在创建 Pump client 的时候，会 [首先从 PD（etcd）中获取所有的 Pump 状态信息](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/client.go#L227)，根据 Pump 状态是否为 Online 初步判断 Pump 为 avaliable 或者 unavailable。然后 Pump client 会 [watch](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/client.go#L478) etcd 中的 Pump 状态变更，及时更新内存中维护的 Pump 状态。
 
 2. binlog 重试机制
 
