@@ -223,7 +223,7 @@ PartitionOpt -> PartitionOptions
 
 1. 增加一个新的节点 struct，表示 `AlterTablePartitionOpt`。其中包含 `PartitionOptions` 和一个 bool 值，表示是否为 remove partitioning。
 
-2. 将 remove partitioning 看作 PartitionOptions，在内部添加一个 bool 成员 `isRemovePartitionging` 以做区分。
+2. 将 remove partitioning 看作 `PartitionOptions`，在内部添加一个 bool 成员 `isRemovePartitionging` 以做区分。
 
 3. 将 `PartitionOpt` 和 remove partitioning 都看作 `AlterTableSpec`，为 `AlterTableSpec` 的添加一个类型，单独表示 remove partitioning。
 
@@ -321,10 +321,11 @@ Tests
 
 **需要特别指出的是，我们鼓励各位 Contributor 多使用 make test。当不知道从何处入手或者失去目标时，make test 输出的错误信息或许能够引导 coder 进行思考和探索**。
 
+>Tips: [完整的PR示例](https://github.com/pingcap/parser/pull/396)
 
 ## FAQ
 
-以下是 example 的 Contributor 在增加 remove partitioning 语法支持时遇到的问题和解决方法。
+以下是在增加 remove partitioning 语法支持时遇到的问题和解决方法。
 
 **Q1. 为什么不在 `PartitionOpt` 中直接添加规则？** 
 
