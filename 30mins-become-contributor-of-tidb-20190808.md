@@ -30,11 +30,11 @@ parser 根目录下运行 `make test`，确保第一次测试失败，并且失�
 
 ### 4. 编码
 
-Contributor 修改文法规则。对于涉及到语义层面的规则变动，需要同步修改 AST 节点的数据结构（AST 节点定义在 `parser/ast` 中）。TiDB 通过 AST 树生成执行计划，修改 AST 节点可能会影响 TiDB 的行为，因此应尽量保持原有结构，不改变原有的属性，如果确实有修改 AST 树必要，我们会帮助 Contributor 检查 TiDB 的行为是否正常。另外，AST 节点其中的两个接口方法是 Accept 和 Restore，分别用于遍历子树和通过 AST 树还原 SQL 字符串。应确保它们的行为都符合预期。
+Contributor 修改文法规则。对于涉及到语义层面的规则变动，需要同步修改 AST 节点的数据结构（AST 节点定义在 `parser/ast` 中）。TiDB 通过 AST 树生成执行计划，修改 AST 节点可能会影响 TiDB 的行为，因此应尽量保持原有结构，不改变原有的属性，如果确实有修改 AST 树必要，我们会帮助 Contributor 检查 TiDB 的行为是否正常。另外，AST 节点其中的两个接口方法是 `Accept` 和 `Restore`，分别用于遍历子树和通过 AST 树还原 SQL 字符串。应确保它们的行为都符合预期。
 
-另外，还要检查新加的规则是否存在冲突问题。「冲突」可以被理解为当 parser 读到某个 token 时，有两种或以上的方式来构造语法树，从而导致歧义。goyacc 所生成的 parser 采用了 LALR(1) 方法进行解析，冲突有两类：一类是两条规则都能被用于归约，称为 reduce-reduce 冲突。另一类是既能使用一条规则归约，又能按照另一条规则移进下一个 token，称为 shift-reduce 冲突。可以通过指定优先级的方式消除冲突，具体可以参考 yacc 的 [%precedence 和 %prec 指示](https://www.gnu.org/software/bison/manual/html_node/Precedence.html#Precedence)。
+另外，还要检查新加的规则是否存在冲突问题。「冲突」可以被理解为当 parser 读到某个 token 时，有两种或以上的方式来构造语法树，从而导致歧义。goyacc 所生成的 parser 采用了 `LALR(1)` 方法进行解析，冲突有两类：一类是两条规则都能被用于归约，称为 `reduce-reduce` 冲突。另一类是既能使用一条规则归约，又能按照另一条规则移进下一个 token，称为 `shift-reduce` 冲突。可以通过指定优先级的方式消除冲突，具体可以参考 yacc 的 [%precedence 和 %prec 指示](https://www.gnu.org/software/bison/manual/html_node/Precedence.html#Precedence)。
 
-编码完成后在项目根目录下运行 make parser，这时会执行 goyacc 重新生成 parser.go 文件。
+编码完成后在项目根目录下运行 `make parser`，这时会执行 goyacc 重新生成 `parser.go` 文件。
 
 ### 5. 补充 test case
 
