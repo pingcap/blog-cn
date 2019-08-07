@@ -321,7 +321,7 @@ Tests
 
 **需要特别指出的是，我们鼓励各位 Contributor 多使用 make test。当不知道从何处入手或者失去目标时，make test 输出的错误信息或许能够引导 coder 进行思考和探索**。
 
->Tips: [完整的PR示例](https://github.com/pingcap/parser/pull/396)
+>Tips: [完整的 PR 示例](https://github.com/pingcap/parser/pull/396)
 
 ## FAQ
 
