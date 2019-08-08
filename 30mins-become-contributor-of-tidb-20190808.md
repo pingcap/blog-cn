@@ -163,21 +163,23 @@ AlterTablePartitionOpt: PartitionOpt | "REMOVE" "PARTITIONING"
 
 ```
 AlterTablePartitionOpt:
-      PartitionOpt
-       {
-              if $1 != nil {
-                     $$ = &ast.AlterTableSpec{
-                           Tp: ast.AlterTablePartition,
-                           Partition: $1.(*ast.PartitionOptions),
-                    }
-             } else {
-                    $$ = nil
-             }
-      }
-|      "REMOVE" "PARTITIONING"
-      {
-              $$ = nil
-      }
+	PartitionOpt
+	{
+		if $1 != nil {
+			$$ = &ast.AlterTableSpec{
+				Tp: ast.AlterTablePartition,
+				Partition: $1.(*ast.PartitionOptions),
+			}
+		} else {
+			$$ = nil
+		}
+	}
+|	"REMOVE" "PARTITIONING"
+	{
+		$$ = nil
+		yylex.AppendError(yylex.Errorf("The REMOVE PARTITIONING clause is parsed but ignored by all storage engines."))
+		parser.lastErrorAsWarn()
+	}
 ```
 
 由于 `REMOVE` 和 `PARTITIONING` 都是新添加的关键字，如果不做任何处理，lexer 扫描的时候只会将它们看作普通的标识符。于是需要在 `parser.y` 的 `%token` 字段上补充声明，其中一个目的是为该字符串产生一个 `tokenID`（一个整数），供 lexer 标识。另外 `goyacc` 也会对 `parser.y` 中所有的字符串常量进行检查，如果没有相应的 `token` 声明，会报 `Undefined symbol` 的错误。
@@ -223,7 +225,7 @@ PartitionOpt -> PartitionOptions
 
 1. 增加一个新的节点 struct，表示 `AlterTablePartitionOpt`。其中包含 `PartitionOptions` 和一个 bool 值，表示是否为 remove partitioning。
 
-2. 将 remove partitioning 看作 `PartitionOptions`，在内部添加一个 bool 成员 `isRemovePartitionging` 以做区分。
+2. 将 remove partitioning 看作 `PartitionOptions`，在内部添加一个 bool 成员 `isRemovePartitioning` 以做区分。
 
 3. 将 `PartitionOpt` 和 remove partitioning 都看作 `AlterTableSpec`，为 `AlterTableSpec` 的添加一个类型，单独表示 remove partitioning。
 
@@ -319,7 +321,7 @@ Tests
 
 ```
 
-**需要特别指出的是，我们鼓励各位 Contributor 多使用 make test。当不知道从何处入手或者失去目标时，make test 输出的错误信息或许能够引导 coder 进行思考和探索**。
+**需要特别指出的是，我们鼓励各位 Contributor 多使用 make test。当不知道从何处入手或者失去目标时，make test 输出的错误信息或许能够引导大家进行思考和探索**。
 
 >Tips: [完整的 PR 示例](https://github.com/pingcap/parser/pull/396)
 
