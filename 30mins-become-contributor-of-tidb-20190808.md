@@ -10,7 +10,7 @@ TiDB 的一大特性就是和 MySQL 高度兼容，目标是让用户能够无�
 
 **本次活动聚焦于语法兼容，提升 TiDB SQL Parser 对 MySQL 8.0 的语法支持。对于新的贡献者而言，除了能将理论知识运用到实践上以外，还可以从中体验参与一个开源项目的整体流程与规范。**
 
-我们把 TiDB Parser 整体看作一个函数，输入是 SQL 字符串，输出是用于描述 SQL 语句的抽象语法树（AST）。在这个转换的过程中涉及到的组件有两个：一个是 lexer，负责将字符流变成 Token，并赋予它们类别标识，这个过程叫「Tokenize」；另一个是 parser，负责将 Token 转为树状结构，便于将来遍历和转换，这个过程叫「Parse」；TiDB 使用了 parser 生成工具 goyacc，它能够根据 `parser.y` 生成 `parser.go`，其中包含了名称为 Parse 的函数接口，供 TiDB 直接使用。更多关于 TiDB Parser 以及 lexer/yacc 的信息请参考 [TiDB SQL Parser 的实现](https://www.pingcap.com/blog-cn/tidb-source-code-reading-5/)。
+我们把 TiDB Parser 整体看作一个函数，输入是 SQL 字符串，输出是用于描述 SQL 语句的抽象语法树（AST）。在这个转换的过程中涉及到的组件有两个：一个是 lexer，负责将字符流变成 Token，并赋予它们类别标识，这个过程叫「Tokenize」；另一个是 parser，负责将 Token 转为树状结构，便于将来遍历和转换，这个过程叫「Parse」；TiDB 使用了 parser 生成工具 goyacc，它能够根据 `parser.y` 生成 `parser.go`，其中包含了名称为 `Parse` 的函数接口，供 TiDB 直接使用。更多关于 TiDB Parser 以及 lexer/yacc 的信息请参考 [TiDB SQL Parser 的实现](https://www.pingcap.com/blog-cn/tidb-source-code-reading-5/)。
 
 ## 参与流程
 
@@ -96,7 +96,7 @@ Error 1064: You have an error in your SQL syntax; check the manual that correspo
 
 这意味着 parser 无法识别 remove 关键字。
 
-确认了问题存在后，到 [该 issue](https://github.com/pingcap/parser/issues/402) 下评论：**Let me fix it**，完成任务领取。
+确认了问题存在后，到 [该 Issue](https://github.com/pingcap/parser/issues/402) 下评论：**Let me fix it**，完成任务领取。
 
 ### 2. 编写测试用例
 
@@ -113,7 +113,7 @@ Error 1064: You have an error in your SQL syntax; check the manual that correspo
 
 ### 3. 执行所有测试
 
-parser 根目录下运行 make test，确保第一次测试失败，并且 fail 的 case 是第 2 步编写的。
+parser 根目录下运行 `make test`，确保第一次测试失败，并且 fail 的 case 是第 2 步编写的。
 
 ```
 FAIL: parser_test.go:1664: testParserSuite.TestDDL
@@ -270,7 +270,7 @@ type AlterTableSpec struct {
 
 这里，所有的代码修改引入的分支结构都能够被现有的测试覆盖，因此在提升覆盖率上没有需求。当然，如果想要测试更多类似的 case，可以将它们添加到前面提到的 `TestDDL` 函数中。
 
-#### 6. 执行所有测试（make test）
+#### 6. 执行所有测试（`make test`）
 
 ```
 gofmt (simplify)
@@ -321,7 +321,7 @@ Tests
 
 ```
 
-**需要特别指出的是，我们鼓励各位 Contributor 多使用 make test。当不知道从何处入手或者失去目标时，make test 输出的错误信息或许能够引导大家进行思考和探索**。
+**需要特别指出的是，我们鼓励各位 Contributor 多使用 `make test`。当不知道从何处入手或者失去目标时，`make test` 输出的错误信息或许能够引导大家进行思考和探索**。
 
 >Tips: [完整的 PR 示例](https://github.com/pingcap/parser/pull/396)
 
@@ -376,4 +376,4 @@ parser_test.go:351:
 
 **A4**：这个错误说明 parser 已经解析通过，但不能从语法树中恢复原 SQL 语句的 remove partitioning 部分。此时应检查相应 AST 节点的 Restore 方法是否正确处理了 `REMOVE PARTITIONING`。
 
-***加入 [TiDB Contributor Club](https://pingcap.com/community-cn/)，无门槛参与开源项目，改变世界从这里开始吧！***
+***最后欢迎大家加入 [TiDB Contributor Club](https://pingcap.com/community-cn/)，无门槛参与开源项目，改变世界从这里开始吧！***
