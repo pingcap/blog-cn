@@ -53,7 +53,7 @@ parser 根目录下运行 `make test`，确保测试通过。
 
 #### [ Put the subtask title here ]
 
-Link: [ put the subtask issue link here ]
+Issue: [ put the subtask issue link here ]
 
 #### MySQL Syntax:
 
