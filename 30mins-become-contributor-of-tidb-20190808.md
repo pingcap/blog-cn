@@ -298,7 +298,7 @@ ok      github.com/pingcap/parser/types 1.106s  coverage: 7.0% of statements in 
 
 #### Fix compatibility problem about keyword REMOVE PARTITIONING
 
-Link: [pingcap/tidb#1](https://github.com/pingcap/tidb/pull/1)
+Issue: pingcap/parser#402
 
 #### MySQL Syntax:
 
