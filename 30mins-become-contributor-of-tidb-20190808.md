@@ -109,7 +109,7 @@ Error 1064: You have an error in your SQL syntax; check the manual that correspo
 {"alter table t lock = default remove partitioning", true, "ALTER TABLE `t` LOCK = DEFAULT REMOVE PARTITIONING"},
 ```
 
-这里每一个 test case 分成了三部分，第一列是用于测试的 SQL 语句，第二列是「是否期望第一列的语句 parse 通过」，第三列是「从语法树 restore 后期望的 SQL 语句」。具体可以参考 [`TestDDL.RunTest()`](https://github.com/pingcap/parser/blob/master/parser_test.go#L308)。
+这里每一个 test case 分成了三部分，第一列是用于测试的 SQL 语句，第二列是「是否期望第一列的语句 parse 通过」，第三列是「从语法树 restore 后期望的 SQL 语句」。具体可以参考 [`TestDDL.RunTest()`](https://github.com/pingcap/parser/blob/53c769c5836485c83d5f339faab97ef5d853d560/parser_test.go#L308)。
 
 ### 3. 执行所有测试
 
