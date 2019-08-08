@@ -188,7 +188,7 @@ AlterTablePartitionOpt:
 
 #### 4.2 增加「关键字-`tokenID`」映射
 
-前文提到，添加声明是为了让 lexer 能够识别关键字并赋予对应的 `tokenID`，对于 lexer 而言，它需要一个从关键字字符串到 `tokenID` 的映射关系。在 TiDB parser 中，这个映射关系就是 [misc.go](https://github.com/pingcap/parser/blob/53c769c5836485c83d5f339faab97ef5d853d560/misc.go) 中的 `tokenMap` 结构。
+前文提到，添加声明是为了让 lexer 能够识别关键字并赋予对应的 `tokenID`，对于 lexer 而言，它需要一个从关键字字符串到 `tokenID` 的映射关系。在 TiDB parser 中，这个映射关系就是 [`misc.go`](https://github.com/pingcap/parser/blob/53c769c5836485c83d5f339faab97ef5d853d560/misc.go) 中的 `tokenMap` 结构。
 
 在这个例子中，我们往 `tokenMap` 中添加 `remove` 和 `partitioning`（如果不添加，会使关键字一致性的检查测试失败）。
 
