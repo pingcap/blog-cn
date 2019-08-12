@@ -32,7 +32,7 @@ TiKV 的事务是乐观事务，一个事务在最终提交时才会去走两阶
  
 ## Prewrite
  
-事务的提交是一个两阶段提交的过程，第一步是 prewrite，即将此事务涉及写入的所有 key 上锁并写入 value。在 client 一端，需要写入的 key 被按 Region 划分，每个 Region 的请求被并行地发送。请求中会带上事务的 start_ts 和选取的 primary key。TiKV 的 [`kv_prewrite`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/server/service/kv.rs#L114) 接口会被调用来处理这一请求。接下来，请求被交给 [`Storage::async_prewrite`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/mod.rs#L1047) 来处理，`async_prewrite` 则将任务交给 [`Scheduler`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/txn/scheduler.rs#L239)。
+事务的提交是一个两阶段提交的过程，第一步是 prewrite，即将此事务涉及写入的所有 key 上锁并写入 value。在 client 一端，需要写入的 key 被按 Region 划分，每个 Region 的请求被并行地发送。请求中会带上事务的 `start_ts` 和选取的 primary key。TiKV 的 [`kv_prewrite`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/server/service/kv.rs#L114) 接口会被调用来处理这一请求。接下来，请求被交给 [`Storage::async_prewrite`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/mod.rs#L1047) 来处理，`async_prewrite` 则将任务交给 [`Scheduler`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/txn/scheduler.rs#L239)。
  
 `Scheduler` 负责调度 TiKV 收到的读写请求，进行流控，从 engine 取得 snapshot（用于读取数据），最后执行任务。Prewrite 最终在 [`process_write_impl`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/txn/process.rs#L523) 中被实际进行。
  
@@ -49,7 +49,7 @@ let modifies = txn.into_modifies();
 engine.async_write(&ctx, to_be_write, callback);
 ```
  
-在 prewrite 时，我们用 [`Mutation`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/mod.rs#L70) 来表示每一个 key 的写入。`Mutation` 分为 Put，Delete，Lock 和 Insert 四种。Put 即对该 key 写入一个 value，Delete 即删除这个 key。Insert 与 Put 的区别是，它在执行时会检查该 key 是否存在，仅当该 key 不存在时才会成功写入。Lock 是一种特殊的写入，并不是 Percolator 模型中的 Lock。它对数据不进行实际更改。当一个事务读了一些 key、写了另一些 key 时，如果需要确保该事务成功提交时这些 key 不会发生改变，那么便应当对这些读到的 key 写入这个 Lock 类型的 `Mutation`。比如，在 TiDB 中，执行 `SELECT ... FOR UPDATE` 时，便会产生这种 Lock 类型的 `Mutation`。
+在 prewrite 时，我们用 [`Mutation`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/mod.rs#L70) 来表示每一个 key 的写入。`Mutation` 分为 `Put`，`Delete`，`Lock` 和 `Insert` 四种类型。`Put` 即对该 key 写入一个 value，`Delete` 即删除这个 key。`Insert` 与 `Put` 的区别是，它在执行时会检查该 key 是否存在，仅当该 key 不存在时才会成功写入。`Lock` 是一种特殊的写入，并不是 Percolator 模型中的 `Lock`，它对数据不进行实际更改，当一个事务读了一些 key、写了另一些 key 时，如果需要确保该事务成功提交时这些 key 不会发生改变，那么便应当对这些读到的 key 写入这个 `Lock` 类型的 `Mutation`。比如，在 TiDB 中，执行 `SELECT ... FOR UPDATE` 时，便会产生这种 Lock 类型的 `Mutation`。
  
 接下来我们创建一个 [`MvccTxn`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/mvcc/txn.rs#L23) 的对象，并对每一个 `Mutation` 调用 [`MvccTxn::prewrite`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/mvcc/txn.rs#L359)。`MvccTxn` 封装了我们的事务算法。当我们调用它的 `prewrite` 方法时，它并不直接写入到下层的存储引擎中，而是将需要进行的写入缓存在内存中，并在调用 `into_modifies` 方法时给出最终需要进行的写入。接下来则是调用 [`engine.async_write`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/txn/process.rs#L315) 来将这些数据写入到下层的存储引擎中。`engine` 会保证这些修改会被原子地一次写入。在生产中，这里的 `engine` 是 [`RaftKV`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/kv/raftkv.rs#L106)，它会将数据修改通过 Raft 同步后，写入到磁盘中。
  
