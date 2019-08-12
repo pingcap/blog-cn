@@ -2,11 +2,11 @@
 title: TiKV 源码解析系列文章（十二）分布式事务
 author: ['周振靖']
 date: 2019-08-12
-summary: 本文将从更加贴近源码的角度来讲解 TiKV 的事务算法的原理和实现细节。
+summary: 本文将更加深入地讲解 TiKV 的事务算法的原理和实现细节。
 tags: ['TiKV 源码解析','社区']
 ---
  
-在之前的文章里，我们已经深入介绍了 TiKV 的 Service 层、Storage 层。相信大家已经大致清楚，TiKV 的事务相关的代码都位于 Storage 层中。本文将更加深入地讲解 TiKV 的事务算法的原理和实现细节。
+在之前的文章里，我们已经介绍了 TiKV 的 [Service 层](https://pingcap.com/blog-cn/tikv-source-code-reading-9/)、[Storage 层](https://pingcap.com/blog-cn/tikv-soucre-code-reading-11/)。相信大家已经大致清楚，TiKV 的事务相关的代码都位于 Storage 层中。本文将更加深入地讲解 TiKV 的事务算法的原理和实现细节。
 
 ## 概述
  
@@ -20,14 +20,7 @@ TiKV 的事务是乐观事务，一个事务在最终提交时才会去走两阶
  
 由于采用的是乐观事务模型，写入会缓存到一个 buffer 中，直到最终提交时数据才会被写入到 TiKV；而一个事务又应当能够读取到自己进行的写操作，因而一个事务中的读操作需要首先尝试读自己的 buffer，如果没有的话才会读取 TiKV。当我们开始一个事务、进行一系列读写操作、并最终提交时，在 TiKV 及其客户端中对应发生的事情如下表所示：
  
-|用户操作   | tikv client                    | TiKV          |
-|:---------|:-------------------------------|:-------------|
-|开始事务   | 从 PD 取 `start_ts`              |             |
-|进行读操作  | 使用 `start_ts` 向 TiKV 发送读请求 | 处理读请求   |
-|进行写操作  | 写入到 buffer 中                |              |
-|进行读操作  | 如果被写到了 buffer 中，从 buffer 中读；否则向 TiKV 发送读请求 | 处理读请求   |
-|提交	| prewrite 写入到 buffer 中的所有 key <br /> 从 PD 取 `commit_ts` <br/> commit primary key <br /> commit 其它 key | 处理 prewrite 请求 <br /><br /> 处理 commit 请求 <br /> 处理 commit 请求 |
- 
+![](media/tikv-source-code-reading-12/1.png) 
  
 ## Prewrite
  
