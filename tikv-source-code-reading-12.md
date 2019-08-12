@@ -2,11 +2,11 @@
 title: TiKV 源码解析系列文章（十二）分布式事务
 author: ['周振靖']
 date: 2019-08-12
-summary: 本文将从更加贴近源码的角度来讲解 TiKV 的事务算法的原理和实现细节。
+summary: 本文将更加深入地讲解 TiKV 的事务算法的原理和实现细节。
 tags: ['TiKV 源码解析','社区']
 ---
  
-在之前的文章里，我们已经深入介绍了 TiKV 的 Service 层、Storage 层。相信大家已经大致清楚，TiKV 的事务相关的代码都位于 Storage 层中。本文将更加深入地讲解 TiKV 的事务算法的原理和实现细节。
+在之前的文章里，我们已经深入介绍了 TiKV 的 [Service 层](https://pingcap.com/blog-cn/tikv-source-code-reading-9/)、[Storage 层](https://pingcap.com/blog-cn/tikv-soucre-code-reading-11/)。相信大家已经大致清楚，TiKV 的事务相关的代码都位于 Storage 层中。本文将更加深入地讲解 TiKV 的事务算法的原理和实现细节。
 
 ## 概述
  
