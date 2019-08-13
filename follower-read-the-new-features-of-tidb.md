@@ -2,7 +2,7 @@
 title: TiDB 新特性漫谈：从 Follower Read 说起
 author: ['黄东旭']
 date: 2019-08-14
-summary: 关注 TiDB 的同学，最近可能注意到 TiKV 这边合并了一个不大不小的 PR #5051，支持了一个特性叫做 Follower Read，看到这个功能被合并进主干我确实有点百感交集，还发了条朋友圈庆祝，因为我实在很喜欢这个特性。
+summary: 关注 TiDB 的同学，最近可能注意到 TiKV 这边合并了一个不大不小的 PR，支持了一个特性叫做 Follower Read，看到这个功能被合并进主干我确实有点百感交集，还发了条朋友圈庆祝，因为我实在很喜欢这个特性。
 tags: ['TiKV','Raft']
 ---
 
