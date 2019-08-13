@@ -11,11 +11,11 @@ tags: ['TiKV','Raft']
 
 大家知道，TiDB 的存储层 TiKV 使用的是 Multi-Raft 的架构：
 
-![](media/the-new-features-of-tidb-follower-read/1.png)
+![](media/follower-read-the-new-features-of-tidb/1.png)
 
 数据在 TiKV 内部按照一个个名为 Region 的逻辑概念切分，每一个 Region 是一个独立的 Raft 复制小组，默认状态下是 3 个副本，多个 Region 自动的动态分裂，合并，移动，在整个集群内部尽可能均匀分布。使用 Raft 主要是为了实现高可用（数据冗余），但是对于 Raft 比较熟悉的朋友一定知道标准的 Raft 是一个有 Strong Leader 的，读写流量都会的经过 Leader。细心的朋友这个时候可能发现问题了，虽然 TiKV 能够很均匀的将 Region 分散在各个节点上，但是对于每一个 Region 来说，只有 Leader 副本能够对外提供服务，另外两个 Follower 除了时刻同步数据，准备着 Failover 时候投票切换成 Leader 外，并没有干其他的活。
 
-![](media/the-new-features-of-tidb-follower-read/2.gif)
+![](media/follower-read-the-new-features-of-tidb/2.gif)
 
 >只有 Region Leader 在干活，其他 Followers 冷眼旁观👆
 
