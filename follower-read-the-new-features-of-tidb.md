@@ -13,7 +13,7 @@ tags: ['TiKV','Raft']
 
 ![](media/follower-read-the-new-features-of-tidb/1.png)
 
-数据在 TiKV 内部按照一个个名为 Region 的逻辑概念切分，每一个 Region 是一个独立的 Raft 复制小组，默认状态下是 3 个副本，多个 Region 自动的动态分裂，合并，移动，在整个集群内部尽可能均匀分布。使用 Raft 主要是为了实现高可用（数据冗余），但是对于 Raft 比较熟悉的朋友一定知道标准的 Raft 是一个有 Strong Leader 的，读写流量都会的经过 Leader。细心的朋友这个时候可能发现问题了，虽然 TiKV 能够很均匀的将 Region 分散在各个节点上，但是对于每一个 Region 来说，只有 Leader 副本能够对外提供服务，另外两个 Follower 除了时刻同步数据，准备着 Failover 时候投票切换成 Leader 外，并没有干其他的活。
+数据在 TiKV 内部按照一个个名为 Region 的逻辑概念切分，每一个 Region 是一个独立的 Raft 复制小组，默认状态下是 3 个副本，多个 Region 自动的动态分裂，合并，移动，在整个集群内部尽可能均匀分布。使用 Raft 主要是为了实现高可用（数据冗余），但是对于 Raft 比较熟悉的朋友一定知道标准的 Raft 是一个有 Strong Leader 的，读写流量都会经过 Leader。细心的朋友这个时候可能发现问题了，虽然 TiKV 能够很均匀的将 Region 分散在各个节点上，但是对于每一个 Region 来说，只有 Leader 副本能够对外提供服务，另外两个 Follower 除了时刻同步数据，准备着 Failover 时候投票切换成 Leader 外，并没有干其他的活。
 
 ![](media/follower-read-the-new-features-of-tidb/2.gif)
 
@@ -27,11 +27,11 @@ tags: ['TiKV','Raft']
 ## ReadIndex
 
 
-对于熟悉的 Raft 的同学来说，沿着这个方向往下想，下一个问题一定就是：如何保证在 Follower 上读到最新的数据呢？如果只是无脑的将 Follower 上最近的 Committed Index 上的数据返回给客户端可以吗？答案是不行的（这里留个悬念，后面会再返回来讨论这个问题），原因显而易见，Raft 是一个 Quorum-based 的算法，一条 log 的写入成功，并不需要所有的 peers 都写入成功，只需要多数派同意就够了，所以有可能某个 Follower 上的本地数据还是老数据，这样一来就破坏线性一致性了。
+对于熟悉 Raft 的同学来说，沿着这个方向往下想，下一个问题一定就是：如何保证在 Follower 上读到最新的数据呢？如果只是无脑的将 Follower 上最近的 Committed Index 上的数据返回给客户端可以吗？答案是不行的（这里留个悬念，后面会再返回来讨论这个问题），原因显而易见，Raft 是一个 Quorum-based 的算法，一条 log 的写入成功，并不需要所有的 peers 都写入成功，只需要多数派同意就够了，所以有可能某个 Follower 上的本地数据还是老数据，这样一来就破坏线性一致性了。
 
 其实在 trivial 的 Raft 实现中，即使所有的 Workload 都走 Leader，也仍然在一些极端场景下会出现上面提到的问题。举个例子，当出现网络隔离，原来的 Leader 被隔离在了少数派这边，多数派那边选举出了新的 Leader，但是老的 Leader 并没有感知，在任期内他可能会给客户端返回老的数据。
 
-但是对于每次读请求都走一次 Quorum Read 虽然能解决问题，但是有点太重了，能不能做得更高效点？根本问题其实就在于老的 Leader 不确定自己是不是最新的 Leader，所以优化也很直接，只要想办法让 Leader 在处理读请求的确认自己是 Leader 就好了，这个就是所谓的 ReadIndex 算法。简单来说，就是在处理读请求的时候记录当前 Leader 的最新 Commit index，然后通过一次给 Quorum 的心跳确保自己仍然是 Leader，确认后返回这条记录就好，这样就能保证不破坏线性一致性。尽管 ReadIndex 仍然需要进行一次多数派的网络通信，但是这些通信只是传输元信息，能极大减少网络 IO，进而提升吞吐。
+但是对于每次读请求都走一次 Quorum Read 虽然能解决问题，但是有点太重了，能不能做得更高效点？根本问题其实就在于老的 Leader 不确定自己是不是最新的 Leader，所以优化也很直接，只要想办法让 Leader 在处理读请求时确认自己是 Leader 就好了，这个就是所谓的 ReadIndex 算法。简单来说，就是在处理读请求的时候记录当前 Leader 的最新 Commit index，然后通过一次给 Quorum 的心跳确保自己仍然是 Leader，确认后返回这条记录就好，这样就能保证不破坏线性一致性。尽管 ReadIndex 仍然需要进行一次多数派的网络通信，但是这些通信只是传输元信息，能极大减少网络 IO，进而提升吞吐。
 
 **在 TiKV 这边比标准的 ReadIndex 更进一步，实现了 LeaseRead。其实 LeaseRead 的思想也很好理解，只需要保证 Leader 的租约比重选新的 Leader 的 Election Timeout 短就行，这里就不展开了。**
 
@@ -39,7 +39,7 @@ tags: ['TiKV','Raft']
 ## Follower Read
 
 
-说到今天的主角，Follower Read，如何保证 Follower 上读到最新的数据呢？聪明的读者现在应该能想到了，最土的办法就是将请求转发给 Leader，然后 Leader 返回最新的 Committed 的数据就好了嘛，Follower 当做 Proxy 来用。这个思路没有任何问题，而且实现起来也很简单还安全。但是，很明显这个地方可以优化成：Leader 只要告诉 Follower 当前最新的 Commit Index 就够了，因为无论如何，即使这个 Follower 本地没有这条日志，最终这条日志迟早都会在本地 Apply。
+说到今天的主角，Follower Read，如何保证 Follower 上读到最新的数据呢？最土的办法就是将请求转发给 Leader，然后 Leader 返回最新的 Committed 的数据就好了嘛，Follower 当做 Proxy 来用。这个思路没有任何问题，而且实现起来也很简单还安全。但是，很明显这个地方可以优化成：Leader 只要告诉 Follower 当前最新的 Commit Index 就够了，因为无论如何，即使这个 Follower 本地没有这条日志，最终这条日志迟早都会在本地 Apply。
 
 **TiDB 目前的 Follower Read 正是如此实现的，当客户端对一个 Follower 发起读请求的时候，这个 Follower 会请求此时 Leader 的 Commit Index，拿到 Leader 的最新的 Commit Index 后，等本地 Apply 到 Leader 最新的 Commit Index 后，然后将这条数据返回给客户端，非常简洁。**
 
@@ -64,6 +64,6 @@ tags: ['TiKV','Raft']
 
 **另外一个很重要的功能也需要 Follower Read 作为基础，就是 Geo-Replication 后的 Local Read**。现在 TiDB 即使跨数据中心部署，虽然 TiDB 会将副本分散在各个数据中心，但是对于每块数据仍然是 Leader 提供服务，这就意味着，业务需要尽可能的接近 Leader，所以我们经常会推荐用户将应用程序部署在一个数据中心，然后告诉 PD 将 Leaders 都集中在这个数据中心以加速读写请求，Raft 只用来做跨数据中心高可用。 
 
-但是对于部分的读请求如果能就近读，总是能极大的降低延迟，提升吞吐，但是细心的朋友肯定能注意到，目前这个 Follower Read 对于降低延迟来说，并不明显，因为仍然要去 Leader 那边通信一下。不过仍然是有办法的，还记得上面留给大家的悬念嘛？能不能不问 Leader 就返回本地的 committed log？其实有些情况下是可以的。**大家知道 TiDB 是基于 MVCC 的，每条记录都会一个全局唯一单调递增的版本号，下一步 Follower Read 会和数据本身的 MVCC 结合起来，如果客户端这边发起的事务的版本号，本地最新的提交日志中的数据的版本大于这个版本，那么其实是可以安全的直接返回，不会破坏 ACID 的语义。另外对于一些对一致性要求不高的场景，未来直接支持低隔离级别的读，也未尝不可。到那时候，TiDB 的跨数据中心的性能将会又有一个飞跃。**
+但是对于部分的读请求，如果能就近读，总是能极大的降低延迟，提升吞吐。但是细心的朋友肯定能注意到，目前这个 Follower Read 对于降低延迟来说，并不明显，因为仍然要去 Leader 那边通信一下。不过仍然是有办法的，还记得上面留给大家的悬念嘛？能不能不问 Leader 就返回本地的 committed log？其实有些情况下是可以的。**大家知道 TiDB 是基于 MVCC 的，每条记录都会一个全局唯一单调递增的版本号，下一步 Follower Read 会和数据本身的 MVCC 结合起来，如果客户端这边发起的事务的版本号，本地最新的提交日志中的数据的版本大于这个版本，那么其实是可以安全的直接返回，不会破坏 ACID 的语义。另外对于一些对一致性要求不高的场景，未来直接支持低隔离级别的读，也未尝不可。到那时候，TiDB 的跨数据中心的性能将会又有一个飞跃。**
 
 所以，Follower Read 是让上面这些吸引人的特性变为现实的第一步，我们仍然秉承着先做稳再做快的原则，一步步来，有兴趣的朋友自己也可以测试起来，也希望更多小伙伴能参与相关特性的贡献。
