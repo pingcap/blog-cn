@@ -85,7 +85,7 @@ TiKV 是一个非常复杂的系统，这块我们会重点介绍，主要包括
 
 [PD](https://github.com/pingcap/pd) 用来负责整个 TiKV 的调度，我们会详细的介绍 PD 内部是如何使用 etcd 来进行元数据存取和高可用支持，也会介绍 PD 如何跟 TiKV 交互，如何生成全局的 ID 以及 timestamp。
 
-最后，我们会详细的介绍 PD 提供的 scheduler，以及不同的 scheudler 所负责的事情，让大家能通过配置 scheduler 来让系统更加的稳定。
+最后，我们会详细的介绍 PD 提供的 scheduler，以及不同的 scheduler 所负责的事情，让大家能通过配置 scheduler 来让系统更加的稳定。
 
 ## 小结
 
