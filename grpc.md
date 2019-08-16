@@ -131,7 +131,7 @@ HPACK 提供了一个静态和动态的 table，静态 table 定义了通用的 
 
 ### 小结
 
-上面只是大概列举了一些 HTTP/2 的特性，还有一些，譬如 push，以及不同的 frame 定义等都没有提及，大家感兴趣，可以自行参考 HTTP/2 [RFC 文档](httpwg.org/specs/rfc7540.html)。
+上面只是大概列举了一些 HTTP/2 的特性，还有一些，譬如 push，以及不同的 frame 定义等都没有提及，大家感兴趣，可以自行参考 HTTP/2 [RFC 文档](https://httpwg.org/specs/rfc7540.html)。
 
 ## Hello gRPC
 
