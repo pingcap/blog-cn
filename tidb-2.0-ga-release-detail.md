@@ -52,14 +52,8 @@ tags: ['TiDB']
 
 在运维方面，我们运维工具做了优化，简化操作流程，降低操作复杂度及操作过程对于线上的影响。同时功能也更加丰富，支持自动部署 Binlog 组件、支持启用 TLS。
 
-## 版本升级
-
-从 TiDB 1.0 到 2.0 可以进行滚动升级，具体步骤可以参考 [这篇文档](https://github.com/pingcap/docs-cn/blob/master/op-guide/tidb-v2.0-upgrade-guide.md)。
-
 ## One more thing
 
 **我们也同时发布了 [TiSpark 1.0 GA]( https://github.com/pingcap/tispark/releases/tag/1.0) 版本，了解一下？**
-
-
 
 >点击查看 [TiDB 2.0 GA Release Notes](https://pingcap.com/blog-cn/tidb-2.0ga-release/)

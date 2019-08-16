@@ -6,7 +6,7 @@ summary: 今年 1 月份，我们发布了 TiDB 3.0.0 Beta 版本，DevCon 上�
 tags: ['TiDB']
 ---
 
-今年 1 月份，我们发布了 [TiDB 3.0.0 Beta 版本](https://github.com/pingcap/docs-cn/blob/master/releases/3.0beta.md)，DevCon 上也对这个版本做了介绍，经过两个月的努力，今天推出了下一个 Beta 版本 3.0.0 Beta.1。让我们看一下这个版本相比于之前有什么改进。
+今年 1 月份，我们发布了 [TiDB 3.0.0 Beta 版本](https://pingcap.com/docs-cn/v3.0/releases/3.0beta/)，DevCon 上也对这个版本做了介绍，经过两个月的努力，今天推出了下一个 Beta 版本 3.0.0 Beta.1。让我们看一下这个版本相比于之前有什么改进。
 
 ## 新增特性解读
 

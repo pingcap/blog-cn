@@ -41,7 +41,7 @@ TiSpark 可以在 YARN，Mesos，Standalone 等任意 Spark 模式下运行。
 
 + 硬件配置建议
 
-普通场景可以参考 [TiDB 和 TiKV 硬件配置建议](https://github.com/pingcap/docs-cn/blob/master/op-guide/recommendation.md#tidb-%E9%9B%86%E7%BE%A4%E5%90%84%E4%B8%AA%E7%BB%84%E4%BB%B6%E7%9A%84%E7%A1%AC%E4%BB%B6%E6%B6%88%E8%80%97%E6%83%85%E5%86%B5%E5%8F%8A%E6%8E%A8%E8%8D%90%E9%85%8D%E7%BD%AE)，但是如果是偏重分析的场景，可以将 TiKV 节点增加到至少 64G 内存，如果是机械硬盘，则推荐 8 块。
+普通场景可以参考 [TiDB 软件和硬件环境建议配置](https://pingcap.com/docs-cn/v3.0/how-to/deploy/hardware-recommendations/) 和 [TiKV 机器配置推荐](https://pingcap.com/docs-cn/v3.0/reference/performance/tune-tikv/#tikv-机器配置推荐)，但是如果是偏重分析的场景，可以将 TiKV 节点增加到至少 64G 内存，如果是机械硬盘，则推荐 8 块。
 
 + TiKV 参数建议
 

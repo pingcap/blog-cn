@@ -88,7 +88,7 @@ Count-Min Sketch 维护了一个 d*w 的计数数组，对于每一个值，用 
 
 ## 统计信息使用
 
-在查询语句中，我们常常会使用一些过滤条件，而统计信息估算的主要作用就是估计经过这些过滤条件后的数据条数，以便优化器选择最优的执行计划。在这篇 [文档](https://github.com/pingcap/docs-cn/blob/master/sql/understanding-the-query-execution-plan.md#explain-%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F) 中，介绍到 explain 输出结果中会包含的一列 count，即预计当前 operator 会输出的数据条数，便是基于统计信息以及 operator 的执行逻辑估算而来。
+在查询语句中，我们常常会使用一些过滤条件，而统计信息估算的主要作用就是估计经过这些过滤条件后的数据条数，以便优化器选择最优的执行计划。在 [理解 TiDB 执行计划](https://pingcap.com/docs-cn/v3.0/reference/performance/understanding-the-query-execution-plan/#span-id-explain-output-format-explain-输出格式-span) 这篇文档中，介绍到 explain 输出结果中会包含的一列 count，即预计当前 operator 会输出的数据条数，便是基于统计信息以及 operator 的执行逻辑估算而来。
 
 在这个部分中，我们会先从最简单的单一列上的过滤条件开始，然后考虑如何处理多列的情况。  
 
