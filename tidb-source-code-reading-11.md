@@ -137,7 +137,7 @@ insert into s value(1),(2),(3),(4);
 select /*+ TIDB_INLJ(t) */ * from t left join s on t.a = s.a;
 ```
 
-在上例中， `t` 为 Outer 表，`s` 为 Inner 表。 [/** TIDN_INLJ */](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#tidb_inljt1-t2) 可以让优化器尽可能选择 Index Lookup Join 算法。
+在上例中， `t` 为 Outer 表，`s` 为 Inner 表。 [/** TIDN_INLJ */](https://pingcap.com/docs-cn/v3.0/reference/performance/optimizer-hints/#tidb-inlj-t1-t2) 可以让优化器尽可能选择 Index Lookup Join 算法。
 
 设 Outer 表读数据 batch 的初始大小为 2 行，Inner Worker 数量为 2。
 

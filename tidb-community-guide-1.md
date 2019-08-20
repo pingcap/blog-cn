@@ -36,7 +36,7 @@ tags: ['TiDB','社区']
 
 当然除了现有的 issue 之外，也欢迎将自己发现的问题或者是想要的特性提为新的 issue，然后自投自抢 :) 。 
 
-当你已经对 TiDB 有了深入的了解，那么可以尝试从 [Roadmap](https://github.com/pingcap/docs/blob/master/ROADMAP.md) 上找到感兴趣的事项，和我们讨论一下如何参与。
+当你已经对 TiDB 有了深入的了解，那么可以尝试从 [Roadmap](https://pingcap.com/docs-cn/v3.0/roadmap/) 上找到感兴趣的事项，和我们讨论一下如何参与。
 
 ## 讨论方案
 
