@@ -1,0 +1,8 @@
+{
+    "ignorePatterns": [
+        {
+            "pattern": "^(?!(https?://(pingcap.com|github.com|tikv.org)/|media/))"
+        }
+    ],
+    "replacementPatterns": []
+}
