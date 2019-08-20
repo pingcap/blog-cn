@@ -145,7 +145,7 @@ TiDB 的悲观锁实现的原理确实如此，在一个事务执行 DML (UPDATE
 
 ![](media/pessimistic-transaction-the-new-features-of-tidb/7.png)
 
-将这个 enable 设置成 true 即可，目前默认是关闭的。
+将这个 `enable` 设置成 `true` 即可，目前默认是关闭的。
 
 第二步，在实际使用的时候，我们引入了两个语法：
 
