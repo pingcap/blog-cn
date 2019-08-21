@@ -161,6 +161,6 @@ Row 提供了获取 Chunk 中数据的方法，比如 [GetInt64](https://github.
 
 ### 3.  新旧执行框架性能对比
 
-采用了新的执行框架后，OLAP 类型语句的执行速度、内存使用效率都有极大提升，从 [TPC-H 对比结果](https://github.com/pingcap/docs-cn/blob/master/benchmark/tpch.md) 看，性能有数量级的提升。
+采用了新的执行框架后，OLAP 类型语句的执行速度、内存使用效率都有极大提升，从 [TPC-H 对比结果](https://github.com/pingcap/docs-cn/blob/becd9e76878c9cf507aa626ce96de9dc6c0f85fc/v2.1/benchmark/tpch.md) 看，性能有数量级的提升。
 
 

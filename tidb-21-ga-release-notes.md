@@ -123,7 +123,7 @@ tags: ['TiDB']
     * [查询按 version 排序的 topN 的 Region 列表](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-topconfver-limit)
     * [查询按 size 排序的 topN 的 Region 列表](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-topsize-limit)
     * [更精确的 TSO 解码](https://github.com/pingcap/pd/pull/1242)
-* [pd-recover](https://github.com/pingcap/docs-cn/blob/master/v2.1/tools/pd-recover.md) 不再需要提供 max-replica 参数
+* [pd-recover](https://github.com/pingcap/docs-cn/blob/aea707820d683c0564bab28ca756d1c4a3eb62c2/v2.1/reference/tools/pd-recover.md) 不再需要提供 max-replica 参数
 
 ### 监控
 
@@ -171,7 +171,7 @@ tags: ['TiDB']
 
 ### tikv-ctl
 
-* [新增 ldb 命令，方便排查 RocksDB 相关问题](https://github.com/tikv/tikv/blob/master/docs/tools/tikv-control.md#ldb-command)
+* [新增 ldb 命令，方便排查 RocksDB 相关问题](https://tikv.org/docs/3.0/reference/tools/tikv-ctl/#ldb-command)
 * compact 命令支持指定是否 compact bottommost 层的数据
 
 ## Tools

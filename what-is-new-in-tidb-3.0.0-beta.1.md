@@ -48,7 +48,7 @@ Lightning 是将大量数据导入 TiDB 的最佳方式，在特定表结构，�
 * 新增通过 SQL 语句方式管理 pump/drainer 状态，简化 pump/drainer 状态管理，当前仅支持查看状态。
 * 支持通过配置文件管理发送 binlog 策略, 丰富 binlog 管理方式。
 
-更多的改进可以参见 [Release Notes](https://github.com/pingcap/docs-cn/blob/master/releases/3.0.0-beta.1.md)，除了这些已经完成的特性之外，还有一些正在做的事情，比如 RBAC、Plan Management 都在密集开发中，希望在下一个 Beta 版本或者 RC 版本中能与大家见面。
+更多的改进可以参见 [Release Notes](https://pingcap.com/docs-cn/v3.0/releases/3.0.0-beta.1/)，除了这些已经完成的特性之外，还有一些正在做的事情，比如 RBAC、Plan Management 都在密集开发中，希望在下一个 Beta 版本或者 RC 版本中能与大家见面。
 
 ## 开源社区
 
