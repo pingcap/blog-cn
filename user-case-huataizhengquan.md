@@ -6,7 +6,7 @@ summary: 自上线以来，TiDB 集群运行稳定，最高 QPS 达到每秒 3.4
 tags: ['金融']
 category: case
 url: /cases-cn/user-case-huataizhengquan/
-weight: 3
+weight: 4
 logo: /images/blog-cn/customers/huataizhengquan-logo.png
 ---
 
