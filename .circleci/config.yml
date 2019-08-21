@@ -1,0 +1,43 @@
+version: 2
+
+jobs:
+  lint:
+    docker:
+      - image: circleci/ruby:2.4.1-node
+    working_directory: ~/pingcap/blog-cn
+    steps:
+      - checkout
+
+      - run:
+          name: "Install markdownlint"
+          command: |
+            sudo npm install -g markdownlint-cli
+            markdownlint --version
+
+
+  build:
+    docker:
+      - image: andelf/doc-build:0.1.9
+    working_directory: ~/pingcap/blog-cn
+
+    steps:
+      - checkout
+
+      - run:
+          name: Greeting
+          command: echo Hello, Blog-cn
+
+
+
+workflows:
+  version: 2
+  lint:
+    jobs:
+      - lint
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - master
