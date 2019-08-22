@@ -6,7 +6,6 @@ summary: 本文将继续介绍 Pump server 的实现，对应的源码主要集�
 tags: ['TiDB Binlog 源码阅读','社区']
 ---
 
-
 在 [上篇文章](https://pingcap.com/blog-cn/tidb-binlog-source-code-reading-3/) 中，我们介绍了 TiDB 如何通过 Pump client 将 binlog 发往 Pump，本文将继续介绍 Pump server 的实现，对应的源码主要集中在 TiDB Binlog 仓库的 [`pump/server.go`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pump/server.go) 文件中。
 
 ## 启动 Pump Server
@@ -15,21 +14,21 @@ Server 的启动主要由两个函数实现：[`NewServer`](https://github.com/p
 
 `NewServer` 依照传入的配置项创建 Server 实例，初始化 Server 运行所必需的字段，以下简单说明部分重要字段：
 
-1.  `metrics`：一个 [`MetricClient`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pkg/util/p8s.go#L36)，用于定时向 Prometheus Pushgateway 推送 metrics
+1.  `metrics`：一个 [`MetricClient`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pkg/util/p8s.go#L36)，用于定时向 Prometheus Pushgateway 推送 metrics。
 
-2.  `clusterID`：每个 TiDB 集群都有一个 ID，连接到同一个 TiDB 集群的服务可以通过这个 ID 识别其他服务是否属于同个集群
+2.  `clusterID`：每个 TiDB 集群都有一个 ID，连接到同一个 TiDB 集群的服务可以通过这个 ID 识别其他服务是否属于同个集群。
 
-3.  `pdCli`：[PD](https://github.com/pingcap/pd) Client，用于注册、发现服务，获取 Timestamp Oracle
+3.  `pdCli`：[PD](https://github.com/pingcap/pd) Client，用于注册、发现服务，获取 Timestamp Oracle。
 
-4.  `tiStore`：用于连接 TiDB storage engine，在这里主要用于查询事务相关的信息（可以通过 TiDB 中的对应 [interface 描述](https://github.com/pingcap/tidb/blob/v3.0.1/kv/kv.go#L259)了解它的功能）
+4.  `tiStore`：用于连接 TiDB storage engine，在这里主要用于查询事务相关的信息（可以通过 TiDB 中的对应 [interface 描述](https://github.com/pingcap/tidb/blob/v3.0.1/kv/kv.go#L259) 了解它的功能）。
 
-5.  `storage`：Pump 的存储实现，从 TiDB 发过来的 binlog 就是通过它保存的，下一篇文章将会重点介绍
+5.  `storage`：Pump 的存储实现，从 TiDB 发过来的 binlog 就是通过它保存的，下一篇文章将会重点介绍。
 
 Server 初始化以后，就可以用 `(*Server).Start` 启动服务。为了避免丢失 binlog，在开始对外提供 binlog 写入服务之前，[它会将当前 Server 注册到 PD 上，确保所有运行中的 Drainer 都已经观察到新增的 Pump 节点](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pump/server.go#L323-L337)。这一步除了启动对外的服务，还开启了一些 Pump 正常运作所必须的辅助机制，下文会有更详细的介绍。
 
 ## Pump Server API
 
-Pump Server 通过 gRPC 暴露出一些服务，这些接口定义在 [`tipb/pump.pb.go`](https://github.com/pingcap/tipb/blob/master/go-binlog/pump.pb.go#L312)，包含以下两个接口：
+Pump Server 通过 gRPC 暴露出一些服务，这些接口定义在 [`tipb/pump.pb.go`](https://github.com/pingcap/tipb/blob/master/go-binlog/pump.pb.go#L312)，包含两个接口 `WriteBinlog`、 `PullBinlogs`。
 
 ### WriteBinlog
 
