@@ -38,6 +38,7 @@
   - [北京银行](user-case-beijing-bank.md)
   - [平安科技](user-case-pingankeji.md)
   - [微众银行](user-case-webank.md)
+  - [华泰证券](user-case-huataizhengquan.md)
   - [贝壳金服](user-case-beikejinfu.md)
   - [Ping++](user-case-ping++.md)
   - [360 金融](user-case-360.md)
