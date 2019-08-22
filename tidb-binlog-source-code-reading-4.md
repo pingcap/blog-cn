@@ -114,7 +114,7 @@ case <-time.After(gcInterval):
 
 ### Heartbeat
 
-心跳机制用于定时（默认两秒）向 PD 发送 Server 最新状态，由 [`(*pumpNode).HeartBeat`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pump/node.go#L211) 实现。状态是由 JSON 编码的 [Status](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pkg/node/node.go#L84) 实例，主要记录 `NodeID`、`MaxCommitTS` 之类的信息。
+心跳机制用于定时（默认两秒）向 PD 发送 Server 最新状态，由 [`(*pumpNode).HeartBeat`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pump/node.go#L211) 实现。状态是由 JSON 编码的 [`Status`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pkg/node/node.go#L84) 实例，主要记录 `NodeID`、`MaxCommitTS` 之类的信息。
 
 ## HTTP API 实现
 
@@ -141,7 +141,6 @@ bin/binlogctl -pd-urls=localhost:2379 -cmd offline-pump -node-id=My-Host:8240
 在 Server 端，`ApplyAction` 收到 close 后会将节点状态置为 Closing（Heartbeat 进程会定时将这类状态更新到 PD），然后另起一个 goroutine 调用 [`Close`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pump/server.go#L834)。`Close` 首先调用 [`cancel`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pump/server.go#L121)，通过 `context` 将关停信号发往协作的 goroutine，这些 goroutine 主要就是上文提到的辅助机制运行的 goroutine，例如在 `genForwardBinlog` 中设计了在 `context` 被 cancel 时退出：
 
 ```go
-
 for {
   select {
   case <-s.ctx.Done():
