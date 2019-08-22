@@ -81,9 +81,9 @@ PullBinlogs 的 [主要流程](https://github.com/pingcap/tidb-binlog/blob/v3.0.
 
 在 [《TiDB-Binlog 架构演进与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/) 一文中，对 fake binlog 机制有以下说明：
 
-“Pump 会定时（默认三秒）向本地存储中写入一条数据为空的 binlog，在生成该 binlog 前，会向 PD 中获取一个 tso，作为该 binlog 的 `start_ts` 与 `commit_ts`，这种 binlog 我们叫作 fake binlog。”
-
-“Drainer 通过如上所示的方式对 binlog 进行归并排序，并推进同步的位置。那么可能会存在这种情况：某个 Pump 由于一些特殊的原因一直没有收到 binlog 数据，那么 Drainer 中的归并排序就无法继续下去，正如我们用两条腿走路，其中一只腿不动就不能继续前进。我们使用 Pump 一节中提到的 fake binlog 的机制来避免这种问题，Pump 每隔指定的时间就生成一条 fake binlog，即使某些 Pump 一直没有数据写入，也可以保证归并排序正常向前推进。”
+>“Pump 会定时（默认三秒）向本地存储中写入一条数据为空的 binlog，在生成该 binlog 前，会向 PD 中获取一个 tso，作为该 binlog 的 `start_ts` 与 `commit_ts`，这种 binlog 我们叫作 fake binlog。
+>
+>……Drainer 通过如上所示的方式对 binlog 进行归并排序，并推进同步的位置。那么可能会存在这种情况：某个 Pump 由于一些特殊的原因一直没有收到 binlog 数据，那么 Drainer 中的归并排序就无法继续下去，正如我们用两条腿走路，其中一只腿不动就不能继续前进。我们使用 Pump 一节中提到的 fake binlog 的机制来避免这种问题，Pump 每隔指定的时间就生成一条 fake binlog，即使某些 Pump 一直没有数据写入，也可以保证归并排序正常向前推进。”
 
 [`genForwardBinlog`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pump/server.go#L460) 实现了这个机制，它里面是一个定时循环，每隔一段时间（默认 3 秒，可通过 `gen-binlog-interval` 选项配置）检查一下是否有新的 binlog 写入，如果没有，就调用 `writeFakeBinlog` 写一条假的 binlog。
 
