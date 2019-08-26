@@ -12,7 +12,7 @@ tags: ['TiDB 源码阅读','社区']
 
 PingCAP 发布了 TiDB 的[源码阅读系列文章](https://pingcap.com/blog-cn/#%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)，让我们可以比较系统的去学习了解TiDB的内部实现。最近的一篇[《SQL 的一生》](https://pingcap.com/blog-cn/tidb-source-code-reading-3/)，从整体上讲解了一条 SQL 语句的处理流程，从网络上接收数据，MySQL 协议解析和转换，SQL 语法解析，查询计划的制定和优化，查询计划执行，到最后返回结果。
 
-![](media/tidb-source-code-reading-5/1.png)
+![SQL 语句处理流程](media/tidb-source-code-reading-5/1.png)
 
 其中，`SQL Parser` 的功能是把 SQL 语句按照 SQL 语法规则进行解析，将文本转换成抽象语法树（`AST`），这部分功能需要些背景知识才能比较容易理解，我尝试做下相关知识的介绍，希望能对读懂这部分代码有点帮助。
 
@@ -33,7 +33,7 @@ parser: goyacc
 
 [Lex & Yacc](http://dinosaur.compilertools.net/) 是用来生成词法分析器和语法分析器的工具，它们的出现简化了编译器的编写。`Lex & Yacc` 分别是由贝尔实验室的 [Mike Lesk](https://en.wikipedia.org/wiki/Mike_Lesk) 和 [Stephen C. Johnson](https://en.wikipedia.org/wiki/Stephen_C._Johnson) 在 1975 年发布。对于 Java 程序员来说，更熟悉的是 [ANTLR](http://www.antlr.org/)，`ANTLR 4` 提供了 `Listener`+`Visitor` 组合接口， 不需要在语法定义中嵌入`actions`，使应用代码和语法定义解耦。`Spark` 的 SQL 解析就是使用了 `ANTLR`。`Lex & Yacc` 相对显得有些古老，实现的不是那么优雅，不过我们也不需要非常深入的学习，只要能看懂语法定义文件，了解生成的解析器是如何工作的就够了。我们可以从一个简单的例子开始：
 
-![](media/tidb-source-code-reading-5/2.png)
+![图例](media/tidb-source-code-reading-5/2.png)
 
 
 上图描述了使用 `Lex & Yacc` 构建编译器的流程。`Lex` 根据用户定义的 `patterns` 生成词法分析器。词法分析器读取源代码，根据 `patterns` 将源代码转换成 `tokens` 输出。`Yacc` 根据用户定义的语法规则生成语法分析器。语法分析器以词法分析器输出的 `tokens` 作为输入，根据语法规则创建出语法树。最后对语法树遍历生成输出结果，结果可以是产生机器代码，或者是边遍历 `AST` 边解释执行。

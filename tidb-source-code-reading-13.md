@@ -60,11 +60,11 @@ select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 
 
 * `a = 1 and (b = 1 or b = 2) and c > 1`。对于这个式子，当 (a, b ,c) 为索引时，如上述所言，由于 `(b = 1 or b = 2)` 形式上是 OR 表达式的情况，而非点查。所以会在 b 列停止，不会考虑 `c > 1` 的情况。所以目前为了兼容 TiDB 的逻辑，遇到这种情况尽量改写为 `a = 1 and b in (1, 2) and c > 1` 的形式。
 
-![](media/tidb-source-code-reading-13/2.jpeg)
+![图例 1](media/tidb-source-code-reading-13/2.jpeg)
 
 * 类似的如 `((a = 1 and b = 1) or (a = 2 and b = 2)) and c = 1` 形式的式子，前段 OR 表达式实际上为点查的行为，但是由于是 OR 连接起来的式子，所以在 TiDB 的逻辑中作为范围查询处理，因此 `c = 1` 不会作为索引的计算条件处理。而这时改写为 `(a, b) in ((1, 1)`,  `(2, 2)) and c = 1` 的形式也不会使 `c = 1` 选入索引计算的条件，原因是多列 in 的函数会被 TiDB 改写为 OR 连接的形式，所以 `((a = 1 and b = 1) or (a = 2 and b = 2))` 和 `(a, b) in ((1, 1),  (2, 2))` 在 TiDB 中是完全一致的行为。针对这种情况，目前的办法只有将这些条件都放入 OR 的子项中，针对这里用到的例子，那就是要改写为 `((a = 1 and b = 1 and c = 1) or (a = 2 and b = 2 and c = 1))`。
 
-![](media/tidb-source-code-reading-13/3.jpeg)
+![图例 2](media/tidb-source-code-reading-13/3.jpeg)
 
 ## 计算逻辑区间
 

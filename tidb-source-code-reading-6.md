@@ -48,7 +48,7 @@ SELECT name FROM t WHERE age > 10;
 
 ## Parsing
 
-Select 语句的语法解析规则在 [这里](https://github.com/pingcap/tidb/blob/source-code/parser/parser.y#L3906)。相比 Insert 语句，要复杂很多，大家可以对着 [MySQL 文档](https://dev.mysql.com/doc/refman/5.7/en/select.html) 看一下具体的解析实现。需要特别注意的是 From 字段，这里可能会非常复杂，其语法定义是递归的。
+[Select 语句的语法解析规则](https://github.com/pingcap/tidb/blob/source-code/parser/parser.y#L3906)，相比 Insert 语句，要复杂很多，大家可以对着 [MySQL 文档](https://dev.mysql.com/doc/refman/5.7/en/select.html) 看一下具体的解析实现。需要特别注意的是 From 字段，这里可能会非常复杂，其语法定义是递归的。
 
 最终语句被解析成 [ast.SelectStmt](https://github.com/pingcap/tidb/blob/source-code/ast/dml.go#L451) 结构：
 
@@ -184,7 +184,7 @@ columnPruner（列裁剪） 规则，会将不需要的列裁剪掉，考虑这�
 
 经过逻辑优化，我们可以得到这样一个查询计划：
 
-![logical-select.png](media/tidb-source-code-reading-6/1.png)
+![logical-select](media/tidb-source-code-reading-6/1.png)
 
 其中 `FROM t` 变成了 DataSource 算子，`WHERE age > 10` 变成了 Selection 算子，这里留一个思考题，`SELECT name` 中的列选择去哪里了？
 
@@ -275,14 +275,14 @@ type task interface {
 
 如果了解过 TiDB 的 Explain 结果，那么可以看到每个 Operator 都会标明属于哪种 Task，比如下面这个例子：
 
-![explain.jpg](media/tidb-source-code-reading-6/2.jpg)
+![explain](media/tidb-source-code-reading-6/2.jpg)
 
 
 整个流程是一个树形动态规划的算法，大家有兴趣可以跟一下相关的代码自行研究或者等待后续的文章。
 
 经过整个优化过程，我们已经得到一个物理查询计划，这个 `SELECT name FROM t WHERE age > 10;` 语句能够指定出来的查询计划大概是这样子的：
 
-![simple-select.png](media/tidb-source-code-reading-6/3.png)
+![simple-select](media/tidb-source-code-reading-6/3.png)
 
 读者可能会比较奇怪，为什么只剩下这样一个物理算子？`WHERR age > 10` 哪里去了？实际上 age > 10 这个过滤条件被合并进了 PhysicalTableScan，因为 `age > 10` 这个表达式可以下推到 TiKV 上进行计算，所以会把 TableScan 和 Filter 这样两个操作合在一起。哪些表达式会被下推到 TiKV 上的 Coprocessor 模块进行计算呢？对于这个 Query 是在下面 [这个地方](https://github.com/pingcap/tidb/blob/source-code/plan/predicate_push_down.go#L72) 进行识别：
 

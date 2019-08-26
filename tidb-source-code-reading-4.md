@@ -34,7 +34,7 @@ key id_idx (id)
 
 ### 语法解析
 
-先看 Parser，对于 Insert 语句的解析逻辑在[这里](https://github.com/pingcap/tidb/blob/source-code/parser/parser.y#L2525)，可以看到这条语句会被解析成下面[这个结构](https://github.com/pingcap/tidb/blob/source-code/ast/dml.go#L706)：
+先看 Parser，对于 [Insert 语句的解析逻辑](https://github.com/pingcap/tidb/blob/source-code/parser/parser.y#L2525)，可以看到这条语句会被解析成下面[这个结构](https://github.com/pingcap/tidb/blob/source-code/ast/dml.go#L706)：
 
 ```go
 // InsertStmt is a statement to insert new rows into an existing table.
@@ -93,7 +93,7 @@ type InsertStmt struct {
 	}
 ```
 
-接下来我们看一下 [AddRecord](https://github.com/pingcap/tidb/blob/source-code/table/tables/tables.go#L345) 这个函数是如何将一行数据写入存储引擎中。要理解这段代码，需要了解一下 TiDB 是如何将 SQL 的数据映射为 Key-Value，可以先读一下我们之前写的一些文章，比如[这一篇](https://pingcap.com/blog-cn/tidb-internal-2/)。这里假设读者已经了解了这一点背景知识，那么一定会知道这里需要将 Row 和 Index 的 Key-Value 构造出来的，写入存储引擎。
+接下来我们看一下 [AddRecord](https://github.com/pingcap/tidb/blob/source-code/table/tables/tables.go#L345) 这个函数是如何将一行数据写入存储引擎中。要理解这段代码，需要了解一下 TiDB 是如何将 SQL 的数据映射为 Key-Value，可以先读一下我们之前写的一些文章，比如[三篇文章了解 TiDB 技术内幕 - 说计算](https://pingcap.com/blog-cn/tidb-internal-2/)。这里假设读者已经了解了这一点背景知识，那么一定会知道这里需要将 Row 和 Index 的 Key-Value 构造出来的，写入存储引擎。
 
 构造 Index 数据的代码在 [addIndices()](https://github.com/pingcap/tidb/blob/source-code/table/tables/tables.go#L447) 函数中，会调用 [index.Create()](https://github.com/pingcap/tidb/blob/source-code/table/tables/index.go#L191) 这个方法：
 
@@ -150,7 +150,7 @@ writeBufs.RowValBuf, err = tablecodec.EncodeRow(ctx.GetSessionVars().StmtCtx, ro
 
 Insert 语句在诸多 DML 语句中算是最简单的语句，本文也没有涉及 Insert 语句中更复杂的情况，所以相对比较好理解。上面讲了这么多代码，让我们用一幅图来再回顾一下整个流程。
 
-![Insert.png](media/tidb-source-code-reading-4/1.png)
+![Insert](media/tidb-source-code-reading-4/1.png)
 
 最后给大家留一个思考题，本文描述了如何写入数据，那么 TiDB 是如何删除数据的呢？也就是 Delete 语句的执行流程是什么样子的，请大家追踪源码，调研一下这个流程，有兴趣的读者可以仿照本文写一篇源码解析文档，投稿给我们。
 

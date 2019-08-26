@@ -216,7 +216,7 @@ Session 中最重要的函数是 [Execute](https://github.com/pingcap/tidb/blob/
 
 TiDB 的执行引擎是以 Volcano 模型运行，所有的物理 Executor 构成一个树状结构，每一层通过调用下一层的 Next/NextChunk() 方法获取结果。 举个例子，假设语句是 `SELECT c1 FROM t WHERE c2 > 1;`，并且查询计划选择的是全表扫描+过滤，那么执行器树会是下面这样：
 
-![](media/tidb-source-code-reading-3/1.png)
+![执行器树](media/tidb-source-code-reading-3/1.png)
 
 大家可以从图中看到 Executor 之间的调用关系，以及数据的流动方式。那么最上层的 Next 是在哪里调用，也就是整个计算的起始点在哪里，谁来驱动这个流程？ 有两个地方大家需要关注，这两个地方分别处理两类语句。 第一类语句是 Select 这种查询语句，需要对客户端返回结果，这类语句的执行器调用点在[给客户端返回数据的地方](https://github.com/pingcap/tidb/blob/master/server/conn.go#L909)：
 
@@ -242,7 +242,7 @@ TiDB 的执行引擎是以 Volcano 模型运行，所有的物理 Executor 构�
 
 上面描述了整个 SQL 层的执行框架，这里用一幅图来描述整个过程：
 
-![](media/tidb-source-code-reading-3/2.png)
+![SQL 层执行框架过程图](media/tidb-source-code-reading-3/2.png)
 
 通过这篇文章，相信大家已经了解了 TiDB 中语句的执行框架，整个逻辑还是比较简单，框架中具体的模块的详细解释会在后续章节中给出。下一篇文章会用具体的语句为例，帮助大家理解本篇文章。
 
