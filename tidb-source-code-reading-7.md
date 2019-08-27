@@ -30,7 +30,7 @@ select b from t1, t2 where t1.c = t2.c and t1.a > 5
 
 变成逻辑查询计划之后，t1 t2 对应的 DataSource，负责将数据捞上来。上面接个 Join 算子，将两个表的结果按 `t1.c = t2.c`连接，再按 `t1.a > 5` 做一个 Selection 过滤，最后将 b 列投影。下图是未经优化的表示：
 
-![](media/tidb-source-code-reading-7/1.png)
+![未经优化表示图](media/tidb-source-code-reading-7/1.png)
 
 - Sort 就是 `select xx from xx order by` 里面的 `order by`。
 

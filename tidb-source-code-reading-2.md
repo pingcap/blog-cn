@@ -12,7 +12,7 @@ tags: ['TiDB 源码阅读','社区']
 
 ## TiDB 架构
 
-![](media/tidb-source-code-reading-2/1.png)
+![TiDB 架构](media/tidb-source-code-reading-2/1.png)
 
 本次 TiDB 源码之旅从这幅简单的架构图开始，这幅图很多人都看过，我们可以用一句话来描述这个图：『TiDB 是一个支持 MySQL 协议，以某种支持事务的分布式 KV 存储引擎为底层存储的 SQL 引擎』。从这句话可以看出有三个重要的事情，第一是如何支持 MySQL 协议，与 Client 交互，第二是如何与底层的存储引擎打交道，存取数据，第三是如何实现 SQL 的功能。本篇文章会先介绍一些 TiDB 有哪些模块及其功能简要介绍，然后以这三点为线索，将这些模块串联起来。
 
@@ -121,7 +121,7 @@ TiDB 的模块非常多，这里做一个整体介绍，大家可以看到每个
 
 ## SQL 层架构
 
-![](media/tidb-source-code-reading-2/2.png)
+![SQL 层架构](media/tidb-source-code-reading-2/2.png)
 
 这幅图比上一幅图详细很多，大体描述了 SQL 核心模块，大家可以从左边开始，顺着箭头的方向看。
 

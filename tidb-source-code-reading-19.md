@@ -7,7 +7,7 @@ tags: ['TiDB 源码阅读','社区']
 ---
 
 
-[上篇文章](http://pingcap.com/blog-cn/tidb-source-code-reading-18/) 中，我们介绍了数据读写过程中 tikv-client 需要解决的几个具体问题，本文将继续介绍 tikv-client 里的两个主要的模块——负责处理分布式计算的 copIterator 和执行二阶段提交的 twoPhaseCommitter。
+[TiDB 源码阅读系列文章（十八）](http://pingcap.com/blog-cn/tidb-source-code-reading-18/) 中，我们介绍了数据读写过程中 tikv-client 需要解决的几个具体问题，本文将继续介绍 tikv-client 里的两个主要的模块——负责处理分布式计算的 copIterator 和执行二阶段提交的 twoPhaseCommitter。
 
 
 ## copIterator

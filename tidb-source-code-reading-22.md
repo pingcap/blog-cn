@@ -87,13 +87,13 @@ Stream Aggregate 的计算需要保证输入数据**按照 `Group-By` 列有序*
 
     此时 `AVG` 函数的整个计算过程只有一个阶段，如图所示：
 
-    ![](media/tidb-source-code-reading-22/1.png)
+    ![CompleteMode](media/tidb-source-code-reading-22/1.png)
 
 * Partial1Mode --> FinalMode
 
     此时我们将 `AVG` 函数的计算过程拆成两个阶段进行，如图所示：
 
-    ![](media/tidb-source-code-reading-22/2.png)
+    ![Partial1Mode -> FinalMode](media/tidb-source-code-reading-22/2.png)
 
 除了上面的两个例子外，还可能有如下的几种计算方式：
 
@@ -135,7 +135,7 @@ TiDB 的并行 Hash Aggregation 算子执行过程中的主要线程有：Main T
 
 Hash Aggregation 的执行阶段可分为如下图所示的 5 步：
 
-![](media/tidb-source-code-reading-22/3.png)
+![Hash Aggregation 执行阶段](media/tidb-source-code-reading-22/3.png)
 
 1. 启动 Data Fetcher，Partial Workers 及 Final Workers。
 
@@ -161,19 +161,19 @@ Hash Aggregation 的执行阶段可分为如下图所示的 5 步：
 
 该查询执行计划如下：
 
-![](media/tidb-source-code-reading-22/4.png)
+![查询执行计划](media/tidb-source-code-reading-22/4.png)
 
 在 TiDB 中，使用 [EXPLAIN ANALYZE](https://pingcap.com/docs-cn/dev/reference/performance/understanding-the-query-execution-plan/#span-id-explain-analyze-output-format-explain-analyze-输出格式-span) 可以获取 SQL 的执行统计信息。因篇幅原因此处仅贴出 TPC-H query-17 部分算子的 EXPLAIN ANALYZE 结果。
 
 `HashAgg` 单线程计算时：
 
-![](media/tidb-source-code-reading-22/5.png)
+![单线程计算](media/tidb-source-code-reading-22/5.png)
 
 查询总执行时间 23 分 24 秒，其中 `HashAgg` 执行时间约 17 分 9 秒。
 
 `HashAgg` 并行计算时（此时 TiDB 层 Partial 和 Final 阶段的 worker 数量都设置为 16）：
 
-![](media/tidb-source-code-reading-22/6.png)
+![并行计算](media/tidb-source-code-reading-22/6.png)
 
 总查询时间 8 分 37 秒，其中 `HashAgg` 执行时间约 1 分 4 秒。
 

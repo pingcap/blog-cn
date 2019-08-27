@@ -23,7 +23,7 @@ Chunk 本质上是 [Column](https://github.com/pingcap/tidb/blob/source-code/ut
 
 ### 1. Column
 
-Column 的实现参考了 Apache Arrow，Column 的代码在 [这里](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L320)。根据所存储的数据类型，我们有两种 Column：
+Column 的实现参考了 Apache Arrow，点击查看 [Column 的代码](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L320)。根据所存储的数据类型，我们有两种 Column：
 
 * 定长 Column：存储定长类型的数据，比如 `Double`、`Bigint`、`Decimal` 等
 
@@ -63,7 +63,7 @@ Column 里面的字段非常多，这里先简单介绍一下：
 
 一个定长类型的 Column 可以用如下图表示:
 
-![](media/tidb-source-code-reading-10/1.png)
+![定长类型 Column](media/tidb-source-code-reading-10/1.png)
 
 
 我们以 [appendInt64](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L378 ) 为例来看看如何追加一个定长类型的数据：
@@ -80,7 +80,7 @@ Column 里面的字段非常多，这里先简单介绍一下：
 
 而一个变长的 Column 可以用下图表示：
 
-![](media/tidb-source-code-reading-10/2.png)
+![变长的 Column](media/tidb-source-code-reading-10/2.png)
 
 我们以 [appendString](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L404 ) 为例来看看如何追加一个变长类型的数据：
 
@@ -104,7 +104,7 @@ Column 里面的字段非常多，这里先简单介绍一下：
 
 ### 2. Row
 
-![](media/tidb-source-code-reading-10/3.jpeg)
+![Row](media/tidb-source-code-reading-10/3.jpeg)
 
 如上图所示：Chunk 中的 [Row](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L456) 是一个逻辑上的概念：Row 中的数据存储在 Chunk 的各个 Column 中，同一个 Row 中的数据在内存中没有连续存储在一起，我们在获取一个 Row 对象的时候也不需要进行数据拷贝。提供 Row 的概念是因为算子运行过程中，大多数情况都是以 Row 为单位访问和操作数据，比如聚合，排序等。 
 
@@ -121,7 +121,7 @@ Row 提供了获取 Chunk 中数据的方法，比如 [GetInt64](https://github.
 在重构前，TiDB 1.0 中使用的执行框架会不断调用 Child 的 [Next](https://github.com/pingcap/tidb/blob/source-code/executor/executor.go#L191) 函数获取一个由 Datum 组成的 Row（和刚才介绍的 Chunk Row 是两个数据结构），这种执行方式的特点是：每次函数调用只返回一行数据，且不管是什么类型的数据都用 Datum 这个结构体来封装。
 
 
-![](media/tidb-source-code-reading-10/4.png)
+![TiDB 1.0 执行框架](media/tidb-source-code-reading-10/4.png)
 
 这种方法的优点是：简单、易用。缺点是：
 
@@ -139,11 +139,11 @@ Row 提供了获取 Chunk 中数据的方法，比如 [GetInt64](https://github.
 
 在重构后，TiDB 2.0 中使用的执行框架会不断调用 Child 的 [NextChunk](https://github.com/pingcap/tidb/blob/source-code/executor/executor.go#L198) 函数，获取一个 [Chunk](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L32) 的数据。
 
-![](media/tidb-source-code-reading-10/5.png)
+![TiDB 2.0 执行框架](media/tidb-source-code-reading-10/5.png)
 
 这种执行方式的特点是：
 
-* 每次函数调用返回一批数据，数据量由一个叫 `tidb_max_chunk_size` 的 session 变量来控制，默认是 1024 行。因为 TiDB 是一个混合 TP 和 AP 的数据库，对于 AP 类型的查询来说，因为计算的数据量大，1024 没啥问题，但是对于 TP 请求来说，计算的数据量可能比较少，直接在一开始就分配 1024 行的内存并不是最佳的实践（ [这里](https://github.com/pingcap/tidb/issues/6489) 有个 github issue 讨论这个问题，欢迎感兴趣的同学来讨论和解决）。
+* 每次函数调用返回一批数据，数据量由一个叫 `tidb_max_chunk_size` 的 session 变量来控制，默认是 1024 行。因为 TiDB 是一个混合 TP 和 AP 的数据库，对于 AP 类型的查询来说，因为计算的数据量大，1024 没啥问题，但是对于 TP 请求来说，计算的数据量可能比较少，直接在一开始就分配 1024 行的内存并不是最佳的实践（有个 [github issue](https://github.com/pingcap/tidb/issues/6489) 讨论这个问题，欢迎感兴趣的同学来讨论和解决）。
 
 * Child 把它产出的数据写入到 Parent 传下来的 [Chunk](https://github.com/pingcap/tidb/blob/source-code/util/chunk/chunk.go#L32) 中。
 

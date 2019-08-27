@@ -57,7 +57,7 @@ Outer Fetcher 是一个后台 goroutine，他的主要计算逻辑在 [fetchOute
 
 它会不断的读大表的数据，并将获得的 Outer 表的数据分发给各个 Join Worker。这里多线程之间的资源交互可以用下图表示：
 
-![](media/tidb-source-code-reading-9/1.png)
+![多线程之间资源交互图](media/tidb-source-code-reading-9/1.png)
 
 上图中涉及到了两个 channel：
 
@@ -81,7 +81,7 @@ Outer Fetcher 是一个后台 goroutine，他的主要计算逻辑在 [fetchOute
 
 每个 Join Worker 都是一个后台 goroutine，主要计算逻辑在 [runJoinWorker4Chunk](https://github.com/pingcap/tidb/blob/source-code/executor/join.go#L562) 这个函数中。Join Worker 的数量由 `tidb_hash_join_concurrency` 这个 session 变量来控制，默认是 5 个。
 
-![](media/tidb-source-code-reading-9/2.png)
+![Join Worker](media/tidb-source-code-reading-9/2.png)
 
 上图中涉及到两个 channel：
 

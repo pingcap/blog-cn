@@ -9,7 +9,7 @@ tags: ['TiDB 源码阅读','社区']
 
 ## TiDB Binlog Overview
 
-这篇文章不是讲 TiDB Binlog 组件的源码，而是讲 TiDB 在执行 DML/DDL 语句过程中，如何将 binlog 数据 发送给 TiDB Binlog 集群的 Pump 组件。目前 TiDB 在 DML 上的 binlog 用的类似 [Row-based](https://dev.mysql.com/doc/refman/5.7/en/binary-log-formats.html) 的格式。TiDB Binlog 具体的架构细节可以参看这篇 [文章](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/)。
+这篇文章不是讲 TiDB Binlog 组件的源码，而是讲 TiDB 在执行 DML/DDL 语句过程中，如何将 binlog 数据 发送给 TiDB Binlog 集群的 Pump 组件。目前 TiDB 在 DML 上的 binlog 用的类似 [Row-based](https://dev.mysql.com/doc/refman/5.7/en/binary-log-formats.html) 的格式。TiDB Binlog 具体的架构细节可以参看这篇 [TiDB Ecosystem Tools 原理解读系列（一）：TiDB-Binlog 架构演进与实现原理](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/)。
 
 **这里只描述 TiDB 中的代码实现。**
 

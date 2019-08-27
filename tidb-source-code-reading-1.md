@@ -16,7 +16,7 @@ TiDB 作为一个开源项目，在开发过程中得到了社区的广泛关注
 
 ## 前言
 
-学习一种系统最好的方法是阅读一些经典著作并研究一个开源项目，数据库也不例外。单机数据库领域有很多好的开源项目，MySQL、PostgreSQL 是其中知名度最高的两个，不少人看过这两个项目的代码。我们在刚做数据库的时候也看过不少 MySQL、PG 的代码，从中受益良多。但是分布式数据库方面，好的开源项目并不多，有一些知名的系统并不开源，比如 F1/Spanner，还有一些系统疏于维护或者是从开源变成闭源，比如被 Apple 收购后闭源的 FoundationDB（还好当初 clone 了一份代码 :)，参见 [这里](https://github.com/shenli/sql-layer)，我们在内部或者外部也组织过一些开源系统代码阅读的 Talk，不过并不系统。
+学习一种系统最好的方法是阅读一些经典著作并研究一个开源项目，数据库也不例外。单机数据库领域有很多好的开源项目，MySQL、PostgreSQL 是其中知名度最高的两个，不少人看过这两个项目的代码。我们在刚做数据库的时候也看过不少 MySQL、PG 的代码，从中受益良多。但是分布式数据库方面，好的开源项目并不多，有一些知名的系统并不开源，比如 F1/Spanner，还有一些系统疏于维护或者是从开源变成闭源，比如被 Apple 收购后闭源的 FoundationDB（还好当初 clone 了一份代码 :)，参见 [FoundationDB 代码](https://github.com/shenli/sql-layer)，我们在内部或者外部也组织过一些开源系统代码阅读的 Talk，不过并不系统。
 
 TiDB 目前获得了广泛的关注，特别是一些技术爱好者，希望能够参与这个项目。由于整个系统的复杂性，很多人并不能很好的理解整个项目。我们希望通过这一系列文章自顶向下，由浅入深，讲述 TiDB 的技术原理以及实现细节，帮助大家掌握这个项目。
 
@@ -44,7 +44,7 @@ TiDB 目前获得了广泛的关注，特别是一些技术爱好者，希望能
 
 ## 内容概要
 
-首先明确一个概念，一般来说我们提到 TiDB 是指整个分布式数据库，包括 tidb-server/pd-server/tikv-server 三大组件。由于整个项目比较复杂，又涉及到两种编程语言（Golang 和 Rust），想了解数据库相关的东西实际上只需要看 tidb-server 的代码即可。tikv-server 上面的计算相关逻辑也能够在 tidb-server 的代码中找到， 在 tidb-server 的代码目录下，可以找到一个叫 mock-tikv 的组件，[这里](https://github.com/pingcap/tidb/tree/source-code/store/mockstore/mocktikv)利用本地存储模拟 tikv-server 的行为，这里能够找到不少和 tikv-server 上面一样的代码逻辑，特别是 Coprocessor 模块的逻辑，tikv-server 上的逻辑是从 mock-tikv 上移植过去的。所以本系列文章主要介绍 tidb-server 的代码，除非特别说明，文章中提到的 TiDB 就是指 tidb-server。
+首先明确一个概念，一般来说我们提到 TiDB 是指整个分布式数据库，包括 tidb-server/pd-server/tikv-server 三大组件。由于整个项目比较复杂，又涉及到两种编程语言（Golang 和 Rust），想了解数据库相关的东西实际上只需要看 tidb-server 的代码即可。tikv-server 上面的计算相关逻辑也能够在 tidb-server 的代码中找到， 在 tidb-server 的代码目录下，可以找到一个叫 mock-tikv 的组件，[mock-tikv](https://github.com/pingcap/tidb/tree/source-code/store/mockstore/mocktikv) 利用本地存储模拟 tikv-server 的行为，这里能够找到不少和 tikv-server 上面一样的代码逻辑，特别是 Coprocessor 模块的逻辑，tikv-server 上的逻辑是从 mock-tikv 上移植过去的。所以本系列文章主要介绍 tidb-server 的代码，除非特别说明，文章中提到的 TiDB 就是指 tidb-server。
 
 这一系列文章会按照数据库的组件以及 SQL 处理的常见流程，讲解 Protocol 层，以及Parser、Preprocess、Optimizer、Executor、Storage Engine 等重要模块。从整体上分为两大部分，上半部分包括如下四篇文章：
 

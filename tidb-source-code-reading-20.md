@@ -133,7 +133,7 @@ drop partition 和 drop table 类似，只不过需要先找到对应的 Partiti
 
 3. [removePartitionInfo](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L283) 会把要删除的分区从 Partition 元信息删除掉，删除前会做[checkDropTablePartition](https://github.com/pingcap/tidb/blob/release-2.1/ddl/partition.go#L269) 的检查。
 
-4. 对分区表数据则需要拿到 PartitionID 根据插入数据时候的编码规则构造出 StartKey 和 EndKey 便能包含对应分区 Range 内所有的数据，然后把这个范围内的数据删除，具体代码实现在[这里](https://github.com/pingcap/tidb/blob/release-2.1/ddl/delete_range.go#L250)。
+4. 对分区表数据则需要拿到 PartitionID 根据插入数据时候的编码规则构造出 StartKey 和 EndKey 便能包含对应分区 Range 内所有的数据，然后把这个范围内的数据删除，点击查看 [具体代码实现](https://github.com/pingcap/tidb/blob/release-2.1/ddl/delete_range.go#L250)。
 
 5. 编码规则：
 
@@ -168,7 +168,7 @@ select * from p3 where id < MAXVALUE)
 
 通过观察 `EXPLAIN` 的结果可以证实上面的例子，如图 1，最终物理执行计划中有四个 Table Reader 因为 employees 表中有四个分区，`Table Reader` 表示在 TiDB 端从 TiKV 端读取，`cop task` 是指被下推到 TiKV 端分布式执行的计算任务。
 
-![EXPLAN 输出.png](media/tidb-source-code-reading-20/1.png)
+![EXPLAN 输出](media/tidb-source-code-reading-20/1.png)
 
 <center>图 1：EXPLAIN 输出</center>
 
@@ -222,4 +222,4 @@ select * from p3 where id < MAXVALUE)
 
 ## End
 
-TiDB 目前支持 Range 分区类型，具体以及更细节的可以看 [这里](https://github.com/pingcap/tidb/tree/source-code)。剩余其它类型的分区类型正在开发中，后面陆续会和大家见面，敬请期待。它们的源码实现读者届时可以自行阅读，流程和文中上述描述类似。
+TiDB 目前支持 Range 分区类型，点击查看 [具体及细节](https://github.com/pingcap/tidb/tree/source-code)。剩余其它类型的分区类型正在开发中，后面陆续会和大家见面，敬请期待。它们的源码实现读者届时可以自行阅读，流程和文中上述描述类似。
