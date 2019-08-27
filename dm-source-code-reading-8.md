@@ -7,7 +7,7 @@ tags: ['DM 源码阅读','社区']
 ---
 
 
-本文为 DM 源码阅读系列文章的第八篇，[上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-7/) 对 DM 中的定制化数据同步功能进行详细的讲解，包括库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。
+本文为 DM 源码阅读系列文章的第八篇，[《DM 源码阅读系列文章（七）定制化数据同步功能的实现》](https://pingcap.com/blog-cn/dm-source-code-reading-7/) 对 DM 中的定制化数据同步功能进行详细的讲解，包括库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。
 
 本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些 MySQL 上的第三方 online schema change 方案同步，内容包括 online schema change 方案的简单介绍，online schema change 同步方案，以及同步实现细节。
 
@@ -17,7 +17,7 @@ tags: ['DM 源码阅读','社区']
 
 这些工具的实现原理比较类似，本文会以 gh-ost 为例来进行分析讲解。
 
-![](media/dm-source-code-reading-8/1.png)
+![gh-ost 逻辑处理流程](media/dm-source-code-reading-8/1.png)
 
 从上图可以大致了解到 gh-ost 的逻辑处理流程：
 
@@ -66,7 +66,7 @@ DM 将 [同步的表分为三类](https://github.com/pingcap/dm/blob/25f95ee08d0
 
 下面是一个执行示例，方便大家对照着来理解上面的代码逻辑：
 
-![](media/dm-source-code-reading-8/2.png)
+![执行示例](media/dm-source-code-reading-8/2.png)
 
 1. Section 1： 使用 create table like statement 创建 ghost table，DM 会清空内存中 `online_ddl`.`_t2_gho` 对应的 DDL 信息
 2. Section 2： 执行 alter table statement，DM 会保存 DDL 到内存中

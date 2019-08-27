@@ -139,7 +139,7 @@ fn metric_service(_req: Request<Body>) -> Response<Body> {
 
 对于如何使用 Push 感兴趣的同学可以自行参考 rust-prometheus 代码内提供的 [Push 示例](https://github.com/pingcap/rust-prometheus/blob/89ca69913691d9d1609c78cc043fca9c3faa1a78/examples/example_push.rs#L1)，这里限于篇幅就不详细介绍了。
 
-上述三段样例的完整代码可参见[这里](https://gist.github.com/breeswish/bb10bccd13a7fe332ef534ff0306ceb5)。
+可以查看上述三段样例的 [完整代码](https://gist.github.com/breeswish/bb10bccd13a7fe332ef534ff0306ceb5) 了解更多内容。
 
 ## 内部实现
 

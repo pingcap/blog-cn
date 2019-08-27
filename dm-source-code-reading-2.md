@@ -7,13 +7,13 @@ tags: ['DM 源码阅读','社区']
 ---
 
 
-本文为 DM 源码阅读系列文章的第二篇，[第一篇文章](https://www.pingcap.com/blog-cn/dm-source-code-reading-1/) 简单介绍了 DM 源码阅读的目的和规划，以及 DM 的源码结构以及工具链。从本篇文章开始，我们会正式开始阅读 DM 的源码。
+本文为 DM 源码阅读系列文章的第二篇，[《DM 源码阅读系列文章（一）序》](https://www.pingcap.com/blog-cn/dm-source-code-reading-1/) 简单介绍了 DM 源码阅读的目的和规划，以及 DM 的源码结构以及工具链。从本篇文章开始，我们会正式开始阅读 DM 的源码。
 
 本篇文章主要介绍 DM 的整体架构，包括 DM 有哪些组件、各组件分别实现什么功能、组件之间交互的数据模型和 RPC 实现。
 
 ## 整体架构
 
-![图 1](media/dm-source-code-reading-2/1.png)
+![DM 架构图](media/dm-source-code-reading-2/1.png)
 
 通过上面的 DM 架构图，我们可以看出，除上下游数据库及 Prometheus 监控组件外，DM 自身有 DM-master、DM-worker 及 dmctl 这 3 个组件。其中，DM-master 负责管理和调度数据同步任务的各项操作，DM-worker 负责执行具体的数据同步任务，dmctl 提供用于管理 DM 集群与数据同步任务的各项命令。
 

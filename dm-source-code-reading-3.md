@@ -6,11 +6,11 @@ summary: 本篇文章将详细地介绍 DM 数据同步处理单元（DM-worker 
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 DM 源码阅读系列文章的第三篇，[上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-2/) 介绍了 DM 的整体架构，DM 组件 DM-master 和 DM-worker 的入口代码，以及两者之间的数据交互模型。本篇文章详细地介绍 DM 数据同步处理单元（DM-worker 内部用来同步数据的逻辑单元），包括数据同步处理单元实现了什么功能，数据同步流程、运行逻辑，以及数据同步处理单元的 interface 设计。
+本文为 DM 源码阅读系列文章的第三篇，[《DM 源码阅读系列文章（二）整体架构介绍》](https://pingcap.com/blog-cn/dm-source-code-reading-2/) 介绍了 DM 的整体架构，DM 组件 DM-master 和 DM-worker 的入口代码，以及两者之间的数据交互模型。本篇文章详细地介绍 DM 数据同步处理单元（DM-worker 内部用来同步数据的逻辑单元），包括数据同步处理单元实现了什么功能，数据同步流程、运行逻辑，以及数据同步处理单元的 interface 设计。
 
 ## 数据同步处理单元
 
-![](media/dm-source-code-reading-3/1.png)
+![DM 数据同步处理单元](media/dm-source-code-reading-3/1.png)
 
 从上图可以了解到目前 DM 包含 relay log、dump、load、binlog replication（sync） 4 个数据同步处理单元，涵盖了以下数据同步处理的功能：
 

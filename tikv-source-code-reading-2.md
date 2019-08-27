@@ -125,6 +125,6 @@ impl Ready {
 
 最后用一张图展示在 Leader 上是通过哪些 API 进行 propose 的：
 
-![](media/tikv-source-code-reading-2/1.png)
+![Leader 图示](media/tikv-source-code-reading-2/1.png)
 
 本期关于 raft-rs 的源码解析就到此结束了，我们非常鼓励大家在自己的分布式应用中尝试 raft-rs 这个库，同时提出宝贵的意见和建议。后续关于 raft-rs 我们还会深入介绍 Configuration Change 和 Snapshot 的实现与优化等内容，展示更深入的设计原理、更详细的优化细节，方便大家分析定位 raft-rs 和 TiKV 使用中的潜在问题。

@@ -212,4 +212,4 @@ fn recv_snap<R: RaftStoreRouter + 'static>(
 
 ## 总结
 
-以上就是 TiKV 发送和接收 Snapshot 相关的代码解析了。这是 TiKV 代码库中较小的一个模块，它很好地解决了由于 Snapshot 消息特殊性所带来的一系列问题，充分应用了 `grpc-rs` 组件及 `futures`/`FuturePool` 模型，大家可以结合本系列文章的 [第七篇](https://pingcap.com/blog-cn/tikv-source-code-reading-7/) 和 [第八篇](https://pingcap.com/blog-cn/tikv-source-code-reading-8/) 进一步拓展学习。
+以上就是 TiKV 发送和接收 Snapshot 相关的代码解析了。这是 TiKV 代码库中较小的一个模块，它很好地解决了由于 Snapshot 消息特殊性所带来的一系列问题，充分应用了 `grpc-rs` 组件及 `futures`/`FuturePool` 模型，大家可以结合本系列文章的 [《TiKV 源码解析系列文章（七）gRPC Server 的初始化和启动流程》](https://pingcap.com/blog-cn/tikv-source-code-reading-7/) 和 [《TiKV 源码解析系列文章（八）grpc-rs 的封装与实现》](https://pingcap.com/blog-cn/tikv-source-code-reading-8/) 进一步拓展学习。

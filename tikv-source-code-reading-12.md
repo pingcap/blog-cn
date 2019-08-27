@@ -12,7 +12,7 @@ tags: ['TiKV 源码解析','社区']
  
 TiKV 采用了 [Google Percolator](https://ai.google/research/pubs/pub36726) 这篇论文中所述的事务模型，我们在 [《TiKV 事务模型概览》](https://pingcap.com/blog-cn/tidb-transaction-model/) 和 [《Deep Dive TiKV - Percolator》](https://tikv.org/docs/deep-dive/distributed-transaction/percolator/) 中都对该事务模型进行了讲解。为了更好的理解接下来的内容，建议大家先阅读以上资料。
  
-在 Percolator 的设计中，分布式事务的算法都在客户端的代码中，这些客户端代码直接访问 BigTable。TiKV 的设计与 Percolator 在这一方面也有些类似。TiKV 以 Region 为单位来接受读写请求，需要跨 Region 的逻辑都在 TiKV 的客户端中，如 TiDB。客户端的代码会将请求切分并发送到对应的 Region。也就是说，正确地进行事务需要客户端和 TiKV 的紧密配合。本篇文章为了讲解完整的事务流程，也会提及 TiDB 的 tikv client 部分的代码（位于 TiDB 代码的 `store/tikv` 目录），大家也可以参考《TiDB 源码阅读系列文章》的 [第十八篇](https://pingcap.com/blog-cn/tidb-source-code-reading-18/) 和 [第十九篇](https://pingcap.com/blog-cn/tidb-source-code-reading-19/) 中关于 tikv client 的介绍。我们也有多种语言的单独的 client 库，它们都仍在开发中。
+在 Percolator 的设计中，分布式事务的算法都在客户端的代码中，这些客户端代码直接访问 BigTable。TiKV 的设计与 Percolator 在这一方面也有些类似。TiKV 以 Region 为单位来接受读写请求，需要跨 Region 的逻辑都在 TiKV 的客户端中，如 TiDB。客户端的代码会将请求切分并发送到对应的 Region。也就是说，正确地进行事务需要客户端和 TiKV 的紧密配合。本篇文章为了讲解完整的事务流程，也会提及 TiDB 的 tikv client 部分的代码（位于 TiDB 代码的 `store/tikv` 目录），大家也可以参考《TiDB 源码阅读系列文章》的 [《TiDB 源码阅读系列文章（十八）tikv-client（上）》](https://pingcap.com/blog-cn/tidb-source-code-reading-18/) 和 [《TiDB 源码阅读系列文章（十九）tikv-client（下）》](https://pingcap.com/blog-cn/tidb-source-code-reading-19/) 中关于 tikv client 的介绍。我们也有多种语言的单独的 client 库，它们都仍在开发中。
  
 TiKV 的事务是乐观事务，一个事务在最终提交时才会去走两阶段提交的流程。悲观事务的支持目前正在完善中，之后会有文章单独介绍悲观事务的实现。
 
@@ -20,7 +20,7 @@ TiKV 的事务是乐观事务，一个事务在最终提交时才会去走两阶
  
 由于采用的是乐观事务模型，写入会缓存到一个 buffer 中，直到最终提交时数据才会被写入到 TiKV；而一个事务又应当能够读取到自己进行的写操作，因而一个事务中的读操作需要首先尝试读自己的 buffer，如果没有的话才会读取 TiKV。当我们开始一个事务、进行一系列读写操作、并最终提交时，在 TiKV 及其客户端中对应发生的事情如下表所示：
  
-![](media/tikv-source-code-reading-12/1.png) 
+![图表](media/tikv-source-code-reading-12/1.png) 
  
 ## Prewrite
  
@@ -181,7 +181,7 @@ if let Some((commit_ts, write)) = self.reader.seek_write(&key, u64::max_value())
  
 在 TiKV 一侧，当一个事务（无论是读还是写）遇到其它事务留下的锁时，如上述 prewrite 的过程一样，会将遇见锁这件事情返回给 client。Client 如果发现锁没有过期，便会尝试 backoff 一段时间重试；如果已经过期，则会进行 `ResolveLocks`。
  
-ResolveLocks 时，首先获取该锁所属的事务目前的状态。它会对该锁的 primary （primary 存储在锁里）调用 [`kv_cleanup`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/server/service/kv.rs#L207) 这一接口。Cleanup 的执行逻辑在 [这里](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/txn/process.rs#L646)。它其实是调用 [`MvccTxn::rollback`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/mvcc/txn.rs#L479)。如果对一个已经提交的事务调用 rollback，会返回 `Committed` 错误，错误信息中会带上该事务提交的 `commit_ts`。Cleanup 会在响应中传回该 `commit_ts`。这里调用 cleanup 的意义是，检查 primary 是否已提交，如果没有则回滚；如果已经提交则取得其 `commit_ts`，用于 commit 该事务的其它 key。接下来便可以根据调用 cleanup 得到的信息处理当前事务遇见的其它锁：调用 TiKV 的 [`kv_resolve_lock`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/server/service/kv.rs#L293) 接口将这些锁清掉，而具体清理时是提交还是回滚则取决于之前的 cleanup 给出的结果。
+ResolveLocks 时，首先获取该锁所属的事务目前的状态。它会对该锁的 primary （primary 存储在锁里）调用 [`kv_cleanup`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/server/service/kv.rs#L207) 这一接口。可以查看 [Cleanup 的执行逻辑](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/txn/process.rs#L646)。它其实是调用 [`MvccTxn::rollback`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/mvcc/txn.rs#L479)。如果对一个已经提交的事务调用 rollback，会返回 `Committed` 错误，错误信息中会带上该事务提交的 `commit_ts`。Cleanup 会在响应中传回该 `commit_ts`。这里调用 cleanup 的意义是，检查 primary 是否已提交，如果没有则回滚；如果已经提交则取得其 `commit_ts`，用于 commit 该事务的其它 key。接下来便可以根据调用 cleanup 得到的信息处理当前事务遇见的其它锁：调用 TiKV 的 [`kv_resolve_lock`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/server/service/kv.rs#L293) 接口将这些锁清掉，而具体清理时是提交还是回滚则取决于之前的 cleanup 给出的结果。
  
 `kv_resolve_lock` 接口有两种执行模式：如果在参数中传递指定的 key，那么在 TiKV 一侧会实际执行 [`ResolveLockLite`](https://github.com/tikv/tikv/blob/5024ad08fc7101ba25f17c46b0264cd27d733bb1/src/storage/txn/process.rs#L801)，即仅清除指定 key 上的锁。否则，TiKV 会扫描当前 Region 中全部 `start_ts` 与指定的 `ts` 相符的锁，并全部清除。当使用后者的方式执行时，TiKV 扫描到一定数量的锁之后会先清除这些锁，然后继续扫描一定数量的锁再清除，如此循环直到扫完整个 Region。这样有助于避免产生过大的 WriteBatch。
  
