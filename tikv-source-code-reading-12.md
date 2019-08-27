@@ -6,7 +6,7 @@ summary: 本文将更加深入地讲解 TiKV 的事务算法的原理和实现�
 tags: ['TiKV 源码解析','社区']
 ---
  
-在之前的文章里，我们已经介绍了 TiKV 的 [Service 层](https://pingcap.com/blog-cn/tikv-source-code-reading-9/)、[Storage 层](https://pingcap.com/blog-cn/tikv-soucre-code-reading-11/)。相信大家已经大致清楚，TiKV 的事务相关的代码都位于 Storage 层中。本文将更加深入地讲解 TiKV 的事务算法的原理和实现细节。
+在之前的文章里，我们已经介绍了 TiKV 的 [Service 层](https://pingcap.com/blog-cn/tikv-source-code-reading-9/)、[Storage 层](https://pingcap.com/blog-cn/tikv-source-code-reading-11/)。相信大家已经大致清楚，TiKV 的事务相关的代码都位于 Storage 层中。本文将更加深入地讲解 TiKV 的事务算法的原理和实现细节。
 
 ## 概述
  
