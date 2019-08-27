@@ -6,7 +6,7 @@ summary: 本文将继续介绍 Pump server 的实现，对应的源码主要集�
 tags: ['TiDB Binlog 源码阅读','社区']
 ---
 
-在 [上篇文章](https://pingcap.com/blog-cn/tidb-binlog-source-code-reading-3/) 中，我们介绍了 TiDB 如何通过 Pump client 将 binlog 发往 Pump，本文将继续介绍 Pump server 的实现，对应的源码主要集中在 TiDB Binlog 仓库的 [`pump/server.go`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pump/server.go) 文件中。
+在 [《TiDB Binlog 源码阅读系列文章（三）Pump client 介绍》](https://pingcap.com/blog-cn/tidb-binlog-source-code-reading-3/) 中，我们介绍了 TiDB 如何通过 Pump client 将 binlog 发往 Pump，本文将继续介绍 Pump server 的实现，对应的源码主要集中在 TiDB Binlog 仓库的 [`pump/server.go`](https://github.com/pingcap/tidb-binlog/blob/v3.0.1/pump/server.go) 文件中。
 
 ## 启动 Pump Server
 

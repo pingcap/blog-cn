@@ -11,7 +11,7 @@ tags: ['TiDB Binlog 源码阅读','社区']
 
 TiDB Binlog 主要由 Pump 和 Drainer 两部分组成，其中 Pump 负责存储 TiDB 产生的 binlog 并向 Drainer 提供按时间戳查询和读取 binlog 的服务，Drainer 负责将获取后的 binlog 合并排序再以合适的格式保存到对接的下游组件。
 
-![](media/tidb-binlog-source-code-reading-2/1.png)
+![TiDB Binlog 架构](media/tidb-binlog-source-code-reading-2/1.png)
 
 **在《[TiDB Binlog 架构演进与实现原理](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/)》一文中，我们对 TiDB Binlog 整体架构有更详细的说明，建议先行阅读该文。**
 
@@ -74,7 +74,7 @@ You may now debug from another terminal. Press [ENTER] to continue.
 
 使用 MySQL 客户端连接任意一个上游 TiDB，可以用 `SHOW PUMP STATUS` 和 `SHOW DRAINER STATUS` 查询对应工具的运行状态，例如：
 
-![](media/tidb-binlog-source-code-reading-2/2.png)
+![图例 1](media/tidb-binlog-source-code-reading-2/2.png)
 
 通过 `binlogctl` 也可以查询到同样的信息，例如：
 
@@ -85,12 +85,12 @@ $ bin/binlogctl -pd-urls=localhost:2379 -cmd pumps
 
 接下来我们可以用 MySQL 客户端连接上端口为 4000 或 4001 的 TiDB 数据库，插入一些测试数据。
 
-![](media/tidb-binlog-source-code-reading-2/3.png)
+![图例 2](media/tidb-binlog-source-code-reading-2/3.png)
 
 
 上图的演示中创建了一个叫 `hello_binlog` 的 database，在里面新建了 `user_info` 表并插入了两行数据。完成上述操作后，就可以连接到端口为 3306 的下游数据库验证同步是否成功：
 
-![](media/tidb-binlog-source-code-reading-2/4.png)
+![图例 3](media/tidb-binlog-source-code-reading-2/4.png)
 
 ## 小结
 

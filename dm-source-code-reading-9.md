@@ -6,17 +6,17 @@ summary: 在本篇文章中，我们将对 shard DDL 同步机制以及 checkpoi
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 DM 源码阅读系列文章的第九篇，在 [上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-8/) 中我们详细介绍了 DM 对 online schema change 方案的同步支持，对 online schema change 同步方案以及实现细节等逻辑进行了分析。
+本文为 DM 源码阅读系列文章的第九篇，在 [《DM 源码阅读系列文章（八）Online Schema Change 同步支持》](https://pingcap.com/blog-cn/dm-source-code-reading-8/) 中我们详细介绍了 DM 对 online schema change 方案的同步支持，对 online schema change 同步方案以及实现细节等逻辑进行了分析。
 
 在本篇文章中，我们将对 shard DDL 同步机制以及 checkpoint 机制等进行详细的介绍，内容包括 shard group 的定义、shard DDL 的同步协调处理流程、checkpoint 机制以及与之相关的 safe mode 机制。
 
 ## shard DDL 机制的实现
 
-DM 中通过 [库表路由与列值转换](https://pingcap.com/blog-cn/dm-source-code-reading-7/) 功能，实现了对分库分表合并场景下 DML 的同步支持。但当需要同步的各分表存在 DDL 变更时，还需要对 DDL 的同步进行更多额外的处理。有关分表合并时 shard DDL 同步需要处理的问题以及 DM 中的同步支持原理，请先阅读 [TiDB Ecosystem Tools 原理解读系列（三）TiDB-DM 架构设计与实现原理](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)。
+DM 中通过 [库表路由与列值转换](https://pingcap.com/blog-cn/dm-source-code-reading-7/) 功能，实现了对分库分表合并场景下 DML 的同步支持。但当需要同步的各分表存在 DDL 变更时，还需要对 DDL 的同步进行更多额外的处理。有关分表合并时 shard DDL 同步需要处理的问题以及 DM 中的同步支持原理，请先阅读 [《TiDB Ecosystem Tools 原理解读系列（三）TiDB-DM 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)。
 
 ### shard group
 
-在 [这篇文章](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中，我们介绍了 DM 在处理 shard DDL 同步时引入了两级 shard group 的概念，即用于执行分表合并同步任务的各 DM-worker 组成的 shard group、每个 DM-worker 内需要进行合表同步的各上游分表组成的 shard group。
+在 [《TiDB Ecosystem Tools 原理解读系列（三）TiDB-DM 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中，我们介绍了 DM 在处理 shard DDL 同步时引入了两级 shard group 的概念，即用于执行分表合并同步任务的各 DM-worker 组成的 shard group、每个 DM-worker 内需要进行合表同步的各上游分表组成的 shard group。
 
 #### DM-worker 组成的 shard group
 
@@ -64,7 +64,7 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 #### DM-worker 间 shard DDL 协调流程
 
-我们基于在 [这篇文章](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中展示过的仅包含两个 DM-worker 的 shard DDL 协调流程示例（如下图）来了解 DM 内部的具体实现。
+我们基于在 [《TiDB Ecosystem Tools 原理解读系列（三）TiDB-DM 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中展示过的仅包含两个 DM-worker 的 shard DDL 协调流程示例（如下图）来了解 DM 内部的具体实现。
 
 ![](media/dm-source-code-reading-9/1.png)
 
@@ -110,7 +110,7 @@ ShardingGroup 中各主要成员变量的作用如下：
   
 #### DM-worker 内 shard DDL 同步流程
 
-我们基于在 [实现原理文章](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中展示过的一个 DM-worker 内仅包含两个分表 `（table_1，table_2）` 的 shard DDL（仅一条 DDL）协调处理流程示例来了解 DM 内部的具体实现。
+我们基于在 [《TiDB Ecosystem Tools 原理解读系列（三）TiDB-DM 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中展示过的一个 DM-worker 内仅包含两个分表 `（table_1，table_2）` 的 shard DDL（仅一条 DDL）协调处理流程示例来了解 DM 内部的具体实现。
 
 1. DM-worker 收到 `table_1` 的 DDL
 
@@ -168,7 +168,7 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 ## checkpoint 机制的实现
 
-DM 中通过 checkpoint 机制来实现同步任务中断后恢复时的续传功能。对于 load 阶段，其 checkpoint 机制的实现在 [DM 源码阅读系列文章（四）dump/load 全量同步的实现](https://pingcap.com/blog-cn/dm-source-code-reading-4/) 文章中我们已经进行了介绍，本文不再赘述。在本文中，我们将介绍 binlog replication 增量同步阶段的 checkpoint 机制的实现及与之相关的 safe mode 机制的实现。
+DM 中通过 checkpoint 机制来实现同步任务中断后恢复时的续传功能。对于 load 阶段，其 checkpoint 机制的实现在 [《DM 源码阅读系列文章（四）dump/load 全量同步的实现》](https://pingcap.com/blog-cn/dm-source-code-reading-4/) 文章中我们已经进行了介绍，本文不再赘述。在本文中，我们将介绍 binlog replication 增量同步阶段的 checkpoint 机制的实现及与之相关的 safe mode 机制的实现。
 
 ### checkpoint 机制
 

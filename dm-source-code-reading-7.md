@@ -6,7 +6,7 @@ summary: 本篇文章介绍了 DM 的定制化数据同步功能中库表路由�
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 DM 源码阅读系列文章的第七篇，在 [上篇文章](https://pingcap.com/blog-cn/dm-source-code-reading-6/) 中我们介绍了 relay log 的实现，主要包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。**本篇文章我们将会对 DM 的定制化数据同步功能进行详细的讲解。** 
+本文为 DM 源码阅读系列文章的第七篇，在 [《DM 源码阅读系列文章（六）relay log 的实现》](https://pingcap.com/blog-cn/dm-source-code-reading-6/) 中我们介绍了 relay log 的实现，主要包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。**本篇文章我们将会对 DM 的定制化数据同步功能进行详细的讲解。** 
 
 在一般的数据同步中，上下游的数据是一一对应的，即上下游的库名、表名、列名以及每一列的值都是相同的，但是很多用户因为业务的原因希望 DM 在同步数据到 TiDB 时进行一些定制化的转化。下面我们将主要介绍数据同步定制化中的库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。值得注意的是，由于其他一些工具（例如 TiDB Lightning 和 TiDB Binlog）也需要类似的功能，所以这四个功能都以 package 的形式维护在 [tidb-tools](https://github.com/pingcap/tidb-tools/tree/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg) 项目下，这样方便使用和维护。
 
@@ -14,7 +14,7 @@ tags: ['DM 源码阅读','社区']
 
 库表路由顾名思义就是对库名和表名根据一定的路由规则进行转换。比如用户在上游多个 MySQL 实例或者 schema 有多个逻辑上相同的表，需要把这些表的数据同步到 TiDB 集群的同一个表中，这个时候就可以使用 table-router 功能，如下图所示：
 
-![](media/dm-source-code-reading-7/1.png)
+![table-router](media/dm-source-code-reading-7/1.png)
 
 该功能实现在 [`pkg/table-router`](https://github.com/pingcap/tidb-tools/tree/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router) 中，库表路由的规则定义在结构 [`TableRule`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L25) 中，其中的属性 [`SchemaPattern`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L26) 和 [`TablePattern`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L27) 用于配置原库名和表名的模式，[`TargetSchema`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L28) 和 [`TargetTable`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L29) 用于配置目标库和表名，即符合指定 pattern 的库和表名都将转化成目标库名和表名。
 
@@ -86,7 +86,7 @@ Expression 为 `PartitionID` 的配置和转化的计算方式都较为复杂，
 
 例如 Arguments 为 `[1, “test”, “t”, “_”]`，`1` 表示数据库实例的 `InstanceID`，`“test”` 为库名称的前缀，`“t”` 为表名称的前缀，`“_”` 为前缀与 ID 的分隔符，则表 `test_1.t_2` 的 `SchemaID` 为 `1`，`TableID` 为 `2`。转化列值时需要对 `InstanceID`、`SchemaID`、`TableID` 进行一定的位移计算，然后与原始的值进行或运算得出一个新的值。对于具体的计算方式，可以查看代码 [`partitionID`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L438) 和 [`computePartitionID`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L487)。下面是一个 `PartitionID` 逻辑简化后的示意图：
 
-![](media/dm-source-code-reading-7/2.png)
+![PartitionID](media/dm-source-code-reading-7/2.png)
 
 使用 [Mapping](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/column-mapping/column.go#L153) 结构对 column mapping 的规则进行管理，Mapping 提供列如下方法：
 
@@ -101,7 +101,7 @@ Expression 为 `PartitionID` 的配置和转化的计算方式都较为复杂，
 
 binlog 过滤功能支持过滤指定类型的 binlog，或者指定模式的 query，该功能维护在 [pkg/binlog-filter](https://github.com/pingcap/tidb-tools/tree/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/binlog-filter) 中。某些用户不希望同步一些指定类型的 binlog，例如 drop table 和 truncate table，这样就可以在下游仍然保存这些表的数据作为备份，或者某些 SQL 语句在 TiDB 中不兼容，希望可以在同步中过滤掉，都可以通过配置 binlog event filter 功能来实现。
 
-![](media/dm-source-code-reading-7/3.png)
+![binlog 过滤](media/dm-source-code-reading-7/3.png)
 
 首先需要对 binlog 进行分类，可以查看代码 [`Event Type List`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/binlog-filter/filter.go#L42)。然后再定义过滤规则 [`BinlogEventRule`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/binlog-filter/filter.go#L85)，包括以下属性：
 

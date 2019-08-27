@@ -16,7 +16,7 @@ TiDB-Lightning Toolset 是一套快速全量导入 SQL dump 文件到 TiDB 集�
 
 TiDB 从 2017 年开始提供全量导入工具 [Loader](https://pingcap.com/docs-cn/tools/loader/)，它以多线程操作、错误重试、断点续传以及修改一些 TiDB 专属配置来提升数据导入速度。
 
-![](media/tidb-ecosystem-tools-2/1.png)
+![Loader](media/tidb-ecosystem-tools-2/1.png)
 
 
 然而，当我们全新初始化一个 TiDB 集群时，Loader 这种逐条 INSERT 指令在线上执行的方式从根本上是无法尽用性能的。原因在于 SQL 层的操作有太强的保证了。在整个导入过程中，TiDB 需要：
@@ -31,7 +31,7 @@ TiKV 是使用 RocksDB 以 KV 对的形式储存数据，这些数据会压缩�
 
 ## 架构
 
-![](media/tidb-ecosystem-tools-2/2.png)
+![TiDB Lightning 架构](media/tidb-ecosystem-tools-2/2.png)
 
 TiDB-Lightning Toolset 包含两个组件：tidb-lightning 和 tikv-importer。Lightning 负责解析 SQL 成为 KV 对，而 Importer 负责将 KV 对排序与调度、上传到 TiKV 服务器。
 
@@ -45,7 +45,7 @@ TiDB-Lightning Toolset 包含两个组件：tidb-lightning 和 tikv-importer。L
 
 ### Lightning
 
-![](media/tidb-ecosystem-tools-2/3.png)
+![Lightning](media/tidb-ecosystem-tools-2/3.png)
 
 Lightning 现时只支持经 mydumper 导出的 SQL 备份。mydumper 将每个表的内容分别储存到不同的文件，与 mysqldump 不同。这样不用解析整个数据库就能平行处理每个表。
 
@@ -61,7 +61,7 @@ INSERT INTO `tbl` VALUES (19, 20, 21), (22, 23, 24), (25, 26, 27);
 
 Lightning 会作初步分析，找出每行在文件的位置并分配一个行号，使得没有主键的表可以唯一的区分每一行。此外亦同时将文件分割为大小差不多的区块（默认 256 MiB）。这些区块也会并发处理，让数据量大的表也能快速导入。以下的例子把文件以 20 字节为限分割成 5 块：
 
-![](media/tidb-ecosystem-tools-2/4.png)
+![图示](media/tidb-ecosystem-tools-2/4.png)
 
 Lightning 会直接使用 TiDB 实例来把 SQL 转换为 KV 对，称为「KV 编码器」。与外部的 TiDB 集群不同，KV 编码器是寄存在 Lightning 进程内的，而且使用内存存储，所以每执行完一个 INSERT 之后，Lightning 可以直接读取内存获取转换后的 KV 对（这些 KV 对包含数据及索引）。
 
@@ -69,7 +69,7 @@ Lightning 会直接使用 TiDB 实例来把 SQL 转换为 KV 对，称为「KV �
 
 ### Importer
 
-![](media/tidb-ecosystem-tools-2/5.png)
+![Importer](media/tidb-ecosystem-tools-2/5.png)
 
 因异步操作的缘故，Importer 得到的原始 KV 对注定是无序的。所以，Importer 要做的第一件事就是要排序。这需要给每个表划定准备排序的储存空间，我们称之为 engine file。
 
@@ -95,7 +95,7 @@ Lightning 会直接使用 TiDB 实例来把 SQL 转换为 KV 对，称为「KV �
 
 ### 并行导入
 
-![](media/tidb-ecosystem-tools-2/6.png)
+![并行导入](media/tidb-ecosystem-tools-2/6.png)
 
 另一方面，尽管我们可以不断的优化程序代码，单机的性能总是有限的。要突破这个界限就需要横向扩展：增加机器来同时导入。如前面所述，只要每套 TiDB-Lightning Toolset 操作不同的表，它们就能平行导进同一个集群。可是，现在的版本只支持读取本机文件系统上的 SQL dump，设置成多机版就显得比较麻烦了（要安装一个共享的网络盘，并且手动分配哪台机读取哪张表）。我们计划让 Lightning 能从网路获取 SQL dump（例如通过 S3 API），并提供一个工具自动分割数据库，降低设置成本。
 

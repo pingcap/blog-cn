@@ -15,7 +15,7 @@ TiDB-DM（Data Migration）是用于将数据从 MySQL/MariaDB 迁移到 TiDB �
 
 DM 是集群模式的，其主要由 DM-master、DM-worker 与 DM-ctl 三个组件组成，能够以多对多的方式将多个上游 MySQL 实例的数据同步到多个下游 TiDB 集群，其架构图如下：
 
-![](media/tidb-ecosystem-tools-3/1.png)
+![DM 架构](media/tidb-ecosystem-tools-3/1.png)
 
 * DM-master：管理整个 DM 集群，维护集群的拓扑信息，监控各个 DM-worker 实例的运行状态；进行数据同步任务的拆解与分发，监控数据同步任务的执行状态；在进行合库合表的增量数据同步时，协调各 DM-worker 上 DDL 的执行或跳过；提供数据同步任务管理的统一入口。
 
@@ -29,7 +29,7 @@ DM 是集群模式的，其主要由 DM-master、DM-worker 与 DM-ctl 三个组�
 
 单个 DM 集群可以同时运行多个数据同步任务；对于每一个同步任务，可以拆解为多个子任务同时由多个 DM-worker 节点承担，其中每个 DM-worker 节点负责同步来自对应的上游 MySQL 实例的数据。对于单个 DM-worker 节点上的单个数据同步子任务，其数据迁移流程如下，其中上部的数据流向为全量数据迁移、下部的数据流向为增量数据同步：
 
-![](media/tidb-ecosystem-tools-3/2.png)
+![数据迁移流程](media/tidb-ecosystem-tools-3/2.png)
 
 在每个 DM-worker 节点内部，对于特定的数据同步子任务，主要由 dumper、loader、relay 与 syncer（binlog replication）等数据同步处理单元执行具体的数据同步操作。
 
@@ -43,13 +43,13 @@ DM 是集群模式的，其主要由 DM-master、DM-worker 与 DM-ctl 三个组�
 
 对于全量数据迁移，在导出阶段，dumper 单元调用 mydumper 导出工具执行实际的数据导出操作，对应的并发模型可以直接参考 [mydumper 的源码](https://github.com/pingcap/mydumper)。在使用 loader 单元执行的导入阶段，对应的并发模型结构如下：
 
-![](media/tidb-ecosystem-tools-3/3.png)
+![模型结构 1](media/tidb-ecosystem-tools-3/3.png)
 
 使用 mydumper 执行导出时，可以通过 `--chunk-filesize` 等参数将单个表拆分成多个 SQL 文件，这些 SQL 文件对应的都是上游 MySQL 某一个时刻的静态快照数据，且各 SQL 文件间的数据不存在关联。因此，在使用 loader 单元执行导入时，可以直接在一个 loader 单元内启动多个 worker 工作协程，由各 worker 协程并发、独立地每次读取一个待导入的 SQL 文件进行导入。即 loader 导入阶段，是以 SQL 文件级别粒度并发进行的。在 DM 的任务配置中，对于 loader 单元，其中的 `pool-size` 参数即用于控制此处 worker 协程数量。
 
 对于增量数据同步，在从上游拉取 binlog 并持久化到本地的阶段，由于上游 MySQL 上 binlog 的产生与发送是以 stream 形式进行的，因此这部分只能串行处理。在使用 syncer 单元执行的导入阶段，在一定的限制条件下，可以执行并发导入，对应的模型结构如下：
 
-![](media/tidb-ecosystem-tools-3/4.png)
+![模型结构 2](media/tidb-ecosystem-tools-3/4.png)
 
 当 syncer 读取与解析本地 relay log 时，与从上游拉取 binlog 类似，是以 stream 形式进行的，因此也只能串行处理。当 syncer 解析出各 binlog event 并构造成待同步的 job 后，则可以根据对应行数据的主键、索引等信息经过 hash 计算后分发到多个不同的待同步 job channel 中；在 channel 的另一端，与各个 channel 对应的 worker 协程并发地从 channel 中取出 job 后同步到下游的 TiDB。即 syncer 导入阶段，是以 binlog event 级别粒度并发进行的。在 DM 的任务配置中，对于 syncer 单元，其中的 `worker-count` 参数即用于控制此处 worker 协程数量。
 
@@ -67,7 +67,7 @@ DM 是集群模式的，其主要由 DM-master、DM-worker 与 DM-ctl 三个组�
 
 为说明 DM 中 table router（表名路由）功能，先看如下图所示的一个例子：
 
-![](media/tidb-ecosystem-tools-3/5.png)
+![图例 1](media/tidb-ecosystem-tools-3/5.png)
 
 在这个例子中，上游有 2 个 MySQL 实例，每个实例有 2 个逻辑库，每个库有 2 个表，总共 8 个表。当同步到下游 TiDB 后，希望所有的这 8 个表最终都合并同步到同一个表中。
 
@@ -97,7 +97,7 @@ name-of-router-rule:
 
 有了 table router 功能，已经可以完成基本的合库合表数据同步了。但在数据库中，我们经常会使用自增类型的列作为主键。如果多个上游分表的主键各自独立地自增，将它们合并同步到下游后，就很可能会出现主键冲突，造成数据的不一致。我们可看一个如下的例子：
 
-![](media/tidb-ecosystem-tools-3/6.png)
+![图例 2](media/tidb-ecosystem-tools-3/6.png)
 
 在这个例子中，上游 4 个需要合并同步到下游的表中，都存在 id 列值为 1 的记录。假设这个 id 列是表的主键。在同步到下游的过程中，由于相关更新操作是以 id 列作为条件来确定需要更新的记录，因此会造成后同步的数据覆盖前面已经同步过的数据，导致部分数据的丢失。
 
@@ -135,7 +135,7 @@ mapping-rule-of-instance-1:
 
 各部分在经过转换后的数值中的二进制分布如下图所示（各部分默认所占用的 bits 位数如图所示）：
 
-![](media/tidb-ecosystem-tools-3/7.png)
+![图例 3](media/tidb-ecosystem-tools-3/7.png)
 
 假如转换前的原始数据为 `123`，且有如上的 arguments 参数设置，则转换后的值为：
 
@@ -155,7 +155,7 @@ mapping-rule-of-instance-1:
 
 有了 table router 和 column mapping 功能，DML 的合库合表数据同步已经可以正常进行了。但如果在增量数据同步的过程中，上游待合并的分表上执行了 DDL 操作，则可能出现问题。我们先来看一个简化后的在分表上执行 DDL 的例子。
 
-![](media/tidb-ecosystem-tools-3/8.png)
+![图例 4](media/tidb-ecosystem-tools-3/8.png)
 
 在上图的例子中，分表的合库合表简化成了上游只有两个 MySQL 实例，每个实例内只有一个表。假设在开始数据同步时，将两个分表的表结构 schema 的版本记为 `schema V1`，将 DDL 执行完成后的表结构 schema 的版本记为 `schema V2`。
 
@@ -175,7 +175,7 @@ mapping-rule-of-instance-1:
 
 继续使用上面的例子，来看看我们在 DM 中是如何处理合库合表过程中的 DDL 同步的。
 
-![](media/tidb-ecosystem-tools-3/9.png)
+![图例 5](media/tidb-ecosystem-tools-3/9.png)
 
 在这个例子中，DM-worker-1 用于同步来自 MySQL 实例 1 的数据，DM-worker-2 用于同步来自 MySQL 实例 2 的数据，DM-master 用于协调多个 DM-worker 间的 DDL 同步。从 DM-worker-1 收到 DDL 开始，简化后的 DDL 同步流程为：
 
@@ -219,7 +219,7 @@ mapping-rule-of-instance-1:
 
 假设同一个 MySQL 实例中有 `table_1` 和 `table_2` 两个分表需要进行合并，如下图：
 
-![](media/tidb-ecosystem-tools-3/10.png)
+![图例 6](media/tidb-ecosystem-tools-3/10.png)
 
 由于数据来自同一个 MySQL 实例，因此所有数据都是从同一个 binlog 流中获得。在这个例子中，时序如下：
 
