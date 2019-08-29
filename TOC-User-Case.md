@@ -5,9 +5,9 @@
 - 互联网
   - [知乎](user-case-zhihu.md)
   - [小红书](user-case-xiaohongshu.md)
-  - [小米](user-case-xiaomi.md)
   - [58 集团](user-case-58.md)
   - [美团点评](user-case-meituandianping.md)
+  - [小米](user-case-xiaomi.md)
   - [爱奇艺](user-case-iqiyi.md)
   - [丰巢](user-case-fengchao.md)
   - [Shopee](user-case-shopee.md)
