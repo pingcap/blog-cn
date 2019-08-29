@@ -17,15 +17,15 @@ tags: ['Raft', '数据分片', '水平扩展']
 
 ## Sharding 的几种策略
 
-在集群中的每一个物理节点都存储若干个 Sharding 单元，数据移动和均衡的单位都是 Sharding 单元。策略主要分两种，一种是 Range 另外一种是 Hash。针对不同类型的系统可以选择不同的策略，比如 HDFS 的Datanode 的数据分布就是一个很典型的例子：
+在集群中的每一个物理节点都存储若干个 Sharding 单元，数据移动和均衡的单位都是 Sharding 单元。策略主要分两种，一种是 Range 另外一种是 Hash。针对不同类型的系统可以选择不同的策略，比如 HDFS 的 Datanode 的数据分布就是一个很典型的例子：
 
-![](media/building-distributed-db-with-raft/1.png)
+![Datanode](media/building-distributed-db-with-raft/1.png)
 
 ### 首先是 Range
 
 Range 的想法比较简单粗暴，首先假设整个数据库系统的 key 都是可排序的，这点其实还是蛮普遍的，比如 HBase 中 key 是按照字节序排序，MySQL 可以按照自增 ID 排序，其实对于一些存储引擎来说，排序其实是天然的，比如 LSM-Tree 或者 BTree 都是天然有序的。Range 的策略就是一段连续的 key 作为一个 Sharding 单元：
 
-![](media/building-distributed-db-with-raft/2.png)
+![key](media/building-distributed-db-with-raft/2.png)
 
 例如上图中，整个 key 的空间被划分成 (minKey, maxKey)，每一个 Sharding 单元（Chunk）是一段连续的 key。按照 Range 的 Sharding 策略的好处是临近的数据大概率在一起（例如共同前缀），可以很好的支持 range scan 这样的操作，比如 HBase 的 Region 就是典型的 Range 策略。
 
@@ -35,7 +35,7 @@ Range 的想法比较简单粗暴，首先假设整个数据库系统的 key 都
 
 与 Range 相对的，Sharding 的策略是将 key 经过一个 Hash 函数，用得到的值来决定 Sharding ID，这样的好处是，每一个 key 的分布几乎是随机的，所以分布是均匀的分布，所以对于写压力比较大、同时读基本上是随机读的系统来说更加友好，因为写的压力可以均匀的分散到集群中，但是显然的，对于 range scan 这样的操作几乎没法做。
 
-![](media/building-distributed-db-with-raft/3.png)
+![Hash Sharding](media/building-distributed-db-with-raft/3.png)
 
 比较典型的 Hash Sharding 策略的系统如：Cassandra 的一致性 Hash，Redis Cluster 和 Codis 的 Pre-sharding 策略，Twemproxy 有采用一致性 Hash 的配置。
 
@@ -51,7 +51,7 @@ Range 的想法比较简单粗暴，首先假设整个数据库系统的 key 都
 
 在 TiKV 中，我们选择了按 range 的 sharding 策略，每一个 range 分片我们称之为 region，因为我们需要对 scan 的支持，而且存储的数据基本是有关系表结构的，我们希望同一个表的数据尽量的在一起。另外在 TiKV 中每一个 region 采用 Raft 算法在多个物理节点上保证数据的一致性和高可用。
 
-![](media/building-distributed-db-with-raft/4.png)
+![TiKV region](media/building-distributed-db-with-raft/4.png)
 
 从社区的多个 Raft 实现来看，比如 Etcd / LogCabin / Consul 基本都是单一 raft group 的实现，并不能用于存储海量的数据，所以他们主要的应用场景是配置管理，很难直接用来存储大量的数据，毕竟单个 raft group 的参与节点越多，性能越差，但是如果不能横向的添加物理节点的话，整个系统没有办法 scale。
 

@@ -18,7 +18,7 @@ tags: ['Tile', 'HTAP']
 
 NSM 是 `N-ary storage model` 的简称，当然就是通常的行存了。NSM 主要针对 OLTP 场景，因为需要高性能的随机写入，NSM 的存储方式如下：
 
-![](media/tile-row-store/1.png)
+![NSM 存储方式](media/tile-row-store/1.png)
 
 NSM 不适用需要读取大量数据，并分析特定 column 的场景，因为 NSM 需要把整个 record 给读出来，在拿到对应的 column 数据分析，数据数据量很大，整个开销会很大。
 
@@ -26,7 +26,7 @@ NSM 不适用需要读取大量数据，并分析特定 column 的场景，因�
 
 DSM 是 `decomposition storage model` 的简称，也就是列存。DSM 主要针对 OLAP 场景，因为需要对一些特定的 column 进行快速扫描分析，DSM 的存储方式如下：
 
-![](media/tile-row-store/2.png)
+![DSM 存储方式](media/tile-row-store/2.png)
 
 DSM 当然就不适用与需要频繁随机更新的情况，因为任何写入，DSM 需要将 record 分开写入到不同的地方，写开销会很大。
 
@@ -34,7 +34,7 @@ DSM 当然就不适用与需要频繁随机更新的情况，因为任何写入�
 
 为了解决这个问题，就有了一个 FSM `flexible storage model` 来融合 NSM 和 DSM，在 Peloton 里面，它把这套系统叫做 HTAP (Hybrid Transactional/Analytical Processing)，
 
-![](media/tile-row-store/3.png)
+![FSM](media/tile-row-store/3.png)
 
 不同于 NSM 按照每行存放，以及 DSM 按照每列存放，FSM 将数据分成了多个区块，Peloton 里面叫做 Tile，上面的图显示的是两个 Tile，一个 Tile 包含了 ID，Image ID 以及 Name，而另一个 Tile 里面则是包含了 Price 和 Data。各个 Tile 里面数据是连续存放的。就是说，我们使用 Tile 来模拟了 DSM，在 Tile 里面则是 NSM。
 
@@ -46,7 +46,7 @@ Peloton 使用 tiles 来抽象了 storage 这一层，在上面的 FSM 例子我
 
 Physical tile 的最小存储单位是 tile tuple，一批 tile tuple 形成了一个 physical tile。而一批 physical tile 则组成一个 tile group。一个 table 则是有多个 tile group 组成。
 
-![](media/tile-row-store/4.png)
+![Physical tile](media/tile-row-store/4.png)
 
 在上面的例子中，table 被分成了三个 tile group (A, B, C)，每个 group 都有不同的 physical tiles。譬如 group A 就是由 tile A-1 和 A-2 组成，tile A-1 包含 table 前面三个 column ID，IMAGE-ID，和 NAME，而 tile A-2 则包含了 PRICE 和 DATA。
 
@@ -58,7 +58,7 @@ Physical tile 的最小存储单位是 tile tuple，一批 tile tuple 形成了�
 
 Logical tile 隐藏了 physical tile 的具体实现，logical tile 的每个 column 可以指向一个或者多个 physical tiles 的 columns，每个 logical tile column 里面存储的是 tuple 在 physical tiles 里面的偏移位置。
 
-![](media/tile-row-store/5.png)
+![Logical tile](media/tile-row-store/5.png)
 
 在上面的例子中，logical tile X 指向了两个 physical tiles A-1 和  A-2。 X 的第一个 column 指向了 physical tile A-1 的 ATTR-1 和 ATTR-2。而第一个 column 里面存放的 1，2，3 则是对应的 tuple 在 tile A-1 里面的偏移。譬如 1 就对应的是 (101, 201)。
 
@@ -80,7 +80,7 @@ Peloton 提供 algebra operators 来让外面更方便的使用。Operators 主�
 + Mutators ：Mutator operators 会改变 table 的实际存储数据。譬如 insert operator 首先会重新构建 logical tile 的 tuple，然后在插入到对应的 table 里面，而 delete operator 则是删除 table 里面的数据，update operator 则是先在 logical tile 里面删除，在通过之前的 tuple 重新构建一个新版本的 tuple，在插入到 table。Mutators 同时也会控制 tuple 在 transaction 里面的可见性。
 + Pipeline Breakers：当我们给一个 query plan 生成对应的 query plan tree 之后，在 tree 上层的 operators 需要等待 children 的操作完成返回了，才能继续进行。譬如 join operator 需要处理多个 logical tiles，并且在这些 tiles 上面执行 predicate。首先，join operator 会构建一个 output logical tile，它的 schema 是根据输入的 logical tile 来构建的。然后 join operator 会遍历 input logical tile，如果发现满足 predicate，就将结果放到 output logical tile，下面是 join 的一个例子：
 
-	![](media/tile-row-store/6.png)
+	![join 图例](media/tile-row-store/6.png)
 
 ## Layout reorganization
 

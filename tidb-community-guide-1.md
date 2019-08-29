@@ -68,7 +68,7 @@ tags: ['TiDB','社区']
 
 2. 必须有测试，除非只是改动文档或者是依赖包，其他情况需要有充足的理由说明没有测试的原因；
 
-3. 代码以及注释的质量需要足够高，[这里](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#code-style) 有一些关于编码风格和 commit message 的 guide；
+3. 代码以及注释的质量需要足够高，查看 [Code style](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#code-style) 有一些关于编码风格和 commit message 的 guide；
 
 4. 请尽可能详细的填写 PR 的描述，并打上合适的 label。
 
@@ -108,6 +108,6 @@ PR review 的过程就是 reviewer 不断地提出 comment，PR 作者持续解�
 
 当你完成上面这些步骤的之后，恭喜你已经跨过第一个门槛，正式进入了 TiDB 开源社区，开始参与 TiDB 项目开发，成为 TiDB Contributor。
 
-如果想更进一步，深入了解 TiDB 的内部机制，掌握一个分布式数据库的核心模块，并能做出改进，那么可以了解更多的模块，提更多的 PR，进一步向 Committer 发展（[这里](https://github.com/pingcap/community/blob/master/become-a-committer.md) 解释了什么是 Committer）。目前 TiDB 社区的 Committer 还非常少，我们希望今后能出现更多的 Committer 甚至是 Maintainer。
+如果想更进一步，深入了解 TiDB 的内部机制，掌握一个分布式数据库的核心模块，并能做出改进，那么可以了解更多的模块，提更多的 PR，进一步向 Committer 发展（[Become a Committer](https://github.com/pingcap/community/blob/master/become-a-committer.md) 这篇文档解释了什么是 Committer）。目前 TiDB 社区的 Committer 还非常少，我们希望今后能出现更多的 Committer 甚至是 Maintainer。
 
 从 Contributor 到 Committer 的门槛比较高，比如今年的新晋 Committer 杜川同学，在成为 Committer 的道路上给 tidb/tikv 项目提交了大约 80 个 PR，并且对一些模块有非常深入的了解。当然，成为 Committer 之后，会有一定的权利，比如对一些 PR 点 LGTM 的权利，参加 PingCAP 内部的技术事项、开发规划讨论的权利，参加定期举办的 TechDay/DevCon 的权利。目前社区中还有几位贡献者正走在从 Contributor 到 Committer 的道路上。

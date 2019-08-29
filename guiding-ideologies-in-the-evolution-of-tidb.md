@@ -12,7 +12,7 @@ tags: ["TiDB","架构"]
 
 本次分享题目是《TiDB 的架构演进哲学》，既然讲哲学那肯定有故事和教训，否则哲学从哪儿来呢？但从另外的角度来说，一般大家来讲哲学就先得有信念。有一个内容特别扯的美剧叫做《美国众神》，里面核心的一条思路是“你相信什么你就是什么”。其实人类这么多年来，基本上也是朝这条线路在走的，人类对于未知的东西很难做一个很精确的推导，这时信念就变得非常重要了。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/1.png)
+![图 1 最初的基本信念](media/guiding-ideologies-in-the-evolution-of-tidb/1.png)
 
 <center>图 1 最初的基本信念</center>
 
@@ -38,7 +38,7 @@ tags: ["TiDB","架构"]
 
 我们在 2015 年的 9 月份开源了第一个版本，当时是没有存储层的，需要接在 HBase 上。当这个系统能跑起来之后，我们的第一想法是赶紧找到当初调研时说要用的那些用户，看看他们是什么想法，尽快的去验证我们的想法是不是可行的。因为很多人做产品思维属于自嗨型，“我做的东西最厉害，只要一推出去肯定一群人蜂拥而至。”抱有这种想法的人太多了，实际上，只有尽快去验证才是唯一的解决之道，避免产品走入误区。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/2.png)
+![图 2 与调研用户第二次对话](media/guiding-ideologies-in-the-evolution-of-tidb/2.png)
 
 <center>图 2 与调研用户第二次对话</center>
 
@@ -46,7 +46,7 @@ tags: ["TiDB","架构"]
 
 这个问题有什么解决办法呢？一个办法是你去解决用户，可以通过销售或者通过某些关系跟用户聊，显然这是一个不靠谱的思路。作为一个产品型的公司，我们很快就否了这个想法。用户的本质要求是：你不要给我装一堆的东西，要真正解决我的问题。所以我们马上开始启动分布式 KV 的开发工作，彻底解决掉这个问题，满足用户的要求。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/3.png)
+![图 3 开发 TiKV 前的技术考量](media/guiding-ideologies-in-the-evolution-of-tidb/3.png)
 
 <center>图 3 开发 TiKV 前的技术考量</center>
 
@@ -64,13 +64,13 @@ tags: ["TiDB","架构"]
 
 接着我们辛辛苦苦干了三个月，然后就开源了 TiKV，所以这时候看起来没有那么多的组件了。我们也不忘初心，又去找了我们当初那个用户，说我们做了一些改进，你要不要试一试。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/4.png)
+![图 4 与调研用户第三次对话](media/guiding-ideologies-in-the-evolution-of-tidb/4.png)
 
 <center>图 4 与调研用户第三次对话</center>
 
 但是用户这时候给了一个让我们非常伤心非常难受的回答：没有，我们不敢上线，虽然你们的产品听起来挺好的，但是数据库后面有很大的责任，心理上的担心确实是过不去。于是我们回去开始加班加点写 TiDB Binlog，让用户可以把 binlog 同步给 MySQL。**毕竟用户需要一个 Backup：万一 TiDB 挂了怎么办，我需要切回 MySQL，这样才放心，因为数据是核心资产。**
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/5.png)
+![图 5 第一个上线用户的架构图](media/guiding-ideologies-in-the-evolution-of-tidb/5.png)
 
 <center>图 5 第一个上线用户的架构图</center>
 
@@ -84,7 +84,7 @@ tags: ["TiDB","架构"]
 
 接下来就是「Make it right」。大家可能想象不到做一个保证正确性的数据库这件事情有多么难，这是一个巨大的挑战，也有巨大的工作量，是从理论到实践的距离。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/6.png)
+![图 6 理论到实践的距离](media/guiding-ideologies-in-the-evolution-of-tidb/6.png)
 
 <center>图 6 理论到实践的距离</center>
 
@@ -104,7 +104,7 @@ tags: ["TiDB","架构"]
 
 大家可能到这儿的时候还是没有一个直观的感受，说这么多测试用例，到底是一个什么样的感受。我们可以对比看一下行业巨头 Oracle 是怎么干的。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/7.png)
+![图 7 前 Oracle 员工的描述](media/guiding-ideologies-in-the-evolution-of-tidb/7.png)
 
 <center>图 7 前 Oracle 员工的描述</center>
 
@@ -112,7 +112,7 @@ tags: ["TiDB","架构"]
 
 这位 Oracle 前员工介绍了自己在 Oracle 的开发工作的流程，如下图：
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/8.png)
+![图 8  Oracle 开发者 fix bug 的过程](media/guiding-ideologies-in-the-evolution-of-tidb/8.png)
 
 <center>图 8  Oracle 开发者 fix bug 的过程</center>
 
@@ -136,7 +136,7 @@ tags: ["TiDB","架构"]
 
 我们想了想，TiDB 直接连 Spark 也是可以的，但这样 Spark 对底下没有感知，事务跑得巨慢，就跟 Spark 接 MySQL 没什么差别。我们研究了一下，做出了一个新的东西——TiSpark。TiSpark 就开始能够同时在 TiDB 上去跑 OLAP 和 OLTP。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/9.png)
+![图 9 出现的新问题](media/guiding-ideologies-in-the-evolution-of-tidb/9.png)
 
 <center>图 9 出现的新问题</center>
 
@@ -168,7 +168,7 @@ tags: ["TiDB","架构"]
 
 还有些用户的数据规模越来越大，到 100T 以上就开始发现十分钟已经跑不完 GC 了（TiDB 的 GC 是每十分钟一次），一个月下来 GC 已经整体落后了非常多。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/10.png)
+![图 10 用户的新呼声](media/guiding-ideologies-in-the-evolution-of-tidb/10.png)
 
 <center>图 10 用户的新呼声</center>
 
@@ -191,7 +191,7 @@ tags: ["TiDB","架构"]
 ## 三、关于成本问题的思考
 
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/11.png)
+![图 11 成本问题](media/guiding-ideologies-in-the-evolution-of-tidb/11.png)
 
 <center>图 11 成本问题</center>
 
@@ -219,7 +219,7 @@ TiDB 还有一条哲学是关于横向和纵向发展的选择。
 
 **其实当初这么定那个目标主要是考虑数据量，因为 TiDB 作为一个分布式系统一定是要处理具有足够数据量的用户场景，** 百亿美金以上的公司肯定有足够的数据，30 亿美金的公司也会有，因为他们的数据在高速增长，当我们完成了这些，然后再开始切入到传统行业，因为在这之前我们经过了稳定性的验证，经过了规模的验证，经过了场景的验证。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/12.png)
+![图 12 横向发展与纵向发展](media/guiding-ideologies-in-the-evolution-of-tidb/12.png)
 
 <center>图 12 横向发展与纵向发展</center>
 
@@ -235,7 +235,7 @@ TiDB 还有一条哲学是关于横向和纵向发展的选择。
 
 说了这么多故事，如果要我总结一下 2015 - 2019 年外面的朋友对 TiDB 的感受，是下图这样的：
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/13.png)
+![图 13 2015-2019 小结](media/guiding-ideologies-in-the-evolution-of-tidb/13.png)
 
 <center>图 13 2015-2019 小结</center>
 
@@ -243,7 +243,7 @@ TiDB 还有一条哲学是关于横向和纵向发展的选择。
 
 我昨天翻了一下 2015 年 4 月 19 日发的一条微博。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/14.png)
+![图 14 刚创业时发的微博](media/guiding-ideologies-in-the-evolution-of-tidb/14.png)
 
 <center>图 14 刚创业时发的微博</center>
 
@@ -251,7 +251,7 @@ TiDB 还有一条哲学是关于横向和纵向发展的选择。
 
 想想当时我也挺绝望的，想着应该还有不少人血气方刚，还有很多技术人员是有非常强大的理想的，但是前面我也说了，总有一个从理想到现实的距离，这个距离很长，好在现在我们能收到很多简历。所以很多时候大家也很难想象我们刚开始做这件事情的时候有多么的困难，以及中间的每一个坚持。**只要稍微有一丁点的松懈，就可能走了另外一条更容易走的路，但是那条更容易走的路，从长远上看是一条更加困难的路，甚至是一条没有出路的路。**
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/15.png)
+![图 15 对 2020 年的展望](media/guiding-ideologies-in-the-evolution-of-tidb/15.png)
 
 <center>图 15 对 2020 年的展望</center>
 
@@ -265,7 +265,7 @@ TiDB 还有一条哲学是关于横向和纵向发展的选择。
 
 我也听说有很多同学对 TiDB 3.0 特别感兴趣，不过今天没有足够的时间介绍，我们会在后续的 TechDay 上介绍 3.0 GA 的重大特性，因为从 2.0 到 3.0 产生了一个巨大的变化和提升，性能大幅提升，硬件成本也下降了一倍的样子，需要一天的时间为大家详细的拆解。
 
-![](media/guiding-ideologies-in-the-evolution-of-tidb/liuqi.jpg)
+![liuqi](media/guiding-ideologies-in-the-evolution-of-tidb/liuqi.jpg)
 
 >本文根据我司 CEO 刘奇在第 100 期 Infra Meetup 上的演讲整理。
 

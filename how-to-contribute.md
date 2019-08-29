@@ -62,7 +62,9 @@ tags: ['开源', '社区']
 -  **Documentation**：许多大型项目不会只通过自述文件去引导用户如何使用。在这些项目中你经常可以找到通往其他文件的超链接，或者是在仓库中找到一个叫做 docs 的文件夹.
   - [TiDB Docs](https://github.com/pingcap/tidb/tree/master/docs)
  
-  ![](media/how-to-contribute/1.jpg)
+  ![TiDB Docs](media/how-to-contribute/1.jpg)
+  
+  <center>TiDB Docs</center>
 
 
 ## 齐步走成为 Contributor
@@ -83,11 +85,15 @@ tags: ['开源', '社区']
 
     TiDB Issue 模版如下：
 
-    ![](media/how-to-contribute/2.png)
+    ![TiDB Issue 模版](media/how-to-contribute/2.png)
+    
+    <center>TiDB Issue 模版</center>
 
     TiKV Issue 模版如下：
     
-    ![](media/how-to-contribute/3.png)
+    ![TiKV Issue 模版](media/how-to-contribute/3.png)
+    
+    <center>TiKV Issue 模版</center>
 
 * **给出你的代码链接** 使用像 [JSFiddle](http://jsfiddle.net/) 或者 [CodePen](http://codepen.io/) 等工具，贴出你的代码，好帮助别人复现你的问题。
 
@@ -106,7 +112,7 @@ tags: ['开源', '社区']
 
 ### Pull Request Pro Tips
 
-* **[Fork](http://guides.github.com/activities/forking/) 代码并且 clone 到你本地** 通过将项目的地址添加为一个 remote，并且经常从 remote 合并更改来保持你的代码最新，以便在提交你的 pull 请求时，尽可能少的发生冲突。详情请参阅 [这里](https://help.github.com/articles/syncing-a-fork)。
+* **[Fork](http://guides.github.com/activities/forking/) 代码并且 clone 到你本地** 通过将项目的地址添加为一个 remote，并且经常从 remote 合并更改来保持你的代码最新，以便在提交你的 pull 请求时，尽可能少的发生冲突。详情请参阅 [Syncing a fork](https://help.github.com/articles/syncing-a-fork)。
 
 * **创建 [branch](http://guides.github.com/introduction/flow/)** 来修改你的代码，目前 TiDB 相关的项目默认的 branch 命名规则是 user/name。例如 disksing/grpc，简单明确，一目了然。
 
@@ -122,7 +128,9 @@ tags: ['开源', '社区']
 
 一旦你新增一个 pull request，讨论将围绕你的更改开始。其他贡献者和用户可能会进入讨论，但最终决定是由维护者决定的。你可能会被要求对你的 pull request 进行一些更改，如果是这样，请向你的 branch 添加更多代码并推送它们，它们将自动进入现有的 pull request。
 
-![](media/how-to-contribute/4.png)
+![Open Pull Requests](media/how-to-contribute/4.png)
+
+<center>Open Pull Requests</center>
 
 如果你的 pull request 被合并，这会非常棒。如果没有被合并，不要灰心。也许你的更改不是项目维护者需要的。或者更改已经存在了。发生这种情况时，我们建议你根据收到的任何反馈来修改代码，并再次提出 pull request。或创建自己的开源项目。
 
@@ -141,4 +149,4 @@ PR 提交之后，请耐心等待维护者进行 Review。
 
 为更好地促进 Contributor 间的交流，便于随时提出好的想法和反馈，我们创建了一个 Contributor Club 微信群，对成为 TiDB Contributor 有兴趣的同学可以添加 TiDB Robot 微信号，它会在后台和你打招呼，并积极招募你成为开源社区的一员。
 
-![](media/how-to-contribute/5.jpg)
+![二维码](media/how-to-contribute/5.jpg)

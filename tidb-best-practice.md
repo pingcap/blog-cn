@@ -27,7 +27,7 @@ Raft 是一种一致性协议，能提供强一致的数据复制保证，TiDB �
 
 
 ### 分布式事务
-TiDB 提供完整的分布式事务，事务模型是在 [Google Percolator](https://research.google.com/pubs/pub36726.html) 的基础上做了一些优化。具体的实现大家可以参考[这篇文章](./percolator-and-txn.md)。这里只说两点：
+TiDB 提供完整的分布式事务，事务模型是在 [Google Percolator](https://research.google.com/pubs/pub36726.html) 的基础上做了一些优化。具体的实现大家可以参考[《Percolator 和 TiDB 事务算法》](./percolator-and-txn.md)这篇文章。这里只说两点：
 
 + 乐观锁
 
@@ -55,7 +55,7 @@ PD 会根据整个 TiKV 集群的状态，对集群的负载进行调度。调�
 
 ### SQL on KV
 
-TiDB 自动将 SQL 结构映射为 KV 结构。具体的可以参考[这篇文档](./tidb-internal-2.md)。简单来说，TiDB 做了两件事：
+TiDB 自动将 SQL 结构映射为 KV 结构。具体的可以参考[《三篇文章了解 TiDB 技术内幕 - 说计算》](./tidb-internal-2.md)这篇文档。简单来说，TiDB 做了两件事：
 
 + 一行数据映射为一个 KV，Key 以 `TableID` 构造前缀，以行 ID 为后缀
 + 一条索引映射为一个 KV，Key 以 `TableID+IndexID` 构造前缀，以索引值构造后缀
@@ -125,13 +125,13 @@ TiDB 支持完整的二级索引，并且是全局索引，很多查询可以通
 推荐通过 [TiDB-Ansible](https://github.com/pingcap/tidb-ansible "TiDB-Ansible")
 部署 TiDB 集群，这个工具可以部署、停止、销毁、升级整个集群，非常方便易用。
 
-具体的使用文档在[这里](https://pingcap.com/docs-cn/dev/how-to/deploy/orchestrated/ansible/)。非常不推荐手动部署，后期的维护和升级会很麻烦。
+具体的使用文档查看 [TiDB-Ansible 部署方案](https://pingcap.com/docs-cn/dev/how-to/deploy/orchestrated/ansible/)。非常不推荐手动部署，后期的维护和升级会很麻烦。
 
 ### 导入数据
 
 如果有 Unique Key 并且业务端可以保证数据中没有冲突，可以在 Session 内打开这个开关： `SET @@session.tidb_skip_constraint_check=1;`
 
-另外为了提高写入性能，可以对 TiKV 的参数进行调优，具体的文档在[这里](https://pingcap.com/docs-cn/v3.0/reference/performance/tune-tikv/)。
+另外为了提高写入性能，可以对 TiKV 的参数进行调优，具体的文档查看 [TiKV 性能参数调优](https://pingcap.com/docs-cn/v3.0/reference/performance/tune-tikv/)。
 
 请特别注意这个参数：
 
@@ -170,7 +170,7 @@ for i from 0 to 23:
 
 ### 查询
 
-看业务的查询需求以及具体的语句，可以参考[这篇文档](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables)
+看业务的查询需求以及具体的语句，可以参考 [TiDB 专用系统变量和语法](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables)这篇文档
 可以通过 SET 语句控制 SQL 执行的并发度，另外通过 Hint 控制 Join 物理算子选择。
 
 另外 MySQL 标准的索引选择 Hint 语法，也可以用，通过 `Use Index/Ignore Index hint` 控制优化器选择索引。
@@ -187,7 +187,7 @@ for i from 0 to 23:
 
 ### 文档
 
-了解一个系统或者解决使用中的问题最好的方法是阅读文档，明白实现原理，TiDB 有大量的官方文档，希望大家在遇到问题的时候能先尝试通过文档或者搜索 Issue list 寻找解决方案。官方文档在[这里](https://github.com/pingcap/docs-cn)。如果希望阅读英文文档，可以看[这里](https://github.com/pingcap/docs)。
+了解一个系统或者解决使用中的问题最好的方法是阅读文档，明白实现原理，TiDB 有大量的官方文档，希望大家在遇到问题的时候能先尝试通过文档或者搜索 Issue list 寻找解决方案。官方文档查看 [docs-cn](https://github.com/pingcap/docs-cn)。如果希望阅读英文文档，可以查看 [docs](https://github.com/pingcap/docs)。
 
 其中的 [FAQ](https://pingcap.com/docs-cn/v3.0/faq/tidb/)
 和[故障诊断](https://pingcap.com/docs-cn/dev/how-to/troubleshoot/cluster-setup/)章节建议大家仔细阅读。另外 TiDB 还有一些不错的工具，也有配套的文档，具体的见各项工具的 GitHub 页面。

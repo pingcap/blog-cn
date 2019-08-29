@@ -23,7 +23,7 @@ MVCC 其实并不是一个新的概念了，在传统的单机关系型数据库
 
 支持分布式 MVCC 在 KV 系统中比较著名的应该是在 BigTable。在 TiKV 中我们的整个事务模型是构建在一个分布式 MVCC 的基础之上：
 
-![](media/tidb-transaction-model/1.jpg)
+![RocksDB](media/tidb-transaction-model/1.jpg)
 
 可以看到，整个 TiKV 的底层本地存储是依赖了 RocksDB，RocksDB 是一个单机的嵌入式 KV 数据库，是一个 LSM Tree的实现，是 Facebook 基于 LevelDB 的修改版本，其特点是写入性能特别好，数据存储是有序的 KV Pairs，对于有序 key 的迭代的场景访问效率较高。
 
@@ -77,7 +77,7 @@ MVCC 其实并不是一个新的概念了，在传统的单机关系型数据库
 
 对 TiKV 的 MVCC 模型有了基础概念之后，就可以介绍我们的分布式事务模型，总体来讲，我们的分布式事务模型本质上是一个两阶段提交的算法，其实本质上来说，在一个分布式系统中实现跨节点事务，只有两阶段提交一种办法（3PC 本质上也是 2PC 的一个优化）。
 
-![](media/tidb-transaction-model/2.jpg)
+![Phase Commit](media/tidb-transaction-model/2.jpg)
 
 在 Spanner 中同样也是一个 2PC，但是 Google 比较创新的引入了 TrueTime API 来作为事务 ID 生成器从而实现了 Serializable 的隔离级别，具体的实现在这里就不赘述了，有兴趣的朋友可以去看 Spanner 的论文。
 

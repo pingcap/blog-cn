@@ -88,13 +88,17 @@ spec:
 
 虽然说这是插件化的，但在 1.7 之前，所有的 plugin 都需要写到 apiserver 的代码中一起编译，很不灵活。而在 1.7 中 K8s 就引入了 [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) 机制，允许用户向 apiserver 注册 webhook，而 apiserver 则通过 webhook 调用外部 server 来实现 filter 逻辑。1.9 中，这个特性进一步做了优化，把 webhook 分成了两类: `MutatingAdmissionWebhook` 和 `ValidatingAdmissionWebhook`，顾名思义，前者就是操作 api 对象的，比如上文例子中的 `DefaultStroageClass`，而后者是校验 api 对象的，比如 `ResourceQuota`。拆分之后，apiserver 就能保证在校验（Validating）之前先做完所有的修改（Mutating），下面这个示意图非常清晰：
 
-![](media/tidb-opeartor-webhook/1.jpg)
+![示意图](media/tidb-opeartor-webhook/1.jpg)
+
+<center>示意图</center>
 
 而我们的办法就是，利用 `ValidatingAdmissionWebhook`，在重要的 Pod 收到删除请求时，先在 webhook server 上请求集群进行下线前的清理和准备工作，并直接返回拒绝。这时候重点来了，Control Loop 为了达到目标状态（比如说升级到新版本），会不断地进行 reconcile，尝试删除 Pod，而我们的 webhook 则会不断拒绝，除非**集群已经完成了所有的清理和准备工作**。
 
 下面是这个流程的分步描述：
 
-![](media/tidb-opeartor-webhook/2.jpg)
+![流程图](media/tidb-opeartor-webhook/2.jpg)
+
+<center>流程图</center>
 
 1. 用户更新资源对象。
 2. controller-manager watch 到对象变更。

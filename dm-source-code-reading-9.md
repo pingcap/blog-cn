@@ -66,7 +66,9 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 我们基于在 [《TiDB Ecosystem Tools 原理解读系列（三）TiDB-DM 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 中展示过的仅包含两个 DM-worker 的 shard DDL 协调流程示例（如下图）来了解 DM 内部的具体实现。
 
-![](media/dm-source-code-reading-9/1.png)
+![shard DDL 协调流程示例](media/dm-source-code-reading-9/1.png)
+
+<center>shard DDL 协调流程示例</center>
 
 1.  DM-worker-1 将 shard DDL 信息发送给 DM-master
 

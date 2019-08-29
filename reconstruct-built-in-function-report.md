@@ -6,7 +6,7 @@ summary: 为了方便社区同学更好地参与 TiDB 项目，本文一方面�
 tags: ['TiDB', 'Contributor','社区']
 ---
 
-6 月 22 日，TiDB 发布了一篇如何十分钟成为 TiDB Contributor 系列的[第二篇文章](./reconstruct-built-in-function.md)，向大家介绍如何为 TiDB 重构 built-in 函数。
+6 月 22 日，TiDB 发布了一篇如何十分钟成为 TiDB Contributor 系列的[十分钟成为 Contributor 系列 | 为 TiDB 重构 built-in 函数](./reconstruct-built-in-function.md)，向大家介绍如何为 TiDB 重构 built-in 函数。
 
 截止到目前，得到了来自社区的积极支持与热情反馈，TiDB 参考社区 contributors 的建议，对计算框架进行了部分修改以降低社区同学参与的难度。
 
@@ -199,4 +199,4 @@ func (s *testPlanSuite) TestInferType(c *C) {
 
 加入 TiDB Contributor Club 请添加我们的 AI 微信：
 
-![](media/reconstruct-built-in-function-report/1.jpg)
+![二维码](media/reconstruct-built-in-function-report/1.jpg)

@@ -32,7 +32,7 @@ tags: ['Raft','线性一致','TiKV']
 说了一堆不明所以的概念，现在来看如何用这些表示分布式系统的行为。
 
 
-![](media/linearizability-and-raft/1.png)
+![图例 1](media/linearizability-and-raft/1.png)
 
 
 上图展示了 Client A 的一个请求从发起到结束的过程。变量 x 的初始值是 1，“x R() A” 是一个事件 Inv 意思是 A 发起了读请求，相应的 “x OK(1) A” 就是事件 Resp，意思是 A 读到了 x 且值为 1，Server 执行读操作（Operation）。
@@ -51,7 +51,7 @@ tags: ['Raft','线性一致','TiKV']
 
 **例：**
 
-![](media/linearizability-and-raft/2.png)
+![图例 2](media/linearizability-and-raft/2.png)
 
 先下结论，上图表示的行为满足线性一致。
 
@@ -61,7 +61,7 @@ tags: ['Raft','线性一致','TiKV']
 
 反映出“最新”的值？我觉得三点中最难理解就是它了。先不急于对“最新”下定义，来看看上图中 x 所有可能的值，显然只有 1 和 2。四个次请求中只有 B 进行了写请求，改变了 x 的值，我们从 B 着手分析，明确 x 在各个时刻的值。由于不能确定 B 的 W（写操作）在哪个时刻发生，能确定的只有一个区间，因此可以引入**上下限**的概念。对于 x=1，它的上下限为**开始到事件“x W(2) B”**，在这个范围内所有的读操作必定读到 1。对于 x=2，它的上下限为 **事件“x Ok() B”** 到结束，在这个范围内所有的读操作必定读到 2。那么“x W(2) B”到“x Ok() B”这段范围，x 的值是什么？**1 或者 2**。由此可以将 x 分为三个阶段，各阶段"最新"的值如下图所示：
 
-![](media/linearizability-and-raft/3.png)
+![图例 3](media/linearizability-and-raft/3.png)
 
 清楚了 x 的变化后理解例子中 A C D 的读到结果就很容易了。
 
@@ -81,7 +81,7 @@ Raft 是一个强 Leader 的共识算法，只有 Leader 能处理客户端的�
 
 以 TiKV 为例，TiKV 内部可分成多个模块，Raft 模块，RocksDB 模块，两者通过 Log 进行交互，整体架构如下图所示，consensus 就是 Raft 模块，state machine 就是 RocksDB 模块。
 
-![](media/linearizability-and-raft/4.jpg)
+![图例 4](media/linearizability-and-raft/4.jpg)
 
 Client 将请求发送到 Leader 后，Leader 将请求作为一个 Proposal 通过 Raft 复制到自身以及 Follower 的 Log 中，然后将其 commit。TiKV 将 commit 的 Log 应用到 RocksDB 上，由于 Input（即 Log）都一样，可推出各个 TiKV 的状态机（即 RocksDB）的状态能达成一致。但实际多个 TiKV 不能保证同时将某一个 Log 应用到 RocksDB 上，也就是说各个节点不能**实时**一致，加之 Leader 会在不同节点之间切换，所以 Leader 的状态机也不总有最新的状态。Leader 处理请求时稍有不慎，没有在最新的状态上进行，这会导致整个系统违反线性一致性。**好在有一个很简单的解决方法：依次应用 Log，将应用后的结果返回给 Client。**
 
@@ -123,7 +123,7 @@ LeaseRead 与 ReadIndex 类似，但更进一步，不仅省去了 Log，还省�
 
 2. 对于下图，它符合线性一致吗？（温馨提示：请使用游标卡尺。;-P）
 
-   ![](media/linearizability-and-raft/5.png)
+   ![图例 5](media/linearizability-and-raft/5.png)
 
 3.  Leader 的状态机在什么时候没有最新状态？要线性一致性，Raft 该如何解决这问题？
 

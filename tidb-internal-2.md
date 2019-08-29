@@ -120,7 +120,7 @@ t10_i1_30_3 --> null
 ## SQL on KV 架构
 TiDB 的整体架构如下图所示
 
-![](media/tidb-internal-2/1.png)
+![TiDB 架构](media/tidb-internal-2/1.png)
 
 TiKV Cluster 主要作用是作为 KV 引擎存储数据，上篇文章已经介绍过了细节，这里不再敷述。本篇文章主要介绍 SQL 层，也就是 TiDB Servers 这一层，这一层的节点都是无状态的节点，本身并不存储数据，节点之间完全对等。TiDB Server 这一层最重要的工作是处理用户请求，执行 SQL 运算逻辑，接下来我们做一些简单的介绍。
 
@@ -143,14 +143,14 @@ TiKV Cluster 主要作用是作为 KV 引擎存储数据，上篇文章已经介
 如何避免上述缺陷也是显而易见的，首先我们需要将计算尽量靠近存储节点，以避免大量的 RPC 调用。其次，我们需要将 Filter 也下推到存储节点进行计算，这样只需要返回有效的行，避免无意义的网络传输。最后，我们可以将聚合函数、GroupBy 也下推到存储节点，进行预聚合，每个节点只需要返回一个 Count 值即可，再由 tidb-server 将 Count 值 Sum 起来。
 这里有一个数据逐层返回的示意图：
 
-![](media/tidb-internal-2/2.png)
+![数据逐层返回示意图](media/tidb-internal-2/2.png)
 
-[这里](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247484187&idx=1&sn=90a7ce3e6db7946ef0b7609a64e3b423&chksm=eb162471dc61ad679fc359100e2f3a15d64dd458446241bff2169403642e60a95731c6716841&scene=4)有一篇文章详细描述了 TiDB 是如何让 SQL 语句跑的更快，大家可以参考一下。
+[MPP and SMP in TiDB](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247484187&idx=1&sn=90a7ce3e6db7946ef0b7609a64e3b423&chksm=eb162471dc61ad679fc359100e2f3a15d64dd458446241bff2169403642e60a95731c6716841&scene=4) 这篇文章详细描述了 TiDB 是如何让 SQL 语句跑的更快，大家可以参考一下。
 
 ## SQL 层架构
 上面几节简要介绍了 SQL 层的一些功能，希望大家对 SQL 语句的处理有一个基本的了解。实际上 TiDB 的 SQL 层要复杂的多，模块以及层次非常多，下面这个图列出了重要的模块以及调用关系：
 
-![](media/tidb-internal-2/3.png)
+![SQL 层架构](media/tidb-internal-2/3.png)
 
 用户的 SQL 请求会直接或者通过 Load Balancer 发送到 tidb-server，tidb-server 会解析 MySQL Protocol Packet，获取请求内容，然后做语法解析、查询计划制定和优化、执行查询计划获取和处理数据。数据全部存储在 TiKV 集群中，所以在这个过程中 tidb-server 需要和 tikv-server 交互，获取数据。最后 tidb-server 需要将查询结果返回给用户。
 

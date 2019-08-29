@@ -19,6 +19,8 @@ tags: ['DM 源码阅读','社区']
 
 ![gh-ost 逻辑处理流程](media/dm-source-code-reading-8/1.png)
 
+<center>gh-ost 逻辑处理流程</center>
+
 从上图可以大致了解到 gh-ost 的逻辑处理流程：
 
 1. 在操作目标数据库上使用 `create table ghost table like origin table` 来创建 ghost 表；

@@ -28,7 +28,7 @@ Jepsen 验证系统由 6 个节点组成，一个控制节点（control node）�
 
     Checker 用于对测试生成的历史进行验证，判断测试结果是否符合预期，历史的格式如下图所示：
 
-    ![](media/tidb-jepsen/1.png)
+    ![截图 1](media/tidb-jepsen/1.png)
 
 + **Nemesis**
 
@@ -43,7 +43,7 @@ Jepsen 验证系统由 6 个节点组成，一个控制节点（control node）�
 
     下图展示了 parts nemesis 引入测试中后某些语句执行时出现了 time-out 的错误。
 
-    ![](media/tidb-jepsen/2.png)
+    ![截图 2](media/tidb-jepsen/2.png)
 
 + **Generator**
 
@@ -79,7 +79,7 @@ TiDB 中的 Jepsen 测试有 3 个，分别是 bank、set 和 register 测试。
 
 下面是测试进行中的某次截图：
 
-![](media/tidb-jepsen/3.png)
+![截图 3](media/tidb-jepsen/3.png)
 
 在快照隔离下，所有的转账都必须保证每一时刻所有账户的总金额是相同的。TiDB 在即使引入了各种 nemesis 的情况下仍旧顺利地通过了测试。
 
@@ -89,7 +89,7 @@ TiDB 中的 Jepsen 测试有 3 个，分别是 bank、set 和 register 测试。
 
 下面是测试进行中的某次截图：
 
-![](media/tidb-jepsen/4.png)
+![截图 4](media/tidb-jepsen/4.png)
 
 同样，TiDB 通过了测试。
 
@@ -97,7 +97,7 @@ TiDB 中的 Jepsen 测试有 3 个，分别是 bank、set 和 register 测试。
 
 这个测试很好理解，建一个表，然后插入一条值，然后我们把这个值看做是一个寄存器，然后在测试中并发地从各个节点对其进行 read、write 和 cas 操作。
 
-![](media/tidb-jepsen/5.png)
+![截图 5](media/tidb-jepsen/5.png)
 
 然后利用 Jepsen 产生的一系列操作历史（如上图）进行 Linearizability 一致性验证。这个算法是 Jepsen 的核心，也是 Jepsen 被业界所熟知的原因之一，所以花时间去深入学习了下，我会在另一篇文章具体介绍这个算法。
 

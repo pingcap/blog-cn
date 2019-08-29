@@ -46,6 +46,8 @@ tags: ['DM 源码阅读','社区']
 
 ![relay log 处理流程](media/dm-source-code-reading-6/1.png)
 
+<center>relay log 处理流程</center>
+
 从上图大致可以了解 relay log 的逻辑处理流程，对应的入口代码为 [`Relay.Process`](https://github.com/pingcap/dm/blob/f6f0566424/relay/relay.go#L168)，主要步骤包括：
 
 1. 使用 [binlog reader](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L30) 从上游 MySQL/MariaDB 读取 binlog event。

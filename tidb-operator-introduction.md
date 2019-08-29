@@ -25,6 +25,8 @@ TiDB 作为一个开源的分布式数据库产品，具有多副本强一致性
 
 ![TiDB-架构.png](media/tidb-operator-introduction/1.png)
 
+<center>TiDB 架构</center>
+
 Kubernetes 最早是作为一个纯粹的容器编排系统而诞生的，用户部署好 Kubernetes 集群之后，直接使用其内置的各种功能部署应用服务。 
 
 由于这个 PaaS 平台使用起来非常便利，吸引了很多用户，不同用户也提出了各种不同的需求。有些特性需求 Kubernetes 直接在其核心代码里面实现了，但是有些特性并不适合合并到主干分支。
@@ -59,6 +61,7 @@ Operator 本质上是 Kubernetes 的控制器（Controller），其核心思想�
 
 ![TiDB-Operator.png](media/tidb-operator-introduction/2.png)
 
+<center>TiDB Operator</center>
 
 上图是 TiDB Operator 工作流程原理图，其中 TidbCluster 是通过 CRD（Custom Resource Definition）扩展的内置资源类型：
 
@@ -104,6 +107,6 @@ KUBE_REPO_PREFIX=uhub.ucloud.cn/pingcap manifests/local-dind/dind-cluster-v1.10.
 
 TiDB Operator 让 TiDB 成为真正意义上的 Cloud-Native 数据库，开源只是一个起点，需要 TiDB 社区和 Kubernetes 社区的共同参与。 
 
-大家在使用过程发现 bug 或缺失什么功能，都可以直接在 GitHub 上面提 issue 或 PR，一起参与讨论。要想成为 Contributor 具体可以参考 [这个文档](https://github.com/pingcap/tidb-operator/blob/master/docs/CONTRIBUTING.md)。
+大家在使用过程发现 bug 或缺失什么功能，都可以直接在 GitHub 上面提 issue 或 PR，一起参与讨论。要想成为 Contributor 具体可以参考 [Building TiDB Operator from Source Code](https://github.com/pingcap/tidb-operator/blob/master/docs/CONTRIBUTING.md) 这个文档。
 
 
