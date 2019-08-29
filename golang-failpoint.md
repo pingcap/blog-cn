@@ -114,7 +114,9 @@ fail_point!("transport_on_send_store", |sid| if let Some(sid) = sid {
 
 宏的本质是什么？如果追本溯源，发现其实可以通过 AST 重写在 Golang 中实现满足以上条件的 failpoint，原理如下图所示：
 
-![](media/golang-failpoint/1.png)
+![原理图](media/golang-failpoint/1.png)
+
+<center>原理图</center>
 
 对于任何一个 Golang 代码的源文件，可以通过解析出这个文件的语法树，遍历整个语法树，找出所有 failpoint 注入点，然后对语法树重写，转换成想要的逻辑。
 

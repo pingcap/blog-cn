@@ -12,11 +12,11 @@ tags: ['TiDB']
 
 ### Skyline Pruning
 
-查询计划正确性和稳定性对于关系型数据库来说至关重要，3.0.0 Beta.1 对这部分进行了优化，引入一个叫 `Skyline Pruning` 的框架，通过一些启发式规则来更快更准确地找到最好的查询计划。详细信息可以参考 [这篇设计文档](https://github.com/pingcap/tidb/blob/master/docs/design/2019-01-25-skyline-pruning.md)。
+查询计划正确性和稳定性对于关系型数据库来说至关重要，3.0.0 Beta.1 对这部分进行了优化，引入一个叫 `Skyline Pruning` 的框架，通过一些启发式规则来更快更准确地找到最好的查询计划。详细信息可以参考 [Skyline Pruning](https://github.com/pingcap/tidb/blob/master/docs/design/2019-01-25-skyline-pruning.md) 这篇设计文档。
 
 ### 日志格式统一
 
-日志是排查程序问题的重要工具，统一且结构化的日志格式不但有利于用户理解日志内容，也有助于通过工具对日志进行定量分析。3.0.0 Beta.1 版本中对 tidb/pd/tikv 这三个组件的日志格式进行了统一，详细格式参见 [这篇文档](https://github.com/tikv/rfcs/blob/master/text/2018-12-19-unified-log-format.md)。
+日志是排查程序问题的重要工具，统一且结构化的日志格式不但有利于用户理解日志内容，也有助于通过工具对日志进行定量分析。3.0.0 Beta.1 版本中对 tidb/pd/tikv 这三个组件的日志格式进行了统一，详细格式参见 [Unified Log Format](https://github.com/tikv/rfcs/blob/master/text/2018-12-19-unified-log-format.md)。
 
 ### 慢查询相关改进
 

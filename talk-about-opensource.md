@@ -97,7 +97,7 @@ PingCAP 攻城狮小申典型的一天：
 22:30 休息一会，准备洗澡睡觉
 
 ### 如何做一个开源项目
-首先你需要根据自己的诉求、商业模式等选择一个开源协议，常见的有 GPL 、BSD、Apache 和 Mit ，这些开源协议的区别在阮一峰老师的[这篇博客](http://www.ruanyifeng.com/blog/2011/05/how_to_choose_free_software_licenses.html)中解释的很清楚了，推荐大家阅读。
+首先你需要根据自己的诉求、商业模式等选择一个开源协议，常见的有 GPL 、BSD、Apache 和 Mit ，这些开源协议的区别在阮一峰老师的 [如何选择开源许可证？](http://www.ruanyifeng.com/blog/2011/05/how_to_choose_free_software_licenses.html) 这篇博客中解释的很清楚了，推荐大家阅读。
 
 协议选定之后，再选择一个代码托管平台，目前的标准选择是 GitHub，注册一个 GitHub 账号，申请一个 Orgnization 之后，就可以开始用了，如果不需要私有 Repo 的话，那么不需要交任何费用。
 
@@ -138,8 +138,8 @@ PingCAP 攻城狮小申典型的一天：
 ### 讲一点好玩的事情
 在开源项目中总能或多或少的发现奇葩的 [Issue](https://github.com/pingcap/tidb/issues/194)，比如 [这个](https://github.com/pingcap/tidb/issues/194)：
 
-![](media/talk-about-opensource/1.jpg)
+![Issue 1](media/talk-about-opensource/1.jpg)
 
-![](media/talk-about-opensource/2.jpg)
+![Issue 2](media/talk-about-opensource/2.jpg)
 
 看到这个 Issue 真的是震惊了。

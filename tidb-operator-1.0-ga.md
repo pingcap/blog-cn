@@ -6,7 +6,7 @@ summary: 开源后到现在的近一年内，我们一方面基于用户反馈�
 tags: ['Cloud-TiDB','TiDB Operator','社区']
 ---
 
-![](media/tidb-operator-1.0-ga/1.png)
+![头图](media/tidb-operator-1.0-ga/1.png)
 
 去年八月份，我们 [开源了 TiDB Operator](https://pingcap.com/blog-cn/tidb-operator-introduction/) 项目，以实现 TiDB 在 Kubernetes 上的部署和运维。开源后到现在的近一年内，我们一方面基于用户反馈不断打磨项目的易用性，另一方面通过严苛的稳定性测试持续提升可靠性。今天，我们自豪地宣布 TiDB Operator 1.0 GA 正式发布！
 

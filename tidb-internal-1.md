@@ -17,7 +17,7 @@ tags: ['TiDB', '存储', 'TiKV', 'RocksDB', 'Raft', 'MVCC', '事务']
 
 ## 保存数据
 
-![](media/tidb-internal-1/1.jpg)
+![数据库](media/tidb-internal-1/1.jpg)
 
 数据库最根本的功能是能把数据存下来，所以我们从这里开始。
 
@@ -57,7 +57,7 @@ tags: ['TiDB', '存储', 'TiKV', 'RocksDB', 'Raft', 'MVCC', '事务']
 
 ### Raft
 
-好了，万里长征第一步已经迈出去了，我们已经为数据找到一个高效可靠的本地存储方案。俗话说，万事开头难，然后中间难，最后结尾难。接下来我们面临一件更难的事情：如何保证单机失效的情况下，数据不丢失，不出错？简单来说，我们需要想办法把数据复制到多台机器上，这样一台机器挂了，我们还有其他的机器上的副本；复杂来说，我们还需要这个复制方案是可靠、高效并且能处理副本失效的情况。听上去比较难，但是好在我们有 Raft 协议。Raft 是一个一致性算法，它和 Paxos 等价，但是更加易于理解。[这里](https://raft.github.io/raft.pdf "In Search of an Understandable Consensus Algorithm")是 Raft 的论文，感兴趣的可以看一下。本文只会对 Raft 做一个简要的介绍，细节问题可以参考论文。另外提一点，Raft 论文只是一个基本方案，严格按照论文实现，性能会很差，我们对 Raft 协议的实现做了大量的优化，具体的优化细节可参考我司首席架构师 tangliu 同学的[这篇](https://zhuanlan.zhihu.com/p/25735592)文章。
+好了，万里长征第一步已经迈出去了，我们已经为数据找到一个高效可靠的本地存储方案。俗话说，万事开头难，然后中间难，最后结尾难。接下来我们面临一件更难的事情：如何保证单机失效的情况下，数据不丢失，不出错？简单来说，我们需要想办法把数据复制到多台机器上，这样一台机器挂了，我们还有其他的机器上的副本；复杂来说，我们还需要这个复制方案是可靠、高效并且能处理副本失效的情况。听上去比较难，但是好在我们有 Raft 协议。Raft 是一个一致性算法，它和 Paxos 等价，但是更加易于理解。[Raft 的论文](https://raft.github.io/raft.pdf "In Search of an Understandable Consensus Algorithm")，感兴趣的可以看一下。本文只会对 Raft 做一个简要的介绍，细节问题可以参考论文。另外提一点，Raft 论文只是一个基本方案，严格按照论文实现，性能会很差，我们对 Raft 协议的实现做了大量的优化，具体的优化细节可参考我司首席架构师 tangliu 同学的[《TiKV 源码解析系列 - Raft 的优化》](https://zhuanlan.zhihu.com/p/25735592)这篇文章。
 
 Raft 是一个一致性协议，提供几个重要的功能：
 
@@ -67,7 +67,7 @@ Raft 是一个一致性协议，提供几个重要的功能：
 
 TiKV 利用 Raft 来做数据复制，每个数据变更都会落地为一条 Raft 日志，通过 Raft 的日志复制功能，将数据安全可靠地同步到 Group 的多数节点中。
 
-![](media/tidb-internal-1/2.png)
+![Raft](media/tidb-internal-1/2.png)
 
 到这里我们总结一下，通过单机的 RocksDB，我们可以将数据快速地存储在磁盘上；通过 Raft，我们可以将数据复制到多台机器上，以防单机失效。数据的写入是通过 Raft 这一层的接口写入，而不是直接写 RocksDB。通过实现 Raft，我们拥有了一个分布式的 KV，现在再也不用担心某台机器挂掉了。
 
@@ -79,7 +79,7 @@ TiKV 利用 Raft 来做数据复制，每个数据变更都会落地为一条 Ra
 
 对于一个 KV 系统，将数据分散在多台机器上有两种比较典型的方案：一种是按照 Key 做 Hash，根据 Hash 值选择对应的存储节点；另一种是分 Range，某一段连续的 Key 都保存在一个存储节点上。TiKV 选择了第二种方式，将整个 Key-Value 空间分成很多段，每一段是一系列连续的 Key，我们将每一段叫做一个 **Region**，并且我们会尽量保持每个 Region 中保存的数据不超过一定的大小(这个大小可以配置，目前默认是 64mb)。每一个 Region 都可以用 StartKey 到 EndKey 这样一个左闭右开区间来描述。
 
-![](media/tidb-internal-1/3.png)
+![Region](media/tidb-internal-1/3.png)
 
 **注意，这里的 Region 还是和 SQL 中的表没什么关系！** 请各位继续忘记 SQL，只谈 KV。
 将数据划分成 Region 后，我们将会做 **两件重要的事情**：
@@ -94,7 +94,7 @@ TiKV 利用 Raft 来做数据复制，每个数据变更都会落地为一条 Ra
 对于第二点，TiKV 是以 Region 为单位做数据的复制，也就是一个 Region 的数据会保存多个副本，我们将每一个副本叫做一个 Replica。Replica 之间是通过 Raft 来保持数据的一致（终于提到了 Raft），一个 Region 的多个 Replica 会保存在不同的节点上，构成一个 Raft Group。其中一个 Replica 会作为这个 Group 的 Leader，其他的 Replica 作为 Follower。所有的读和写都是通过 Leader 进行，再由 Leader 复制给 Follower。
 大家理解了 Region 之后，应该可以理解下面这张图：
 
-![](media/tidb-internal-1/4.png)
+![KeyValue](media/tidb-internal-1/4.png)
 
 我们以 Region 为单位做数据的分散和复制，就有了一个分布式的具备一定容灾能力的 KeyValue 系统，不用再担心数据存不下，或者是磁盘故障丢失数据的问题。这已经很 Cool，但是还不够完美，我们需要更多的功能。
 

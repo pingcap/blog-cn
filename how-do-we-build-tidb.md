@@ -26,7 +26,9 @@ tags: ['架构', 'Raft', 'MVCC', '分布式事务', 'PD', 'Go']
 
 为什么传统的方案在这上面解决起来特别的困难，天花板马上到了，基本上不可能解决这个问题。另外是多数据中心的复制和数据中心的容灾，MySQL 在这上面是做不好的。
 
-![](media/how-do-we-build-tidb/1.png)
+![数据库演进](media/how-do-we-build-tidb/1.png)
+
+<center>数据库演进</center>
 
 在前面三十年基本上是关系数据库的时代，那个时代创建了很多伟大的公司，比如说 IBM、Oracle、微软也有自己的数据库，早期还有一个公司叫 Sybase，有一部分特别老的程序员同学在当年的教程里面还可以找到这些东西，但是现在基本上看不到了。
 
@@ -62,17 +64,21 @@ TiKV 和 TiDB 基本上对应 Google Spanner 和 Google F1，用 Open Source 方
 
 另外，对于现在的社会来讲，我们觉得 Infrastructure 领域闭源的东西是没有任何生存机会的。没有任何一家公司，愿意把自己的身家性命压在一个闭源的项目上。举一个很典型的例子，在美国有一个数据库叫 FoundationDB，去年被苹果收购了。 FoundationDB 之前和用户签的合约都是一年的合约。比如说，我给你服务周期是一年，现在我被另外一个公司收购了，我今年服务到期之后，我是满足合约的。但是其他公司再也不能找它服务了，因为它现在不叫 FoundationDB 了，它叫 Apple了，你不能找 Apple 给你提供一个 enterprise service。
 
-![](media/how-do-we-build-tidb/2.png)
+![Architecture Overview Software](media/how-do-we-build-tidb/2.png)
 
+<center>Architecture Overview Software</center>
 
 TiDB 和 TiKV 为什么是两个项目，因为它和 Google 的内部架构对比差不多是这样的：TiKV 对应的是 Spanner，TiDB 对应的是 F1 。F1 里面更强调上层的分布式的 SQL 层到底怎么做，分布式的 Plan 应该怎么做，分布式的 Plan 应该怎么去做优化。同时 TiDB 有一点做的比较好的是，它兼容了 MySQL 协议，当你出现了一个新型的数据库的时候，用户使用它是有成本的。大家都知道作为开发很讨厌的一个事情就是，我要每个语言都写一个 Driver，比如说你要支持 C++，你要支持 Java，你要支持 Go 等等，这个太累了，而且用户还得改他的程序，所以我们选择了一个更加好的东西兼容 MySQL 协议，让用户可以不用改。一会我会用一个视频来演示一下，为什么一行代码不改就可以用，用户就能体会到 TiDB 带来的所有的好处。
 
-![](media/how-do-we-build-tidb/3.png)
+![Architecture Overview Logical](media/how-do-we-build-tidb/3.png)
 
+<center>Architecture Overview Logical</center>
 
 这个图实际上是整个协议栈或者是整个软件栈的实现。大家可以看到整个系统是高度分层的，从最底下开始是 RocksDB ，然后再上面用 Raft 构建一层可以被复制的 RocksDB，在这一层的时候它还没有 Transaction，但是整个系统现在的状态是所有写入的数据一定要保证它复制到了足够多的副本。也就是说只要我写进来的数据一定有足够多的副本去 cover 它，这样才比较安全，在一个比较安全的 Key-value store 上面， 再去构建它的多版本，再去构建它的分布式事务，然后在分布式事务构建完成之后，就可以轻松的加上 SQL 层，再轻松的加上 MySQL 协议的支持。然后，这两天我比较好奇，自己写了 MongoDB 协议的支持，然后我们可以用 MongoDB 的客户端来玩，就是说协议这一层是高度可插拔的。TiDB 上可以在上面构建一个 MongoDB 的协议，相当于这个是构建一个 SQL 的协议，可以构建一个 NoSQL 的协议。这一点主要是用来验证 TiKV 在模型上面的支持能力。
 
-![](media/how-do-we-build-tidb/4.png)
+![TiKV 架构图](media/how-do-we-build-tidb/4.png)
+
+<center>TiKV 架构图</center>
 
 这是整个 TiKV 的架构图，从这个看来，整个集群里面有很多 Node，比如这里画了四个 Node，分别对应了四个机器。每一个 Node 上可以有多个 Store，每个 Store 里面又会有很多小的 Region，就是说一小片数据，就是一个 Region 。从全局来看所有的数据被划分成很多小片，每个小片默认配置是 64M，它已经足够小，可以很轻松的从一个节点移到另外一个节点，Region 1 有三个副本，它分别在 Node1、Node 2 和 Node4 上面， 类似的Region 2，Region 3 也是有三个副本。每个 Region 的所有副本组成一个 Raft Group, 整个系统可以看到很多这样的 Raft groups。
 
@@ -88,17 +94,23 @@ Raft 细节我不展开了，大家有兴趣可以找我私聊或者看一下相
 
 然后 TiKV 的 Raft 实现，是从 etcd 里面 port 过来的，为什么要从 etcd 里面 port 过来呢？首先 TiKV 的 Raft 实现是用 Rust 写的。作为第一个做到生产级别的 Raft 实现，所以我们从 etcd 里面把它用 Go 语言写的 port 到这边。
 
-![](media/how-do-we-build-tidb/5.png)
+![TiKV 在 Raft 官网里的状态](media/how-do-we-build-tidb/5.png)
+
+<center>TiKV 在 Raft 官网里的状态</center>
 
 这个是 Raft 官网上面列出来的 TiKV 在里面的状态，大家可以看到 TiKV 把所有 Raft 的 feature 都实现了。 比如说 Leader Election、Membership Changes，这个是非常重要的，整个系统的 scale 过程高度依赖 Membership Changes，后面我用一个图来讲这个过程。后面这个是 Log Compaction，这个用户不太关心。
 
-![](media/how-do-we-build-tidb/6.png)
+![细胞分裂图](media/how-do-we-build-tidb/6.png)
+
+<center>细胞分裂图</center>
 
 这是很典型的细胞分裂的图，实际上 Region 的分裂过程和这个是类似的。
 
 我们看一下扩容是怎么做的。
 
-![](media/how-do-we-build-tidb/7.png)
+![Scale out](media/how-do-we-build-tidb/7.png)
+
+<center>Scale out</center>
 
 比如说以现在的系统假设，我们刚开始说只有三个节点，有 Region1 分别是在 1 、2、4，我用虚线连接起来代表它是 一个 Raft group ，大家可以看到整个系统里面有三个 Raft group，在每一个 Node 上面数据的分布是比较均匀的，在这个假设每一个 Region 是 64M ，相当于只有一个 Node 上面负载比其他的稍微大一点点。
 
@@ -110,7 +122,9 @@ Raft 细节我不展开了，大家有兴趣可以找我私聊或者看一下相
 
 MVCC 我稍微仔细讲一下这一块。MVCC 的好处，它很好支持 Lock-free  的 snapshot read ，一会儿我有一个图会展示 MVCC 是怎么做的。isolation level 就不讲了，MySQL 里面的级别是可以调的，我们的 TiKV 有 SI，还有 SI+lock，默认是支持 SI 的这种隔离级别，然后你写一个 select for update 语句，这个会自动的调整到 SI 加上 lock 这个隔离级别。这个隔离级别基本上和 SSI 是一致的。还有一个就是 GC 的问题，如果你的系统里面的数据产生了很多版本，你需要把这个比较老的数据给 GC 掉，比如说正常情况下我们是不删除数据的， 你写入一行，然后再写入一行，不断去 update 同一行的时候，每一次 update 会产生新的版本，新的版本就会在系统里存在，所以我们需要一个 GC 的模块把比较老的数据给 GC 掉，实际上这个 GC 不是 Go 里面的GC，不是 Java 的 GC，而是数据的 GC。
 
-![](media/how-do-we-build-tidb/8.png)
+![数据版本](media/how-do-we-build-tidb/8.png)
+
+<center>数据版本</center>
 
 这是一个数据版本，大家可以看到我们的数据分成两块，一个是 meta，一个是 data。meta 相对于描述我的数据当前有多少个版本。大家可以看到绿色的部分，比如说我们的 meta key 是 A，keyA 有三个版本，是 A1、A2、A3，我们把 key 自己和 version 拼到一起。那我们用 A1、A2、A3 分别描述 A 的三个版本，那么就是 version 1/2/3。meta 里面描述，就是我的整个 key 相对应哪个版本，我想找到那个版本。比如说我现在要读取 key A 的版本 10，但显然现在版本 10 是没有的，那么小于版本 10 最大的版本是 3，所以这时我就能读取到 3，这是它的隔离级别决定的。关于 data，我刚才已经讲过了。
 

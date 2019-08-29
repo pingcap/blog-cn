@@ -52,11 +52,11 @@ Percolator 的模型本质上改进的就是这个问题。下面简单介绍一
 
 在选出 Primary row 后， 开始走正常的两阶段提交，第一阶段是上锁+写入新的版本，所谓的上锁，其实就是写一个 lock key, 举个例子，比如一个事务操作 A、B、C，3 行。在数据库中的原始 Layout 如下：
 
-![](media/pessimistic-transaction-the-new-features-of-tidb/1.png)
+![Layout-1](media/pessimistic-transaction-the-new-features-of-tidb/1.png)
 
 假设我们这个事务要 Update (A, B, C, Version 4)，第一阶段，我们选出的 Primary row 是 A，那么第一阶段后，数据库的 Layout 会变成：
 
-![](media/pessimistic-transaction-the-new-features-of-tidb/2.png)
+![Layout-2](media/pessimistic-transaction-the-new-features-of-tidb/2.png)
 
 上面这个只是一个释义图，实际在 TiKV 我们做了一些优化，但是原理上是相通的。上图中标红色的是在第一阶段中在数据库中新写入的数据，可以注意到，`A_Lock`、`B_Lock`、`C_Lock` 这几个就是所谓的锁，大家看到 B 和 C 的锁的内容其实就是存储了这个事务的 Primary lock 是谁。在 2PC 的第二阶段，标志事务是否提交成功的关键就是对 Primary lock 的处理，如果提交 Primary row 完成（写入新版本的提交记录+清除 Primary lock），那么表示这个事务完成，反之就是失败，对于 Secondary rows 的清理不需要关心，可以异步做（为什么不需要关心这个问题，留给读者思考）。
 
@@ -103,9 +103,9 @@ txn.Commit();
 
 TiDB 实现悲观事务的方式很聪明而且优雅，我们仔细思考了 Percolator 的模型发现，其实我们只要将在客户端调用 Commit 时候进行两阶段提交这个行为稍微改造一下，将第一阶段上锁和等锁提前到在事务中执行 DML 的过程中不就可以了吗，就像这样：
 
-![](media/pessimistic-transaction-the-new-features-of-tidb/3.png)
+![乐观事务模型下的 Percolator](media/pessimistic-transaction-the-new-features-of-tidb/3.png)
 
-![](media/pessimistic-transaction-the-new-features-of-tidb/4.png)
+![悲观事务模型下的 Percolator](media/pessimistic-transaction-the-new-features-of-tidb/4.png)
 
 **TiDB 的悲观锁实现的原理确实如此，在一个事务执行 DML (UPDATE/DELETE) 的过程中，TiDB 不仅会将需要修改的行在本地缓存，同时还会对这些行直接上悲观锁，这里的悲观锁的格式和乐观事务中的锁几乎一致，但是锁的内容是空的，只是一个占位符，待到 Commit 的时候，直接将这些悲观锁改写成标准的 Percolator 模型的锁，后续流程和原来保持一致即可，唯一的改动是：**
 
@@ -127,13 +127,13 @@ TiDB 实现悲观事务的方式很聪明而且优雅，我们仔细思考了 Pe
 
 例如刚才那个例子，事务 1 对 A 上了锁后，如果另外一个事务 2 对 A 进行等待，那么就会产生一个依赖关系：事务 2 依赖事务 1，如果此时事务 1 打算去等待 B（假设此时事务 2 已经持有了 B 的锁）， 那么死锁检测模块就会发现一个循环依赖，然后中止（或者重试）这个事务就好了，因为这个事务并没有实际的 prewrite + 提交，所以这个代价是比较小的。
 
-![](media/pessimistic-transaction-the-new-features-of-tidb/5.png)
+![TiDB 悲观锁的死锁检测](media/pessimistic-transaction-the-new-features-of-tidb/5.png)
 
 <center>TiDB 悲观锁的死锁检测</center>
 
 在具体的实现中，TiKV 会动态选举出一个 TiKV node 负责死锁检测（实际上，我们就是直接使用 Region1 所在的 TiKV node），在这个 TiKV node 上会开辟一块内存的记录和检测正在执行的这些事务的依赖关系。在悲观事务在等锁的时候，第一步会经过这个死锁检测模块，所以这部分可能会多引入一次 RPC 进行死锁检测，实际实现时死锁检测是异步的，不会增加延迟（回想一下交给饭店的定金 :P）。因为是纯内存的，所以性能还是很不错的，我们简单的对死锁检测模块进行了 benchmark，结果如下：
 
-![](media/pessimistic-transaction-the-new-features-of-tidb/6.png)
+![Deadlock Detector Benchmark](media/pessimistic-transaction-the-new-features-of-tidb/6.png)
 
 **基本能达到 300k+ QPS 的吞吐，这个吞吐已经能够适应绝大多数的并发事务场景了**。另外还有一些优化，例如，显然的悲观事务等待的第一个锁不会导致死锁，不会发送请求给 Deadlock Detector 之类的，其实在实际的测试中， 悲观事务模型带来的 overhead 其实并不高。另一方面，由于 TiKV 本身支持 Region 的高可用，所以一定能保证 Region 1 会存在，间接解决了死锁检测服务的高可用问题。
 
@@ -143,7 +143,7 @@ TiDB 实现悲观事务的方式很聪明而且优雅，我们仔细思考了 Pe
 
 在 TiDB 3.0 的配置文件中有一栏：
 
-![](media/pessimistic-transaction-the-new-features-of-tidb/7.png)
+![图示](media/pessimistic-transaction-the-new-features-of-tidb/7.png)
 
 将这个 `enable` 设置成 `true` 即可，目前默认是关闭的。
 

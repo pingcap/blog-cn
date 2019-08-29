@@ -169,7 +169,7 @@ Enq 和 Deq 可以看做是 abstract operation，而 Enq 和 Deq 中的每条语
 
 下面这张图可以帮助你很好地理解上述公式的意思。第二列是线性化的表现值（linearized representation values），第三列是线性化的抽象值（linearized abstract values），可以看到每一行中第二列都是第三列的子集。
 
-![](media/linearizability/1.png)
+![A queue history](media/linearizability/1.png)
 
 ## Wing & Gong 线性化算法
 
@@ -193,7 +193,7 @@ typedef struct ev {
 
 >区域（Section）：由触发（inv）事件，对应的返回事件，以及它们中间包含的所有事件。
 
->![](media/linearizability/2.png)
+>![Snapshot of a history](media/linearizability/2.png)
 
 >虚线同时可以看作是也是 match 指针。
 
@@ -201,7 +201,7 @@ typedef struct ev {
 >
 >unlift：将移出的某对操作放回
 
->![](media/linearizability/3.png)
+>![Lifting an operation in a history](media/linearizability/3.png)
 
 这个算法的核心是一个搜索（Search）函数，如果历史 H 是线性化的，那么那么他返回一个线性化点（即顺序化历史 S）。搜索使用一个栈来保存历史中已经线性化的部分，这个栈及栈中的元素是这样定义的：
 

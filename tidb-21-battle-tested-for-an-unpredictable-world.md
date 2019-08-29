@@ -64,7 +64,7 @@ TiDB 所有的 DDL 操作都是 Online 进行，不过在 2.0 以及之前的版
 
 Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随 MySQL 的 Explain 输出格式来展示查询计划。但是当 SQL 比较复杂时，MySQL 的格式并不利于展示算子之间的层级关系，不利于用户定位问题。
 
-2.1 版本中，我们使用缩进来展示算子之间的层级关系，对每个算子的详细信息也做了优化，希望整个查询计划一目了然，帮助用户尽快定位问题。[这篇文档](https://www.pingcap.com/docs/sql/understanding-the-query-execution-plan/) 可以帮助用户了解 TiDB 的查询计划。
+2.1 版本中，我们使用缩进来展示算子之间的层级关系，对每个算子的详细信息也做了优化，希望整个查询计划一目了然，帮助用户尽快定位问题。[Understand the Query Execution Plan](https://www.pingcap.com/docs/sql/understanding-the-query-execution-plan/) 这篇文档可以帮助用户了解 TiDB 的查询计划。
 
 用户除了通过 Explain 语句查看查询计划之外，在 2.1 版本中还可以通过 Explain Analyze 语句查看语句的运行时信息，包括每个算子运行时的处理时间以及处理的数据量。这样可以通过实际的运行结果，拿到更加精确的信息。
 
@@ -82,7 +82,7 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 
 我们针对 OLTP 场景中，点查占多数的特点进行了针对性的优化。当通过 Unique Key 或者 Primary Key 进行数据访问时，在优化器和执行引擎中都做了改进，使得语句的执行效率更高，通过 [2.1 和 2.0 版本的 Sysbench 对比](https://github.com/pingcap/docs/blob/master/v2.1/benchmark/sysbench-v3.md) 可以看到，点查性能提升 50%。
 
-![](media/tidb-21-battle-tested-for-an-unpredictable-world/1.png)
+![OLTP](media/tidb-21-battle-tested-for-an-unpredictable-world/1.png)
 
 ### OLAP
 
@@ -90,7 +90,7 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 
 我们在相同的场景下，对 2.1 和 2.0 进行了 [对比测试](https://github.com/pingcap/docs-cn/blob/master/v2.1/benchmark/tpch-v2.md)。从下图可以看到（纵坐标是 Query 的响应时间，越低越好），之前的两个慢 Query 的运行时间大幅缩短，其他的 Query 也有一定程度的提升。这些提升一方面得益于查询优化器以及执行引擎的改进，另一方面 得益于 TiKV 对连续数据扫描的性能优化。
 
-![](media/tidb-21-battle-tested-for-an-unpredictable-world/2.png)
+![OLAP](media/tidb-21-battle-tested-for-an-unpredictable-world/2.png)
 
 
 ## 完善的生态工具
@@ -105,7 +105,7 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 
 ## Open Source Community
 
-我们相信战胜“未知”最好的武器就是社区的力量，基础软件需要坚定地走开源路线。为了让社区更深入的了解 TiDB 的技术细节并且更好地参与到项目中来，我们今年已经完成超过 20 篇源码阅读文章，项目的设计文档（[TiDB](https://github.com/pingcap/tidb/wiki/Design-Documents) 和 [TiKV](https://github.com/tikv/rfcs)）已经在 GitHub 上面公开出来，项目的开发过程也尽量通过 Github Issue/Project 向社区展示。一些 Feature 设计方案的讨论也会通过在线视频会议的方式方便社区参与进来，[这里](https://github.com/pingcap/community/blob/master/proposals.md) 可以看到会议安排。
+我们相信战胜“未知”最好的武器就是社区的力量，基础软件需要坚定地走开源路线。为了让社区更深入的了解 TiDB 的技术细节并且更好地参与到项目中来，我们今年已经完成超过 20 篇源码阅读文章，项目的设计文档（[TiDB](https://github.com/pingcap/tidb/wiki/Design-Documents) 和 [TiKV](https://github.com/tikv/rfcs)）已经在 GitHub 上面公开出来，项目的开发过程也尽量通过 Github Issue/Project 向社区展示。一些 Feature 设计方案的讨论也会通过在线视频会议的方式方便社区参与进来，通过 [Proposals](https://github.com/pingcap/community/blob/master/proposals.md) 可以看到会议安排。
 
 从 TiDB 2.0 版发布到现在的半年多时间，TiDB 开源社区新增了 87 位 Contributor，其中 [杜川](https://github.com/spongedu) 成为了 TiDB Committer，他已经贡献了 [76 次 PR](https://github.com/pingcap/tidb/commits?author=spongedu)，还有一些活跃的 Contributor 有希望成为下一批 Committer。
 

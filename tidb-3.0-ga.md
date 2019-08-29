@@ -43,13 +43,13 @@ TiDB 是 PingCAP 自主研发的开源分布式关系型数据库，具备商业
 ### 1. OLTP
 
 
-![](media/tidb-3.0-ga/1.png)
+![OLTP-1](media/tidb-3.0-ga/1.png)
 
-![](media/tidb-3.0-ga/2.png)
+![OLTP-2](media/tidb-3.0-ga/2.png)
 
-![](media/tidb-3.0-ga/3.png)
+![OLTP-3](media/tidb-3.0-ga/3.png)
 
-![](media/tidb-3.0-ga/4.png)
+![OLTP-4](media/tidb-3.0-ga/4.png)
 
 3.0 与 2.1 版本相比 Sysbench 的 Point Select，Update Index，Update Non-Index 均提升约 1.5 倍，TPC-C 性能提升约 4.5 倍。主要的优化点如下：
 
@@ -67,7 +67,7 @@ TiDB 是 PingCAP 自主研发的开源分布式关系型数据库，具备商业
 
 ### 2.TiDB Lightning
 
-![](media/tidb-3.0-ga/5.png)
+![TiDB Lightning](media/tidb-3.0-ga/5.png)
 
 TiDB Lightning 性能与 2019 年年初相比提升 3 倍，从 100GB/h 提升到 300GB/h，即 28MB/s 提升到 85MB/s，优化点，如下：
 

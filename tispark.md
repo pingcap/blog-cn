@@ -12,7 +12,9 @@ TiSpark 是 PingCAP 推出的为了解决用户复杂 OLAP 需求的产品。借
 
 TiSpark 是将 Spark SQL 直接运行在 TiDB 存储引擎 TiKV 上的 OLAP 解决方案。TiSpark 架构图如下：
 
-![](media/tispark/1.png)
+![TiSpark 架构图](media/tispark/1.png)
+
+<center>TiSpark 架构图</center>
 
 
 + TiSpark 深度整合了 Spark Catalyst 引擎, 可以对计算提供精确的控制，使 Spark 能够高效的读取 TiKV 中的数据，提供索引支持以实现高速的点查；
@@ -91,7 +93,7 @@ Spark 的具体配置方式也请参考[官方说明](https://spark.apache.org/d
 
 ## 四、部署 TiSpark
 
-TiSpark 的 jar 包可以在[这里](https://github.com/pingcap/tispark/releases)下载。
+TiSpark 的 jar 包可以在 [TiSpark 2.1.4](https://github.com/pingcap/tispark/releases) 下载。
 
 ### 4.1 已有 Spark 集群的部署方式
 
@@ -111,7 +113,7 @@ TiSpark 的 jar 包可以在[这里](https://github.com/pingcap/tispark/releases
 
 #### 4.2.1 下载安装包并安装
 
-你可以在[这里](https://spark.apache.org/downloads.html)下载 Apache Spark。
+你可以在 [Download Apache Spark](https://spark.apache.org/downloads.html) 下载 Apache Spark。
 
 对于 Standalone 模式且无需 Hadoop 支持，则选择 Spark 2.3.x 或者 Spark 2.4.x 且带有 Hadoop 依赖的 Pre-build with Apache Hadoop 2.x 任意版本。如有需要配合使用的 Hadoop 集群，则选择对应的 Hadoop 版本号。你也可以选择从源代码[自行构建](https://spark.apache.org/docs/latest/building-spark.html)以配合官方 Hadoop 2.x 之前的版本。
 

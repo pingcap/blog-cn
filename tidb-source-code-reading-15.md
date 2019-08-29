@@ -30,7 +30,9 @@ TiDB 的实现代码在 [tidb/executor/merge_join.go](https://github.com/pingcap
 
 下面的图展示了 SMJ 的过程：
 
-![图 1 SMJ 过程](media/tidb-source-code-reading-15/1.png)
+![SMJ 过程](media/tidb-source-code-reading-15/1.png)
+
+<center>SMJ 过程</center>
 
 
 ### 读取内表 / 外表数据

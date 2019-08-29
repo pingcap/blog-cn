@@ -8,7 +8,7 @@ tags: ['TiDB','架构']
 
 >在 TiDB DevCon 2019 上，我司联合创始人兼 CTO 黄东旭分享了对数据库行业大趋势以及未来数据库技术的看法。以下是演讲实录，enjoy~ 
 
-![](media/the-near-future-of-database/dongxu.jpg)
+![我司联合创始人兼 CTO 黄东旭](media/the-near-future-of-database/dongxu.jpg)
 
 <center>我司联合创始人兼 CTO 黄东旭</center>
 
@@ -18,21 +18,21 @@ tags: ['TiDB','架构']
 
 那么在 HTAP 的未来应该是一个什么样子，我希望能够在今年这个 Talk 里面先说一说，但是这个题目起的有点不太谦虚，所以我特地加了一个「Near」， 分享一下这一年、两年、三年我们想做什么，和对行业大趋势的展望。
 
-![](media/the-near-future-of-database/1.png)
+![图 1](media/the-near-future-of-database/1.png)
 
-<center>图1</center>
+<center>图 1</center>
 
 **今天我们的分享的一个主题就是：「我们只做用户想要的东西，并不是要去做一个完美的东西」**。其实很多工程师包括我们自己，都会有一个小小的心理的洁癖，就是想要做一个超级快、超级牛的东西，但是做出来一个数据库，单机跑分一百万 TPS ，其实用户实际业务就需要 3000，然后所有的用户还会说我需要这些东西，比如需要 Scalability（弹性扩展）， Super Large 的数据量，最好是我的业务一行代码都不用改，而且 ACID 能够完全的满足，怎么踹都踹不坏，机器坏了可以高可用，业务层完全不用动， 另外可以在跑 OLTP 的同时，完全不用担心任何资源隔离地跑 OLAP（这里不是要说大家的愿望不切实际，而是非常切实际，我们也觉得数据库本身就应该是这样的。所以大家记住这几个要点，然后慢慢看 TiDB 到底是不是朝着这个方向发展的）。**本质上来说用户的需求就是「大一统」。看过《魔戒》的同学都知道这句话 ：ONE RING TO RULE THEM ALL，就是一套解决方案去解决各种问题**。
 
 过去很多，包括一些行业的大佬之前说在各种环境下都要出一个数据库来解决特定的一个问题，但是其实看上去我们想走的方案还是尽可能在一个平台里面，尽可能大范围去解决用户的问题。因为不同的产品之间去做数据的交互和沟通，其实是蛮复杂的。
 
-![](media/the-near-future-of-database/2.png)
+![图 2 理想中的「赛道」](media/the-near-future-of-database/2.png)
 
 <center>图 2 理想中的「赛道」</center>
 
 这张图（图 2）什么意思呢？就是很多人设计系统的时候，总是会陷入跑分思维，就是说这个东西在实验室或者说在一个特定的 Workload 下，跑得巨快无比。如果大家去看一下大概 2000 年以后关于数据库的论文，很多在做一个新的模型或者新的系统的时候，都会说 TPCC 能够跑到多大，然后把 Oracle 摁在地上摩擦，这样的论文有很多很多很多。但是大家回头看看 Oracle 还是王者。所以大多数实验室的产品和工程师自己做的东西都会陷入一个问题，就是想象中的我的赛道应该是一个图 2 那样的，但实际上用户的业务环境是下面这样的（图 3）。很多大家在广告上看到特别牛的东西，一放到生产环境或者说放到自己的业务场景里面就不对了，然后陷入各种各样的比较和纠结的烦恼之中。
 
-![](media/the-near-future-of-database/3.png)
+![图 3 实际上用户的业务环境](media/the-near-future-of-database/3.png)
 
 <center>图 3 实际上用户的业务环境</center>
 
@@ -41,7 +41,7 @@ TiDB 的定位或者说我们想做的事情，并不是在图 2 那样的赛道
 我们一直在想能不能做一个数据库，怎么踹都踹不坏，然后所有的异常的状况，或者它的 Workload  都是可预期的。我觉得很多人远远低估了这个事情的困难程度，其实我们自己也特别低估了困难程度。大概 4 年前出来创业的时候，我们就是想做这么一个数据库出来，我跟刘奇、崔秋三个人也就三个月做出来了。但是到现在已经 4 年过去了，我们的目标跟当年还是一模一样。不忘初心，不是忘不掉，而是因为初心还没达到，怎么忘？其实把一个数据库做稳，是很难很难的。
 
 
-![](media/the-near-future-of-database/4.png)
+![图 4 近年来硬件的发展](media/the-near-future-of-database/4.png)
 
 <center>图 4 近年来硬件的发展</center>
 
@@ -49,7 +49,7 @@ TiDB 的定位或者说我们想做的事情，并不是在图 2 那样的赛道
 
 举一个例子吧，比如极端一点，大家可能在上世纪八九十年代用过这种 5 寸盘、3 寸盘，我针对这样的磁盘设计一个数据结构，现在看上去是个笑话是吧？因为大家根本没有人用这样的设备了。在数据库这个行业里面很多的假设，在现在新的硬件的环境下其实都是不成立的。比如说，为什么 B-Tree 就一定会比 LSM-Tree 要快呢？不一定啊，我跑到 Flash 或者 NVMe SSD 、Optane 甚至未来的持久化内存这种介质上，那数据结构设计完全就发生变化了。过去可能需要投入很多精力去做的数据结构，现在暴力就好了。
 
-![](media/the-near-future-of-database/5.png)
+![图 5 近年来软件变革](media/the-near-future-of-database/5.png)
 
 <center>图 5 近年来软件变革</center>
 
@@ -57,7 +57,7 @@ TiDB 的定位或者说我们想做的事情，并不是在图 2 那样的赛道
 
 **所以我觉得这几年我们赶上了一个比较好的时代，就是不管是软件还是硬件，还是分布式系统理论上，都有了一些比较大突破，所以我们基础才能够打得比较好**。
 
-![](media/the-near-future-of-database/6.png)
+![图 6  Data Type](media/the-near-future-of-database/6.png)
 
 <center>图 6  Data Type</center>
 
@@ -65,25 +65,25 @@ TiDB 的定位或者说我们想做的事情，并不是在图 2 那样的赛道
 
 所以对 warm data 来说，过去在 TiDB 之前，其实是并没有太好的办法去很优雅的做一层大数据中台架构的，**「the missing part of modern data processing stack」，就是在 warm data 这方面，TiDB 正好去补充了这个位置，所以才能有这么快的增长**。当然这个增长也是得益于 MySQL 社区的流行。
 
-![](media/the-near-future-of-database/7.png)
+![图 7 应用举例](media/the-near-future-of-database/7.png)
 
 <center>图 7 应用举例</center>
 
 想象一下，我们如果在过去要做这样很简单的业务（图 7），比如在美国的订单库跟在中国的订单库可能都是在不同的数据库里，用户库可能是另外一个库，然后不同的业务可能是操作不同的库。如果我想看看美国的消费者里面有哪些在中国有过消费的，就是这么一条 SQL。过去如果没有像 TiDB 这样的东西，大家想象这个东西该怎么做？
 
-![](media/the-near-future-of-database/8.png)
+![图 8 过去的解决方案](media/the-near-future-of-database/8.png)
 
 <center>图 8 过去的解决方案</center>
 
 假如说这两边的数据量都特别大，然后已经分库分表了。过去可能只能第二天才可以看到前一天的数据，因为中间比如说一个 T+1  要做一个 ETL 到一个 data ware house 里。或者厉害一点的架构师可能会说，我可以做一套实时的 OLAP 来做这个事情，怎么做呢？比如说 MySQL 中间通过一个 MQ 再通过 Hadoop 做一下 ETL，然后再导到 Hadoop 上做一个冷的数据存储，再在上面去跑一个 OLAP 做实时的分析。先不说这个实时性到底有多「实时」，大家仔细算一算，这套架构需要的副本数有多少，比如 M 是我的业务数，N 是每一个系统会存储的 Replica，拍脑袋算一下就是下面这个数字（图 9 中的 **R** ）。
 
-![](media/the-near-future-of-database/9.png)
+![图 9 过去解决方案里需要的 Replica 数量](media/the-near-future-of-database/9.png)
 
 <center>图 9 过去解决方案里需要的 Replica 数量</center>
 
 所以大家其实一开始在过去说，TiDB 这个背后这么多 Replica  不好，但其实你想想，你自己在去做这个业务的时候，大家在过去又能怎么样呢？所以我觉得 TiDB 在这个场景下去统一一个中台，是一个大的趋势。今天在社区实践分享上也看到很多用户都要提到了 TiDB 在中台上非常好的应用。
 
-![](media/the-near-future-of-database/10.png)
+![图 10 现在的解决方案](media/the-near-future-of-database/10.png)
 
 <center>图 10 现在的解决方案 </center>
 
@@ -93,7 +93,7 @@ TiDB 的定位或者说我们想做的事情，并不是在图 2 那样的赛道
 
 第一个大的趋势就是日志，「log is the new database」 这句话应该也是业界的一个共识吧。现在如果有一个分布式数据库的复制协议，还是同步一个逻辑语句过去，或者做 binlog 的复制，那其实还算比较 low 的。
 
-![](media/the-near-future-of-database/11.png)
+![图 11  Log is the new database](media/the-near-future-of-database/11.png)
 
 <center>图 11  Log is the new database </center>
 
@@ -107,14 +107,14 @@ TiDB 的定位或者说我们想做的事情，并不是在图 2 那样的赛道
 
 第二个大趋势是全面的向量化。向量化是什么意思？我举个简单的例子。比如我要去算一个聚合，从一个表里面去求某一列的总量数据，如果我是一个行存的数据库，我只能把这条记录的 C 取出来，然后到下一条记录，再取再取再取，整个 Runtime 的开销也好，还有去扫描、读放大的每一行也好，都是很有问题的。但是如果在内存里面已经是一个列式存储，是很紧凑的结构的话，那会是非常快的。
 
-![](media/the-near-future-of-database/12.png)
+![图 12 TiDB 向量化面临的挑战](media/the-near-future-of-database/12.png)
 
 <center>图 12 TiDB 向量化面临的挑战</center>
 
 这里面其实也有一些挑战。我们花了大概差不多 2018 年一年的时间去做向量化的改造，其实还挺难的。为什么？首先 TiDB SQL 引擎是用了 Volcano 模型，这个模型很简单，就是遍历一棵物理计划的树，不停的调 Next，每一次 Next 都是调用他的子节点的 Next，然后再返回结果。这个模型有几个问题：第一是每一次都是拿一行，导致 CPU 的 L1、L2 这样的缓存利用率很差，就是说没有办法利用多 CPU 的 Cache。第二，在真正实现的时候，它内部的架构是一个多级的虚函数调用。大家知道虚函数调用在 Runtime  本身的开销是很大的，在[《MonetDB/X100: Hyper-Pipelining Query Execution》](http://cidrdb.org/cidr2005/papers/P19.pdf)里面提到，在跑 TPC-H 的时候，Volcano 模型在 MySQL 上跑，大概有 90% 的时间是花在 MySQL 本身的 Runtime  上，而不是真正的数据扫描。所以这就是 Volcano 模型一个比较大的问题。第三，如果使用一个纯静态的列存的数据结构，大家知道列存特别大问题就是它的更新是比较麻烦的， 至少过去在 TiFlash 之前，没有一个列存数据库能够支持做增删改查。那在这种情况下，怎么保证数据的新鲜？这些都是问题。
 
 
-![](media/the-near-future-of-database/13.png)
+![图 13 TiDB SQL 引擎向量化](media/the-near-future-of-database/13.png)
 
 <center>图 13 TiDB SQL 引擎向量化</center>
 
@@ -125,7 +125,7 @@ TiDB 已经迈出了第一步，我们已经把 TiDB SQL 引擎的 Volcano 模�
 另外一个比较大的话题，是 Workload Isolation。今天我们在演示的各种东西都有一个中心思想，就是怎么样尽可能地把 OLTP 跟 OLAP 隔离开。这个问题在业界也有不同的声音，包括我们的老前辈 Google Spanner，他们其实是想做一个新的数据结构，来替代 Bigtable-Like SSTable 数据结构，这个数据结构叫 Ressi，大家去看 2018 年 《Spanner: Becoming a SQL System》这篇 Paper 就能看到。它其实表面上看还是行存，但内部也是一个 Chunk 变成列存这样的一个结构。但我们觉得即使是换一个新的数据结构，也没有办法很好做隔离，因为毕竟还是在一台机器上，在同一个物理资源上。最彻底的隔离是物理隔离。
 
 
-![](media/the-near-future-of-database/14.png)
+![图 14 TiFlash 架构](media/the-near-future-of-database/14.png)
 
 <center>图 14 TiFlash 架构</center>
 
@@ -137,14 +137,14 @@ TiDB 已经迈出了第一步，我们已经把 TiDB SQL 引擎的 Volcano 模�
 
 说完了存储层，接下来说一说执行器。TiDB 在接下来会做一个很重要的工作，就是全面地 leverage  SIMD 的计算。我先简单科普一下 SIMD 是什么。
 
-![](media/the-near-future-of-database/15.png)
+![图 15 SIMD 原理举例（1/2）](media/the-near-future-of-database/15.png)
 
 
 <center>图 15 SIMD 原理举例（1/2）</center>
 
 如图 15，在做一些聚合的时候，有这样一个函数，我要去做一个求和。正常人写程序，他就是一个 for 循环，做累加。但是在一个数据库里面，如果有一百亿条数据做聚合，每一次执行这条操作的时候，CPU 的这个指令是一次一次的执行，数据量特别大或者扫描的行数特别多的时候，就会很明显的感受到这个差别。
 
-![](media/the-near-future-of-database/16.png)
+![图 16 SIMD 原理举例（2/2）](media/the-near-future-of-database/16.png)
 
 <center>图 16 SIMD 原理举例（2/2）</center>
 
@@ -155,7 +155,7 @@ TiDB 已经迈出了第一步，我们已经把 TiDB SQL 引擎的 Volcano 模�
 ## 5. Dynamic Data placement
 
 
-![](media/the-near-future-of-database/17.png)
+![图 17 Dynamic Data placement (1/2)分库分表方案与 TiDB 对比](media/the-near-future-of-database/17.png)
 
 <center>图 17 Dynamic Data placement (1/2)分库分表方案与 TiDB 对比</center>
 
@@ -165,7 +165,7 @@ TiDB 已经迈出了第一步，我们已经把 TiDB SQL 引擎的 Volcano 模�
 
 在这个架构下，甚至未来我们还能让 AI 来帮忙。把分片操作放到 PD 里面，它就像一个 DBA 一样，甚至预测 Workload 给出数据分布操作。比如课程报名数据库系统，系统发现可能明天会是报名高峰，就事先把数据给切分好，放到更好的机器上。这在传统方案下是都需要人肉操作，其实这些事情都应该是自动化的。
 
-![](media/the-near-future-of-database/18.png)
+![图 18 Dynamic Data placement (2/2)](media/the-near-future-of-database/18.png)
 
 <center>图 18 Dynamic Data placement (2/2)</center>
 
@@ -175,7 +175,7 @@ TiDB 已经迈出了第一步，我们已经把 TiDB SQL 引擎的 Volcano 模�
 
 ## 6. Storage and Computing Seperation
 
-![](media/the-near-future-of-database/19.png)
+![图 19 存储计算分离](media/the-near-future-of-database/19.png)
 
 <center>图 19 存储计算分离</center>
 
@@ -183,7 +183,7 @@ TiDB 已经迈出了第一步，我们已经把 TiDB SQL 引擎的 Volcano 模�
 
 ## 7. Everything is Pluggable
 
-![](media/the-near-future-of-database/20.png)
+![图 20 Everything is Pluggable](media/the-near-future-of-database/20.png)
 
 <center>图 20 Everything is Pluggable</center>
 
@@ -191,13 +191,13 @@ TiDB 已经迈出了第一步，我们已经把 TiDB SQL 引擎的 Volcano 模�
 
 ## 8. Distributed Transaction
 
-![](media/the-near-future-of-database/21.png)
+![图 21 Distributed Transaction（1/2）](media/the-near-future-of-database/21.png)
 
 <center>图 21 Distributed Transaction（1/2）</center>
 
 说到分布式事务，我也分享一下我的观点。**目前看上去，ACID 事务肯定是必要的**。我们仍然还没有太多更好的办法，除了 Google 在这块用了原子钟，Truetime 非常牛，我们也在研究各种新型的时钟的技术，但是要把它推广到整个开源社区也不太可能。当然，时间戳，不管是用硬件还是软件分配，仍然是我们现在能拥有最好的东西， 因为如果要摆脱中心事务管理器，时间戳还是很重要的。**所以在这方面的挑战就会变成：怎么去减少两阶段提交带来的网络的 round-trips？或者如果有一个时钟的 PD 服务，怎么能尽可能的少去拿时间戳？**
 
-![](media/the-near-future-of-database/22.png)
+![图 22 Distributed Transaction（2/2）](media/the-near-future-of-database/22.png)
 
 <center>图 22 Distributed Transaction（2/2）</center>
 
@@ -205,13 +205,13 @@ TiDB 已经迈出了第一步，我们已经把 TiDB SQL 引擎的 Volcano 模�
 
 ## 9. Cloud-Native Architecture
 
-![](media/the-near-future-of-database/23.png)
+![图 23 Cloud-Native](media/the-near-future-of-database/23.png)
 
 <center>图 23 Cloud-Native</center>
 
 另外一点就是 Cloud-Native。刚刚中午有一个社区小伙伴问我，你们为什么不把多租户做在 TiDB 的系统内部？**我想说「数据库就是数据库」，它并不是一个操作系统，不是一个容器管理平台。我们更喜欢模块和结构化更清晰的一个做事方式。**而且 Kubernetes 在这块已经做的足够好了 ，我相信未来 K8s 会变成集群的新操作系统，会变成一个 Linux。比如说如果你单机时代做一个数据库，你会在你的数据库里面内置一个操作系统吗？肯定不会。所以这个模块抽象的边界，在这块我还是比较相信 K8s 的。《Large-scale cluster management at Google with Borg》这篇论文里面提到了一句话，BigTable 其实也跑在 Borg 上。
 
-![](media/the-near-future-of-database/24.png)
+![图 24 TiDB 社区小伙伴的愿望列表](media/the-near-future-of-database/24.png)
 
 <center>图 24 TiDB 社区小伙伴的愿望列表</center>
 

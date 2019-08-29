@@ -17,7 +17,9 @@ tags: ['TiDB Binlog','社区']
 
 ## TiDB Binlog 架构
 
-![](media/tidb-binlog-open-source/1.png)
+![TiDB Binlog 架构](media/tidb-binlog-open-source/1.png)
+
+<center>TiDB Binlog 架构</center>
 
 ## TiDB Binlog 核心特性
 

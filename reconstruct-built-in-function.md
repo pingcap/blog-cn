@@ -8,7 +8,7 @@ tags: ['TiDB','社区','Contributor']
 
 这是十分钟成为 TiDB Contributor 系列的第二篇文章，让大家可以无门槛参与大型开源项目，感谢社区为 TiDB 带来的贡献，也希望参与 TiDB Community 能为你的生活带来更多有意义的时刻。
 
-为了加速表达式计算速度，最近我们对表达式的计算框架进行了重构，这篇教程为大家分享如何利用新的计算框架为 TiDB 重写或新增 built-in 函数。对于部分背景知识请参考[这篇文章](./add-a-built-in-function.md)，本文将首先介绍利用新的表达式计算框架重构 built-in 函数实现的流程，然后以一个函数作为示例进行详细说明，最后介绍重构前后表达式计算框架的区别。
+为了加速表达式计算速度，最近我们对表达式的计算框架进行了重构，这篇教程为大家分享如何利用新的计算框架为 TiDB 重写或新增 built-in 函数。对于部分背景知识请参考[《十分钟成为 TiDB Contributor 系列 | 添加內建函数》](./add-a-built-in-function.md)这篇文章，本文将首先介绍利用新的表达式计算框架重构 built-in 函数实现的流程，然后以一个函数作为示例进行详细说明，最后介绍重构前后表达式计算框架的区别。
 
 ## 重构 built-in 函数整体流程
 
@@ -193,7 +193,7 @@ select * from t where c1 + CONCAT( c2, c3 < “1.1” )
 对于上述 select 语句 where 条件中的表达式：
 在**编译阶段**，TiDB 将构建出如下图所示的表达式树:
 
-![](media/reconstruct-built-in-function/1.jpg)
+![编译阶段表达式树 1](media/reconstruct-built-in-function/1.jpg)
 
 在**执行阶段**，调用根节点的 eval 方法，通过后续遍历表达式树对表达式进行计算。
 
@@ -213,7 +213,7 @@ select * from t where c1 + CONCAT( c2, c3 < “1.1” )
 
 继续以上文提到的查询为例，在**编译阶段**，生成的表达式树如下图所示，对于不符合函数参数类型的表达式，为其加上一层 cast 函数进行类型转换；
 
-![](media/reconstruct-built-in-function/2.jpg)
+![编译阶段表达式树 2](media/reconstruct-built-in-function/2.jpg)
 
 
 这样，在**执行阶段**，对于每一个 ScalarFunction，可以保证其所有的参数类型一定是符合该表达式运算规则的数据类型，无需在执行过程中再对参数类型进行检查和转换。
@@ -260,4 +260,4 @@ TiDB Contributor Club 将大家聚集起来，我们互相分享、讨论，一�
 
 加入 TiDB Contributor Club 请添加我们的 AI 微信：
 
-![](media/reconstruct-built-in-function/3.jpg)
+![二维码](media/reconstruct-built-in-function/3.jpg)
