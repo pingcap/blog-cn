@@ -1,4 +1,3 @@
-
 ---
 title: TiDB 在海航易建科技与香港航空研发收益支持系统过程中的实践
 author: ['王碧虹']
@@ -62,7 +61,7 @@ TiDB是 PingCAP 公司受 Google Spanner / F1论文启发而设计的开源�
 
 TiDB 适用于 100% 的 OLTP 场景和 80% 的 OLAP 场景。对业务没有任何侵入性，能优雅的替换传统的数据库中间件、数据库分库分表等 Sharding 方案。同时它也让开发运维人员不用关注数据库 Scale 的细节问题，专注于业务开发，极大的提升研发的生产力。
 
-参考：[https://pingcap.github.io/docs-cn/overview](https://pingcap.github.io/docs-cn/overview)
+参考：[TiDB 简介](https://pingcap.com/docs-cn/v3.0/overview/)
 
 ### TiDB的架构
 
@@ -90,7 +89,7 @@ PlacementDriver (简称 PD) 是整个集群的管理模块，其主要工作有�
 
 TiKV Server 负责存储数据，从外部看 TiKV 是一个分布式的提供事务的 Key-Value 存储引擎。存储数据的基本单位是 Region，每个 Region 负责存储一个 Key Range 的数据，每个 TiKV 节点会负责多个 Region 。TiKV 使用 Raft 协议做复制，保持数据的一致性和容灾。副本以 Region 为单位进行管理，不同节点上的多个 Region 构成一个 Raft Group，互为副本。数据在多个 TiKV 之间的负载均衡由 PD 调度，以 Region 为单位进行调度。
 
-参考：[https://pingcap.github.io/docs-cn/overview](https://pingcap.github.io/docs-cn/overview)
+参考：[TiDB 简介](https://pingcap.com/docs-cn/v3.0/overview/)
 
 ## TiDB在易建
 
