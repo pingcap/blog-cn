@@ -52,7 +52,7 @@ TiDB 是由 PingCAP 开发的分布式关系型数据库，今天我们很高兴
 
 在制定查询计划时，会根据现有的统计信息估算出需要处理的数据量；在执行查询计划时，会统计出真实处理的数据量。TiDB 会根据这两个值之间的差距来更新统计信息，包括直方图和 CM-Sketch。在我们的测试中，对于一个完全没有统计信息的表，经过十轮左右的更新，可以达到统计信息基本稳定的状态。这对于维持正确的查询计划非常重要。
 
-除了动态增量更新之外，我们对自动全量 Analyze 也提供了更多支持，可以通过 [系统变量](https://www.pingcap.com/docs-cn/sql/statistics/#%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0) 指定做自动 Analyze 的时间段。
+除了动态增量更新之外，我们对自动全量 Analyze 也提供了更多支持，可以通过 [系统变量](https://pingcap.com/docs-cn/sql/statistics/#%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0) 指定做自动 Analyze 的时间段。
 
 ### 并行 DDL
 
@@ -64,7 +64,7 @@ TiDB 所有的 DDL 操作都是 Online 进行，不过在 2.0 以及之前的版
 
 Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随 MySQL 的 Explain 输出格式来展示查询计划。但是当 SQL 比较复杂时，MySQL 的格式并不利于展示算子之间的层级关系，不利于用户定位问题。
 
-2.1 版本中，我们使用缩进来展示算子之间的层级关系，对每个算子的详细信息也做了优化，希望整个查询计划一目了然，帮助用户尽快定位问题。[Understand the Query Execution Plan](https://www.pingcap.com/docs/sql/understanding-the-query-execution-plan/) 这篇文档可以帮助用户了解 TiDB 的查询计划。
+2.1 版本中，我们使用缩进来展示算子之间的层级关系，对每个算子的详细信息也做了优化，希望整个查询计划一目了然，帮助用户尽快定位问题。[Undershttps://pingcap.comn Plan](https://pingcap.com/docs/sql/understanding-the-query-execution-plan/) 这篇文档可以帮助用户了解 TiDB 的查询计划。
 
 用户除了通过 Explain 语句查看查询计划之外，在 2.1 版本中还可以通过 Explain Analyze 语句查看语句的运行时信息，包括每个算子运行时的处理时间以及处理的数据量。这样可以通过实际的运行结果，拿到更加精确的信息。
 
