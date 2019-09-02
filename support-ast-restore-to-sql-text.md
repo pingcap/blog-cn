@@ -11,7 +11,7 @@ tags: ['TiDB', 'Contributor', 'SQL', '社区']
 
 SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST（抽象语法树），AST 节点与 SQL 文本结构是一一对应的，我们通过遍历整个 AST 树就可以拼接出一个与 AST 语义相同的 SQL 文本。
 
-对 parser 不熟悉的小伙伴们可以看 [TiDB 源码阅读系列文章（五）TiDB SQL Parser 的实现](https://www.pingcap.com/blog-cn/tidb-source-code-reading-5/)。
+对 parser 不熟悉的小伙伴们可以看 [TiDB 源码阅读系列文章（五）TiDB SQL Parser 的实现](https://pingcap.com/blog-cn/tidb-source-code-reading-5/)。
 
 为了控制 SQL 文本的输出格式，并且为方便未来新功能的加入（例如在 SQL 文本中用 “*” 替代密码），我们引入了 `RestoreFlags` 并封装了 `RestoreCtx` 结构（[相关源码](https://github.com/pingcap/parser/blob/9339d225378fa9b50e1bf8373c2040524b96c6af/ast/util.go#L78)）：
 

@@ -199,4 +199,4 @@ i j k l m
 
 # 写在最后
 
-INSERT 语句是所有 DML 语句中最复杂，功能最强大多变的一个。其既有像 `INSERT ON DUPLICATE UPDATE` 这种能执行 INSERT 也能执行 UPDATE 的语句，也有像 REPLACE 这种一行数据能影响许多行数据的语句。INSERT 语句自身都可以连接一个 SELECT 语句作为待插入数据的输入，因此，其又受到了来自 planner 的影响（关于 planner 的部分详见相关的源码阅读文章： [（七）基于规则的优化](https://www.pingcap.com/blog-cn/tidb-source-code-reading-7/) 和 [（八）基于代价的优化](https://www.pingcap.com/blog-cn/tidb-source-code-reading-8/)）。熟悉 TiDB 的 INSERT 各个语句实现，可以帮助各位读者在将来使用这些语句时，更好地根据其特色使用最为合理、高效语句。另外，如果有兴趣向 TiDB 贡献代码的读者，也可以通过本文更快的理解这部分的实现。
+INSERT 语句是所有 DML 语句中最复杂，功能最强大多变的一个。其既有像 `INSERT ON DUPLICATE UPDATE` 这种能执行 INSERT 也能执行 UPDATE 的语句，也有像 REPLACE 这种一行数据能影响许多行数据的语句。INSERT 语句自身都可以连接一个 SELECT 语句作为待插入数据的输入，因此，其又受到了来自 planner 的影响（关于 planner 的部分详见相关的源码阅读文章： [（七）基于规则的优化](https://pingcap.com/blog-cn/tidb-source-code-reading-7/) 和 [（八）基于代价的优化](https://pingcap.com/blog-cn/tidb-source-code-reading-8/)）。熟悉 TiDB 的 INSERT 各个语句实现，可以帮助各位读者在将来使用这些语句时，更好地根据其特色使用最为合理、高效语句。另外，如果有兴趣向 TiDB 贡献代码的读者，也可以通过本文更快的理解这部分的实现。

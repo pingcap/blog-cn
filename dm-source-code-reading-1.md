@@ -22,7 +22,7 @@ tags: ['DM 源码阅读','社区']
 
 *   基本的后端服务知识，比如后台服务进程管理、RPC 工作原理等。
 
-总体而言，读者需要有一定 MySQL/TiDB 的使用经验，了解 MySQL 数据备份和主从同步的原理，以及可以读懂 Go 语言程序。在阅读 DM 源码之前，可以先从阅读[《TiDB-DM 架构设计与实现原理》](https://www.pingcap.com/blog-cn/tidb-ecosystem-tools-3/)入手，并且参考 [使用文档](https://pingcap.com/docs-cn/tools/dm/overview/) 在本地搭建一个 DM 的测试环境，从基础原理和使用对 DM 有一个初步的认识，然后再进一步分析源码，深入理解代码的设计和实现。
+总体而言，读者需要有一定 MySQL/TiDB 的使用经验，了解 MySQL 数据备份和主从同步的原理，以及可以读懂 Go 语言程序。在阅读 DM 源码之前，可以先从阅读[《TiDB-DM 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)入手，并且参考 [使用文档](https://pingcap.com/docs-cn/tools/dm/overview/) 在本地搭建一个 DM 的测试环境，从基础原理和使用对 DM 有一个初步的认识，然后再进一步分析源码，深入理解代码的设计和实现。
 
 ## 内容概要
 

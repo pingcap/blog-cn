@@ -6,7 +6,7 @@ summary: 本篇将为大家介绍 rust-prometheus 的更多高级功能的实现
 tags: ['TiKV 源码解析','Prometheus','社区']
 ---
 
-> 本文为 TiKV 源码解析系列的第四篇，接上篇继续为大家介绍 [rust-prometheus]。[《TiKV 源码解析系列文章（三）Prometheus（上）》](https://www.pingcap.com/blog-cn/tikv-source-code-reading-3/) 主要介绍了基础知识以及最基本的几个指标的内部工作机制，本篇会进一步介绍更多高级功能的实现原理。
+> 本文为 TiKV 源码解析系列的第四篇，接上篇继续为大家介绍 [rust-prometheus]。[《TiKhttps://pingcap.com（上）》](https://pingcap.com/blog-cn/tikv-source-code-reading-3/) 主要介绍了基础知识以及最基本的几个指标的内部工作机制，本篇会进一步介绍更多高级功能的实现原理。
 
 与上篇一样，以下内部实现都基于本文发布时最新的 rust-prometheus 0.5 版本代码，目前我们正在开发 1.0 版本，API 设计上会进行一些简化，实现上出于效率考虑也会和这里讲解的略微有一些出入，因此请读者注意甄别。
 

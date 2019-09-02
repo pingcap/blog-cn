@@ -6,7 +6,7 @@ summary: Titan 是由 PinCAP 研发的一个基于 RocksDB 的高性能单机 ke
 tags: ['Titan','TiKV','RocksDB','LSM-tree']
 ---
 
-[Titan](https://github.com/pingcap/rocksdb/tree/titan-5.15) 是由 [PingCAP](https://www.pingcap.com/) 研发的一个基于 [RocksDB](https://github.com/facebook/rocksdb) 的高性能单机 key-value 存储引擎，其主要设计灵感来源于 USENIX FAST 2016 上发表的一篇论文 [WiscKey](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)。`WiscKey` 提出了一种高度基于 SSD 优化的设计，利用 SSD 高效的随机读写性能，通过将 value 分离出 `LSM-tree` 的方法来达到降低写放大的目的。
+[Titan](https://github.com/pingcap/rocksdb/tree/titan-5.15) 是由 [PingCAP](https://pingcap.com/) 研发的一个基于 [RocksDB](https://github.com/facebook/rocksdb) 的高性能单机 key-value 存储引擎，其主要设计灵感来源于 USENIX FAST 2016 上发表的一篇论文 [WiscKey](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)。`WiscKey` 提出了一种高度基于 SSD 优化的设计，利用 SSD 高效的随机读写性能，通过将 value 分离出 `LSM-tree` 的方法来达到降低写放大的目的。
 
 我们的基准测试结果显示，当 value 较大的时候，Titan 在写、更新和点读等场景下性能都优于 RocksDB。但是根据  [`RUM Conjecture`](http://daslab.seas.harvard.edu/rum-conjecture/)，通常某些方面的提升往往是以牺牲其他方面为代价而取得的。Titan 便是以牺牲硬盘空间和范围查询的性能为代价，来取得更高的写性能。随着 SSD 价格的降低，我们认为这种取舍的意义会越来越明显。
 
