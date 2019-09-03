@@ -80,34 +80,34 @@ tags: ['TiKV 源码解析','社区']
 
    可见，User Key 顺序是 `abc < abc\x00..\x00`，但写入的 Key 顺序却是 `abc\x00\x00..\x05 > abc\x00\x00..\x00\x00\x00..\x10`。显然，在这之后，我们若想要有序地扫数据就会面临巨大的挑战。因此需要对 User Key 进行编码：
 
-   Example 1:
+    Example 1:
 
-   ```text
-   User Key:      abc
-   Encoded:       abc\x00\x00\x00\x00\x00\xFA
+    ```text
+    User Key:      abc
+    Encoded:       abc\x00\x00\x00\x00\x00\xFA
                   ^^^                    ^^^^
                   Key                    Pad=5
                      ^^^^^^^^^^^^^^^^^^^^
                      Padding
-   ```
+    ```
 
-   Example 2:
+    Example 2:
 
-   ```text
-   User Key:      abc\x00\x00\x00\x00\x00\x00\x00\x00
-   Encoded[0..9]: abc\x00\x00\x00\x00\x00\xFF
+    ```text
+    User Key:      abc\x00\x00\x00\x00\x00\x00\x00\x00
+    Encoded[0..9]: abc\x00\x00\x00\x00\x00\xFF
                   ^^^^^^^^^^^^^^^^^^^^^^^
                   Key[0..8]
                                          ^^^^
                                          Pad=0
-   Encoded[9..]:  \x00\x00\x00\x00\x00\x00\x00\x00\xFA
+    Encoded[9..]:  \x00\x00\x00\x00\x00\x00\x00\x00\xFA
                   ^^^^^^^^^^^^                    ^^^^
                   Key[8..11]                      Pad=5
                               ^^^^^^^^^^^^^^^^^^^^
                               Padding
-   ```
+    ```
 
-   编码后的 Key 无论后面再追加什么 8 字节的 Timestamp，都能保持原来的顺序。
+    编码后的 Key 无论后面再追加什么 8 字节的 Timestamp，都能保持原来的顺序。
 
 3. TiKV 在 Key 中存储的 Timestamp（无论是 `start_ts` 还是 `commit_ts`）都是 Timestamp 取反后的结果，其目的是让较新的数据（即 Timestamp 比较大的数据）排列在较老的数据（即 Timestamp 比较小的数据）前面。扫数据的流程利用了这个特性优化性能，继续阅读本文可以有所感受。后面本文中关于时间戳的部分将写作 `{!ts}` 来反映这个取反操作。
 
