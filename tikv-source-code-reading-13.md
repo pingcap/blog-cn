@@ -41,29 +41,29 @@ tags: ['TiKV 源码解析','社区']
 
 - 事务 #1：
 
-  | Write Key   | Write Value | Default Key | Default Value |
-  |:-------------|:-------------|:-------------|:---------------|
-  | `{foo}{0x03}`  | type=PUT, start_ts=0x01 | `{foo}{0x01}`  | `foo_value`     |
-  | `{bar}{0x03}`  | type=PUT, start_ts=0x01 | `{bar}{0x01}`  | `bar_value`     |
+    | Write Key   | Write Value | Default Key | Default Value |
+    |:-------------|:-------------|:-------------|:---------------|
+    | `{foo}{0x03}`  | type=PUT, start_ts=0x01 | `{foo}{0x01}`  | `foo_value`     |
+    | `{bar}{0x03}`  | type=PUT, start_ts=0x01 | `{bar}{0x01}`  | `bar_value`     |
 
 - 事务 #2：
 
-  | Write Key     | Write Value  | Default Key  | Default Value  |
-  |:--------------|:-------------|:-------------|:---------------|
-  | `{foo}{0x13}`  | type=PUT, start_ts=0x11 | `{foo}{0x11}`  | `foo_value2`   |
-  | `{box}{0x13}`  | type=PUT, start_ts=0x11 | `{box}{0x11}`  | `box_value`    |
+    | Write Key     | Write Value  | Default Key  | Default Value  |
+    |:--------------|:-------------|:-------------|:---------------|
+    | `{foo}{0x13}`  | type=PUT, start_ts=0x11 | `{foo}{0x11}`  | `foo_value2`   |
+    | `{box}{0x13}`  | type=PUT, start_ts=0x11 | `{box}{0x11}`  | `box_value`    |
 
 - 事务 #3：
 
-  | Write Key   | Write Value | Default Key | Default Value |
-  |:-------------|:-------------|:-------------|:---------------|
-  | `{abc}{0x23}` | type=DELETE, start_ts=0x21 |             |               |
+    | Write Key   | Write Value | Default Key | Default Value |
+    |:-------------|:-------------|:-------------|:---------------|
+    | `{abc}{0x23}` | type=DELETE, start_ts=0x21 |             |               |
 
 - 事务 #4：
 
-  | Write Key   | Write Value | Default Key | Default Value |
-  |:-------------|:-------------|:-------------|:---------------|
-  | `{box}{0x33}` | type=DELETE, start_ts=0x31 |             |               |
+    | Write Key   | Write Value | Default Key | Default Value |
+    |:-------------|:-------------|:-------------|:---------------|
+    | `{box}{0x33}` | type=DELETE, start_ts=0x31 |             |               |
 
 实际在 RocksDB 中存储的数据与上面表格里写的略微不一样，主要区别有：
 
@@ -73,10 +73,10 @@ tags: ['TiKV 源码解析','社区']
 
    例如，假设我们依次写入 `abc`、`abc\x00..\x00` 两个 User Key，在不进行 Padding 的情况下：
 
-   | User Key         | Start Ts | 写入的 Key       |
-   |:------------------|:----------|:-----------------|
-   | `abc`            | 0x05     | `abc\x00\x00..\x05` |
-   | `abc\x00..\x00`  | 0x10     | `abc\x00\x00..\x00\x00\x00..\x10` |
+    | User Key         | Start Ts | 写入的 Key       |
+    |:------------------|:----------|:-----------------|
+    | `abc`            | 0x05     | `abc\x00\x00..\x05` |
+    | `abc\x00..\x00`  | 0x10     | `abc\x00\x00..\x00\x00\x00..\x10` |
 
    可见，User Key 顺序是 `abc < abc\x00..\x00`，但写入的 Key 顺序却是 `abc\x00\x00..\x05 > abc\x00\x00..\x00\x00\x00..\x10`。显然，在这之后，我们若想要有序地扫数据就会面临巨大的挑战。因此需要对 User Key 进行编码：
 
