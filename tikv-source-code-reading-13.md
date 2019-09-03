@@ -41,29 +41,29 @@ tags: ['TiKV 源码解析','社区']
  
 - 事务 #1：
  
- | Write Key   | Write Value | Default Key | Default Value |
- |-------------|-------------|-------------|---------------|
- | `{foo}{0x03}`  | type=PUT, start_ts=0x01 | `{foo}{0x01}`  | `foo_value`     |
- | `{bar}{0x03}`  | type=PUT, start_ts=0x01 | `{bar}{0x01}`  | `bar_value`     |
+  | Write Key   | Write Value | Default Key | Default Value |
+  |-------------|-------------|-------------|---------------|
+  | `{foo}{0x03}`  | type=PUT, start_ts=0x01 | `{foo}{0x01}`  | `foo_value`     |
+  | `{bar}{0x03}`  | type=PUT, start_ts=0x01 | `{bar}{0x01}`  | `bar_value`     |
  
 - 事务 #2：
  
- | Write Key    | Write Value | Default Key | Default Value |
- |--------------|-------------|-------------|---------------|
- | `{foo}{0x13}`  | type=PUT, start_ts=0x11 | `{foo}{0x11}`  | `foo_value2`   |
- | `{box}{0x13}`  | type=PUT, start_ts=0x11 | `{box}{0x11}`  | `box_value`    |
+  | Write Key    | Write Value | Default Key | Default Value |
+  |--------------|-------------|-------------|---------------|
+  | `{foo}{0x13}`  | type=PUT, start_ts=0x11 | `{foo}{0x11}`  | `foo_value2`   |
+  | `{box}{0x13}`  | type=PUT, start_ts=0x11 | `{box}{0x11}`  | `box_value`    |
  
 - 事务 #3：
  
- | Write Key   | Write Value | Default Key | Default Value |
- |-------------|-------------|-------------|---------------|
- | `{abc}{0x23}` | type=DELETE, start_ts=0x21 |             |               |
+  | Write Key   | Write Value | Default Key | Default Value |
+  |-------------|-------------|-------------|---------------|
+  | `{abc}{0x23}` | type=DELETE, start_ts=0x21 |             |               |
  
 - 事务 #4：
  
- | Write Key   | Write Value | Default Key | Default Value |
- |-------------|-------------|-------------|---------------|
- | `{box}{0x33}` | type=DELETE, start_ts=0x31 |             |               |
+  | Write Key   | Write Value | Default Key | Default Value |
+  |-------------|-------------|-------------|---------------|
+  | `{box}{0x33}` | type=DELETE, start_ts=0x31 |             |               |
  
 实际在 RocksDB 中存储的数据与上面表格里写的略微不一样，主要区别有：
  
@@ -71,43 +71,43 @@ tags: ['TiKV 源码解析','社区']
  
 2. User Key 会被按照 Memory Comparable Encoding 方式进行编码，编码算法是以 8 字节为单位进行 Padding。这个操作确保了我们在 User Key 后面追加 `start_ts` 或 `commit_ts` 之后实际写入的 Key 能保持与 User Key 具有相同的顺序。
  
-  例如，假设我们依次写入 `abc`、`abc\x00..\x00` 两个 User Key，在不进行 Padding 的情况下：
+   例如，假设我们依次写入 `abc`、`abc\x00..\x00` 两个 User Key，在不进行 Padding 的情况下：
  
-  | User Key         | Start Ts | 写入的 Key       |
-  |------------------|----------|-----------------|
-  | `abc`            | 0x05     | `abc\x00\x00..\x05` |
-  | `abc\x00..\x00`  | 0x10     | `abc\x00\x00..\x00\x00\x00..\x10` |
+   | User Key         | Start Ts | 写入的 Key       |
+   |------------------|----------|-----------------|
+   | `abc`            | 0x05     | `abc\x00\x00..\x05` |
+   | `abc\x00..\x00`  | 0x10     | `abc\x00\x00..\x00\x00\x00..\x10` |
  
-  可见，User Key 顺序是 `abc < abc\x00..\x00`，但写入的 Key 顺序却是 `abc\x00\x00..\x05 > abc\x00\x00..\x00\x00\x00..\x10`。显然，在这之后，我们若想要有序地扫数据就会面临巨大的挑战。因此需要对 User Key 进行编码：
+   可见，User Key 顺序是 `abc < abc\x00..\x00`，但写入的 Key 顺序却是 `abc\x00\x00..\x05 > abc\x00\x00..\x00\x00\x00..\x10`。显然，在这之后，我们若想要有序地扫数据就会面临巨大的挑战。因此需要对 User Key 进行编码：
  
-  Example 1:
+   Example 1:
  
-  ```text
-  User Key:      abc
-  Encoded:       abc\x00\x00\x00\x00\x00\xFA
+   ```text
+   User Key:      abc
+   Encoded:       abc\x00\x00\x00\x00\x00\xFA
                  ^^^                    ^^^^
                  Key                    Pad=5
                     ^^^^^^^^^^^^^^^^^^^^
                     Padding
-  ```
+   ```
  
-  Example 2:
+   Example 2:
  
-  ```text
-  User Key:      abc\x00\x00\x00\x00\x00\x00\x00\x00
-  Encoded[0..9]: abc\x00\x00\x00\x00\x00\xFF
+   ```text
+   User Key:      abc\x00\x00\x00\x00\x00\x00\x00\x00
+   Encoded[0..9]: abc\x00\x00\x00\x00\x00\xFF
                  ^^^^^^^^^^^^^^^^^^^^^^^
                  Key[0..8]
                                         ^^^^
                                         Pad=0
-  Encoded[9..]:  \x00\x00\x00\x00\x00\x00\x00\x00\xFA
+   Encoded[9..]:  \x00\x00\x00\x00\x00\x00\x00\x00\xFA
                  ^^^^^^^^^^^^                    ^^^^
                  Key[8..11]                      Pad=5
                              ^^^^^^^^^^^^^^^^^^^^
                              Padding
-  ```
+   ```
  
-  编码后的 Key 无论后面再追加什么 8 字节的 Timestamp，都能保持原来的顺序。
+   编码后的 Key 无论后面再追加什么 8 字节的 Timestamp，都能保持原来的顺序。
  
 3. TiKV 在 Key 中存储的 Timestamp（无论是 `start_ts` 还是 `commit_ts`）都是 Timestamp 取反后的结果，其目的是让较新的数据（即 Timestamp 比较大的数据）排列在较老的数据（即 Timestamp 比较小的数据）前面。扫数据的流程利用了这个特性优化性能，继续阅读本文可以有所感受。后面本文中关于时间戳的部分将写作 `{!ts}` 来反映这个取反操作。
  
@@ -315,7 +315,7 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说
   >
   > ![示意图 3](media/tikv-source-code-reading-13/4.png)
  
-<center>图 4 一种 User Cursor 和 Lock Cursor 具有相同 User Key 的情况，Seek 的是 c</center>
+  > <center>图 4 一种 User Cursor 和 Lock Cursor 具有相同 User Key 的情况，Seek 的是 c</center>
 
  
   走到了目前这一步，说明我们需要从 Write Info 中读取 User Key 满足 `scan_ts` 的记录。需要注意，此时 User Key 可能是存在 Lock 的，但已被判定为应当忽略。
@@ -452,9 +452,9 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说
  
 - 执行步骤 1：首次迭代：将 Lock 及 Write CF Cursor Seek 到 `lower_bound` 处。
  
- ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/6.png)
+  ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/6.png)
  
-<center>图 6 执行完毕后各个 Cursor 位置示意</center>
+  <center>图 6 执行完毕后各个 Cursor 位置示意</center>
 
  
 - 执行步骤 2：对比 Lock Cursor 与 Write Cursor，进入分支 2.4。
@@ -467,18 +467,18 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说
  
 - 执行步骤 4.1：Seek `{w_key}{!scan_ts}`，即 Seek `bar......\xFF\xFF..\xFA`。Write Cursor 仍然是当前位置。
  
- ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/7.png)
+  ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/7.png)
  
-<center>图 7 执行完毕后各个 Cursor 位置示意</center>
+  <center>图 7 执行完毕后各个 Cursor 位置示意</center>
 
  
 - 执行步骤 4.2：此时 Write Key 指向 bar 与 User Key 相同，因此依据 `PUT (start_ts=1)` 从 Default CF 中获取到 `value = bar_value`。
  
 - 执行步骤 4.3：移动 Write Cursor 跳过当前 `bar` 剩余所有版本，即 Seek `bar......\xFF\xFF..\xFF`：
  
- ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/8.png)
+  ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/8.png)
  
-<center>图 8 执行完毕后各个 Cursor 位置示意</center>
+  <center>图 8 执行完毕后各个 Cursor 位置示意</center>
 
  
 - 执行步骤 4.4：对外返回 Key Value 对 `(bar, bar_value)`。
@@ -491,9 +491,9 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说
  
 - 执行分支 2.4：Write Cursor 指向 `foo`，Lock Cursor 指向 `box`，User Key 为 `box`。
  
- ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/9.png)
+  ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/9.png)
  
-<center>图 9 执行完毕后各个 Cursor 位置示意</center>
+  <center>图 9 执行完毕后各个 Cursor 位置示意</center>
  
 - 执行步骤 3：User Key = box 来自于 Lock，继续。
  
@@ -501,9 +501,9 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说
  
 - 执行步骤 3.2：将 Lock Cursor 往后移动一个 Key。
  
- ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/10.png)
+  ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/10.png)
  
- <center>图 10 执行完毕后各个 Cursor 位置示意</center>
+  <center>图 10 执行完毕后各个 Cursor 位置示意</center>
 
  
 - 执行步骤 4：User Key = box 不来自于 Write，跳过，回到步骤 2。
@@ -512,15 +512,15 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说
  
 - 执行分支 2.4：Write Cursor 指向 `foo`，Lock Cursor 指向 `foo`，User Key 为 `foo`。
  
- ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/11.png)
+  ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/11.png)
  
- <center>图 11 执行完毕后各个 Cursor 位置示意</center>
+  <center>图 11 执行完毕后各个 Cursor 位置示意</center>
  
 - 执行步骤 3：User Key = foo 来自于 Lock，继续。与之前类似，锁被忽略，且 Lock Cursor 往后移动。
  
- ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/12.png)
+  ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/12.png)
  
- <center>图 12 执行完毕后各个 Cursor 位置示意</center>
+  <center>图 12 执行完毕后各个 Cursor 位置示意</center>
 
  
 - 执行步骤 4：User Key = foo 同样来自于 Write，继续。
@@ -531,9 +531,9 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说
  
 - 执行步骤 4.3：移动 Write Cursor 跳过当前 `foo` 剩余所有版本，即 Seek `foo......\xFF\xFF..\xFF`：
  
- ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/13.png)
+  ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/13.png)
  
- <center>图 13 执行完毕后各个 Cursor 位置示意</center>
+  <center>图 13 执行完毕后各个 Cursor 位置示意</center>
  
 - 执行步骤 4.4：对外返回 Key Value 对 `(foo, foo_value)`。
  
@@ -543,9 +543,9 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说
  
 - 执行步骤 2：对比 Lock Cursor 与 Write Cursor，进入分支 2.1。
  
- ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/14.png)
+  ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/14.png)
  
- <center>图 14 执行完毕后各个 Cursor 位置示意</center>
+  <center>图 14 执行完毕后各个 Cursor 位置示意</center>
  
 - 执行步骤 2.1：Write Cursor 和 Lock Cursor 都指向空，没有更多数据了。
  
