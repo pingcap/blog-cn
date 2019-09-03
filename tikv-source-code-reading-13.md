@@ -71,7 +71,7 @@ tags: ['TiKV 源码解析','社区']
 
 2. User Key 会被按照 Memory Comparable Encoding 方式进行编码，编码算法是以 8 字节为单位进行 Padding。这个操作确保了我们在 User Key 后面追加 `start_ts` 或 `commit_ts` 之后实际写入的 Key 能保持与 User Key 具有相同的顺序。
 
-   例如，假设我们依次写入 `abc`、`abc\x00..\x00` 两个 User Key，在不进行 Padding 的情况下：
+    例如，假设我们依次写入 `abc`、`abc\x00..\x00` 两个 User Key，在不进行 Padding 的情况下：
 
     | User Key         | Start Ts | 写入的 Key       |
     |:------------------|:----------|:-----------------|
