@@ -130,7 +130,6 @@ TiDB 在 v3.0.x 版本以及 v2.1.13 以后的版本支持了一个新特性叫�
 SPLIT TABLE table_name [INDEX index_name] BETWEEN (lower_value) AND (upper_value) REGIONS region_num
 
 SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)]
-
 ```
 
 读者可能会有疑问，为何 TiDB 不自动将这个切分动作提前完成？大家先看一下下图：
