@@ -2,11 +2,11 @@
 title: TiDB 高并发写入常见热点问题及规避方法
 author: ['姚维']
 date: 2019-09-05
-summary: 本文目的是阐述一个高并发批量写入数据到 TiDB 的典型场景中，TiDB 中常见的一些问题，旨在给出一个业务的最佳实践，避免业务在开发的时候陷入 TiDB 使用的 “反模式”。
+summary: 本文通过阐述一个高并发批量写入数据到 TiDB 的典型场景中，TiDB 中常见的问题，给出一个业务的最佳实践，避免业务在开发的时候陷入 TiDB 使用的 “反模式”。
 tags: ['TiDB','社区']
 ---
 
-本文目的是阐述一个高并发批量写入数据到 TiDB 的典型场景中，TiDB 中常见的一些问题，旨在给出一个业务的最佳实践，避免业务在开发的时候陷入 TiDB 使用的 “反模式”。
+本文通过阐述一个高并发批量写入数据到 TiDB 的典型场景中，TiDB 中常见的问题，给出一个业务的最佳实践，避免业务在开发的时候陷入 TiDB 使用的 “反模式”。
 
 ## 面向的对象
 
@@ -95,7 +95,7 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 
 ## 反直觉的原因
 
-上面这个现象是有一些违反直觉的，造成这个现象的原因是：刚创建表的时候，这个表在 TiKV 只会对应为一个 Region, 范围是:
+上面这个现象是有一些违反直觉的，造成这个现象的原因是：刚创建表的时候，这个表在 TiKV 只会对应为一个 Region，范围是:
 
 ```
 [CommonPrefix + TableID, CommonPrefix + TableID + 1)
@@ -110,7 +110,7 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 
 上图简单描述了这个过程，持续写入，TiKV 会将 Region 切分。但是由于是由原 Leader 所在的 Store 首先发起选举，所以大概率下旧的 Store 会成为新切分好的两个 Region 的 Leader。对于新切分好的 Region 2，3。也会重复之前发生在 Region 1 上的事情。也就是压力会密集地集中在 TiKV-Node 1 中。
 
-在持续写入的过程中， PD 能发现 Node 1 中产生了 热点，它就会将 Leader 均分到其他的 Node 上。如果 TiKV 的节点数能多于副本数的话，还会发生 Region 的迁移，尽量往空闲的 Node 上迁移，这两个操作在插入过程，在 PD 监控中也可以印证：
+在持续写入的过程中， PD 能发现 Node 1 中产生了热点，它就会将 Leader 均分到其他的 Node 上。如果 TiKV 的节点数能多于副本数的话，还会发生 Region 的迁移，尽量往空闲的 Node 上迁移，这两个操作在插入过程，在 PD 监控中也可以印证：
 
 ![图 7 监控截图](media/tidb-in-high-concurrency-scenarios/7.png)
 
@@ -148,7 +148,7 @@ SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)]
 
 所以 TiDB 提供了 Split Region 语法，来专门针对短时批量写入场景作优化，下面我们尝试在上面的例子中用以下语句提前切散 Region，再看看负载情况。
 
-由于测试的写入是在正数范围内完全离散，所以我们可以用以下语句，在 int64 空间内提前将表切散为 128 个 Region：
+由于测试的写入是在正数范围内完全离散，所以我们可以用以下语句，在 Int64 空间内提前将表切散为 128 个 Region：
 
 ```
 SPLIT TABLE TEST_HOTSPOT BETWEEN (0) AND (9223372036854775807) REGIONS 128;
