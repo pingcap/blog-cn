@@ -1,5 +1,5 @@
 ---
-title: 一体化数据同步平台，DM 1.0 GA 发布
+title: 一体化数据同步平台 DM 1.0 GA 发布
 author: ['沈瑀昊']
 date: 2019-09-06
 summary: DM 在 TiDB DevCon 2019 上正式开源，经过半年多时间在大量用户、开发者的支持和反馈下，今天我们宣布 DM 1.0 GA 正式发布。
