@@ -32,7 +32,7 @@ DM 提供了包括库表路由（Table routing）、黑白名单（Black & white
 
 ## 更多资料
 
-大家可以参考 [DM 使用文档](https://pingcap.com/docs-cn/v3.0/reference/tools/data-migration/deploy/) 来部署并体验。想深入了解 DM 相关实现原理的同学，也可以查看 [DM 源代码](https://github.com/pingcap/dm) 以及配套的 [DM 源码阅读系列](https://pingcap.com/blog-cn/#DM-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB) 文章。如果有相关的问题，欢迎在 Github 上提 issue 或者是在 [AskTUG 问答社区](https://asktug.com/) 中讨论。
+大家可以参考 [DM 使用文档](https://pingcap.com/docs-cn/v3.0/reference/tools/data-migration/deploy/) 来部署并体验，参考 [DM 升级指南](https://pingcap.com/docs-cn/v3.0/reference/tools/data-migration/dm-upgrade/) 更新至 GA 版本。想深入了解 DM 相关实现原理的同学，也可以查看 [DM 源代码](https://github.com/pingcap/dm) 以及配套的 [DM 源码阅读系列](https://pingcap.com/blog-cn/#DM-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB) 文章。如果有相关的问题，欢迎在 Github 上提 issue 或者是在 [AskTUG 问答社区](https://asktug.com/) 中讨论。
 
 ## 下一步计划
 
