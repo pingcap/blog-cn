@@ -6,7 +6,7 @@ summary: 使用 TiDB Ansible 部署 TiDB 集群，会同时部署一套 Grafana 
 tags: ['Prometheus', 'Grafana', '监控']
 ---
 
->**作者介绍**：李坤，TUG Ambassador，前美团、去哪儿数据库专家。
+>**作者介绍**：李坤，PingCAP 互联网架构师，TUG Ambassador，前美团、去哪儿数据库专家。
 
 ## 一、概述
 
