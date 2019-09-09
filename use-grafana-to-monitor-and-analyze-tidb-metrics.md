@@ -6,7 +6,7 @@ summary: 使用 TiDB Ansible 部署 TiDB 集群，会同时部署一套 Grafana 
 tags: ['Prometheus', 'Grafana', '监控']
 ---
 
->**作者介绍**：李坤，TUG Ambassador 大使，前美团、去哪儿数据库专家。
+>**作者介绍**：李坤，TUG Ambassador，前美团、去哪儿数据库专家。
 
 ## 一、概述
 
@@ -164,7 +164,7 @@ PD 的 Dashboard，只展示当前 leader 的 metric 信息，有时候会想看
 <center>图 15 增加 Avg 函数</center>
 
 
-### 技巧 7：使用 Prometheus 的 API接口获得表达式的结果
+### 技巧 7：使用 Prometheus 的 API 接口获得表达式的结果
 
 Grafana 通过 Prometheus 的接口获取数据，我们也可以用该接口获取数据，这个用法可以扩散出很多功能：
 
@@ -174,7 +174,7 @@ Grafana 通过 Prometheus 的接口获取数据，我们也可以用该接口获
 
 * 将重要的指标进行定期健康巡检。
 
-![图 16 Prometheus的 API 接口](media/use-grafana-to-monitor-and-analyze-tidb-metrics/14.png)
+![图 16 Prometheus 的 API 接口](media/use-grafana-to-monitor-and-analyze-tidb-metrics/14.png)
 
 <center>图 16 Prometheus的 API 接口</center>
 
