@@ -1,5 +1,5 @@
 ---
-title: 如何利用 Grafana 监控分析 TiDB 指标
+title: 如何高效利用 Grafana 监控分析 TiDB 指标
 author: ['李坤']
 date: 2019-09-09
 summary: 使用 TiDB Ansible 部署 TiDB 集群，会同时部署一套 Grafana + Prometheus 的监控平台，这套监控用来收集和展示 TiDB 集群各个组件和机器的 metric 信息，这些 metric 信息非常丰富，可以帮助使用者分析 TiDB 集群的状态以及 Trouble shooting。
@@ -41,7 +41,7 @@ TiDB 的 3 个核心组件（TiDB，TiKV，PD）可以通过 http 接口来获�
 用 tidb-server 举例，我们通过 http 接口，看一个 statement QPS 的 metric：
 
 ```
-# 可以看到实时qps的数据，区分不同的type，value是counter类型的累计值（科学计数法）
+# 可以看到实时 qps 的数据，区分不同的 type，value 是 counter 类型的累计值（科学计数法）
 
 curl http://__tidb_ip__:10080/metrics |grep tidb_executor_statement_total
 tidb_executor_statement_total{type="Delete"} 520197
@@ -51,7 +51,6 @@ tidb_executor_statement_total{type="Select"} 2.64983586e+08
 tidb_executor_statement_total{type="Set"} 2.399075e+06
 tidb_executor_statement_total{type="Show"} 500531
 tidb_executor_statement_total{type="Use"} 466016
-
 ```
 
 这个数据会在 Prometheus 存储下来，然后在 Grafana 展示，我们在面板上点击右键会出现 `Edit` 按钮（或直接按 e），如下图所示：
@@ -176,7 +175,7 @@ Grafana 通过 Prometheus 的接口获取数据，我们也可以用该接口获
 
 ![图 16 Prometheus 的 API 接口](media/use-grafana-to-monitor-and-analyze-tidb-metrics/14.png)
 
-<center>图 16 Prometheus的 API 接口</center>
+<center>图 16 Prometheus 的 API 接口</center>
 
 ```
 curl -u user:pass 'http://__grafana_ip__:3000/api/datasources/proxy/1/api/v1/query_range?query=sum(tikv_engine_size_bytes%7Binstancexxxxxxxxx20181%22%7D)%20by%20(instance)&start=1565879269&end=1565882869&step=30' |python -m json.tool
