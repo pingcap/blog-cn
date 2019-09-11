@@ -3,7 +3,7 @@ title: TiDB 混沌工程实践：如何打造健壮的分布式系统？
 author: ['唐刘']
 date: 2018-06-19
 summary: 这篇文章是关于 TiDB 代表性“为什么”的 TOP 10，希望大家在了解了我们这些背后的选择之后，能更加纯熟的使用 TiDB，让它在适合的环境里更好的发挥价值。
-tags: ['TiDB','架构']
+tags: ['K8s','混沌工程']
 ---
 
 >本文转载自 [InfoQ](https://www.infoq.cn/article/bxGvrb_CxAZD6Wv3fUj8)，策划：赵钰莹。
