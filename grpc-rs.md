@@ -257,7 +257,7 @@ pub fn unary_async<P, Q>(channel: &Channel,
 
 [Rust repr(), alternative representations](https://doc.rust-lang.org/nomicon/other-reprs.html)
 
-[gRPC - A solution for RPCs by Google](http://d3s.mff.cuni.cz/research/seminar/download/2016-11-15-Tattermusch-gRPC.pdf)
+[gRPC - A solution for RPCs by Google](media/grpc-rs/2016-11-15-Tattermusch-gRPC.pdf)
 
 [Tokio, A platform for writing fast networking code with Rust.](https://tokio.rs)
 
