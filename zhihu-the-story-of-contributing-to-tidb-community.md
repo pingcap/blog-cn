@@ -6,6 +6,8 @@ summary: “从前我们更多是站在使用者的角度从开源社区汲取�
 tags: ['社区']
 ---
 
+>**作者介绍**：孙晓光，知乎技术平台团队负责人，负责建设知乎在线和离线的基础设施平台，为业务开发提供统一的基础设施。曾多年从事私有云相关产品开发工作，关注云原生技术，TiKV 项目 Committer。
+
 关注 TiDB 的朋友们可能发现继 Follower Read 在 TiKV 端的 PR 合并后，TiDB 端相关的 PR 也于近期完成了到主干的合并工作。如果后期的稳定性测试一切正常，相关功能应该会随 TiDB 3.1 发布。Follower Read 功能本身从代码量上看并不大，但这个功能的意义尤其是对互联网类型业务来说是非常大的。
 
 前段时间 PingCAP CTO 黄东旭已经写了 [一篇文章](https://pingcap.com/blog-cn/follower-read-the-new-features-of-tidb/)，从原理角度对 Follower Read 做了非常透彻的介绍和分析。今天我想从非技术的角度介绍 Follower Read 功能的落地过程，并从 Contributor 的视角跟大家聊一聊个人参与 TiDB 开发过程中的体验和感受。最后站在知乎技术平台团队的角度，聊一下我们未来在积极参与开源项目，共同建设社区的愿望和决心。
