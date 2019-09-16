@@ -28,7 +28,7 @@ TiDB 的向量化计算是在经典 Volcano 模型上的进行改进，尽可能
 
 ### 1. 如何访问和修改一个向量
 
-TiDB 中，数据按列在内存中连续存在 Column 内，Column 详细介绍请看：[TiDB 源码阅读系列文章（十）Chunk 和执行框架简介](https://pingcap.com/blog-cn/tidb-source-code-reading-10/)。本文所指的向量，其数据正是存储在 Column 中。
+在 TiDB 中，数据按列在内存中连续存在 Column 内，Column 详细介绍请看：[TiDB 源码阅读系列文章（十）Chunk 和执行框架简介](https://pingcap.com/blog-cn/tidb-source-code-reading-10/)。本文所指的向量，其数据正是存储在 Column 中。
 
 我们把数据类型分为两种：
 
@@ -91,7 +91,7 @@ vecEvalXType(input *Chunk, result *Column) error
 
 ## 为函数实现向量化接口
 
-要实现函数向量化，首先需要为其实现 `vecEvalXType()` 和 `vectorized()` 接口。
+要实现函数向量化，还需要为其实现 `vecEvalXType()` 和 `vectorized()` 接口。
 
 * 在 `vectorized()` 接口中返回 `true` ，表示该函数已经实现向量化计算。
 
