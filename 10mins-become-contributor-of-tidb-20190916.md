@@ -157,7 +157,7 @@ for i := 0; i < n; i++ {
 
 ### 4. 如何处理 Error
 
-所有受 SQL Mode 控制的 Error，都利用对应的错误处理函数在函数内就地处理。
+所有受 SQL Mode 控制的 Error，都利用对应的错误处理函数在函数内就地处理。部分 Error 可能会被转换成 Warn 而不需要立即抛出。
 
 这个比较杂，需要查看对应的非向量化接口了解具体行为。代码参考 [PR/12042](https://github.com/pingcap/tidb/pull/12042)，以 `builtinCastIntAsDurationSig` 的向量化实现为例：
 
@@ -233,6 +233,6 @@ go test -v -benchmem -bench=BenchmarkVectorizedBuiltinMathFunc -run=BenchmarkVec
 
 5.  发起 Pull Request 并完成 merge 到主分支。
 
-如果贡献突出，可能被提名为 reviewer，reviewer 的介绍请看[这里](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#reviewer)。
+如果贡献突出，可能被提名为 reviewer，reviewer 的介绍请看 [这里](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#reviewer)。
 
 如果你有任何疑问，也欢迎到 wg-vec-expr channel 中提问和讨论。
