@@ -31,7 +31,7 @@ TiDB 的向量化计算是在经典 Volcano 模型上的进行改进，尽可能
 
 TiDB 中，数据按列在内存中连续存在 Column 内，Column 详细介绍请看：[TiDB 源码阅读系列文章（十）Chunk 和执行框架简介](https://pingcap.com/blog-cn/tidb-source-code-reading-10/)。本文所指的向量，其数据正是存储在 Column 中。
 
-我们把数据类型分为两种:
+我们把数据类型分为两种：
 
 1.  定长类型：`Int64`、`Uint64`、`Float32`、`Float64`、`Decimal`、`Time`、`Duration`；
 
@@ -51,22 +51,27 @@ TiDB 中，数据按列在内存中连续存在 Column 内，Column 详细介绍
 
 1. 定长类型（以 `int64` 为例)
 
-    * `ResizeInt64s(size, isNull)`：预分配 size 个元素的空间，并把所有位置的 `null` 标记都设置为 `isNull`；
-    * `Int64s()`：返回一个 `[]int64` 的 Slice，用于直接读写数据；
-    * `SetNull(rowID, isNull)`：标记第 `rowID` 行为 `isNull`。
+    a. `ResizeInt64s(size, isNull)`：预分配 size 个元素的空间，并把所有位置的 `null` 标记都设置为 `isNull`；
+    
+    b.  `Int64s()`：返回一个 `[]int64` 的 Slice，用于直接读写数据；
+    
+    c.  `SetNull(rowID, isNull)`：标记第 `rowID` 行为 `isNull`。
 
 2. 变长类型（以 `string` 为例）
     
-    * `ReserveString(size)`：预估 size 个元素的空间，并预先分配内存；
-    * `AppendString(string)`: 追加一个 string 到向量末尾；
-    * `AppendNull()`：追加一个 `null` 到向量末尾；
-    * `GetString(rowID)`：读取下标为 `rowID` 的 string 数据。
+    a. `ReserveString(size)`：预估 size 个元素的空间，并预先分配内存；
+    
+    b. `AppendString(string)`: 追加一个 string 到向量末尾；
+    
+    c.  `AppendNull()`：追加一个 `null` 到向量末尾；
+    
+    d.  `GetString(rowID)`：读取下标为 `rowID` 的 string 数据。
 
 当然还有些其他的方法如 `IsNull(rowID)`，`MergeNulls(cols)` 等，就交给大家自己去探索了，后面会有这些方法的使用例子。
 
-## 表达式向量化计算框架简介
+### 表达式向量化计算框架简介
 
-向量化的计算接口大概如下，[完整的定义在这里](https://github.com/pingcap/tidb/blob/master/expression/builtin.go#L340)：
+向量化的计算接口大概如下（[完整的定义在这里](https://github.com/pingcap/tidb/blob/master/expression/builtin.go#L340)）：
 
 ```
 vectorized() bool
@@ -87,13 +92,13 @@ vecEvalXType(input *Chunk, result *Column) error
 
 ## 如何为函数实现向量化接口
 
-函数向量化需要为其实现 `vecEvalXType()` 和 `vectorized()` 接口。
+函数向量化首先需要实现 `vecEvalXType()` 和 `vectorized()` 接口。
 
-在 `vectorized()` 接口中返回 true ，表示该函数已经实现向量化计算。
+* 在 `vectorized()` 接口中返回 `true` ，表示该函数已经实现向量化计算。
 
-在 `vecEvalXType()` 实现此函数的计算逻辑。
+* 在 `vecEvalXType()` 实现此函数的计算逻辑。
 
-尚未向量化的函数在 [issue/12058](https://github.com/pingcap/tidb/issues/12058) 中，欢迎感兴趣的同学加入我们一起完成这项宏大的工程。
+**尚未向量化的函数在 [issue/12058](https://github.com/pingcap/tidb/issues/12058) 中，欢迎感兴趣的同学加入我们一起完成这项宏大的工程。**
 
 向量化代码需放到以 `_vec.go` 结尾的文件中，如果还没有这样的文件，欢迎新建一个，注意在文件头部加上 licence 说明。
 
@@ -175,7 +180,7 @@ for i := 0; i < n; i++ {
 
 ### 如何添加测试
 
-我们做了一个简易的测试框架，可避免测试时的一些重复工作。
+我们做了一个简易的测试框架，可避免大家测试时做一些重复工作。
 
 该测试框架的代码在 `expression/bench_test.go` 文件中，被实现在 `testVectorizedBuiltinFunc` 和 `benchmarkVectorizedBuiltinFunc` 两个函数中。
 
@@ -209,9 +214,7 @@ GO111MODULE=on go test -check.f TestVectorizedBuiltinMathFunc
 go test -v -benchmem -bench=BenchmarkVectorizedBuiltinMathFunc -run=BenchmarkVectorizedBuiltinMathFunc
 ```
 
-在你的 PR Description 中，请把性能测试结果附上。
-
-不同配置的机器，性能测试结果可能不同，我们对机器配置无任何要求，你只需在 PR 中带上你本地机器的测试结果，让我们对向量化前后的性能有一个对比即可。
+在你的 PR Description 中，请把性能测试结果附上。不同配置的机器，性能测试结果可能不同，我们对机器配置无任何要求，你只需在 PR 中带上你本地机器的测试结果，让我们对向量化前后的性能有一个对比即可。
 
 ## 如何成为 Contributor
 
