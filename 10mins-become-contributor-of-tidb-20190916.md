@@ -1,5 +1,5 @@
 ---
-title: 十分钟成为 Contributor 系列 (9) | 助力 TiDB 表达式计算性能提升 10 倍
+title: 十分钟成为 Contributor 系列 | 助力 TiDB 表达式计算性能提升 10 倍
 author: ['Yuanjia Zhang']
 date: 2019-09-16
 summary: 最近我们扩展了 TiDB 表达式计算框架，增加了向量化计算接口，初期的性能测试显示，多数表达式计算性能可大幅提升，部分甚至可提升 1~2 个数量级。为了让所有的表达式都能受益，我们需要为所有内建函数实现向量化计算。
@@ -93,7 +93,7 @@ vecEvalXType(input *Chunk, result *Column) error
 
 要实现函数向量化，还需要为其实现 `vecEvalXType()` 和 `vectorized()` 接口。
 
-* 在 `vectorized()` 接口中返回 `true` ，表示该函数已经实现向量化计算。
+* 在 `vectorized()` 接口中返回 `true` ，表示该函数已经实现向量化计算；
 
 * 在 `vecEvalXType()` 实现此函数的计算逻辑。
 
@@ -109,7 +109,7 @@ vecEvalXType(input *Chunk, result *Column) error
 
 3.  实现完成后请根据后续的说明添加测试。
 
-下面我们将为大家介绍在实现向量化计算过程中需要注意的问题。
+下面为大家介绍在实现向量化计算过程中需要注意的问题。
 
 ### 1. 如何获取和释放中间结果向量
 
