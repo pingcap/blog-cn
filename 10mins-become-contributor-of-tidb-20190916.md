@@ -219,7 +219,7 @@ go test -v -benchmem -bench=BenchmarkVectorizedBuiltinMathFunc -run=BenchmarkVec
 
 ## 如何成为 Contributor
 
-**为了推进表达式向量化计算，我们正式成立 vectorized expression working group，其具体的目标和制度详见 [vec-expr-wg](https://github.com/pingcap/community/blob/master/working-groups/wg-vec-expr.md)。与此对应，我们在 [TiDB Community Slack](https://pingcap.com/tidbslack/) 中创建了 [wg-vec-expr channel](https://app.slack.com/client/TH91JCS4W/CMRD79DRR) 供大家交流讨论，不设门槛，欢迎感兴趣的同学加入。**
+**为了推进表达式向量化计算，我们正式成立 Vectorized Expression Working Group，其具体的目标和制度详见[这里](https://github.com/pingcap/community/blob/master/working-groups/wg-vec-expr.md)。与此对应，我们在 [TiDB Community Slack](https://pingcap.com/tidbslack/) 中创建了 [wg-vec-expr channel](https://app.slack.com/client/TH91JCS4W/CMRD79DRR) 供大家交流讨论，不设门槛，欢迎感兴趣的同学加入。**
 
 如何成为 Contributor：
 
