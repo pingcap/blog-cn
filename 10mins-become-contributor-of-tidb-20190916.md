@@ -27,7 +27,7 @@ TiDB 的向量化计算是在经典 Volcano 模型上的进行改进，尽可能
 
 ## 表达式向量化简介
 
-### 如何访问和修改一个向量
+### 1. 如何访问和修改一个向量
 
 TiDB 中，数据按列在内存中连续存在 Column 内，Column 详细介绍请看：[TiDB 源码阅读系列文章（十）Chunk 和执行框架简介](https://pingcap.com/blog-cn/tidb-source-code-reading-10/)。本文所指的向量，其数据正是存储在 Column 中。
 
@@ -69,7 +69,7 @@ TiDB 中，数据按列在内存中连续存在 Column 内，Column 详细介绍
 
 当然还有些其他的方法如 `IsNull(rowID)`，`MergeNulls(cols)` 等，就交给大家自己去探索了，后面会有这些方法的使用例子。
 
-### 表达式向量化计算框架简介
+### 2. 表达式向量化计算框架
 
 向量化的计算接口大概如下（[完整的定义在这里](https://github.com/pingcap/tidb/blob/master/expression/builtin.go#L340)）：
 
@@ -90,9 +90,9 @@ vecEvalXType(input *Chunk, result *Column) error
 
 比如 `(2+6)*3`，只有当 `MultiplyInt` 和 `PlusInt` 函数都向量化后，它才能被向量化执行。
 
-## 如何为函数实现向量化接口
+## 为函数实现向量化接口
 
-函数向量化首先需要实现 `vecEvalXType()` 和 `vectorized()` 接口。
+要实现函数向量化，首先需要为其实现 `vecEvalXType()` 和 `vectorized()` 接口。
 
 * 在 `vectorized()` 接口中返回 `true` ，表示该函数已经实现向量化计算。
 
@@ -110,7 +110,9 @@ vecEvalXType(input *Chunk, result *Column) error
 
 3.  实现完成后请根据后续的说明添加测试。
 
-### 如何获取和释放中间结果向量
+下面我们将为大家介绍在实现向量化计算过程中需要注意的问题。
+
+### 1. 如何获取和释放中间结果向量
 
 存储表达式计算中间结果的向量可通过表达式内部对象 `bufAllocator` 的 `get()` 和 `put()` 来获取和释放，参考 [PR/12014](https://github.com/pingcap/tidb/pull/12014)，以 `builtinRepeatSig` 的向量化实现为例：
 
@@ -122,7 +124,7 @@ if err != nil {
 defer b.bufAllocator.put(buf2) // 注意释放之前申请的内存
 ```
 
-### 如何更新定长类型的结果
+### 2. 如何更新定长类型的结果
 
 如前文所说，我们需要使用 `ResizeXType()` 和 `XTypes()` 来初始化和获取用于存储定长类型数据的 Golang Slice，直接读写这个 Slice 来完成数据操作，另外也可以使用 `SetNull()` 来设置某个元素为 `NULL`。代码参考 [PR/12012](https://github.com/pingcap/tidb/pull/12012)，以 `builtinLog10Sig` 的向量化实现为例：
 
@@ -137,7 +139,7 @@ for i := 0; i < n; i++ {
 }
 ```
 
-### 如何更新变长类型的结果
+### 3. 如何更新变长类型的结果
 
 如前文所说，我们需要使用 `ReserveXType()` 来为变长类型预分配一段内存（降低 Golang runtime.growslice() 的开销），使用 `AppendXType()` 来追加一个变长类型的元素，使用 `GetXType()` 来读取一个变长类型的元素。代码参考 [PR/12014](https://github.com/pingcap/tidb/pull/12014)，以 `builtinRepeatSig` 的向量化实现为例：
 
@@ -154,7 +156,7 @@ for i := 0; i < n; i++ {
 }
 ```
 
-### 如何处理 Error
+### 4. 如何处理 Error
 
 所有受 SQL Mode 控制的 Error，都利用对应的错误处理函数在函数内就地处理。
 
@@ -178,7 +180,7 @@ for i := 0; i < n; i++ {
 }
 ```
 
-### 如何添加测试
+### 5. 如何添加测试
 
 我们做了一个简易的测试框架，可避免大家测试时做一些重复工作。
 
