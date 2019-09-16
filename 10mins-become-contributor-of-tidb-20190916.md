@@ -118,7 +118,7 @@ vecEvalXType(input *Chunk, result *Column) error
 ```
 buf2, err := b.bufAllocator.get(types.ETInt, n)
 if err != nil {
-	return err
+    return err
 }
 defer b.bufAllocator.put(buf2) // 注意释放之前申请的内存
 ```
@@ -130,11 +130,11 @@ defer b.bufAllocator.put(buf2) // 注意释放之前申请的内存
 ```
 f64s := result.Float64s()
 for i := 0; i < n; i++ {
-	if isNull {
-		result.SetNull(i, true)
-	} else {
-		f64s[i] = math.Log10(f64s[i])
-	}
+    if isNull {
+        result.SetNull(i, true)
+    } else {
+        f64s[i] = math.Log10(f64s[i])
+    }
 }
 ```
 
@@ -146,12 +146,12 @@ for i := 0; i < n; i++ {
 result.ReserveString(n)
 ...
 for i := 0; i < n; i++ {
-	str := buf.GetString(i)
-	if isNull {
-		result.AppendNull()
-	} else {
-		result.AppendString(strings.Repeat(str, int(num)))
-	}
+    str := buf.GetString(i)
+    if isNull {
+        result.AppendNull()
+    } else {
+    result.AppendString(strings.Repeat(str, int(num)))
+    }
 }
 ```
 
@@ -163,19 +163,19 @@ for i := 0; i < n; i++ {
 
 ```
 for i := 0; i < n; i++ {
-	...
-	dur, err := types.NumberToDuration(i64s[i], int8(b.tp.Decimal))
-	if err != nil {
-		if types.ErrOverflow.Equal(err) {
-			err = b.ctx.GetSessionVars().StmtCtx.HandleOverflow(err, err) // 就地利用对应处理函数处理错误
-		}
-		if err != nil { // 如果处理不掉就抛出
-			return err
-		}
-		result.SetNull(i, true)
-		continue
-	}
-	...
+    ...
+    dur, err := types.NumberToDuration(i64s[i], int8(b.tp.Decimal))
+    if err != nil {
+       if types.ErrOverflow.Equal(err) {
+          err = b.ctx.GetSessionVars().StmtCtx.HandleOverflow(err, err) // 就地利用对应处理函数处理错误
+       }
+       if err != nil { // 如果处理不掉就抛出
+          return err
+       }
+       result.SetNull(i, true)
+       continue
+    }
+    ...
 }
 ```
 
@@ -221,7 +221,7 @@ go test -v -benchmem -bench=BenchmarkVectorizedBuiltinMathFunc -run=BenchmarkVec
 
 **为了推进表达式向量化计算，我们正式成立 vectorized expression working group，其具体的目标和制度详见 [vec-expr-wg](https://github.com/pingcap/community/blob/master/working-groups/wg-vec-expr.md)。与此对应，我们在 [TiDB Community Slack](https://pingcap.com/tidbslack/) 中创建了 [wg-vec-expr channel](https://app.slack.com/client/TH91JCS4W/CMRD79DRR) 供大家交流讨论，不设门槛，欢迎感兴趣的同学加入。**
 
-如何成为 contributor：
+如何成为 Contributor：
 
 1.  在此 [issue](https://github.com/pingcap/tidb/issues/12058) 内选择感兴趣的函数并告诉大家你会完成它；
 
