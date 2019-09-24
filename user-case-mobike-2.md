@@ -6,7 +6,7 @@ summary: TiDB 的出现，不仅弥补了 MySQL 单机容量上限、传统 Shar
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-mobike-2/
-weight: 14
+weight: 7
 logo: /images/blog-cn/customers/mobike-logo.png
 ---
 

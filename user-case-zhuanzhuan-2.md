@@ -6,7 +6,7 @@ summary: TiDB 在业务开发中是值得推广和实践的，但是我们对关
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-zhuanzhuan-2/
-weight: 12
+weight: 19
 logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 ---
 
