@@ -6,7 +6,7 @@ summary: TEG 目前写入量比较大，数据量在 6T 左右，数据增长 50
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-58/
-weight: 3 
+weight: 8
 logo: /images/blog-cn/customers/58.png
 ---
 
