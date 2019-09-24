@@ -6,7 +6,7 @@ summary: 目前 TiDB 在 LinkDoc 已承载数据量最大的两个业务。平�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-linkdoc/
-weight: 21
+weight: 24
 logo: /images/blog-cn/customers/linkdoc-logo.png
 ---
 

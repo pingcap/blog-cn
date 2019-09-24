@@ -6,7 +6,7 @@ summary: 由于 TiDB 对 MySQL 的高度兼容性，在数据迁移完成后，�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-kasi/
-weight: 17 
+weight: 28
 logo: /images/blog-cn/customers/kasi-logo.png
 ---
 
