@@ -36,6 +36,11 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 
 * 元数据管理是树状结构，它本身并不适合做分布式存储，并且目录结构需要多次访问，不适合把它放到 SSD 上，而更适合放在内存里，然后一般授权一个 master 节点 list。HDFS 基本也是这样。
 
+
+![图 3 如何存储对象（数据量 100B）](media/user-case-jingdongyun/3.png)
+
+<center>图 3 如何存储对象（数据量 100B）</center>
+
 那么如果要求做千亿级的对象存储，如何实现呢？最容易想到的办法是将元数据分布式存储，不再像文件系统中那样存储在单独的机器上，是一个树状结构，而是变成一个平坦结构。
 
 ## 二、对象存储元数据管理系统
@@ -44,36 +49,37 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 
 ### 1. 元数据管理系统 v1.0
 
-![图 3 如何存储对象（数据量 100B）](media/user-case-jingdongyun/3.png)
 
-<center>图 3 如何存储对象（数据量 100B）</center>
+![图 4 元数据管理系统 v1.0（1/4）](media/user-case-jingdongyun/4.png)
+
+<center>图 4 元数据管理系统 v1.0（1/4）</center>
 
 上面是一个最简单、原始的方案，这里 Bucket 相当于名字空间（Namespace）。很多人最开始设计的结构也就是这样的，但后期数据量增长很快的时候会遇到一些问题，如下图。
 
-![图 4 元数据管理系统 v1.0（1/3）](media/user-case-jingdongyun/4.png)
 
-<center>图 4 元数据管理系统 v1.0（1/3）</center>
+![图 5 元数据管理系统 v1.0（2/4）](media/user-case-jingdongyun/5.png)
 
+<center>图 5 元数据管理系统 v1.0（2/4）</center>
 
 第一个问题是，在初期数据量比较小的时候，可能只分了 4 个 Bucket 存储，随着业务增长，需要重新拆分到 400 个 Bucket 中，数据迁移是一个 Rehash 过程，这是一件非常复杂且麻烦的事情。所以，我们在思考对象存储连续的、跨数量级的无限扩展要怎么做呢？下图是一个相对复杂的解决方案，核心思想是把绝大部分数据做静态处理，因为静态的存储，无论是做迁移还是做拆分，都比较简单。比如每天都把前一天写入的数据静态化，合到历史数据中去。
 
 
-![图 5 元数据管理系统 v1.0（2/3）](media/user-case-jingdongyun/5.png)
+![图 6 元数据管理系统 v1.0（3/4）](media/user-case-jingdongyun/6.png)
 
-<center>图 5 元数据管理系统 v1.0（2/3）</center>
+<center>图 6 元数据管理系统 v1.0（3/4）</center>
 
 
 针对第二个问题，如果单个 Bucket 数据量很大，那么在往 Stable Meta（上图中黄色部分）做静态化迁移时需要做深度拆分，单个 Bucket 的对象的数量非常多，在一个数据库里面存储不下来，需要存储在多个数据库里面，再建立一层索引，存储每个数据库里面存储那个区间的数据。同时，我们在运行的时候其实也会出现一个 Bucket 数量变多的情况，这种是属于非预期的变多，这种情况下我们的做法是弄了一大堆外部的监控程序，监控 Bucket 的量，在 Bucket 量过大的时候，会主动去触发表分裂、迁移等一系列流程。
 
-![图 6 元数据管理系统 v1.0（3/3）](media/user-case-jingdongyun/6.png)
+![图 7 元数据管理系统 v1.0（4/4）](media/user-case-jingdongyun/7.png)
 
-<center>图 6 元数据管理系统 v1.0（3/3）</center>
+<center>图 7 元数据管理系统 v1.0（4/4）</center>
 
 **这个解决方案有两个明显的问题，第一数据分布复杂，管理困难；第二，调度不灵活，给后期维护带来很大的困难。**
 
-![图 7 元数据管理系统改进步目标](media/user-case-jingdongyun/7.png)
+![图 8 元数据管理系统改进步目标](media/user-case-jingdongyun/8.png)
 
-<center>图 7 元数据管理系统改进目标</center>
+<center>图 8 元数据管理系统改进目标</center>
 
 
 **所以，我们思考了这个事情本质其实是做一个全局有序 KV，并且需要“足够大”，能够弹性扩张。这样系统架构就会变得非常简单（如上图所示）。当然最终我们找到了分布式 KV 数据库—— TiKV。**
@@ -102,9 +108,9 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 
 通过上面的测试我们认为 TiKV 无论是从性能还是系统安全性的角度，都能很好的满足要求，于是我们在 TiKV 基础之上，实现了对象元数据管理系统 v2.0，如下图所示。
 
-![图 8 元数据管理系统 v2.0](media/user-case-jingdongyun/8.png)
+![图 9 元数据管理系统 v2.0](media/user-case-jingdongyun/9.png)
 
-<center>图 8 元数据管理系统 v2.0</center>
+<center>图 9 元数据管理系统 v2.0</center>
 
 **将 v1.0 中一堆复杂的数据库和逻辑结构用 TiKV 替代之后，整个系统变得非常简洁。**
 
@@ -114,9 +120,9 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 
 ### 1. 迁移方案
 
-![图 9 迁移方案](media/user-case-jingdongyun/9.png)
+![图 10 迁移方案](media/user-case-jingdongyun/10.png)
 
-<center>图 9 迁移方案</center>
+<center>图 10 迁移方案</center>
 
 上图是我们设计的迁移方案，首先线上的数据都必须双写，保证数据安全。第二，我们将存量数据设置为只读之后迁移到 TiKV 中，同时迁移过程中的增量数据直接写入 TiKV，每天将前一日的增量数据做静态化处理，然后与 MySQL 中的数据对比，验证数据正确性。另外，如果双写失败，会启用 MySQL backup。
 
@@ -138,9 +144,9 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 
 数据验证过程最大的困难在于增量数据的验证，因为增量数据是每天变化的，所以我们双写了 MySQL 和 TiKV，并且每天将增量数据进行静态化处理，用 MySQL 中的记录来验证 TiKV 的数据是否可靠（没有出现数据丢失和错误），如下图所示。
 
-![图 10 双写验证](media/user-case-jingdongyun/10.png)
+![图 11 双写验证](media/user-case-jingdongyun/11.png)
 
-<center>图 10 双写验证</center>
+<center>图 11 双写验证</center>
 
 因为同时双写 MySQL 和 TiKV 可能会出现一种情况是，写入 TiKV 就成功了，但是写入 MySQL 失败了，这两个写入不在同一个事务中，所以不能保证一定同时成功或者失败，尤其是在业务量比较大的情况下。对于这种不一致的情况，我们会通过业务层的操作记录，来判断是由于业务层的问题导致的，还是由 TiKV 导致的。
 
