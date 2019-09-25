@@ -6,7 +6,7 @@ summary: 目前 TiDB 在小米主要提供 OLTP 服务，2 个业务均已上线
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-xiaomi/
-weight: 1
+weight: 5
 logo: /images/blog-cn/customers/xiaomi-logo.png
 ---
 

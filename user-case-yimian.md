@@ -6,7 +6,7 @@ summary: TiDB 水平扩展性、兼容 MySQL 是非常好的特性，对需要�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-yimian/
-weight: 21
+weight: 25
 logo: /images/blog-cn/customers/yimian-logo.png
 ---
 

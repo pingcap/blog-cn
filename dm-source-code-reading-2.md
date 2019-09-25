@@ -6,7 +6,6 @@ summary: 本篇文章主要介绍 DM 的整体架构，包括 DM 有哪些组件
 tags: ['DM 源码阅读','社区']
 ---
 
-
 本文为 TiDB Data Migration 源码阅读系列文章的第二篇，[《DM 源码阅读系列文章（一）序》](https://pingcap.com.pingcap.com/blog-cn/dm-source-code-reading-1/) 简单介绍了 DM 源码阅读的目的和规划，以及 DM 的源码结构以及工具链。从本篇文章开始，我们会正式开始阅读 DM 的源码。
 
 本篇文章主要介绍 DM 的整体架构，包括 DM 有哪些组件、各组件分别实现什么功能、组件之间交互的数据模型和 RPC 实现。

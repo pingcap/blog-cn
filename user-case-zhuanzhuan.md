@@ -6,7 +6,7 @@ summary: 目前 TiDB 在转转线上已经接入消息、风控两套 OLTP 以�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-zhuanzhuan/
-weight: 4
+weight: 11
 logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 ---
 

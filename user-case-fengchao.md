@@ -6,7 +6,7 @@ summary: TiDB 的改造完成之后，丰巢推送服务对大部分消息进行
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-fengchao/
-weight: 5
+weight: 6
 logo: /images/blog-cn/customers/fengchao-logo.png
 ---
 

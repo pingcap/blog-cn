@@ -6,7 +6,7 @@ summary: TiDB 可以直接替代 proxy+MySQL 的架构，完美解决了数据�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-iqiyi/
-weight: 3
+weight: 9
 logo: /images/blog-cn/customers/iqiyi-logo.png
 ---
 
