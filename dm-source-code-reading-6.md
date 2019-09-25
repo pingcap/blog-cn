@@ -7,7 +7,7 @@ tags: ['DM 源码阅读','社区']
 ---
 
 
-本文为 DM 源码阅读系列文章的第六篇，在 [《DM 源码阅读系列文章（五）Binlog replication 实现》](https://pingcap.com/blog-cn/dm-source-code-reading-5/) 中我们介绍了 binlog replication 处理单元的实现，对在增量复制过程中 binlog event 的读取、过滤、路由、转换以及执行等逻辑进行了分析。
+本文为 TiDB Data Migration 源码阅读系列文章的第六篇，在 [《DM 源码阅读系列文章（五）Binlog replication 实现》](https://pingcap.com/blog-cn/dm-source-code-reading-5/) 中我们介绍了 binlog replication 处理单元的实现，对在增量复制过程中 binlog event 的读取、过滤、路由、转换以及执行等逻辑进行了分析。
 
 本篇文章我们将会对 relay 数据处理单元的实现进行详细的讲解。这个单元的作用是从上游 MySQL/MariaDB 读取 binlog event 并写入到本地的 relay log file 中；当执行增量复制任务时，binlog replication 处理单元将读取 relay log file 中的 event 并在进行解析后复制到下游的 TiDB 中。本篇文章的内容包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。
 

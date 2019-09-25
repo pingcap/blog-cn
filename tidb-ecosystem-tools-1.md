@@ -1,23 +1,23 @@
 ---
-title: TiDB Ecosystem Tools 原理解读系列（一）：TiDB-Binlog 架构演进与实现原理
+title: TiDB Ecosystem Tools 原理解读系列（一）：TiDB Binlog 架构演进与实现原理
 author: ['王相']
 date: 2018-12-07
-summary: TiDB-Binlog 组件用于收集 TiDB 的 binlog，并提供实时备份和同步功能。本文主要介绍了 TiDB-Binlog 的架构演进之路和实现原理。
-tags: ['TiDB-Binlog','TiDB Ecosystem Tools']
+summary: TiDB Binlog 组件用于收集 TiDB 的 binlog，并提供实时备份和同步功能。本文主要介绍了 TiDB Binlog 的架构演进之路和实现原理。
+tags: ['TiDB Binlog','TiDB Ecosystem Tools']
 ---
 
 
 ## 简介
 
-TiDB-Binlog 组件用于收集 TiDB 的 binlog，并提供实时备份和同步功能。该组件在功能上类似于 MySQL 的主从复制，MySQL 的主从复制依赖于记录的 binlog 文件，TiDB-Binlog 组件也是如此，主要的不同点是 TiDB 是分布式的，因此需要收集各个 TiDB 实例产生的 binlog，并按照事务提交的时间排序后才能同步到下游。如果你需要部署 TiDB 集群的从库，或者想订阅 TiDB 数据的变更输出到其他的系统中，TiDB-Binlog 则是必不可少的工具。
+TiDB Binlog 组件用于收集 TiDB 的 binlog，并提供实时备份和同步功能。该组件在功能上类似于 MySQL 的主从复制，MySQL 的主从复制依赖于记录的 binlog 文件，TiDB Binlog 组件也是如此，主要的不同点是 TiDB 是分布式的，因此需要收集各个 TiDB 实例产生的 binlog，并按照事务提交的时间排序后才能同步到下游。如果你需要部署 TiDB 集群的从库，或者想订阅 TiDB 数据的变更输出到其他的系统中，TiDB Binlog 则是必不可少的工具。
 
 ## 架构演进
 
-TiDB-Binlog 这个组件已经发布了 2 年多时间，经历过几次架构演进，去年十月到现在大规模使用的是 Kafka 版本，架构图如下：
+TiDB Binlog 这个组件已经发布了 2 年多时间，经历过几次架构演进，去年十月到现在大规模使用的是 Kafka 版本，架构图如下：
 
-![TiDB-Binlog 架构演进](media/tidb-ecosystem-tools-1/1.png)
+![TiDB Binlog 架构演进](media/tidb-ecosystem-tools-1/1.png)
 
-Kafka 版本的 TiDB-Binlog 主要包括两个组件：
+Kafka 版本的 TiDB Binlog 主要包括两个组件：
 
 Pump：一个守护进程，在每个 TiDB 主机的后台运行。其主要功能是实时记录 TiDB 产生的 binlog 并顺序写入 Kafka 中。
 
@@ -39,11 +39,11 @@ Drainer： 从 Kafka 中收集 binlog，并按照 TiDB 中事务的提交顺序�
 
 最后，Drainer 需要读取 Kafka 中的 binlog、对 binlog 进行排序、解析 binlog，同步数据到下游等工作，可以看出 Drainer 的工作较多，而且 Drainer 是一个单点，所以往往同步数据的瓶颈都在 Drainer。
 
-**以上这些问题我们很难在已有的框架下进行优化，因此我们对 TiDB-Binlog 进行了重构，最新版本的 TiDB-Binlog 的总体架构如下图所示：**
+**以上这些问题我们很难在已有的框架下进行优化，因此我们对 TiDB Binlog 进行了重构，最新版本的 TiDB Binlog 的总体架构如下图所示：**
 
-![TiDB-Binlog 总体架构](media/tidb-ecosystem-tools-1/2.png)
+![TiDB Binlog 总体架构](media/tidb-ecosystem-tools-1/2.png)
 
-新版本 TiDB-Binlog 不再使用 Kafka 存储 binlog，仍然保留了 Pump 和 Drainer 两个组件，但是对功能进行了调整：
+新版本 TiDB Binlog 不再使用 Kafka 存储 binlog，仍然保留了 Pump 和 Drainer 两个组件，但是对功能进行了调整：
 
 * Pump 用于实时记录 TiDB 产生的 binlog，并将 binlog 按照事务的提交时间进行排序，再提供给 Drainer 进行消费。
 
@@ -61,7 +61,7 @@ Drainer： 从 Kafka 中收集 binlog，并按照 TiDB 中事务的提交顺序�
 
 5. Drainer 不再需要像原来一样读取一批 binlog 到内存里进行堆排序，只需要依次读取各个 Pump 的 binlog 进行归并排序，这样可以大大节省内存的使用，同时也更容易做内存控制。
 
-由于该版本最大的特点是多个 Pump 组成了一个集群（cluster），因此该版本命名为 cluster 版本。下面我们以最新的 cluster 版本的架构来介绍 TiDB-Binlog 的实现原理。
+由于该版本最大的特点是多个 Pump 组成了一个集群（cluster），因此该版本命名为 cluster 版本。下面我们以最新的 cluster 版本的架构来介绍 TiDB Binlog 的实现原理。
 
 ## 工作原理
 
@@ -302,4 +302,4 @@ Drainer 通过以上这些机制来高效地同步数据，并且保证数据的
 
 ## 总结
 
-TiDB-Binlog 是 TiDB 生态的重要工具，通过该工具来实现 TiDB 集群的主从复制、数据订阅。我们将持续提升该工具的稳定性、易用性、可靠性。
+TiDB Binlog 是 TiDB 生态的重要工具，通过该工具来实现 TiDB 集群的主从复制、数据订阅。我们将持续提升该工具的稳定性、易用性、可靠性。
