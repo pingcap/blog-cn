@@ -122,10 +122,10 @@ TiDB 支持完整的二级索引，并且是全局索引，很多查询可以通
 
 在部署之前请务必阅读 [TiDB 部署建议以及对硬件的需求](https://pingcap.com/docs-cn/dev/how-to/deploy/hardware-recommendations/)。
 
-推荐通过 [TiDB-Ansible](https://github.com/pingcap/tidb-ansible "TiDB-Ansible")
+推荐通过 [TiDB Ansible](https://github.com/pingcap/tidb-ansible "TiDB-Ansible")
 部署 TiDB 集群，这个工具可以部署、停止、销毁、升级整个集群，非常方便易用。
 
-具体的使用文档查看 [TiDB-Ansible 部署方案](https://pingcap.com/docs-cn/dev/how-to/deploy/orchestrated/ansible/)。非常不推荐手动部署，后期的维护和升级会很麻烦。
+具体的使用文档查看 [TiDB Ansible 部署方案](https://pingcap.com/docs-cn/dev/how-to/deploy/orchestrated/ansible/)。非常不推荐手动部署，后期的维护和升级会很麻烦。
 
 ### 导入数据
 
@@ -179,7 +179,7 @@ for i from 0 to 23:
 
 ### 监控 & 日志
 
-**Metrics 系统是了解系统状态的最佳方法，建议所有的用户都部署监控系统。**TiDB [使用 Grafana+Prometheus 监控系统状态](https://pingcap.com/docs-cn/v3.0/how-to/monitor/overview/)，如果使用 TiDB-Ansible 部署集群，那么会自动部署和配置监控系统。
+**Metrics 系统是了解系统状态的最佳方法，建议所有的用户都部署监控系统。**TiDB [使用 Grafana+Prometheus 监控系统状态](https://pingcap.com/docs-cn/v3.0/how-to/monitor/overview/)，如果使用 TiDB Ansible 部署集群，那么会自动部署和配置监控系统。
 
 监控系统中的监控项很多，大部分是给 TiDB 开发者查看的内容，如果没有对源代码比较深入的了解，并没有必要了解这些监控项。我们会精简出一些和业务相关或者是系统关键组件状态相关的监控项，放在一个独立的面板中，供用户使用。
 

@@ -6,13 +6,13 @@ summary: 本文将详细介绍 dump 和 load 两个数据同步处理单元的�
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 DM 源码阅读系列文章的第四篇，[《DM 源码阅读系列文章（三）数据同步处理单元介绍》](https://pingcap.com/blog-cn/dm-source-code-reading-3/) 介绍了数据同步处理单元实现的功能，数据同步流程的运行逻辑以及数据同步处理单元的 interface 设计。本篇文章在此基础上展开，详细介绍 dump 和 load 两个数据同步处理单元的设计实现，重点关注数据同步处理单元 interface 的实现，数据导入并发模型的设计，以及导入任务在暂停或出现异常后如何恢复。
+本文为 TiDB Data Migration 源码阅读系列文章的第四篇，[《DM 源码阅读系列文章（三）数据同步处理单元介绍》](https://pingcap.com/blog-cn/dm-source-code-reading-3/) 介绍了数据同步处理单元实现的功能，数据同步流程的运行逻辑以及数据同步处理单元的 interface 设计。本篇文章在此基础上展开，详细介绍 dump 和 load 两个数据同步处理单元的设计实现，重点关注数据同步处理单元 interface 的实现，数据导入并发模型的设计，以及导入任务在暂停或出现异常后如何恢复。
 
 ## dump 处理单元
 
-dump 处理单元的代码位于 [github.com/pingcap/dm/mydumper](https://github.com/pingcap/dm/tree/master/mydumper) 包内，作用是从上游 MySQL 将表结构和数据导出到逻辑 SQL 文件，由于该处理单元总是运行在任务的第一个阶段（full 模式和 all 模式），该处理单元每次运行不依赖于其他处理单元的处理结果。另一方面，如果在 dump 运行过程中被强制终止（例如在 dmctl 中执行 pause-task 或者 stop-task），也不会记录已经 dump 数据的 checkpoint 等信息。不记录 checkpoint 是因为每次运行 mydumper 从上游导出数据，上游的数据都可能发生变更，为了能得到一致的数据和 metadata 信息，每次恢复任务或重新运行任务时该处理单元会 [清理旧的数据目录](https://github.com/pingcap/dm/blob/092b5e4378ce42cf6c2488dd06498792190a091b/mydumper/mydumper.go#L68)，重新开始一次完整的数据 dump。
+dump 处理单元的代码位于 [github.com/pingcap/dm/mydumper](https://github.com/pingcap/dm/tree/master/mydumper) 包内，作用是从上游 MySQL 将表结构和数据导出到逻辑 SQL 文件，由于该处理单元总是运行在任务的第一个阶段（full 模式和 all 模式），该处理单元每次运行不依赖于其他处理单元的处理结果。另一方面，如果在 dump 运行过程中被强制终止（例如在 dmctl 中执行 pause-task 或者 stop-task），也不会记录已经 dump 数据的 checkpoint 等信息。不记录 checkpoint 是因为每次运行 Mydumper 从上游导出数据，上游的数据都可能发生变更，为了能得到一致的数据和 metadata 信息，每次恢复任务或重新运行任务时该处理单元会 [清理旧的数据目录](https://github.com/pingcap/dm/blob/092b5e4378ce42cf6c2488dd06498792190a091b/mydumper/mydumper.go#L68)，重新开始一次完整的数据 dump。
 
-导出表结构和数据的逻辑并不是在 DM 内部直接实现，而是 [通过 `os/exec` 包调用外部 mydumper 二进制文件](https://github.com/pingcap/dm/blob/092b5e4378ce42cf6c2488dd06498792190a091b/mydumper/mydumper.go#L104) 来完成。在 mydumper 内部，我们需要关注以下几个问题：
+导出表结构和数据的逻辑并不是在 DM 内部直接实现，而是 [通过 `os/exec` 包调用外部 mydumper 二进制文件](https://github.com/pingcap/dm/blob/092b5e4378ce42cf6c2488dd06498792190a091b/mydumper/mydumper.go#L104) 来完成。在 Mydumper 内部，我们需要关注以下几个问题：
 
 * 数据导出时的并发模型是如何实现的。
 
@@ -20,9 +20,9 @@ dump 处理单元的代码位于 [github.com/pingcap/dm/mydumper](https://github
 
 * 库表黑白名单的实现方式。
 
-### mydumper 的实现细节
+### Mydumper 的实现细节
 
-mydumper 的一次完整的运行流程从主线程开始，主线程按照以下步骤执行：
+Mydumper 的一次完整的运行流程从主线程开始，主线程按照以下步骤执行：
 
 1. 解析参数。
 
@@ -50,7 +50,7 @@ mydumper 的一次完整的运行流程从主线程开始，主线程按照以�
 
 13. [等待所有工作子线程退出](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L1670-L1679)。
 
-工作线程的并发控制包括了两个层面，一层是在不同表级别的并发，另一层是同一张表级别的并发。mydumper 的主线程会将一次同步任务拆分为多个同步子任务，并将每个子任务分发给同一个异步队列 `conf.queue_less_locking/conf.queue`，工作子线程从队列中获取任务并执行。具体的子任务划分包括以下策略：
+工作线程的并发控制包括了两个层面，一层是在不同表级别的并发，另一层是同一张表级别的并发。Mydumper 的主线程会将一次同步任务拆分为多个同步子任务，并将每个子任务分发给同一个异步队列 `conf.queue_less_locking/conf.queue`，工作子线程从队列中获取任务并执行。具体的子任务划分包括以下策略：
 
 + 开启 `less-locking` 选项的非 InnoDB 表的处理。
     - [先将所有 `non_innodb_table` 分为 `num_threads` 组，分组方式是遍历这些表，依此将遍历到的表加入到当前数据量最小的分组，尽量保证每个分组内的数据量相近](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L1574-L1586)。
@@ -65,9 +65,9 @@ mydumper 的一次完整的运行流程从主线程开始，主线程按照以�
 + InnoDB 表的处理。
     - 与未开启 `less-locking` 选项的非 InnoDB 表的处理相同，同样是 [按照表分发子任务，如果有 `chunks` 子任务会进一步细分](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L1616-L1620)。
 
-从上述的并发模型可以看出 mydumper 首先按照表进行同步任务拆分，对于同一张表，如果配置 `rows-per-file` 参数，会根据该参数和表行数将表划分为合适的 `chunks` 数，这即是同一张表内部的并发。具体表行数的估算和 `chunks` 划分的实现见 [`get_chunks_for_table`](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L1885-L2004) 函数。
+从上述的并发模型可以看出 Mydumper 首先按照表进行同步任务拆分，对于同一张表，如果配置 `rows-per-file` 参数，会根据该参数和表行数将表划分为合适的 `chunks` 数，这即是同一张表内部的并发。具体表行数的估算和 `chunks` 划分的实现见 [`get_chunks_for_table`](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L1885-L2004) 函数。
 
-需要注意目前 DM 在任务配置中指定的库表黑白名单功能只应用于 load 和 binlog replication 处理单元。如果在 dump 处理单元内使用库表黑白名单功能，需要在同步任务配置文件的 dump 处理单元配置提供 extra-args 参数，并指定 mydumper 相关参数，包括 --database, --tables-list 和 --regex。mydumper 使用 regex 过滤库表的实现参考 [`check_regex`](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L314-L338) 函数。
+需要注意目前 DM 在任务配置中指定的库表黑白名单功能只应用于 load 和 binlog replication 处理单元。如果在 dump 处理单元内使用库表黑白名单功能，需要在同步任务配置文件的 dump 处理单元配置提供 extra-args 参数，并指定 Mydumper 相关参数，包括 --database, --tables-list 和 --regex。Mydumper 使用 regex 过滤库表的实现参考 [`check_regex`](https://github.com/pingcap/mydumper/blob/9493dd752b9ea8804458e56a955e7f74960fa969/mydumper.c#L314-L338) 函数。
 
 ## load 处理单元
 

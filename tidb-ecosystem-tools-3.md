@@ -1,15 +1,15 @@
 ---
-title: TiDB Ecosystem Tools 原理解读系列（三）TiDB-DM 架构设计与实现原理
+title: TiDB Ecosystem Tools 原理解读系列（三）TiDB Data Migration 架构设计与实现原理
 author: ['张学程']
 date: 2018-12-26
-summary: TiDB-DM（Data Migration）是用于将数据从 MySQL/MariaDB 迁移到 TiDB 的工具。该工具既支持以全量备份文件的方式将 MySQL/MariaDB 的数据导入到 TiDB，也支持通过解析执行 MySQL/MariaDB binlog 的方式将数据增量同步到 TiDB。
+summary: TiDB Data Migration 是用于将数据从 MySQL/MariaDB 迁移到 TiDB 的工具。该工具既支持以全量备份文件的方式将 MySQL/MariaDB 的数据导入到 TiDB，也支持通过解析执行 MySQL/MariaDB binlog 的方式将数据增量同步到 TiDB。
 tags: ['TiDB-DM','TiDB Ecosystem Tools']
 ---
 
 
 ## 简介
 
-TiDB-DM（Data Migration）是用于将数据从 MySQL/MariaDB 迁移到 TiDB 的工具。该工具既支持以全量备份文件的方式将 MySQL/MariaDB 的数据导入到 TiDB，也支持通过解析执行 MySQL/MariaDB binlog 的方式将数据增量同步到 TiDB。特别地，对于有多个 MySQL/MariaDB 实例的分库分表需要合并后同步到同一个 TiDB 集群的场景，DM 提供了良好的支持。如果你需要从 MySQL/MariaDB 迁移到 TiDB，或者需要将 TiDB 作为 MySQL/MariaDB 的从库，DM 将是一个非常好的选择。
+TiDB Data Migration 是用于将数据从 MySQL/MariaDB 迁移到 TiDB 的工具。该工具既支持以全量备份文件的方式将 MySQL/MariaDB 的数据导入到 TiDB，也支持通过解析执行 MySQL/MariaDB binlog 的方式将数据增量同步到 TiDB。特别地，对于有多个 MySQL/MariaDB 实例的分库分表需要合并后同步到同一个 TiDB 集群的场景，DM 提供了良好的支持。如果你需要从 MySQL/MariaDB 迁移到 TiDB，或者需要将 TiDB 作为 MySQL/MariaDB 的从库，DM 将是一个非常好的选择。
 
 ## 架构设计
 

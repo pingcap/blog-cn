@@ -8,7 +8,7 @@ tags: ['DM 源码阅读','社区']
 
 ## 前言
 
-[TiDB-DM](https://github.com/pingcap/dm) 是由 PingCAP 开发的一体化数据同步任务管理平台，支持从 MySQL 或 MariaDB 到 TiDB 的全量数据迁移和增量数据同步，在 [TiDB DevCon 2019](https://pingcap.com/community-cn/devcon2019/) 正式开源。作为一款连接 MySQL/MariaDB 生态和 TiDB 生态的中台类型产品，DM 获得了广泛的关注，很多公司、开发者和社区的伙伴已经在使用 DM 来进行数据迁移和管理。随着大家使用的广泛和深入，遇到了不少由于对 DM 原理不理解而错误使用的情况，也发现了一些 DM 支持并不完善的场景和很多可以改进的地方。
+[TiDB Data Migration](https://github.com/pingcap/dm) 是由 PingCAP 开发的一体化数据同步任务管理平台，支持从 MySQL 或 MariaDB 到 TiDB 的全量数据迁移和增量数据同步，在 [TiDB DevCon 2019](https://pingcap.com/community-cn/devcon2019/) 正式开源。作为一款连接 MySQL/MariaDB 生态和 TiDB 生态的中台类型产品，DM 获得了广泛的关注，很多公司、开发者和社区的伙伴已经在使用 DM 来进行数据迁移和管理。随着大家使用的广泛和深入，遇到了不少由于对 DM 原理不理解而错误使用的情况，也发现了一些 DM 支持并不完善的场景和很多可以改进的地方。
 
 在这样的背景下，我们希望开展 DM 源码阅读分享活动，通过对 DM 代码的分析和设计原理的解读，帮助大家理解 DM 的实现原理，和大家进行更深入的交流，也有助于我们和社区共同进行 DM 的设计、开发和测试。
 
@@ -22,7 +22,7 @@ tags: ['DM 源码阅读','社区']
 
 *   基本的后端服务知识，比如后台服务进程管理、RPC 工作原理等。
 
-总体而言，读者需要有一定 MySQL/TiDB 的使用经验，了解 MySQL 数据备份和主从同步的原理，以及可以读懂 Go 语言程序。在阅读 DM 源码之前，可以先从阅读[《TiDB-DM 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)入手，并且参考 [使用文档](https://pingcap.com/docs-cn/tools/dm/overview/) 在本地搭建一个 DM 的测试环境，从基础原理和使用对 DM 有一个初步的认识，然后再进一步分析源码，深入理解代码的设计和实现。
+总体而言，读者需要有一定 MySQL/TiDB 的使用经验，了解 MySQL 数据备份和主从同步的原理，以及可以读懂 Go 语言程序。在阅读 DM 源码之前，可以先从阅读[《TiDB Data Migration 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)入手，并且参考 [使用文档](https://pingcap.com/docs-cn/tools/dm/overview/) 在本地搭建一个 DM 的测试环境，从基础原理和使用对 DM 有一个初步的认识，然后再进一步分析源码，深入理解代码的设计和实现。
 
 ## 内容概要
 
