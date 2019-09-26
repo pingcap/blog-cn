@@ -2,13 +2,13 @@
 title: TiKV Rust Client 迁移记 - futures 0.1 至 0.3
 author: ['Nick Cameron']
 date: 2019-09-25
-summary: 
+summary: 最近我将一个中小型的 crate 从 futures 库的 0.1 迁移至了 0.3 版本。过程本身不是特别麻烦，但还是有些地方或是微妙棘手，或是没有很好的文档说明。这篇文章里，我会把迁移经验总结分享给大家。 
 tags: ['Rust','TiKV','futures']
 ---
 
 >作者介绍：Nick Cameron，PingCAP 研发工程师，Rust core team 成员，专注于分布式系统、数据库领域和 Rust 语言的进展。
 
-最近我把一个中小型的 crate 从 futures 库的 0.1 迁移至了 0.3 版本。过程本身不是特别麻烦，但还是有些地方或是微妙棘手，或是没有很好的文档说明。这篇文章里，我会迁移经验总结分享给大家。 
+最近我将一个中小型的 crate 从 futures 库的 0.1 迁移至了 0.3 版本。过程本身不是特别麻烦，但还是有些地方或是微妙棘手，或是没有很好的文档说明。这篇文章里，我会把迁移经验总结分享给大家。 
 
 我所迁移的 crate 是 TiKV 的 [Rust Client](https://github.com/tikv/client-rust) 。该 crate 的规模约为 5500 行左右代码，通过 gRPC 与 TiKV 交互，采用异步接口实现。因此，对于 Futures 库的使用颇为重度。 
 
