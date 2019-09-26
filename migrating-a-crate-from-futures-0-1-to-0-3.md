@@ -10,9 +10,9 @@ tags: ['Rust','TiKV','futures']
 
 最近我将一个中小型的 crate 从 futures 库的 0.1 迁移至了 0.3 版本。过程本身不是特别麻烦，但还是有些地方或是微妙棘手，或是没有很好的文档说明。这篇文章里，我会把迁移经验总结分享给大家。 
 
-我所迁移的 crate 是 TiKV 的 [Rust Client](https://github.com/tikv/client-rust) 。该 crate 的规模约为 5500 行左右代码，通过 gRPC 与 TiKV 交互，采用异步接口实现。因此，对于 Futures 库的使用颇为重度。 
+我所迁移的 crate 是 TiKV 的 [Rust Client](https://github.com/tikv/client-rust) 。该 crate 的规模约为 5500 行左右代码，通过 gRPC 与 TiKV 交互，采用异步接口实现。因此，对于 futures 库的使用颇为重度。 
 
-异步编程是 Rust 语言中影响广泛的一块领域，已有几年发展时间，其核心部分就是 [Futures](https://github.com/rust-lang-nursery/futures-rs) 库。作为一个标准 Rust 库，Futures 库为使用 futures 编程提供所需数据类型以及功能。虽然它是异步编程的关键，但并非你所需要的一切 - 你仍然需要可以推进事件循环 (event loop) 以及与操作系统交互的其他库。
+异步编程是 Rust 语言中影响广泛的一块领域，已有几年发展时间，其核心部分就是 [futures](https://github.com/rust-lang-nursery/futures-rs) 库。作为一个标准 Rust 库，futures 库为使用 futures 编程提供所需数据类型以及功能。虽然它是异步编程的关键，但并非你所需要的一切 - 你仍然需要可以推进事件循环 (event loop) 以及与操作系统交互的其他库。
 
 `futures` 库在这几年中变化很大。最新的版本为 0.3（crates.io 发布的 `futures` 预览版）。然而，有许多早期代码是 futures 0.1 系列版本，且一直没有更新。这样的分裂事出有因 - 0.1 和 0.3 版本之间变化太大。0.1 版本相对稳定，而 0.3 版本一直处于快速变化中。长远来看，0.3 版本最终会演进为 1.0。有一部分代码会进入 Rust 标准库，其中的第一部分已在最近发布了稳定版，也就是 `Future` trait。
 
