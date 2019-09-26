@@ -3,9 +3,8 @@ title: TiKV Rust Client 迁移记 - futures 0.1 至 0.3
 author: ['Nick Cameron']
 date: 2019-09-25
 summary: 
-tags: ['','TiDB Operator','社区']
+tags: ['Rust','TiKV','futures']
 ---
-
 
 >作者介绍：Nick Cameron，PingCAP 研发工程师，Rust core team 成员，专注于分布式系统、数据库领域和 Rust 语言的进展。
 
