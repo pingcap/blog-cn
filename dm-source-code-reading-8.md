@@ -7,7 +7,7 @@ tags: ['DM 源码阅读','社区']
 ---
 
 
-本文为 DM 源码阅读系列文章的第八篇，[《DM 源码阅读系列文章（七）定制化数据同步功能的实现》](https://pingcap.com/blog-cn/dm-source-code-reading-7/) 对 DM 中的定制化数据同步功能进行详细的讲解，包括库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。
+本文为 TiDB Data Migration 源码阅读系列文章的第八篇，[《DM 源码阅读系列文章（七）定制化数据同步功能的实现》](https://pingcap.com/blog-cn/dm-source-code-reading-7/) 对 DM 中的定制化数据同步功能进行详细的讲解，包括库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。
 
 本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些 MySQL 上的第三方 online schema change 方案同步，内容包括 online schema change 方案的简单介绍，online schema change 同步方案，以及同步实现细节。
 

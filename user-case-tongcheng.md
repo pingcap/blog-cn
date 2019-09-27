@@ -6,7 +6,7 @@ summary: 在同程内部，目前共有数套 TiDB 集群，部署服务器数�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-tongcheng/
-weight: 9
+weight: 18
 logo: /images/blog-cn/customers/tongcheng-logo.png
 ---
 

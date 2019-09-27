@@ -47,7 +47,7 @@ TiDB-Lightning Toolset 包含两个组件：tidb-lightning 和 tikv-importer。L
 
 ![Lightning](media/tidb-ecosystem-tools-2/3.png)
 
-Lightning 现时只支持经 mydumper 导出的 SQL 备份。mydumper 将每个表的内容分别储存到不同的文件，与 mysqldump 不同。这样不用解析整个数据库就能平行处理每个表。
+Lightning 现时只支持经 Mydumper 导出的 SQL 备份。Mydumper 将每个表的内容分别储存到不同的文件，与 mysqldump 不同。这样不用解析整个数据库就能平行处理每个表。
 
 首先，Lightning 会扫描 SQL 备份，区分出结构文件（包含 CREATE TABLE 语句）和数据文件（包含 INSERT 语句）。结构文件的内容会直接发送到 TiDB，用以建立数据库构型。
 

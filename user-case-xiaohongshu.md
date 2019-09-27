@@ -6,7 +6,7 @@ summary: ​本文根据近两年 TiDB 在小红书的落地过程，和大家�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-xiaohongshu/
-weight: 2
+weight: 4
 logo: /images/blog-cn/customers/xiaohongshu-logo.png
 ---
 

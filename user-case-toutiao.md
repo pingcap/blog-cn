@@ -6,7 +6,7 @@ summary: TiDB 主要应用在今日头条核心 OLTP 系统 - 对象存储系统
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-toutiao/
-weight: 11
+weight: 17
 logo: /images/blog-cn/customers/toutiao-logo.png
 ---
 
