@@ -76,10 +76,10 @@ for rowID := range rows {
 
 在 TiDB 的 Expression Package 上，除了向量化相关的 PR，下面几位同学的 PR 贡献数已经超过了 8 个，达到了 Active Contributor 的要求，他们分别是：[jacklightChen](https://github.com/jacklightChen)，[tsthght](https://github.com/tsthght)，[tangwz](https://github.com/tangwz) 和 [b41sh](https://github.com/b41sh)，也恭喜他们！
 
-成为 Active Contributor 之后，如果继续为 Expression Package 贡献 PR，且合并的 PR 数量超过 20 个，就有机会获得提名成为 Expression Package [Reviewer](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#reviewer)。Expression Package 的 Reviewer 在技术上受到社区认可，其对 PR 的 review comments 具有技术公信力，可以和 TiDB 工程师一起 Review Expression 包的 PR，拥有点赞的权限，还拥有持续发展成 TiDB committer 的机会！
+成为 Active Contributor 之后，如果继续为 Expression Package 贡献 PR，且合并的 PR 数量超过 20 个，就有机会获得提名成为 Expression Package [Reviewer](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#reviewer)。Expression Package 的 Reviewer 在技术上受到社区认可，其对 PR 的 review comments 具有技术公信力，可以和 TiDB 工程师一起 Review Expression 包的 PR，并拥有点赞的权限，当然还拥有持续发展成 TiDB Committer 的机会！
 
 ## 未来工作
 
-如 [十分钟成为 Contributor 系列 | 助力 TiDB 表达式计算性能提升 10 倍](https://mp.weixin.qq.com/s/aJEwU8xGiruIIn0niWvgIg) 文中所说，我们成立了 [Vectorized Expression Working Group](https://github.com/pingcap/community/blob/master/working-groups/wg-vec-expr.md)，在 slack - [tidbcommunity](https://pingcap.com/tidbslack) 中开放了 #wg-vec-expr 的公共 channel 供大家讨论问题，欢迎感兴趣的同学参与进来一起讨论表达式计算的向量化优化。目前表达式向量化重构的工作还在继续，欢迎各位新老 Contributor 持续的参与这项工程。
+[上篇文章](https://mp.weixin.qq.com/s/aJEwU8xGiruIIn0niWvgIg) 中提到，我们成立了 [Vectorized Expression Working Group](https://github.com/pingcap/community/blob/master/working-groups/wg-vec-expr.md)，并在 slack - [tidbcommunity](https://pingcap.com/tidbslack) 中开放了 #wg-vec-expr 的公共 channel 供大家讨论问题，欢迎感兴趣的同学参与进来一起讨论表达式计算的向量化优化。目前表达式向量化重构的工作还在继续，欢迎各位新老 Contributor 持续的参与这项工程。
 
-关于社区，我们后续会优化升级 Community Organizer 组织架构，除了现在 Working Group 的组织以外，新增 Special Interest Group（简称 SIG)，并将在国庆节后成立 Expression 的 SIG。届时将邀请 Expression Package 中 Active Contributor 及以上角色的同学参加。我们会在 Expression SIG 中为社区同学提供详尽的辅导，帮助 SIG 中的同学在提升自我，满足自己兴趣的同时，持续为 TiDB 贡献代码，和 TiDB 一起成长，敬请期待！
+此外，我们后续会优化升级 Community Organizer 组织架构，除了现在 Working Group 的组织以外，还会新增 Special Interest Group（简称 SIG)，并将在国庆节后成立 Expression 的 SIG。届时将邀请 Expression Package 中 Active Contributor 及以上角色的同学参加。我们会在 Expression SIG 中为社区同学提供详尽的辅导，帮助 SIG 中的同学在提升自我，满足自己兴趣的同时，持续为 TiDB 贡献代码，和 TiDB 一起成长，敬请期待！
