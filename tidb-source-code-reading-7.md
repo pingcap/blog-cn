@@ -151,19 +151,20 @@ PredicatePushDown 函数处理当前的查询计划 p，参数 predicates 表示
 
 什么情况下外连接可以转内连接？左向外连接的结果集包括左表的所有行，而不仅仅是连接列所匹配的行。如果左表的某行在右表中没有匹配的行，则在结果集右边补 NULL。做谓词下推时，如果我们知道接下来的的谓词条件一定会把包含 NULL 的行全部都过滤掉，那么做外连接就没意义了，可以直接改写成内连接。
 
-什么情况会过滤掉 NULL 呢？比如，某个谓词的表达式用 NULL 计算后会得到 false；或者多个谓词用 AND 条件连接，其中一个会过滤 NULL；又或者用 OR 条件连接，其中每个都是过滤 NULL 的。术语里面 OR 条件连接叫做析取范式 DNF (disjunctive normal form)。对应的还有合取范式 CNF (conjunctive normal form)。TiDB 的代码里面用到这种缩写。
+什么情况会过滤掉 NULL 呢？比如，某个谓词的表达式用 NULL 计算后会得到 false 或者 NULL；或者多个谓词用 AND 条件连接，其中一个会过滤 NULL；又或者用 OR 条件连接，其中每个都是过滤 NULL 的。术语里面 OR 条件连接叫做析取范式 DNF (disjunctive normal form)。对应的还有合取范式 CNF (conjunctive normal form)。TiDB 的代码里面用到这种缩写。
 
 能转成 inner join 的例子:
 
 ```sql
-   select * from t1 left outer join t2 on t1.id = t2.id where t2.id != null;
-   select * from t1 left outer join t2 on t1.id = t2.id where t2.id != null and t2.value > 3;
+   select * from t1 left outer join t2 on t1.id = t2.id where t2.id is not null;
+   select * from t1 left outer join t2 on t1.id = t2.id where t2.value > 3;
+   select * from t1 left outer join t2 on t1.id = t2.id where t2.id is null and t2.value > 3;
 ```
 
 不能转成 inner join 的例子:
 
 ```sql
-   select * from t1 left outer join t2 on t1.id = t2.id where t2.id != null or t2.value > 3;
+   select * from t1 left outer join t2 on t1.id = t2.id where t2.id is null or t2.value > 3;
 ```
 
 接下来，把所有条件全收集起来，然后区分哪些是 Join 的等值条件，哪些是 Join 需要用到的条件，哪些全部来自于左子节点，哪些全部来自于右子节点。
