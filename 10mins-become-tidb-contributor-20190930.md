@@ -2,11 +2,12 @@
 title: 十分钟成为 Contributor 系列 | TiDB 向量化表达式活动第二弹
 author: ['Yuanjia Zhang']
 date: 2019-09-16
-summary: 
+summary: 在上篇文章中，我们介绍了 TiDB 如何实现表达式的向量化优化以及社区同学如何参与这项工程。两周过去了，我们收到了很多来自社区小伙伴们的建议和反馈，今天在这里和大家分享一下活动进展和这些建议及反馈。
+
 tags: ['TiDB','社区','Contributor']
 ---
 
-在 [上篇文章](https://pingcap.com/blog-cn/10mins-become-contributor-of-tidb-20190916/) 中，我们介绍了 TiDB 如何实现表达式的向量化优化以及社区同学如何参与这项工程。两周过去了，我们收到了很多来自社区小伙伴们很好的建议和反馈，今天和大家分享一下此活动进展和这些建议及反馈。
+在 [上篇文章](https://pingcap.com/blog-cn/10mins-become-contributor-of-tidb-20190916/) 中，我们介绍了 TiDB 如何实现表达式的向量化优化以及社区同学如何参与这项工程。两周过去了，我们收到了很多来自社区小伙伴们的建议和反馈，今天在这里和大家分享一下活动进展和这些建议及反馈。
 
 ## 活动进展
 
