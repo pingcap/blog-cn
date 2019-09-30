@@ -2,11 +2,11 @@
 title: 十分钟成为 Contributor 系列 | TiDB 向量化表达式活动第二弹
 author: ['Yuanjia Zhang']
 date: 2019-09-16
-summary: 在上篇文章中，我们介绍了 TiDB 如何实现表达式的向量化优化以及社区同学如何参与这项工程。两周过去了，我们收到了很多来自社区小伙伴们的建议和反馈，今天在这里和大家分享一下活动进展和这些建议及反馈。
+summary: 在上篇文章中，我们介绍了 TiDB 如何实现表达式的向量化优化，以及社区同学如何参与这项工程。两周过去了，我们收到了很多来自社区小伙伴们的建议和反馈，今天在这里和大家分享一下活动进展和这些建议及反馈。
 tags: ['TiDB','社区','Contributor']
 ---
 
-在 [上篇文章](https://pingcap.com/blog-cn/10mins-become-contributor-of-tidb-20190916/) 中，我们介绍了 TiDB 如何实现表达式的向量化优化以及社区同学如何参与这项工程。两周过去了，我们收到了很多来自社区小伙伴们的建议和反馈，今天在这里和大家分享一下活动进展和这些建议及反馈。
+在 [上篇文章](https://pingcap.com/blog-cn/10mins-become-contributor-of-tidb-20190916/) 中，我们介绍了 TiDB 如何实现表达式的向量化优化，以及社区同学如何参与这项工程。两周过去了，我们收到了很多来自社区小伙伴们的建议和反馈，今天在这里和大家分享一下活动进展和这些建议及反馈。
 
 ## 活动进展
 
@@ -81,4 +81,4 @@ for rowID := range rows {
 
 [上篇文章](https://mp.weixin.qq.com/s/aJEwU8xGiruIIn0niWvgIg) 中提到，我们成立了 [Vectorized Expression Working Group](https://github.com/pingcap/community/blob/master/working-groups/wg-vec-expr.md)，并在 slack - [tidbcommunity](https://pingcap.com/tidbslack) 中开放了 #wg-vec-expr 的公共 channel 供大家讨论问题，欢迎感兴趣的同学参与进来一起讨论表达式计算的向量化优化。目前表达式向量化重构的工作还在继续，欢迎各位新老 Contributor 持续的参与这项工程。
 
-此外，我们后续会优化升级 Community Organizer 组织架构，除了现在 Working Group 的组织以外，还会新增 Special Interest Group（简称 SIG)，并将在国庆节后成立 Expression 的 SIG。届时将邀请 Expression Package 中 Active Contributor 及以上角色的同学参加。我们会在 Expression SIG 中为社区同学提供详尽的辅导，帮助 SIG 中的同学在提升自我，满足自己兴趣的同时，持续为 TiDB 贡献代码，和 TiDB 一起成长，敬请期待！
+此外，我们后续会优化升级 Community Organizer 组织架构，除了现在 Working Group 的组织以外，还会新增 Special Interest Group（简称 SIG)，负责专门维护和开发 TiDB 中某些具体模块，并将在国庆节后成立 Expression 的 SIG。届时将邀请 Expression Package 中 Active Contributor 及以上角色的同学参加。我们会在 Expression SIG 中为社区同学提供详尽的辅导，帮助 SIG 中的同学在提升自我，满足自己兴趣的同时，持续为 TiDB 贡献代码，和 TiDB 一起成长，敬请期待！
