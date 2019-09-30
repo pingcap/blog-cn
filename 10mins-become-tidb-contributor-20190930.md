@@ -67,7 +67,7 @@ for rowID := range rows {
 
 ## 开发者社区
 
-如前文所说，在表达式向量化优化过程中的代码绝大多数都是由社区开发者们贡献的，具体来说是以下 Contributor（按照 PR 数排序，“*” 表示这次活动中新晋的 TiDB Contributor）：
+如上面所说，在表达式向量化优化过程中的代码绝大多数都是由社区开发者们贡献的，具体来说是以下 Contributor（按照 PR 数排序，“*” 表示这次活动中新晋的 TiDB Contributor）：
 
 ![](media/10mins-become-tidb-contributor-20190930/1.png)
 
