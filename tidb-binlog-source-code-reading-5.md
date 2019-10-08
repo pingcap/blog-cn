@@ -142,7 +142,7 @@ if l0Num >= l0Trigger {
 
 对于 Valuelog，GC 每删除 100 批 KVS（即 102400 个 KVS）触发一次 Valuelog 的 GC，Valuelog GC 最终反应到文件系统上删除文件，因此开销比较小。
 
-在示例代码的 [doGCTS](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L653) 函数中存在一个 Bug，你发现了么？欢迎留言抢答。
+> 在示例代码的 [doGCTS](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L653) 函数中存在一个 Bug，你发现了么？欢迎留言抢答。
 
 ## 小结
 
