@@ -82,7 +82,7 @@ go append.writeToSorter(append.writeToKV(toKV))
 
 	既然 binlog 的元数据在 writeToKV 过程已经排好序了，为什么还需要 `writeToSorter` 呢？这里和《[TiDB-Binlog 架构演进与实现原理](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/)》一文提到的 Binlog 工作原理有关：
 
-	TiDB 的事务采用 2pc 算法，一个成功的事务会写两条 binlog，包括一条 Prewrite binlog 和 一条 Commit binlog；如果事务失败，会发一条 Rollback binlog。
+>	TiDB 的事务采用 2pc 算法，一个成功的事务会写两条 binlog，包括一条 Prewrite binlog 和 一条 Commit binlog；如果事务失败，会发一条 Rollback binlog。
 
 	要完整的还原事务，我们需要对 Prewrite binlog 和 Commit binlog（下文简称 P-binlog 和 C-binlog） 配对，才能知晓某一个事务是否被 commit 成功了。[Sorter](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/sorter.go#L95) 就起这样的作用，这个过程的主要实现在 [sorter.run](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/sorter.go#L156) 中。Sorter 逐条读出 binlog，对于 P-binlog 则暂时存放在内存中等待配对，对于 C-binlog 则与内存中未配对的 P-binlog 进行匹配。如果某一条 P-binlog 长期没有 C-binlog 与之牵手，Sorter 将反查 TiKV 问问这条单身狗 P-binlog 的伴侣是不是迷路了。
 
