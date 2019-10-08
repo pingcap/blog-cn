@@ -6,7 +6,7 @@ summary: 在上篇文章中，我们主要介绍了 Pump Server 的上线过程�
 tags: ['TiDB Binlog 源码阅读','社区']
 ---
 
-在上篇文章中，我们主要介绍了 Pump Server 的上线过程、gRPC API 实现、以及下线过程和相关辅助机制，其中反复提到了 Pump Storage 这个实体。本文就将介绍 Pump Storage 的实现，其主要代码在 [pump/storage](https://github.com/pingcap/tidb-binlog/tree/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage) 文件夹中。
+在 [上篇文章](https://pingcap.com/blog-cn/tidb-binlog-source-code-reading-4/) 中，我们主要介绍了 Pump Server 的上线过程、gRPC API 实现、以及下线过程和相关辅助机制，其中反复提到了 Pump Storage 这个实体。本文就将介绍 Pump Storage 的实现，其主要代码在 [pump/storage](https://github.com/pingcap/tidb-binlog/tree/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage) 文件夹中。
 
 Pump Storage 由 Pump Server 调用，主要负责 binlog 的持久化存储，同时兼顾排序、配对等功能，下面我们由 Storage 接口开始了解 Pump Storage 的实现。
 
@@ -102,7 +102,7 @@ PullCommitBinlog 顾名思义，是用于拉 Commit binlog 的接口，其实现
 
 GC 是老生常谈，必不可少的机制。Pump Storage 数据在本地存储的体积随时间而增大，我们需要某种 GC 机制来释放存储资源。对垃圾数据的判定有两条规则：1、该条 binlog 已经同步到下游；2、该条 binlog 的 tso 距现在已经超过一段时间（该值即配置项：`gc`）。
 
-注：  由于生产环境中发现用户有时会关闭了 drainer 却没有使用 binlogctl 将相应 drainer 节点标记为 offline，导致 pump storage 的数据一直在膨胀，不能GC。因此在 v3.0.1、v2.1.15 后无论 Binlog 是否已经同步到下游，都会正常进入 GC 流程。
+注：  由于生产环境中发现用户有时会关闭了 drainer 却没有使用 binlogctl 将相应 drainer 节点标记为 offline，导致 Pump Storage 的数据一直在膨胀，不能GC。因此在 v3.0.1、v2.1.15 后无论 Binlog 是否已经同步到下游，都会正常进入 GC 流程。
 
 GC 实现在 [doGCTS](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/storage.go#L653) 中，GC 过程分别针对 Metadata 和 Valuelog 两类存储。
 
