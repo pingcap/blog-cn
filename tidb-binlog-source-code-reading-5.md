@@ -1,8 +1,14 @@
+---
+title: TiDB Binlog 源码阅读系列文章（五）Pump Storage 介绍（上）
+author: ['赵一霖']
+date: 2019-10-08
+summary: 在上篇文章中，我们主要介绍了 Pump Server 的上线过程、gRPC API 实现、以及下线过程和相关辅助机制，其中反复提到了 Pump Storage 这个实体。本文就将介绍 Pump Storage 的实现。
+tags: ['TiDB Binlog 源码阅读','社区']
+---
 
+在上篇文章中，我们主要介绍了 Pump Server 的上线过程、gRPC API 实现、以及下线过程和相关辅助机制，其中反复提到了 Pump Storage 这个实体。本文就将介绍 Pump Storage 的实现，其主要代码在 [pump/storage](https://github.com/pingcap/tidb-binlog/tree/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage) 文件夹中。
 
-在上篇文章中，我们主要介绍了 Pump Server 的上线过程、gRPC API 实现、以及下线过程和相关辅助机制，其中反复提到了 Pump Storage 这个实体。本文就介绍一下 Pump Storage 的实现，其主要代码在 [pump/storage](https://github.com/pingcap/tidb-binlog/tree/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage) 文件夹中。
-
-Pump Storage 由 Pump Server 调用，主要负责 Binlog 的持久化存储，同时兼顾排序、配对等功能，下面我们由 Storage 接口开始了解 Pump Storage 的实现。
+Pump Storage 由 Pump Server 调用，主要负责 binlog 的持久化存储，同时兼顾排序、配对等功能，下面我们由 Storage 接口开始了解 Pump Storage 的实现。
 
 ## Storage interface
 
@@ -39,7 +45,7 @@ Append 的初始化操作是在 [`NewAppendWithResolver`](https://github.com/pin
 
 ### WriteBinlog
 
-[`WriteBinlog`](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L760) 由 Pump Server 调用，用于写入 binlog 到本地的持久化存储中。在 Append 实现的 `WirteBinlog` 函数中，binlog 在编码后被传入到 [Append.writeCh](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L115) Channel 由专门的 goroutine 处理：
+[`WriteBinlog`](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L760) 由 Pump Server 调用，用于写入 binlog 到本地的持久化存储中。在 Append 实现的 `WirteBinlog` 函数中，binlog 在编码后被传入到 [`Append.writeCh`](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L115) Channel 由专门的 goroutine 处理：
 
 ```
 toKV := append.writeToValueLog(writeCh)
@@ -134,7 +140,7 @@ if l0Num >= l0Trigger {
 }
 ```
 
-对于 Valuelog，GC 每删除 100 批 KVS（即 102400 个KVS）触发一次 Valuelog 的 GC，Valuelog GC 最终反应到文件系统上删除文件，因此开销比较小。
+对于 Valuelog，GC 每删除 100 批 KVS（即 102400 个 KVS）触发一次 Valuelog 的 GC，Valuelog GC 最终反应到文件系统上删除文件，因此开销比较小。
 
 在示例代码的 [doGCTS](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L653) 函数中存在一个 Bug，你发现了么？欢迎留言抢答。
 
