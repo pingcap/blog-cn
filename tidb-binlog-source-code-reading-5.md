@@ -6,7 +6,7 @@ summary: 在上篇文章中，我们主要介绍了 Pump Server 的上线过程�
 tags: ['TiDB Binlog 源码阅读','社区']
 ---
 
-在上篇文章中，我们主要介绍了 Pump Server 的上线过程、gRPC API 实现、以及下线过程和相关辅助机制，其中反复提到了 Pump Storage 这个实体。本文就将介绍 Pump Storage 的实现，其主要代码在 [pump/storage](https://github.com/pingcap/tidb-binlog/tree/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage) 文件夹中。
+在 [上篇文章](https://pingcap.com/blog-cn/tidb-binlog-source-code-reading-4/) 中，我们主要介绍了 Pump Server 的上线过程、gRPC API 实现、以及下线过程和相关辅助机制，其中反复提到了 Pump Storage 这个实体。本文就将介绍 Pump Storage 的实现，其主要代码在 [pump/storage](https://github.com/pingcap/tidb-binlog/tree/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage) 文件夹中。
 
 Pump Storage 由 Pump Server 调用，主要负责 binlog 的持久化存储，同时兼顾排序、配对等功能，下面我们由 Storage 接口开始了解 Pump Storage 的实现。
 
@@ -97,7 +97,7 @@ go append.writeToSorter(append.writeToKV(toKV))
 
 ### PullCommitBinlog
 
-PullCommitBinlog 顾名思义，是用于拉 Commit binlog 的接口，其实现主要在 [PullCommitBinlog](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/storage.go#L1061) 函数中。这个过程实现上比较简单，Append 将从客户端指定的 tso 开始 Scan Metadata，Scan 过程中只关注 C-binlog，发现 C-binlog 时根据 StartTs 再反查与它牵手的 P-binlog。这样我们从这个接口拉到的就都是 Commit 成功的 binlog 了。
+PullCommitBinlog 顾名思义，是用于拉 Commit binlog 的接口，其实现主要在 [`PullCommitBinlog`](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/storage.go#L1061) 函数中。这个过程实现上比较简单，Append 将从客户端指定的 tso 开始 Scan Metadata，Scan 过程中只关注 C-binlog，发现 C-binlog 时根据 StartTs 再反查与它牵手的 P-binlog。这样我们从这个接口拉到的就都是 Commit 成功的 binlog 了。
 
 ### GC
 
@@ -143,7 +143,7 @@ if l0Num >= l0Trigger {
 
 对于 Valuelog，GC 每删除 100 批 KVS（即 102400 个 KVS）触发一次 Valuelog 的 GC，Valuelog GC 最终反应到文件系统上删除文件，因此开销比较小。
 
->在示例代码的 [doGCTS](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L653) 函数中存在一个 Bug，你发现了么？欢迎留言抢答。
+>在示例代码的 [`doGCTS`](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L653) 函数中存在一个 Bug，你发现了么？欢迎留言抢答。
 
 ## 小结
 
