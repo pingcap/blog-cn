@@ -82,10 +82,10 @@ go append.writeToSorter(append.writeToKV(toKV))
 
 	既然 binlog 的元数据在 writeToKV 过程已经排好序了，为什么还需要 `writeToSorter` 呢？这里和《[TiDB-Binlog 架构演进与实现原理](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/)》一文提到的 Binlog 工作原理有关：
 
-	> TiDB 的事务采用 2pc 算法，一个成功的事务会写两条 binlog，包括一条 Prewrite binlog 和 一条 Commit binlog；如果事务失败，会发一条 Rollback binlog。
+	> TiDB 的事务采用 2pc 算法，一个成功的事务会写两条 binlog，包括一条 Prewrite binlog 和一条 Commit binlog；如果事务失败，会发一条 Rollback binlog。
 	
 
-	要完整的还原事务，我们需要对 Prewrite binlog 和 Commit binlog（下文简称 P-binlog 和 C-binlog） 配对，才能知晓某一个事务是否被 commit 成功了。[Sorter](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/sorter.go#L95) 就起这样的作用，这个过程的主要实现在 [sorter.run](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/sorter.go#L156) 中。Sorter 逐条读出 binlog，对于 P-binlog 则暂时存放在内存中等待配对，对于 C-binlog 则与内存中未配对的 P-binlog 进行匹配。如果某一条 P-binlog 长期没有 C-binlog 与之牵手，Sorter 将反查 TiKV 问问这条单身狗 P-binlog 的伴侣是不是迷路了。
+	要完整的还原事务，我们需要对 Prewrite binlog 和 Commit binlog（下文简称 P-binlog 和 C-binlog） 配对，才能知晓某一个事务是否被 Commit 成功了。[Sorter](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/sorter.go#L95) 就起这样的作用，这个过程的主要实现在 [sorter.run](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/sorter.go#L156) 中。Sorter 逐条读出 binlog，对于 P-binlog 则暂时存放在内存中等待配对，对于 C-binlog 则与内存中未配对的 P-binlog 进行匹配。如果某一条 P-binlog 长期没有 C-binlog 与之牵手，Sorter 将反查 TiKV 问问这条单身狗 P-binlog 的伴侣是不是迷路了。
 
 	为什么会有 C-binlog 迷路呢？要解释这个现象，我们首先要回顾一下 binlog 的写入流程：
 
@@ -93,7 +93,7 @@ go append.writeToSorter(append.writeToKV(toKV))
 	
 	<center>图 2 binlog 写入流程</center>
 
-	在 Prepare 阶段，TiDB 同时向 TiKV 和 Pump 发起 prewrite 请求，只有 TiKV 和 Pump 全部返回成功了，TiDB 才认为 Prepare 成功。因此可以保证只要 Prepare 阶段成功，Pump 就一定能收到 P-binlog。这里可以这样做的原因是，TiKV 和 Pump 的 prewrite 都可以回滚，因此有任一节点 prewrite 失败后，TiDB 可以回滚其他节点，不会影响数据一致性。然而 Commit 阶段则不然，commit 是无法回滚的操作，因此 TiDB 先 commit TiKV，成功后再向 Pump 写入 C-binlog。而 TiKV commit 后，这个事务就已经提交成功了，如果写 C-binlog 操作失败，则会产生事务提交成功但 Pump 未收到 C-binlog 的现象。在生产环境中，C-binlog 写失败大多是由于重启 TiDB 导致的，这本身属于一个可控事件或小概率事件。
+	在 Prepare 阶段，TiDB 同时向 TiKV 和 Pump 发起 prewrite 请求，只有 TiKV 和 Pump 全部返回成功了，TiDB 才认为 Prepare 成功。因此可以保证只要 Prepare 阶段成功，Pump 就一定能收到 P-binlog。这里可以这样做的原因是，TiKV 和 Pump 的 prewrite 都可以回滚，因此有任一节点 prewrite 失败后，TiDB 可以回滚其他节点，不会影响数据一致性。然而 Commit 阶段则不然，Commit 是无法回滚的操作，因此 TiDB 先 Commit TiKV，成功后再向 Pump 写入 C-binlog。而 TiKV Commit 后，这个事务就已经提交成功了，如果写 C-binlog 操作失败，则会产生事务提交成功但 Pump 未收到 C-binlog 的现象。在生产环境中，C-binlog 写失败大多是由于重启 TiDB 导致的，这本身属于一个可控事件或小概率事件。
 
 ### PullCommitBinlog
 
