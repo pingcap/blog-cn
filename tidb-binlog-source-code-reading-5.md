@@ -116,14 +116,14 @@ for iter.Next() && deleteBatch < 100 {
 	lastKey = iter.Key()
 
 	if batch.Len() == 1024 {
-err := a.metadata.Write(batch, nil)
-if err != nil {
-	log.Error("write batch failed", zap.Error(err))
-}
-deletedKv.Add(float64(batch.Len()))
-batch.Reset()
-deleteBatch++
-	}
+	    err := a.metadata.Write(batch, nil)
+	    if err != nil {
+	        log.Error("write batch failed", zap.Error(err))
+	    }
+	    deletedKv.Add(float64(batch.Len()))
+	    batch.Reset()
+	    deleteBatch++
+    }
 }
 ```
 
