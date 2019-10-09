@@ -6,7 +6,7 @@ summary: 如果有一个自动 tuning 的方案就可以大大减少调优的人
 tags: ['TiKV','调优','机器学习']
 ---
 
-[TiKV](https://github.com/tikv/tikv) 底层使用了 [RocksDB](https://github.com/facebook/rocksdb) 作为存储引擎，然而 RocksDB 配置选项很多，很多情况下只能通过反复测试或者依靠经验来调优，甚至连 RocksDB 的开发者都自嘲，他们没办法弄清楚 [每个参数调整对性能的影响]([https://github.com/facebook/rocksdb/wiki/RocksDB-Tuning-Guide#final-thoughts](https://github.com/facebook/rocksdb/wiki/RocksDB-Tuning-Guide#final-thoughts))。如果有一个自动 tuning 的方案就可以大大减少调优的人力成本，同时也可能在调优的过程中，发现一些人工想不到的信息。我们从 AutoML 中得到启发，希望能用 Automated Hyper-parameter Tuning 中的一些方法来对数据库参数进行自动调优。
+[TiKV](https://github.com/tikv/tikv) 底层使用了 [RocksDB](https://github.com/facebook/rocksdb) 作为存储引擎，然而 RocksDB 配置选项很多，很多情况下只能通过反复测试或者依靠经验来调优，甚至连 RocksDB 的开发者都自嘲，他们没办法弄清楚 [每个参数调整对性能的影响](https://github.com/facebook/rocksdb/wiki/RocksDB-Tuning-Guide#final-thoughts)。如果有一个自动 tuning 的方案就可以大大减少调优的人力成本，同时也可能在调优的过程中，发现一些人工想不到的信息。我们从 AutoML 中得到启发，希望能用 Automated Hyper-parameter Tuning 中的一些方法来对数据库参数进行自动调优。
 
 常用的 Automated Hyper-parameter Tuning 方式大体上有以下三种：
 
@@ -149,7 +149,7 @@ workload=pntlookup80  knobs={'bloom-filter-bits-per-key', 'optimize-filters-for-
 
 推荐结果为：bloom-filter-bits-per-key==20，block-size==4K，不 disable auto compaction。而 optimize-filters-for-hits 是否启用影响不大（所以会出现这一项的推荐结果一直在摇摆的情况）。
 
-推荐的结果都挺符合预期的。关于 optimize-filter 这一项，应该是试验里面 block cache 足够大，所以 bloom filter 大小对 cache 性能影响不大；而且我们是设置 default CF 相应的选项（关于 TiKV 中对 RocksDB CF 的使用，可以参考 [TiKV 是如何存取数据的](https://pingcap.com/blog-cn/how-tikv-store-get-data/)），而对于 TiKV 来说查询 default CF 之前我们已经确定相应的 key 肯定存在，所以是否有 filter 并没有影响。之后的试验中我们会设置 writeCF 中的 optimize-filters-for-hits（defaultCF 的这一项默认就是 0 了）；然后分别设置 defaultCF 和 writeCF 中的 bloom-filter-bits-per-key，把它们作为两个 knob。
+推荐的结果都挺符合预期的。关于 optimize-filter 这一项，应该是试验里面 block cache 足够大，所以 bloom filter 大小对 cache 性能影响不大；而且我们是设置 default CF 相应的选项（关于 TiKV 中对 RocksDB CF 的使用，可以参考 [《TiKV 是如何存取数据的》](https://pingcap.com/blog-cn/how-tikv-store-get-data/)），而对于 TiKV 来说查询 default CF 之前我们已经确定相应的 key 肯定存在，所以是否有 filter 并没有影响。之后的试验中我们会设置 writeCF 中的 optimize-filters-for-hits（defaultCF 的这一项默认就是 0 了）；然后分别设置 defaultCF 和 writeCF 中的 bloom-filter-bits-per-key，把它们作为两个 knob。
 
 为了能尽量测出来 bloom filter 的效果，除了上述改动之外，我们把 workload 也改了一下：把 run phase 的 recordcount 设成 load phase 的两倍大，这样强制有一半的查找对应的 key 不存在，这样应该会测出来 write CF 的 optimize-filters-for-hits 必须关闭。改完之后的 workload 如下：
 
