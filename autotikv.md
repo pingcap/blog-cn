@@ -2,11 +2,11 @@
 title: AutoTiKV：基于机器学习的数据库调优
 author: ['吴毅','王远立']
 date: 2019-10-09
-summary: 如果有一个自动 tuning 的方案就可以大大减少调优的人力成本，同时也可能在调优的过程中，发现一些人工想不到的信息。我们从 AutoML 中得到启发，希望能用 Automated Hyper-parameter Tuning 中的一些方法来对数据库参数进行自动调优。我们受 OtterTune 的启发，开发了 AutoTiKV，一个用于对 TiKV 数据库进行自动调优的工具。
+summary: 如果有一个自动 tuning 的方案就可以大大减少调优的人力成本，同时也可能在调优的过程中，发现一些人工想不到的信息。我们从 AutoML 中得到启发，希望能用 Automated Hyper-parameter Tuning 中的一些方法来对数据库参数进行自动调优。
 tags: ['TiKV','调优','机器学习']
 ---
 
-[TiKV](https://github.com/tikv/tikv) 底层使用了 [RocksDB](https://github.com/facebook/rocksdb) 作为存储引擎，然而 RocksDB 配置选项很多，很多情况下只能通过反复测试或者依靠经验来调优，甚至连 RocksDB 的开发者都自嘲，他们没办法弄清楚 [每个参数调整对性能的影响](https://github.com/facebook/rocksdb/wiki/RocksDB-Tuning-Guide#final-thoughts)。如果有一个自动 tuning 的方案就可以大大减少调优的人力成本，同时也可能在调优的过程中，发现一些人工想不到的信息。我们从 AutoML 中得到启发，希望能用 Automated Hyper-parameter Tuning 中的一些方法来对数据库参数进行自动调优。
+[TiKV](https://github.com/tikv/tikv) 底层使用了 [RocksDB](https://github.com/facebook/rocksdb) 作为存储引擎，然而 RocksDB 配置选项很多，很多情况下只能通过反复测试或者依靠经验来调优，甚至连 RocksDB 的开发者都自嘲，[他们没办法弄清楚每个参数调整对性能的影响](https://github.com/facebook/rocksdb/wiki/RocksDB-Tuning-Guide#final-thoughts)。如果有一个自动 tuning 的方案就可以大大减少调优的人力成本，同时也可能在调优的过程中，发现一些人工想不到的信息。我们从 AutoML 中得到启发，希望能用 Automated Hyper-parameter Tuning 中的一些方法来对数据库参数进行自动调优。
 
 常用的 Automated Hyper-parameter Tuning 方式大体上有以下三种：
 
@@ -14,9 +14,9 @@ tags: ['TiKV','调优','机器学习']
 
 2.  Multi-armed Bandit。这种方法综合考虑了“探索”和“利用”两个问题，既可以配置更多资源（也就是采样机会）给搜索空间中效果更优的一部分，也会考虑尝试尽量多的可能性。Bandit 结合贝叶斯优化，就构成了传统的 AutoML 的核心。
 
-3.  深度强化学习。强化学习在 AutoML 中最著名的应用就是 [NAS](https://arxiv.org/pdf/1611.01578.pdf)，用于自动生成神经网络结构。另外它在 [深度学习参数调优](https://arxiv.org/pdf/1709.07417.pdf) 中也有应用。它的优点是从“从数据中学习”转变为“从动作中学习”（比如 knob 中的 cache size 从小调到大），既可以从性能好的样本中学习，也可以从性能坏的样本中学习。但强化学习坑也比较多，体现在训练可能比较困难，有时结果比较难复现。
+3.  深度强化学习。强化学习在 AutoML 中最著名的应用就是 [NAS](https://arxiv.org/pdf/1611.01578.pdf)，用于自动生成神经网络结构。另外它在 [深度学习参数调优](https://arxiv.org/pdf/1709.07417.pdf) 中也有应用。它的优点是从“从数据中学习”转变为“从动作中学习”（比如 knob 中的 cache size 从小调到大），既可以从性能好的样本中学习，也可以从性能坏的样本中学习。但强化学习的坑也比较多，体现在训练可能比较困难，有时结果比较难复现。
 
-目前学术界针对 auto-tune 数据库的研究也有很多，采用的方法大多集中在后面两种。其中一个比较有名的研究是 [OtterTune](https://www.cs.cmu.edu/~ggordon/van-aken-etal-parameters.pdf) 。我们受 OtterTune 的启发，开发了 AutoTiKV，一个用于对 TiKV 数据库进行自动调优的工具。项目启动三个月以来，AutoTiKV 在 TiKV 内部测试和调参的环节起到了较好的效果，有了一个很好的开始。后续我们还会针对生产环境上的一些特点，对它进行继续探索和完善。
+目前学术界针对 auto-tune 数据库的研究也有很多，采用的方法大多集中在后面两种。其中一个比较有名的研究是 [OtterTune](https://www.cs.cmu.edu/~ggordon/van-aken-etal-parameters.pdf) 。**我们受 OtterTune 的启发，开发了 AutoTiKV，一个用于对 TiKV 数据库进行自动调优的工具。项目启动三个月以来，AutoTiKV 在 TiKV 内部测试和调参的环节起到了较好的效果，有了一个很好的开始。后续我们还会针对生产环境上的一些特点，对它进行继续探索和完善。**
 
 项目地址：[https://github.com/tikv/auto-tikv](https://github.com/tikv/auto-tikv) 
 
@@ -91,7 +91,7 @@ AutoTiKV 使用了和 [OtterTune](https://mp.weixin.qq.com/s/y8VIieK0LO37SjRRyPh
 
 * `block-size`：RocksDB 会将数据存放在 data block 里面，block-size 设置这些 block 的大小，当需要访问某一个 key 的时候，RocksDB 需要读取这个 key 所在的整个 block。对于点查，更大的 block 会增加读放大，影响性能，但是对于范围查询，更大的 block 能够更有效的利用磁盘带宽。 
 
-* `disable-auto-compactions`：定义是否关闭 compaction。compaction 会占用磁盘带宽，影响写入速度。但如果 LSM 得不到 compact， level0 文件会累积，影响读性能。其实本身 [compaction 也是一个有趣的 auto-tuning 的方向](https://www.jianshu.com/p/0fdeed70b36a)
+* `disable-auto-compactions`：定义是否关闭 compaction。compaction 会占用磁盘带宽，影响写入速度。但如果 LSM 得不到 compact， level0 文件会累积，影响读性能。其实本身 [compaction 也是一个有趣的 auto-tuning 的方向](https://www.jianshu.com/p/0fdeed70b36a)。
 
 * `write-buffer-size`：单个 memtable 的大小限制（最大值）。理论上说更大的 memtable 会增加二分查找插入位置的消耗，但是之前的初步试验发现这个选项对 writeheavy 影响并不明显。
 
@@ -221,9 +221,9 @@ workload=shortscan    knobs={'bloom-filter-bits-per-key', 'optimize-filters-fo
 
 * AutoTiKV 直接和 DB 运行在同一台机器上，而不是像 OtterTune 一样设置一个集中式的训练服务器。但其实这样并不会占用很多资源，还避免了不同机器配置不一样造成数据不一致的问题。
 
-* 省去了 workload mapping（OtterTune 加了这一步来从 repository 中挑出和当前 workload 最像的训练样本，而我们目前默认 workload 类型只有一种）
+* 省去了 workload mapping（OtterTune 加了这一步来从 repository 中挑出和当前 workload 最像的训练样本，而我们目前默认 workload 类型只有一种）。
 
-* 要调的 knobs 比较少，省去了 identity important knobs（OtterTune 是通过 Lasso Regression 选出 10 个最重要的 knob 进行调优）
+* 要调的 knobs 比较少，省去了 identity important knobs（OtterTune 是通过 Lasso Regression 选出 10 个最重要的 knob 进行调优）。
 
 * 另外我们重构了 OtterTune 的架构，减少了对具体数据库系统的耦合度。更方便将整个模型和 pipeline 移植到其他系统上（只需修改 controller.py 中具体操作数据库系统的语句即可，其它都不用修改），也更适合比起 SQL 更加轻量的 KV 数据库。
 
