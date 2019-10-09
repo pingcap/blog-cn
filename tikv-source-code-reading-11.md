@@ -145,7 +145,7 @@ pub struct Scheduler<E: Engine> {
 }
 
 struct SchedulerInner {
-    id_alloc, AtomicU64,
+    id_alloc: AtomicU64,
     task_contexts: Vec<Mutex<HashMap<u64, TaskContext>>>,
     lathes: Latches,
     sched_pending_write_threshold: usize,
