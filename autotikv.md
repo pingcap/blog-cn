@@ -1,6 +1,6 @@
 ---
 title: AutoTiKV：基于机器学习的数据库调优
-author: ['吴毅']
+author: ['吴毅','王远立']
 date: 2019-10-09
 summary: 如果有一个自动 tuning 的方案就可以大大减少调优的人力成本，同时也可能在调优的过程中，发现一些人工想不到的信息。我们从 AutoML 中得到启发，希望能用 Automated Hyper-parameter Tuning 中的一些方法来对数据库参数进行自动调优。我们受 OtterTune 的启发，开发了 AutoTiKV，一个用于对 TiKV 数据库进行自动调优的工具。
 tags: ['TiKV','调优','机器学习']
@@ -151,12 +151,11 @@ workload=pntlookup80  knobs={'bloom-filter-bits-per-key', 'optimize-filters-for-
 
 推荐的结果都挺符合预期的。关于 optimize-filter 这一项，应该是试验里面 block cache 足够大，所以 bloom filter 大小对 cache 性能影响不大；而且我们是设置 default CF 相应的选项（关于 TiKV 中对 RocksDB CF 的使用，可以参考 [TiKV 是如何存取数据的](https://pingcap.com/blog-cn/how-tikv-store-get-data/)），而对于 TiKV 来说查询 default CF 之前我们已经确定相应的 key 肯定存在，所以是否有 filter 并没有影响。之后的试验中我们会设置 writeCF 中的 optimize-filters-for-hits（defaultCF 的这一项默认就是 0 了）；然后分别设置 defaultCF 和 writeCF 中的 bloom-filter-bits-per-key，把它们作为两个 knob。
 
+为了能尽量测出来 bloom filter 的效果，除了上述改动之外，我们把 workload 也改了一下：把 run phase 的 recordcount 设成 load phase 的两倍大，这样强制有一半的查找对应的 key 不存在，这样应该会测出来 write CF 的 optimize-filters-for-hits 必须关闭。改完之后的 workload 如下：
+
 ```
 workload=pntlookup80  knobs={rocksdb.writecf.bloom-filter-bits-per-key,  rocksdb.defaultcf.bloom-filter-bits-per-key, rocksdb.writecf.optimize-filters-for-hits,  rocksdb.defaultcf.block-size, rocksdb.defaultcf.disable-auto-compactions}  metric=get_throughput
 ```
-
-为了能尽量测出来 bloom filter 的效果，除了上述改动之外，我们把 workload 也改了一下：把 run phase 的 recordcount 设成 load phase 的两倍大，这样强制有一半的查找对应的 key 不存在，这样应该会测出来 write CF 的 optimize-filters-for-hits 必须关闭。改完之后的 workload 如下：
-
 
 这次的实验效果如下（发现一个很出乎意料的现象）：
 
