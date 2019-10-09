@@ -171,7 +171,9 @@ workload=pntlookup80  knobs={rocksdb.writecf.bloom-filter-bits-per-key,  rocksd
   
   rocksdb.writecf.optimize-filters-for-hits ['rocksdb', 'writecf'] optimize-filters-for-hits **True**  
   
-  rocksdb.defaultcf.block-size ['rocksdb', 'defaultcf'] block-size **4KB**  rocksdb.defaultcf.disable-auto-compactions ['rocksdb', 'defaultcf'] disable-auto-compactions **False**
+  rocksdb.defaultcf.block-size ['rocksdb', 'defaultcf'] block-size **4KB**  
+  
+  rocksdb.defaultcf.disable-auto-compactions ['rocksdb', 'defaultcf'] disable-auto-compactions **False**
 
 * {2,2,0,0,0}
 
