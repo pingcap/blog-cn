@@ -71,7 +71,7 @@ AutoTiKV 使用了和 [OtterTune](https://mp.weixin.qq.com/s/y8VIieK0LO37SjRRyPh
 
 ### workload
 
-测试中我们使用了 [YCSB](https://github.com/brianfrankcooper/YCSB/wiki/Core-Properties) 来模拟 write heavy、long range scan、short range scan和point-lookup 四种典型 workload。数据库大小都是 80GB。[2]
+测试中我们使用了 [YCSB](https://github.com/brianfrankcooper/YCSB/wiki/Core-Properties) 来模拟 write heavy、long range scan、short range scan 和 point-lookup 四种典型 workload。数据库大小都是 80GB。[2]
 
 ### knobs
 
