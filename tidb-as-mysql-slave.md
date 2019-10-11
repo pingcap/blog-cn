@@ -6,6 +6,13 @@ summary: 由于 TiDB 本身兼容绝大多数的 MySQL 语法，所以对于绝�
 tags: ['MySQL', 'TiDB', 'Binlog', '工具', '主从', '数据同步']
 ---
 
+>*由于 TiDB 版本迭代，本文部分内容已不适用于最新的、广泛使用的版本，所以在阅读本文时请注意：*
+>
+>*1. 关于文中「使用 checker 进行 Schema 检查」：我们不再推荐使用 checker 工具进行同步前检查，推荐使用 [TiDB Data Migration (DM)](https://pingcap.com/docs-cn/v3.0/reference/tools/data-migration/overview/) 进行数据同步及同步前检查。*
+>
+>*2. 关于文中「一个无法迁移的 table 例子」：TiDB DDL 兼容性在持续提升，大家可以持续关注 [官方文档](https://pingcap.com/docs-cn/v3.0/releases/rn/) 中 TiDB 版本的更新。*
+>
+>*——2019 年 10 月 11 日*
 
 由于 TiDB 本身兼容绝大多数的 MySQL 语法，所以对于绝大多数业务来说，最安全的切换数据库方式就是将 TiDB 作为现有数据库的从库接在主 MySQL 库的后方，这样对业务方实现完全没有侵入性下使用 TiDB 对现有的业务进行备份，应对未来数据量或者并发量增长带来的单点故障风险，如需上线 TiDB，也只需要简单的将业务的主 MySQL 地址指向 TiDB 即可。
 
@@ -22,13 +29,13 @@ tags: ['MySQL', 'TiDB', 'Binlog', '工具', '主从', '数据同步']
 +------------------+-------------+--------+-----------+-------------------+
 ```
 
-### 使用 checker 进行 Schema 检查
+## 使用 checker 进行 Schema 检查
 
 在迁移之前，我们可以使用 TiDB 的 `checker` 工具，checker 是我们开发的一个小工具，用于检测目标 MySQL 库中的表的表结构是否支持无缝的迁移到 TiDB，TiDB 支持绝大多数的 MySQL 常用的原生数据类型，所以大多数情况 checker 的返回应该是 ok。如果 check 某个 table schema 失败，表明 TiDB 当前并不支持，我们不能对该 table 里面的数据进行迁移。`checker` 包含在 TiDB 工具集里面，我们可以直接下载。
 
-#### 下载 TiDB 工具集
+### 下载 TiDB 工具集
 
-##### Linux
+#### Linux
 
 ```bash
 # 下载 tool 压缩包
@@ -43,7 +50,7 @@ tar -xzf tidb-tools-latest-linux-amd64.tar.gz
 cd tidb-tools-latest-linux-amd64
 ```
 
-#### 使用 `checker` 检查的一个示范
+### 使用 `checker` 检查的一个示范
 
 + 在 MySQL 的 test database 里面创建几张表，并插入数据:
 
@@ -82,7 +89,7 @@ INSERT INTO t2 VALUES (1, "a"), (2, "b"), (3, "c");
 Check database succ!
 ```
 
-#### 一个无法迁移的 table 例子
+### 一个无法迁移的 table 例子
 
 我们在 MySQL 里面创建如下表：
 
@@ -110,7 +117,7 @@ github.com/pingcap/tidb/parser/yy_parser.go:124:
 2016/10/27 13:19:28 main.go:68: [error] Check database test with 1 errors and 0 warnings.
 ```
 
-### 使用 `mydumper`/`myloader` 全量导入数据
+## 使用 `mydumper`/`myloader` 全量导入数据
 
 我们使用 `mydumper` 从 MySQL 导出数据，然后用 `myloader` 将其导入到 TiDB 里面。
 
@@ -118,9 +125,9 @@ github.com/pingcap/tidb/parser/yy_parser.go:124:
 
 `mydumper`/`myloader` 是一个更强大的数据迁移工具，具体可以参考 [https://github.com/maxbube/mydumper](https://github.com/maxbube/mydumper)。
 
-#### 下载 Binary
+### 下载 Binary
 
-##### Linux
+#### Linux
 
 ```bash
 # 下载 mydumper 压缩包
@@ -134,7 +141,7 @@ tar -xzf mydumper-linux-amd64.tar.gz
 cd mydumper-linux-amd64
 ```
 
-#### 从 MySQL 导出数据
+### 从 MySQL 导出数据
 
 我们使用 `mydumper` 从 MySQL 导出数据，如下:
 
@@ -148,7 +155,7 @@ cd mydumper-linux-amd64
 
 **注意：在阿里云一些需要 `super privilege` 的云上面，`mydumper` 需要加上 `--no-locks` 参数，否则会提示没有权限操作。**
 
-#### 给 TiDB 导入数据
+### 给 TiDB 导入数据
 
 我们使用 `myloader` 将之前导出的数据导入到 TiDB。
 
@@ -190,7 +197,7 @@ mysql> select * from t2;
 +----+------+
 ```
 
-### 使用 `syncer` 增量导入数据实现数据和 MySQL 实时同步
+## 使用 `syncer` 增量导入数据实现数据和 MySQL 实时同步
 
 上面我们介绍了如何使用 `mydumper`/`myloader` 将 MySQL 的数据全量导入到 TiDB，但如果后续 MySQL 的数据有更新，我们仍然希望快速导入，使用全量的方式就不合适了。
 
@@ -200,7 +207,7 @@ TiDB 提供 `syncer` 工具能方便的将 MySQL 的数据增量的导入到 TiD
 
 假设我们之前已经使用 `mydumper`/`myloader` 导入了 `t1` 和 `t2` 两张表的一些数据，现在我们希望这两张表的任何更新，都是实时的同步到 TiDB 上面。
 
-#### MySQL 开启 binlog
+### MySQL 开启 binlog
 
 在使用 `syncer` 之前，我们必须保证：
 
@@ -211,7 +218,7 @@ TiDB 提供 `syncer` 工具能方便的将 MySQL 的数据增量的导入到 TiD
     SET GLOBAL binlog_format = ROW;
   ```
 
-#### 获取同步 position
+### 获取同步 position
 
 我们通过 `show master status` 得到当前 binlog 的 position，`syncer` 的初始同步位置就是从这个地方开始。
 
@@ -234,7 +241,7 @@ binlog-pos = 1280
 
 注意：`syncer.meta` 只需要第一次使用的时候配置，后续 `syncer` 同步新的 binlog 之后会自动将其更新到最新的 position。
 
-#### 启动 `syncer`
+### 启动 `syncer`
 
 `syncer` 的配置文件 `config.toml`:
 
@@ -274,7 +281,7 @@ port = 4000
 2016/10/27 15:22:01 syncer.go:549: [info] rotate binlog to (mysql-bin.000003, 1280)
 ```
 
-### 在 MySQL 插入新的数据
+## 在 MySQL 插入新的数据
 
 ```bash
 INSERT INTO t1 VALUES (4, 4), (5, 5);
