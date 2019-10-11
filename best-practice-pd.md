@@ -40,10 +40,10 @@ tags: ['PD', '调度']
 
 	Scheduler（调度器）是 PD 中生成调度的组件。PD 中每个调度器是独立运行的，分别服务于不同的调度目的。常用的调度器及其调用目标有：
 	  
-	  * `balance-leader-scheduler`：保持不同节点的 Leader 均衡。
-	  * `balance-region-scheduler`：保持不同节点的 Peer 均衡。
-	  * `hot-region-scheduler`：保持不同节点的读写热点 Region 均衡。
-	  * `evict-leader-{store-id}`：驱逐某个节点的所有 Leader。（常用于滚动升级）
+	* `balance-leader-scheduler`：保持不同节点的 Leader 均衡。
+	* `balance-region-scheduler`：保持不同节点的 Peer 均衡。
+	* `hot-region-scheduler`：保持不同节点的读写热点 Region 均衡。
+	* `evict-leader-{store-id}`：驱逐某个节点的所有 Leader。（常用于滚动升级）
 
 * Operator
 
@@ -57,12 +57,12 @@ tags: ['PD', '调度']
 	
 	目前 PD 可生成的 Step 包括：
 	  
-	  * `TransferLeader`：将 Region Leader 迁移至指定 Peer
-	  * `AddPeer`：在指定 Store 添加 Follower
-	  * `RemovePeer`：删除一个 Region Peer
-	  * `AddLearner`：在指定 Store 添加 Region Learner
-	  * `PromoteLearner`：将指定 Learner 提升为 Follower
-	  * `SplitRegion`：将指定 Region 一分为二
+	* `TransferLeader`：将 Region Leader 迁移至指定 Peer
+	* `AddPeer`：在指定 Store 添加 Follower
+	* `RemovePeer`：删除一个 Region Peer
+	* `AddLearner`：在指定 Store 添加 Region Learner
+	* `PromoteLearner`：将指定 Learner 提升为 Follower
+	* `SplitRegion`：将指定 Region 一分为二
 
 ### 调度流程
 
