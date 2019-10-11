@@ -16,7 +16,7 @@ tags: ['PD', '调度']
 
 * Store
 
-  PD 中的 Store 指的是集群中的存储节点，也就是 tikv-server 实例。注意 Store 与 TiKV 实例是严格一一对应的，即使在同一主机甚至同一块磁盘部署多个 TiKV 实例，这些实例也对会对应不同的 Store。
+  PD 中的 Store 指的是集群中的存储节点，也就是 tikv-server 实例。注意 Store 与 TiKV 实例是严格一一对应的，即使在同一主机甚至同一块磁盘部署多个 TiKV 实例，这些实例也会对应不同的 Store。
 
 * Region / Peer / Raft Group
 
@@ -70,11 +70,11 @@ tags: ['PD', '调度']
 
 1. 信息收集
 
-  TiKV 节点周期性地向 PD 上报 `StoreHeartbeat` 和 `RegionHeartbeat` 两种心跳消息。其中 `StoreHeartbeat` 包含了 Store 的基本信息，容量，剩余空间，读写流量等数据，`RegionHeartbeat` 包含了 Region 的范围，副本分布，副本状态，数据量，读写流量等数据。PD 将这些信息梳理并转存供调度来决策。
+   TiKV 节点周期性地向 PD 上报 `StoreHeartbeat` 和 `RegionHeartbeat` 两种心跳消息。其中 `StoreHeartbeat` 包含了 Store 的基本信息，容量，剩余空间，读写流量等数据，`RegionHeartbeat` 包含了 Region 的范围，副本分布，副本状态，数据量，读写流量等数据。PD 将这些信息梳理并转存供调度来决策。
 
 2. 生成调度
-
-  不同的调度器从自身的逻辑和需求出发，考虑各种限制和约束后生成待执行的 Operator。这里所说的限制和约束包括但不限于：
+   
+   不同的调度器从自身的逻辑和需求出发，考虑各种限制和约束后生成待执行的 Operator。这里所说的限制和约束包括但不限于：
   
   * 不往断连中、下线中、繁忙、空间不足、在大量收发 snapshot 等各种异常状态的 Store 添加副本
   * Balance 时不选择状态异常的 Region
@@ -84,10 +84,10 @@ tags: ['PD', '调度']
   * 不破坏 Label property 等约束
 
 3. 执行调度
-
-  生成的 Operator 不会立即开始执行，而是首先会进入一个由 `OperatorController` 管理的一个等待队列。`OperatorController` 会根据配置以一定的并发从等待队列中取出 Operator 进行执行，执行的过程就是依次把每个 Operator Step 下发给对应 Region 的 Leader。
-
-  最终 Operator 执行完毕会被标记为 finish 状态或者超时被标记为 timeout，并从执行列表中移除。
+   
+   生成的 Operator 不会立即开始执行，而是首先会进入一个由 `OperatorController` 管理的一个等待队列。`OperatorController` 会根据配置以一定的并发从等待队列中取出 Operator 进行执行，执行的过程就是依次把每个 Operator Step 下发给对应 Region 的 Leader。
+   
+   最终 Operator 执行完毕会被标记为 finish 状态或者超时被标记为 timeout，并从执行列表中移除。
 
 ### Balance
 
@@ -125,7 +125,7 @@ Region merge 指的是为了避免删除数据后大量小 Region 甚至空 Regi
 
 ## 查询调度状态
 
-查看调度系统的状态的手段主要包括：Metrics，pd-ctl，日志。本文简要介绍 Metrics 和 pd-ctl 两种方式，更具体的信息可以参考官方文档中 [PD 监控](https://pingcap.com/docs-cn/v3.0/reference/key-monitoring-metrics/pd-dashboard)以及 [PD Control 使用](https://pingcap.com/docs-cn/dev/reference/tools/pd-control) 的章节。
+查看调度系统的状态的手段主要包括：Metrics，pd-ctl，日志。本文简要介绍 Metrics 和 pd-ctl 两种方式，更具体的信息可以参考官方文档中 [PD 监控](https://pingcap.com/docs-cn/v3.0/reference/key-monitoring-metrics/pd-dashboard) 以及 [PD Control 使用](https://pingcap.com/docs-cn/dev/reference/tools/pd-control) 的章节。
 
 ### Operator 状态
 
@@ -259,7 +259,7 @@ PD 还支持绕过调度器，直接通过 pd-ctl 来创建或删除 Operator，
 
 **另一种情况是没能生成对应的 balance 调度**。可能的原因有：
 
-* 调度器被未启用。比如对应的 Scheduler 被删除了，或者 limit 被设置为 `0`。
+* 调度器未被启用。比如对应的 Scheduler 被删除了，或者 limit 被设置为 `0`。
 
 * 由于其它约束无法进行调度。比如系统中有 `evict-leader-scheduler`，此时无法把 Leader 迁移至对应的 Store。再比如设置了 Label property，也会导致部分 Store 不接受 Leader。
 
@@ -285,17 +285,21 @@ PD 还支持绕过调度器，直接通过 pd-ctl 来创建或删除 Operator，
 
 ### 3. 节点上线速度慢
 
-**目前 PD 没有对节点上线特殊处理，节点上线实际上就是依靠 balance region 机制来调度的，所以参考前面 Region 分布不均衡的排查步骤即可。**
+目前 PD 没有对节点上线特殊处理，节点上线实际上就是依靠 balance region 机制来调度的，所以参考前面 Region 分布不均衡的排查步骤即可。
 
 ### 4. 热点分布不均匀
 
 热点调度的问题大体上可以分为以下几种情况。
 
-一种是从 PD 的 metrics 能看出来有不少 hot Region，但是调度速度跟不上，不能及时地把热点 Region 分散开来。解决方法是加大 `hot-region-schedule-limit`，并减少其他调度器的 limit 配额，从而加快热点调度的速度。还有 `hot-region-cache-hits-threshold` 调小一些可以使 PD 对流量的变化更快做出反应。
+**一种是从 PD 的 metrics 能看出来有不少 hot Region，但是调度速度跟不上，不能及时地把热点 Region 分散开来。**
 
-第二种情况是单一 Region 形成热点的情况，比如大量请求频繁 scan 一个小表，这个可以从业务角度或者 metrics 统计的热点信息看出来。由于单 Region 热点现阶段无法使用打散的手段来消除，需要确认热点 Region 后先手动添加 `split-region` 调度将这样的 Region 拆开。
+解决方法是加大 `hot-region-schedule-limit`，并减少其他调度器的 limit 配额，从而加快热点调度的速度。还有 `hot-region-cache-hits-threshold` 调小一些可以使 PD 对流量的变化更快做出反应。
 
-还有一种情况是从 PD 的统计来看没有热点，但是从 TiKV 的相关 metrics 可以看出部分节点负载明显高于其他节点，成为整个系统的瓶颈。这是因为目前 PD 统计热点 Region 的维度比较单一，仅针对流量进行分析，在某些场景下无法准备定位出热点。例如部分 Region 有大量的点查请求，从流量上来看并不显著，但是过高的 QPS 导致关键模块达到瓶颈。这个问题当前的处理方式是：首先从业务层面确定形成热点的 table，然后添加 `scatter-range-scheduler` 来使得这个 table 的所有 Region 均匀分布。TiDB 也在其 HTTP API 中提供了相关接口来简化这个操作，具体可以参考 [TiDB HTTP API 文档](https://github.com/pingcap/tidb/blob/master/docs/tidb_http_api.md)。
+**第二种情况是单一 Region 形成热点的情况，比如大量请求频繁 scan 一个小表**。这个可以从业务角度或者 metrics 统计的热点信息看出来。由于单 Region 热点现阶段无法使用打散的手段来消除，需要确认热点 Region 后先手动添加 `split-region` 调度将这样的 Region 拆开。
+
+**还有一种情况是从 PD 的统计来看没有热点，但是从 TiKV 的相关 metrics 可以看出部分节点负载明显高于其他节点，成为整个系统的瓶颈。**
+
+这是因为目前 PD 统计热点 Region 的维度比较单一，仅针对流量进行分析，在某些场景下无法准备定位出热点。例如部分 Region 有大量的点查请求，从流量上来看并不显著，但是过高的 QPS 导致关键模块达到瓶颈。这个问题当前的处理方式是：首先从业务层面确定形成热点的 table，然后添加 `scatter-range-scheduler` 来使得这个 table 的所有 Region 均匀分布。TiDB 也在其 HTTP API 中提供了相关接口来简化这个操作，具体可以参考 [TiDB HTTP API 文档](https://github.com/pingcap/tidb/blob/master/docs/tidb_http_api.md)。
 
 ### 5. Region Merge 速度慢
 
@@ -305,9 +309,9 @@ PD 还支持绕过调度器，直接通过 pd-ctl 来创建或删除 Operator，
 
 还有一种特殊情况：曾经创建过大量 Table 然后又清空了（truncate 操作也算创建 Table），此时如果开启了 split table 特性，这些空 Region 是无法合并的，此时需要调整以下参数关闭这个特性：
 
-* TiKV [split-region-on-table](https://pingcap.com/docs-cn/v3.0/reference/configuration/tikv-server/configuration-file/#split-region-on-table) 设为 `false`
+* TiKV [`split-region-on-table`](https://pingcap.com/docs-cn/v3.0/reference/configuration/tikv-server/configuration-file/#split-region-on-table) 设为 `false`
 
-* PD [namespace-classifier](https://pingcap.com/docs-cn/v3.0/reference/configuration/pd-server/configuration/#--namespace-classifier) 设为 `“”`
+* PD [`namespace-classifier`](https://pingcap.com/docs-cn/v3.0/reference/configuration/pd-server/configuration/#--namespace-classifier) 设为 `“”`
 
 另外对于 3.0.4 和 2.1.16 以前的版本，Region 的统计 `approximate_keys` 在特定情况下（大部分发生在 drop table 之后）统计不准确，造成 keys 的统计值很大，无法满足 `max-merge-region-keys` 的约束，可以把 `max-merge-region-keys` 这个条件放开，调成很大的值来绕过这个问题。
 
