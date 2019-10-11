@@ -6,10 +6,13 @@ summary: 由于 TiDB 本身兼容绝大多数的 MySQL 语法，所以对于绝�
 tags: ['MySQL', 'TiDB', 'Binlog', '工具', '主从', '数据同步']
 ---
 
->由于 TiDB 版本迭代，本文部分内容已不适用于最新的、广泛使用的版本，所以在阅读本文时请注意：
+>*由于 TiDB 版本迭代，本文部分内容已不适用于最新的、广泛使用的版本，所以在阅读本文时请注意：*
 >
->1. 关于文中「使用 checker 进行 Schema 检查」：我们不再推荐使用 checker 工具进行同步前检查，推荐使用 [TiDB Data Migration (DM)](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/) 进行数据同步及同步前检查。
->2. 关于文中「一个无法迁移的 table 例子」：TiDB DDL 兼容性在持续提升，大家可以持续关注 [官方文档](https://pingcap.com/docs-cn/v3.0/releases/rn/) 中 TiDB 版本的更新。
+>*1. 关于文中「使用 checker 进行 Schema 检查」：我们不再推荐使用 checker 工具进行同步前检查，推荐使用 [TiDB Data Migration (DM)](https://pingcap.com/docs-cn/v3.0/reference/tools/data-migration/overview/) 进行数据同步及同步前检查。*
+>
+>*2. 关于文中「一个无法迁移的 table 例子」：TiDB DDL 兼容性在持续提升，大家可以持续关注 [官方文档](https://pingcap.com/docs-cn/v3.0/releases/rn/) 中 TiDB 版本的更新。*
+>
+>*——2019 年 10 月 10 日*
 
 由于 TiDB 本身兼容绝大多数的 MySQL 语法，所以对于绝大多数业务来说，最安全的切换数据库方式就是将 TiDB 作为现有数据库的从库接在主 MySQL 库的后方，这样对业务方实现完全没有侵入性下使用 TiDB 对现有的业务进行备份，应对未来数据量或者并发量增长带来的单点故障风险，如需上线 TiDB，也只需要简单的将业务的主 MySQL 地址指向 TiDB 即可。
 
