@@ -37,7 +37,7 @@ var columnStatisticsCols = []columnInfo{
 }
 ```
 
-下一步需要如何填充数据返回给 TIDB 的 SQL Engine，我们注意到 `infoschemaTable` 这个类实现了 `table.Table interface`，很显然这个 interface 就是 TiDB 中对于 Table 获取数据/修改数据的接口，有关获取数据的方法是 IterRecords, 我们只需要看到 IterRecords 中的实现就能知道这些系统表的数据是如何返回给 SQL Engine 的，果然在 IterRecords 里面有一个方法，`inforschemaTable.getRows()`，这个方法的定义中有一个巨大的 switch 语句，用于判断是在哪个系统表上，根据这个信息然后返回不同的数据:
+下一步需要如何填充数据返回给 TiDB 的 SQL Engine，我们注意到 `infoschemaTable` 这个类实现了 `table.Table interface`，很显然这个 interface 就是 TiDB 中对于 Table 获取数据/修改数据的接口，有关获取数据的方法是 `IterRecords`，我们只需要看到 `IterRecords` 中的实现就能知道这些系统表的数据是如何返回给 SQL Engine 的，果然在 `IterRecords` 里面有一个方法，`inforschemaTable.getRows()`，这个方法的定义中有一个巨大的 switch 语句，用于判断是在哪个系统表上，根据这个信息然后返回不同的数据:
 
 ```
 ...
