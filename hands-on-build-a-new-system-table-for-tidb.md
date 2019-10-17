@@ -8,7 +8,7 @@ tags: ['TiDB','社区']
 
 >“TiDB，你已经是一个成熟的数据库了，该学会用自己的 SQL 查自己的状态了。”
 
-对于一个成熟的数据库来说，通过 SQL 来查询系统本身的状态再正常不过，对于 MySQL 来说 `INFOMATION_SCHEMA` 和 `PERFORMANCE_SCHEMA` 里面有大量的信息，基本上通过查询些信息，DBA 就能对整个系统的运行状态一目了然。最棒的是，查询的接口正是 SQL，不需要依赖其他的第三方工具，运用表达力强大的 SQL 甚至可以对这些信息进行二次加工或者过滤，另外接入第三方的运维监控工具也很自然，不需要引入新的什么依赖。
+对于一个成熟的数据库来说，通过 SQL 来查询系统本身的状态再正常不过，对于 MySQL 来说 `INFOMATION_SCHEMA` 和 `PERFORMANCE_SCHEMA` 里面有大量的信息，基本上通过查询些信息，DBA 就能对整个系统的运行状态一目了然。最棒的是，查询的接口正是 SQL，不需要依赖其他的第三方工具，运用表达力强大的 SQL 甚至可以对这些信息进行二次加工或者过滤，另外接入第三方的运维监控工具也很自然，不需要引入新的依赖。
 
 过去由于种种原因，TiDB 很多的内部状态信息是通过不同组件暴露 RESTFul API 来实现，这个方案也不是不好，但是随着 API 的增多，管理成本越来越高，举一个例子：在不参考文档的前提下，用户是很难记住那么多 RESTFul API 的路径的，只能通过将这些 API 封装成命令行工具来使用，但是如果这是一张系统表，只需要一句 `SHOW TABLES` 和几条 `SELECT` 就能够了。当然选择 RESTFul API 还有其他的原因，例如有些操作并不是只读的，是类似命令的形式，例如：手动 split region 这类操作，使用 RESTFul API 会更好，这两者其实并不矛盾，系统表当然是一个很好的补充，这是提升整体软件易用性的一个好例子。
 
@@ -37,7 +37,7 @@ var columnStatisticsCols = []columnInfo{
 }
 ```
 
-下一步需要如何填充数据返回给 TiDB 的 SQL Engine，我们注意到 `infoschemaTable` 这个类实现了 `table.Table interface`，很显然这个 interface 就是 TiDB 中对于 Table 获取数据/修改数据的接口，有关获取数据的方法是 `IterRecords`，我们只需要看到 `IterRecords` 中的实现就能知道这些系统表的数据是如何返回给 SQL Engine 的，果然在 `IterRecords` 里面有一个方法，`inforschemaTable.getRows()`，这个方法的定义中有一个巨大的 switch 语句，用于判断是在哪个系统表上，根据这个信息然后返回不同的数据:
+下一步需要如何填充数据返回给 TiDB 的 SQL Engine，我们注意到 `infoschemaTable` 这个类实现了 `table.Table interface`，很显然这个 interface 就是 TiDB 中对于 Table 获取数据/修改数据的接口，有关获取数据的方法是 `IterRecords`，我们只需要看到 `IterRecords` 中的实现就能知道这些系统表的数据是如何返回给 SQL Engine 的，果然在 `IterRecords` 里面有一个方法，`inforschemaTable.getRows()`，这个方法的定义中有一个巨大的 switch 语句，用于判断是在哪个系统表上，根据这个信息然后返回不同的数据：
 
 ```
 ...
