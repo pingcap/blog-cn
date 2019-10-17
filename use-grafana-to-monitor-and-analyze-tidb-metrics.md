@@ -119,7 +119,7 @@ Prometheus 支持很多表达式与函数，更多表达式请参考 [官网页�
 
 <center>图 8 基线默认为 0</center>
 
-![图 9 调整基线为 auto](media/use-grafana-to-monitor-and-analyze-tidb-metrics/8.png)
+![图 9 调整基线为 auto](media/use-grafana-to-monitor-and-analyze-tidb-metrics/9.png)
 
 <center>图 9 调整基线为 auto</center>
 
@@ -158,7 +158,7 @@ PD 的 Dashboard，只展示当前 leader 的 metric 信息，有时候会想看
 
 <center>图 14 增加 Avg 等汇总函数</center>
 
-![图 15 增加 Avg 函数](media/use-grafana-to-monitor-and-analyze-tidb-metrics/14.png)
+![图 15 增加 Avg 函数](media/use-grafana-to-monitor-and-analyze-tidb-metrics/15.png)
 
 <center>图 15 增加 Avg 函数</center>
 
@@ -173,7 +173,7 @@ Grafana 通过 Prometheus 的接口获取数据，我们也可以用该接口获
 
 * 将重要的指标进行定期健康巡检。
 
-![图 16 Prometheus 的 API 接口](media/use-grafana-to-monitor-and-analyze-tidb-metrics/14.png)
+![图 16 Prometheus 的 API 接口](media/use-grafana-to-monitor-and-analyze-tidb-metrics/16.png)
 
 <center>图 16 Prometheus 的 API 接口</center>
 
