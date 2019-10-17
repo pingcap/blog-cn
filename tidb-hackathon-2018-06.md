@@ -224,7 +224,7 @@ Streaming 有两个比较本质的特征：
 
 3. **StreamReader**
 
-    这一块主要有两个部分，一个是适配不同的数据源（collector），另一个是将 Streaming 数据源引入 TiDB 计算引擎（StreamReader）。collector 这部分上面已经介绍过了，这里就不再过多介绍了。StreamReader 这一块，主要要修改由 LogicalPlan 生成 PhysicalPlan（[具体代码](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/planner/core/find_best_task.go#L206)），以及由 PhysicalPlan 生成 Executor Operator Tree 的过程（[具体代码](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/executor/builder.go#L171)）。[StreamReader](https://github.com/qiuyesuifeng/tidb/blob/master/executor/stream_reader.go) 的 Open 方法中，会利用 Meta 中的各种元信息来初始化与 collector 之间的连接，然后在 Next 方法中通过 Pull 的方式不断拉取数据。
+    这一块主要有两个部分，一个是适配不同的数据源（collector），另一个是将 Streaming 数据源引入 TiDB 计算引擎（StreamReader）。collector 这部分上面已经介绍过了，这里就不再过多介绍了。StreamReader 这一块，主要要修改由 LogicalPlan 生成 PhysicalPlan（[具体代码](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/planner/core/find_best_task.go#L206)），以及由 PhysicalPlan 生成 Executor Operator Tree 的过程（[具体代码](https://github.com/qiuyesuifeng/tidb/blob/656971da00a3b1f81f5085aaa277159868fca223/executor/builder.go#L171)）。[StreamReader](https://github.com/qiuyesuifeng/tidb/blob/tiboys/hackathon2018/executor/stream_reader.go) 的 Open 方法中，会利用 Meta 中的各种元信息来初始化与 collector 之间的连接，然后在 Next 方法中通过 Pull 的方式不断拉取数据。
 
 4. **对时间窗口的处理**
 
