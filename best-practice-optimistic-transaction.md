@@ -10,7 +10,7 @@ TiDB 最佳实践系列是面向广大 TiDB 用户的系列教程，旨在深入
 
 **本文我们将深入浅出介绍 TiDB 乐观事务原理，并给出多种场景下的最佳实践，希望大家能够从中收益。同时，也欢迎大家给我们提供相关的优化建议，参与到我们的优化工作中来。**
 
->建议大家在阅读之前先了解 [TiDB 的整体架构](https://pingcap.com/docs-cn/v3.0/architecture/#tidb-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84) 和 [Percollator](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 事务原型。另外，本文重点关注原理及最佳实践路径，具体的 TiDB 事务语句大家可以在 [官方文档](https://pingcap.com/docs-cn/v3.0/reference/transactions/overview/) 中查阅。
+>建议大家在阅读之前先了解 [TiDB 的整体架构](https://pingcap.com/docs-cn/v3.0/architecture/#tidb-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84) 和 [Percollator](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 事务模型。另外，本文重点关注原理及最佳实践路径，具体的 TiDB 事务语句大家可以在 [官方文档](https://pingcap.com/docs-cn/v3.0/reference/transactions/overview/) 中查阅。
 
 ## TiDB 事务定义
 
