@@ -10,7 +10,7 @@ TiDB 最佳实践系列是面向广大 TiDB 用户的系列教程，旨在深入
 
 **本文我们将深入浅出介绍 TiDB 乐观事务原理，并给出多种场景下的最佳实践，希望大家能够从中收益。同时，也欢迎大家给我们提供相关的优化建议，参与到我们的优化工作中来。**
 
->建议大家在阅读之前先了解 [TiDB 的整体架构](https://pingcap.com/docs-cn/v3.0/architecture/#tidb-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84) 和 [Percollator](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 事务原型。另外，本文重点关注原理及最佳实践路径，具体的 TiDB 事务语句大家可以在 [官方文档](https://pingcap.com/docs-cn/v3.0/reference/transactions/overview/) 中查阅。
+>建议大家在阅读之前先了解 [TiDB 的整体架构](https://pingcap.com/docs-cn/v3.0/architecture/#tidb-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84) 和 [Percollator](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 事务模型。另外，本文重点关注原理及最佳实践路径，具体的 TiDB 事务语句大家可以在 [官方文档](https://pingcap.com/docs-cn/v3.0/reference/transactions/overview/) 中查阅。
 
 ## TiDB 事务定义
 
@@ -103,7 +103,7 @@ UPDATE my_table SET a='newer_value' WHERE id = 2;
 UPDATE my_table SET a='newest_value' WHERE id = 3;
 ```
 
-以上每一条语句，都需要经过两阶段提交，网络交互就直接 *3， 如果我们能够打包成一个事务提交，性能上会有一个显著的提升，如下：
+以上每一条语句，都需要经过两阶段提交，网络交互就直接 \*3， 如果我们能够打包成一个事务提交，性能上会有一个显著的提升，如下：
 
 ```
 # improved version
@@ -167,7 +167,7 @@ COMMIT;
 
 ### 重试机制
 
-我们知道了乐观锁下事务的默认行为，可以知道在冲突比较大的时候，Commit 很容易出现失败。然而，TiDB 的大部分用户，都是来自于 MySQL而 MySQL 内部使用的是悲观锁，对应到这个 case，就是事务 A 在 `t4` 更新时就会报失败，客户端就会根据需求去重试。
+我们知道了乐观锁下事务的默认行为，可以知道在冲突比较大的时候，Commit 很容易出现失败。然而，TiDB 的大部分用户，都是来自于 MySQL；而 MySQL 内部使用的是悲观锁。对应到这个 case，就是事务 A 在 `t4` 更新时就会报失败，客户端就会根据需求去重试。
 
 换言之，MySQL 的冲突检测在 SQL 执行过程中执行，所以 commit 时很难出现异常。而 TiDB 使用乐观锁机制造成的两边行为不一致，则需要客户端修改大量的代码。 为了解决广大 MySQL 用户的这个问题，TiDB 提供了内部默认重试机制，这里，也就是当事务 A commit 发现冲突时，TiDB 内部重新回放带写入的 SQL。为此 TiDB 提供了以下参数,
 
@@ -180,15 +180,15 @@ COMMIT;
 1. session 级别设置：
 
 	```
-	set  @@tidb_disable_txn_auto_retry = 0;
-	set @@tidb_retry_limit=10;
+	set @@tidb_disable_txn_auto_retry = 0;
+	set @@tidb_retry_limit = 10;
 	```
 
 2. 全局设置：
 
 	```
-	set  @@global.tidb_disable_txn_auto_retry = 0;
-	set @@global.tidb_retry_limit=10;
+	set @@global.tidb_disable_txn_auto_retry = 0;
+	set @@global.tidb_retry_limit = 10;
 	```
 
 ### 万能重试
