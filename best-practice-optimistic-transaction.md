@@ -103,7 +103,7 @@ UPDATE my_table SET a='newer_value' WHERE id = 2;
 UPDATE my_table SET a='newest_value' WHERE id = 3;
 ```
 
-以上每一条语句，都需要经过两阶段提交，网络交互就直接 *3， 如果我们能够打包成一个事务提交，性能上会有一个显著的提升，如下：
+以上每一条语句，都需要经过两阶段提交，网络交互就直接 \*3， 如果我们能够打包成一个事务提交，性能上会有一个显著的提升，如下：
 
 ```
 # improved version
