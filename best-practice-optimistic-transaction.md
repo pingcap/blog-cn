@@ -6,7 +6,6 @@ summary: 本文我们将深入浅出介绍 TiDB 乐观事务原理，并给出�
 tags: ['事务','最佳实践']
 ---
 
-
 TiDB 最佳实践系列是面向广大 TiDB 用户的系列教程，旨在深入浅出介绍 TiDB 的架构与原理，帮助用户在生产环境中最大限度发挥 TiDB 的优势。我们将分享一系列典型场景下的最佳实践路径，便于大家快速上手，迅速定位并解决问题。在前两篇的文章中，我们分别介绍了 [TiDB 高并发写入常见热点问题及规避方法](https://pingcap.com/blog-cn/tidb-in-high-concurrency-scenarios/) 和 [PD 调度策略最佳实践](https://pingcap.com/blog-cn/best-practice-pd/)，今天给大家带来的是本系列的第三篇文章。
 
 **本文我们将深入浅出介绍 TiDB 乐观事务原理，并给出多种场景下的最佳实践，希望大家能够从中收益。同时，也欢迎大家给我们提供相关的优化建议，参与到我们的优化工作中来。**
@@ -15,9 +14,9 @@ TiDB 最佳实践系列是面向广大 TiDB 用户的系列教程，旨在深入
 
 ## TiDB 事务定义
 
-TiDB 使用 Percolator 事务模型，实现了分布式事务。未读过该论文的同学建议学习一下 [论文](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 中事务部分内容。
+TiDB 使用 Percolator 事务模型，实现了分布式事务（建议未读过该论文的同学先浏览一下 [论文](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 中事务部分内容）。
 
-说到事务，不得不先抛出事务的基本概念。一般地，我们用 ACID 来定义事务，不熟悉 ACID 基本概念的同学可以先复习一下 [定义](https://en.wikipedia.org/wiki/ACID)。下面我们简单说一下 TiDB 是怎么实现 ACID 的：
+说到事务，不得不先抛出事务的基本概念。一般地，我们用 ACID 来定义事务（[ACID 概念定义](https://en.wikipedia.org/wiki/ACID)）。下面我们简单说一下 TiDB 是怎么实现 ACID 的：
 
 * A（原子性）：基于单实例的原子性来实现分布式事务的原子性，和 Percolator 论文一样，TiDB 通过使用 Primary key 所在 region 的原子性来保证。
 * C（一致性）：本身 TiDB 在写入数据之前，会对数据的一致性进行校验，校验通过才会写入内存并返回成功。
@@ -29,7 +28,7 @@ TiDB 使用 Percolator 事务模型，实现了分布式事务。未读过该论
 * 悲观事务：顾名思义，比较悲观，对于每一条 SQL 都会检测冲突。
 * 乐观事务：只有在事务最终提交 commit 时才会检测冲突。
 
-下面我们将着重介绍乐观事务在 TiDB 中的实现。想要了解我们悲观事务更多细节的同学，可以先阅读本文，思考一下在 TiDB 中如何实现悲观事务，我们之后也会提供《悲观锁事务最佳实践》给大家参考。
+下面我们将着重介绍乐观事务在 TiDB 中的实现。另外，想要了解 TiDB 悲观事务更多细节的同学，可以先阅读本文，思考一下在 TiDB 中如何实现悲观事务，我们后续也会提供《悲观锁事务最佳实践》给大家参考。
 
 ## 乐观事务原理
 
@@ -73,7 +72,7 @@ TiDB 在处理一个事务时，处理流程如下：
 
 6. TiDB 向客户端返回事务提交成功。
 
-7.  TiDB 异步清理本次事务遗留的锁信息。
+7. TiDB 异步清理本次事务遗留的锁信息。
 
 ### 优缺点分析
 
@@ -91,9 +90,9 @@ TiDB 在处理一个事务时，处理流程如下：
 
 基于以上缺点的分析，我们有了一些实践建议，将在下文详细介绍。
 
-### 事务大小
+## 事务大小
 
-#### 1. 小事务
+### 1. 小事务
 
 为了降低网络交互对于小事务的影响，我们建议小事务打包来做。如在 auto commit 模式下，下面每条语句成为了一个事务：
 
@@ -117,7 +116,7 @@ COMMIT;
 
 同理，对于 insert 语句也建议打包成事务来处理。
 
-#### 2. 大事务
+### 2. 大事务
 
 既然小事务有问题，我们的事务是不是越大越好呢？
 
@@ -134,9 +133,8 @@ COMMIT;
 * 键值对的总数不超过 300,000
 * 键值对的总大小不超过 100MB
 
-### 小结
 
-**对于 TiDB 乐观事务而言，事务太大或者太小，都会出现性能上的问题。建议每 100～500 行写入一个事务，可以达到一个比较优的性能。**
+**因此，对于 TiDB 乐观事务而言，事务太大或者太小，都会出现性能上的问题。我们建议每 100～500 行写入一个事务，可以达到一个比较优的性能。**
 
 ## 事务冲突
 
@@ -173,9 +171,9 @@ COMMIT;
 
 换言之，MySQL 的冲突检测在 SQL 执行过程中执行，所以 commit 时很难出现异常。而 TiDB 使用乐观锁机制造成的两边行为不一致，则需要客户端修改大量的代码。 为了解决广大 MySQL 用户的这个问题，TiDB 提供了内部默认重试机制，这里，也就是当事务 A commit 发现冲突时，TiDB 内部重新回放带写入的 SQL。为此 TiDB 提供了以下参数,
 
-* [tidb_disable_txn_auto_retry](https://pingcap.com/docs-cn/v3.0/reference/configuration/tidb-server/tidb-specific-variables/#tidb_disable_txn_auto_retry)：这个参数控制是否自动重试，默认为 `1`，即不重试。
+* [`tidb_disable_txn_auto_retry`](https://pingcap.com/docs-cn/v3.0/reference/configuration/tidb-server/tidb-specific-variables/#tidb_disable_txn_auto_retry)：这个参数控制是否自动重试，默认为 `1`，即不重试。
 
-* [tidb_retry_limit](https://pingcap.com/docs-cn/v3.0/reference/configuration/tidb-server/tidb-specific-variables/#tidb_retry_limit)：用来控制重试次数，注意只有第一个参数启用时该参数才会生效。
+* [`tidb_retry_limit`](https://pingcap.com/docs-cn/v3.0/reference/configuration/tidb-server/tidb-specific-variables/#tidb_retry_limit)：用来控制重试次数，注意只有第一个参数启用时该参数才会生效。
 
 如何设置以上参数呢？推荐两种方式设置：
 
