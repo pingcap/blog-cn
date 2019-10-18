@@ -16,7 +16,7 @@ TiDB 最佳实践系列是面向广大 TiDB 用户的系列教程，旨在深入
 
 TiDB 使用 Percolator 事务模型，实现了分布式事务（建议未读过该论文的同学先浏览一下 [论文](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 中事务部分内容）。
 
-说到事务，不得不先抛出事务的基本概念。一般地，我们用 ACID 来定义事务（[ACID 概念定义](https://en.wikipedia.org/wiki/ACID)）。下面我们简单说一下 TiDB 是怎么实现 ACID 的：
+说到事务，不得不先抛出事务的基本概念。通常我们用 ACID 来定义事务（[ACID 概念定义](https://en.wikipedia.org/wiki/ACID)）。下面我们简单说一下 TiDB 是怎么实现 ACID 的：
 
 * A（原子性）：基于单实例的原子性来实现分布式事务的原子性，和 Percolator 论文一样，TiDB 通过使用 Primary key 所在 region 的原子性来保证。
 * C（一致性）：本身 TiDB 在写入数据之前，会对数据的一致性进行校验，校验通过才会写入内存并返回成功。
