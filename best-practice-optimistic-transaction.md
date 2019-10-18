@@ -1,7 +1,7 @@
 ---
 title: TiDB 最佳实践系列（三）乐观锁事务
 author: ['Shirly']
-date: 2019-10-11
+date: 2019-10-18
 summary: 本文我们将深入浅出介绍 TiDB 乐观事务原理，并给出多种场景下的最佳实践，希望大家能够从中收益。同时，也欢迎大家给我们提供相关的优化建议，参与到我们的优化工作中来。
 tags: ['事务','最佳实践']
 ---
@@ -152,7 +152,7 @@ COMMIT;
 
 默认配置下，以下并发事务存在冲突时，结果如下：
 
-![](media/best-practice-optimistic-transaction/表1.png)
+![](media/best-practice-optimistic-transaction/table-1.png)
 
 在这个 case 中，现象分析如下：
 
@@ -207,7 +207,7 @@ COMMIT;
 
 打开了重试后，我们来看下面的例子：
  
-![](media/best-practice-optimistic-transaction/表2.png)
+![](media/best-practice-optimistic-transaction/table-2.png)
 
 我们来详细分析以下这个 case：
 
