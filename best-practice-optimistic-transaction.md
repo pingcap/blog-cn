@@ -181,7 +181,7 @@ COMMIT;
 
 	```
 	set @@tidb_disable_txn_auto_retry = 0;
-	set @@tidb_retry_limit=10;
+	set @@tidb_retry_limit = 10;
 	```
 
 2. 全局设置：
