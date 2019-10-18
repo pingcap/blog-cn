@@ -180,7 +180,7 @@ COMMIT;
 1. session 级别设置：
 
 	```
-	set  @@tidb_disable_txn_auto_retry = 0;
+	set @@tidb_disable_txn_auto_retry = 0;
 	set @@tidb_retry_limit=10;
 	```
 
