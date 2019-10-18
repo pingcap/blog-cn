@@ -208,7 +208,7 @@ COMMIT;
  
 ![](media/best-practice-optimistic-transaction/表2.png)
 
-我们来详细分析以下这个 case:
+我们来详细分析以下这个 case：
 
 ![](media/best-practice-optimistic-transaction/3.png)
 
@@ -232,7 +232,7 @@ COMMIT;
 
 这里我们可以看到，对于重试事务，如果本身事务中更新语句需要依赖查询结果时，因为重试时会重新取版本号作为 `start_ts`，因而无法保证事务原本的 `ReadRepeatable` 隔离型，结果与预测可能出现不一致。
 
-综上所述，如果存在依赖查询结果来更新 SQL 语句的事务，建议不要打开TiDB 乐观锁的重试机制。
+综上所述，如果存在依赖查询结果来更新 SQL 语句的事务，建议不要打开 TiDB 乐观锁的重试机制。
 
 ### 冲突预检
 
