@@ -3,7 +3,8 @@ title: 写给社区的回顾和展望：TiDB 2019, Level Up!
 author: ['黄东旭']
 date: 2019-01-02
 summary: 2018 年对于 TiDB 和 PingCAP 来说是一个由少年向成年的转换的一年，如果用一个关键字来概括就是「蜕变」。
-tags: ['TiDB','TiKV','社区']
+tags: ['TiDB','TiKV','社区','社区动态']
+image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 ---
 
 
