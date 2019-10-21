@@ -3,7 +3,7 @@ title: 写在 TiDB 1.0 发布之际 | 预测未来最好的方式就是创造未
 author: ['刘奇']
 date: 2017-10-17
 summary: 1.0 版本只是个开始，是新的起点，愿我们一路相扶，不负远途。
-tags: ['GA']
+tags: ['GA','社区动态']
 aliases:
   - /blog-cn/ga-liuqi/
 ---
