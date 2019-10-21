@@ -4,6 +4,7 @@ author: ['PingCAP']
 date: 2019-07-30
 summary: 开源后到现在的近一年内，我们一方面基于用户反馈不断打磨项目的易用性，另一方面通过严苛的稳定性测试持续提升可靠性。今天，我们自豪地宣布 TiDB Operator 1.0 GA 正式发布！
 tags: ['Cloud-TiDB','TiDB Operator','社区','社区动态']
+image: /images/media/tidb-operator-1.0-ga/tidb-operator-1.0-ga.jpg
 ---
 
 ![头图](media/tidb-operator-1.0-ga/1.png)

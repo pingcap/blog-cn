@@ -3,7 +3,8 @@ title: TiDB Operator，让 TiDB 成为真正的 Cloud-Native 数据库
 author: ['邓栓']
 date: 2018-08-22
 summary: TiDB Operator 已经正式开源，本文将详细介绍 TiDB Operator 开源的细节，希望大家深入了解这个新的开源项目之后，能够速来贡献代码、成为 Contributor！Enjoy～
-tags: ['Cloud-TiDB','TiDB Operator','社区']
+tags: ['Cloud-TiDB','TiDB Operator','社区','社区动态']
+image: /images/media/tidb-operator-introductiona/tidb-operator.jpg
 ---
 
 

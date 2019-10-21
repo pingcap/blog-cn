@@ -4,6 +4,7 @@ author: ['PingCAP']
 date: 2019-05-06
 summary: 为方便用户和开发者更加深入理解和使用 TiDB Binlog 组件，以及基于 TiDB Binlog 组件做二次开发用于更多的业务场景， TiDB 团队决定于 2019 年 5 月 6 日正式开源 TiDB Binlog 组件。
 tags: ['TiDB Binlog','社区','社区动态']
+image: /images/media/tidb-binlog-open-source/tidb-binlog-open-source.jpg
 ---
 
 [TiDB Binlog](https://github.com/pingcap/tidb-binlog) 组件用于收集 TiDB 的 binlog，并准实时同步给下游，如：TiDB/MySQL等。该组件在功能上类似于 MySQL 的主从复制，会收集各个 TiDB 实例产生的 binlog，并按事务提交的时间排序，全局有序的将数据同步至下游。利用 TiDB Binlog 可以实现数据准实时同步到其他数据库，以及 TiDB 数据准实时的备份与恢复。TiDB Binlog 作为 TiDB 的核心组件之一，已经在上百家用户的生产环境中长时间稳定运行。
