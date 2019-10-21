@@ -251,7 +251,7 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
     - QPS 均值 4 k/s，高峰期万级 QPS，读写比约 1:5；
     - 延迟时间：80% 在 8ms 以内，95% 在 125ms 以下，99.9% 在 500ms 以下。
 
-## 四、最佳运维实践分享
+## 四、最佳实践分享
 
 ### 4.1 集群管理
 
