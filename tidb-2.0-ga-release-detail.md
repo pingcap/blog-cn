@@ -4,7 +4,7 @@ author: ['PingCAP']
 date: 2018-04-27
 summary: 经过半年时间，6 个 RC 版本，今天 TiDB 2.0 GA 版本正式发布。
 tags: ['TiDB','社区动态']
-image: /images/media/tidb-2.0-ga-release-detail/2.0-ga.jpg
+image: /images/blog-cn/tidb-2.0-ga-release-detail/2.0-ga.jpg
 ---
 
 

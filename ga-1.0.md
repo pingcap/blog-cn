@@ -4,7 +4,7 @@ author: ['刘奇']
 date: 2017-10-17
 summary: 1.0 版本只是个开始，是新的起点，愿我们一路相扶，不负远途。
 tags: ['GA','社区动态']
-image: /images/media/ga-1.0/ga-1.0.jpg
+image: /images/blog-cn/ga-1.0/ga-1.0.jpg
 aliases:
   - /blog-cn/ga-liuqi/
 ---

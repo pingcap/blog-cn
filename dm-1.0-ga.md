@@ -4,7 +4,7 @@ author: ['沈瑀昊']
 date: 2019-09-06
 summary: DM 在 TiDB DevCon 2019 上正式开源，经过半年多时间在大量用户、开发者的支持和反馈下，今天我们宣布 DM 1.0 GA 正式发布。
 tags: ['DM','社区','社区动态']
-image: /images/media/dm-1.0-ga/dm-1.0-ga.jpg
+image: /images/blog-cn/dm-1.0-ga/dm-1.0-ga.jpg
 ---
 
 DM（TiDB Data Migration）是由 PingCAP 开发的一体化数据同步平台，支持从 MySQL 或 MariaDB 到 TiDB 的全量数据迁移和增量数据同步。无论是从 MySQL 向 TiDB 进行平滑数据迁移还是用 TiDB 作为多个 MySQL 实例的数据汇总库，都可以通过 DM 来实现。DM 在 [TiDB DevCon 2019](https://pingcap.com/community-cn/devcon2019/) 上正式开源，经过半年多时间在大量用户、开发者的支持和反馈下，其功能和稳定性越来越完善。在今天，我们宣布 DM 1.0 GA 正式发布。
