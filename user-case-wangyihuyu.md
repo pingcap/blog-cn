@@ -17,11 +17,11 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 
 计费组是为网易互娱产品提供统一登录和支付高效解决方案的公共支持部门，对内是互娱的各个游戏工作室，对外是国内外数百个渠道。由于业务场景的特殊性，我们为各个游戏产品部署了不同的应用服务，其中大产品环境独立，小产品集中部署。
 
-随着部门业务量的激增，单机 MySQL 在容量、性能、扩展性等方面都遇到了瓶颈，我们开始对其他数据库产品进行调研选型。本文详细介绍了网易互娱计费组针对自己场景的数据库选型对比方案，以及使用 TiDB 后解决的问题，并分享了使用 TiDB 过程中集群管理、监控和数据迁移等方面的最佳实践，以供大家参考并和业界交流。
+随着部门业务量的激增，单机 MySQL 在容量、性能、扩展性等方面都遇到了瓶颈，我们开始对其他数据库产品进行调研选型。本文将详细介绍网易互娱计费组针对自己场景的数据库选型对比方案，以及使用 TiDB 后解决的问题，并分享了使用 TiDB 过程中集群管理、监控和数据迁移等方面的最佳实践，以供大家参考和交流。
 
 ### 1.1 MySQL 使用架构
 
-网易互娱计费组线上 MySQL 的基本使用架构，如下图所示，其中箭头方向表示数据或请求的指向。
+网易互娱计费组线上 MySQL 的基本使用架构，如下图所示，其中箭头方向表示数据或请求的指向：
 
 ![图 1 网易互娱计费组线上 MySQL 使用架构](media/user-case-wangyihuyu/1.png) 
 
@@ -56,9 +56,9 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
     - 数据不互通，导致数据相关隔离，形成数据壁垒；
     - 当进行跨产品计算时，需要维护多个异构数据源，访问方式复杂。数据分散在不同的数据孤岛上会增加数据分析难度，不利于共性价值的挖掘。如下图：
     
-    ![图 2 现状数据孤岛](media/user-case-wangyihuyu/2.png) 
+    ![图 2 现状之数据孤岛](media/user-case-wangyihuyu/2.png) 
     
-    <center>图 2 现状数据孤岛</center>
+    <center>图 2 现状之数据孤岛</center>
 
 
 
@@ -66,12 +66,12 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 
 ### 2.1 调研目标
 
-针对目前存储架构存在的问题，有需要使用其他存储方案的可能。考虑到目前的业务与MySQL 高度耦合，对数据库选型的主要要求有：
+针对目前存储架构存在的问题，有需要使用其他存储方案的可能。考虑到目前的业务与 MySQL 高度耦合，对数据库选型的主要要求有：
 
 + 必须兼容 MySQL 协议；
 + 支持事务，保证任务以事务为维度来执行或遇错回滚；
 + 支持索引，尤其是二级索引；
-+ 扩展性：支持灵活在线扩展能力，包括性能扩展和容量扩展。
++ 扩展性，支持灵活在线扩展能力，包括性能扩展和容量扩展。
 
 其他要求：
 
@@ -141,7 +141,7 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 	SELECT DISTINCT c FROM sbtest%u WHERE id BETWEEN ? AND ? ORDER BY c
 	```
 
-+ 随机IN查询：
++ 随机 IN 查询：
 
 	```
 	SELECT id, k, c, pad FROM sbtest1 WHERE k IN (?)
@@ -165,19 +165,19 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 	UPDATE sbtest%u SET c=? WHERE id=?
 	```
 
-+ 读写混合：范围查询+更删改混合
++ 读写混合：范围查询 + 更删改混合
 
 其中一个重要的测试结果如下：
 
 ![图 6 一个重要的测试结果](media/user-case-wangyihuyu/6.png) 
     
-<center>图 6 一个重要的测试结果</center>
+<center>图 6 测试结果</center>
 
 结论：
 
 1. CRDB 和 TiDB 在性能表现上不相上下；
 
-	>注：上面是 2018 年 7 月的基于 TiDB 2.0.5 版本的测试结果，现在 [TiDB 已发布 3.0 GA 版本，在性能上有了质的提升](https://pingcap.com/docs-cn/v3.0/releases/3.0-ga/)，我们在近期进行了补充测试，大多数场景下 3.0 版本 较 2.1 版本有数倍的性能提升，最新的测试结果图如下：
+	>注：上面是 2018 年 7 月的基于 TiDB 2.0.5 版本的测试结果，现在 [TiDB 已发布 3.0 GA 版本，在性能上有了质的提升](https://pingcap.com/docs-cn/v3.0/releases/3.0-ga/)，我们在近期进行了补充测试，大多数场景下 3.0 版本较 2.1 版本有数倍的性能提升，最新的测试结果图如下：
 	>
 	>![图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较](media/user-case-wangyihuyu/7.png) 
 	>
@@ -247,8 +247,8 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 
 + 规模
     - 41 台服务器，88 个实例节点，38 个 Syncer 实时同步流（将升级为 DM）；
-    - 存储：20 TB/总 50 TB，230 万个 Region；
-    - QPS 均值 4 k/s，高峰期万级 QPS，读写比约 1:5；
+    - 存储：20TB/总 50TB，230 万个 Region；
+    - QPS 均值 4k/s，高峰期万级 QPS，读写比约 1:5；
     - 延迟时间：80% 在 8ms 以内，95% 在 125ms 以下，99.9% 在 500ms 以下。
 
 ## 四、最佳实践分享
@@ -256,15 +256,15 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 ### 4.1 集群管理
 
 +  Ansible（推荐）
-    - 一键部署
-    - 弹性伸缩，可在线灵活扩缩容
-    - 升级：单节点轮转平滑升级
-    - 集群启停和下线
-    - Prometheus 监控
+    - 一键部署；
+    - 弹性伸缩，可在线灵活扩缩容；
+    - 升级，单节点轮转平滑升级；
+    - 集群启停和下线；
+    - Prometheus 监控。
 
 + Docker
 + K8s
-    - 使用 [TiDB Operator](https://github.com/pingcap/tidb-operator) 可以在私有云和公有云上一键管理
+    - 使用 [TiDB Operator](https://github.com/pingcap/tidb-operator) 可以在私有云和公有云上一键管理。
 
 ### 4.2 运维实践
 
@@ -291,10 +291,12 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 应用访问 TiDB 写入数据时发现特别慢，读请求正常。排查后，根据 TiKV 面板发现 Raft Store CPU 这项指标异常。深入了解原因是因为数据库副本复制是单线程操作，目前已经到了集群的瓶颈。解决办法有以下两点：
 
 + Region 数量过多，Raft Store 还要处理 heartbeat message。
-    - 解决方法：删除过期数据。
+  
+  解决方法：删除过期数据。
 
 + Raft Store 单线程处理速度跟不上集群写入速度。
-    - 解决方法：从 2.1.5 升级到 2.1.15，开启自动 Region Merge 功能。
+  
+  解决方法：从 2.1.5 升级到 2.1.15，开启自动 Region Merge 功能。
 
 #### 4.2.2 部分运维问题及解决方案
 
@@ -309,7 +311,7 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 | 存储空间放大  | 2.1 & 2.0 | 该问题属于 RocksDB。RocksDB 的空间放大系数最理想的值为 1.111。官方建议在合适场景下通过 TiKV 开启 RocksDB 的 dynamic-level-bytes 以减少空间放大。 |
 | Truncate Table 空间无法完全回收 | 2.0 | Truncate 一张大表后，发现 2 个现象：一是空间回收较慢，二是最终也没有完全回收。目前 2.1 版本优化底层 RocksDB 的机制，使用 DeleteFilesInRange 接口删除整个表占用的空间，然后清理少量残留数据，已经解决。 |
 
-### 4.4 全网数据库遍历
+### 4.3 全网数据库遍历
 
 以前部分业务遍历全网数据库获取所需数据，需要维护多个源，而且是异构源，非常复杂和繁琐。使用 TiDB 很好地解决了这个问题，只需要访问一个源就可以获取到所有想要的数据。
 
@@ -317,9 +319,9 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 
 <center>图 13 全网数据库遍历</center>
 
-### 4.5 数据迁移
+### 4.4 数据迁移
 
-#### 4.5.1 MySQL 到 TiDB
+#### 4.4.1 MySQL 到 TiDB
 
 ![图 14 数据从 MySQL 迁移到 TiDB](media/user-case-wangyihuyu/14.png) 
 
@@ -328,7 +330,7 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 + 全量
-    - 使用工具 （Mydumper 或 MySQL Dump等）从 MySQL 导出数据，并且记录当前数据的 binlog 位置；
+    - 使用工具 （Mydumper 或 MySQL Dump 等）从 MySQL 导出数据，并且记录当前数据的 binlog 位置；
     - 使用工具（Loader 或 Lightning 等）将数据导入到 TiDB 集群；
     - 可以用作数据的备份和恢复操作。
 
@@ -336,7 +338,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
     - TiDB 伪装成为上游 MySQL 的一个 Slave，通过工具（Syncer 或 DM）实时同步 binlog 到 TiDB 集群；
     - 通常情况上游一旦有数据更新，下游就会实时同步过来。同步速度受网络和数据量大小的影响。
 
-#### 4.5.2 数据迁出 TiDB
+#### 4.4.2 数据迁出 TiDB
 
 ![图 15 数据迁出 TiDB](media/user-case-wangyihuyu/15.png) 
 
@@ -350,9 +352,9 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 导入的方式：
 
 + 全量：TiDB 兼容 MySQL 协议，在 MySQL 容量足够大的情况下，也可用工具将数据从 TiDB 导出后再导入 MySQL。
-+ 增量：打开 TiDB 的 binlog 开关，部署 binlog 收集组件（Pump+Drainer），可以将 binlog 数据同步到下游存储架构（MySQL、TiDB、Kafka、S3等）。
++ 增量：打开 TiDB 的 binlog 开关，部署 binlog 收集组件（Pump+Drainer），可以将 binlog 数据同步到下游存储架构（MySQL、TiDB、Kafka、S3 等）。
 
-### 4.6 优雅地「去分库分表」
+### 4.5 优雅地「去分库分表」
 
 ![图 16 去分库分表举例](media/user-case-wangyihuyu/16.png) 
 
@@ -376,7 +378,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 	
 	应用此方案，最大单表 700+GB，13+ 亿行，索引查询秒返回。
 
-### 4.7  业务迁移
+### 4.6  业务迁移
 
 **目标**：利用 TiDB 的水平扩展特性，解决容量瓶颈和系统吞吐量瓶颈。
 
