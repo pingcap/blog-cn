@@ -23,7 +23,6 @@ tags: ['社区','社区动态']
 
 * Maintainer：项目的规划和设计者，拥有合并主干分支的权限，从 Committer 中产生。他们必须对子项目的健康表现出良好的判断力和责任感。维护者必须直接或通过委派这些职责来设置技术方向并为子项目做出或批准设计决策。
 
-可以看到老社区架构中对角色的职责、角色之间关系的表述都比较简单，所以我们在新社区架构中做了一些加法，对每个角色定义、权责做了明确的界定，同时也增加了一些新角色、新组织，下面让我们来详细地看一看。
 可以看到老社区架构屏蔽了日益壮大的、对产品打磨升级至关重要的 TiDB 用户群体，并且老架构中对与开发者社区角色的职责、角色之间关系的表述都比较简单，所以我们在新社区架构中做了一些加法，将 TiDB 用户社区纳入进来的同时，对 TiDB 开发者社区的每个角色定义、权责又做了明确的界定，同时也增加了一些新角色、新组织，下面让我们来详细地看一看。
 
 ## 新社区架构
@@ -60,7 +59,7 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
 
 专项兴趣小组主要负责 TiDB/TiKV 某个模块的开发和维护工作，对该模块代码的质量负责。我们将邀请满足条件的 Active Contributor 加入专项兴趣小组，开发者们将在专项兴趣小组中获得来自 Tech Lead 们的持续指导，一边锻炼技术能力，一边优化和完善该模块。社区开发者们可通过专项兴趣小组逐渐从初始的 Active Contributor 成长为受到社区认可的 Reviewer、Committer 和 Maintainer。一般而言每个专项兴趣小组都会周期性的组织会议，讨论最近进展和遇到的问题，所有的会议讨论都公开在社区上，方便感兴趣的同学一起参与和讨论。
 
-具体可参考目前我们正在运营的表达式专项兴趣小组：[Expression Special Interest Group](https://github.com/pingcap/community/pull/51)。
+具体可参考目前我们正在运营的表达式专项兴趣小组：[Expression Special Interest Group](https://github.com/pingcap/community/tree/master/special-interest-groups/sig-expr)。
 
 另外这张图也反映了社区角色和专项兴趣小组的关系，我们来仔细看看 SIG 中的社区角色：
 
