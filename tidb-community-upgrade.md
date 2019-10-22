@@ -17,37 +17,48 @@ tags: ['社区','社区动态']
 
 <center>图 1 老社区架构</center>
 
-这里简单介绍下老社区架构中的两种社区角色：
+老社区架构主要面向 TiDB 开发者社区（Developer Group），主要角色有 Maintainer、Committer、Contributor 等，其中：
 
 * Committer：由 Maintainer 或 PMC 推荐，是对 TiDB 有突出贡献的 Contributor。需要独立完成至少一个 feature 或修复重大 bug。
 
 * Maintainer：项目的规划和设计者，拥有合并主干分支的权限，从 Committer 中产生。他们必须对子项目的健康表现出良好的判断力和责任感。维护者必须直接或通过委派这些职责来设置技术方向并为子项目做出或批准设计决策。
 
 可以看到老社区架构中对角色的职责、角色之间关系的表述都比较简单，所以我们在新社区架构中做了一些加法，对每个角色定义、权责做了明确的界定，同时也增加了一些新角色、新组织，下面让我们来详细地看一看。
+可以看到老社区架构屏蔽了日益壮大的、对产品打磨升级至关重要的 TiDB 用户群体，并且老架构中对与开发者社区角色的职责、角色之间关系的表述都比较简单，所以我们在新社区架构中做了一些加法，将 TiDB 用户社区纳入进来的同时，对 TiDB 开发者社区的每个角色定义、权责又做了明确的界定，同时也增加了一些新角色、新组织，下面让我们来详细地看一看。
 
 ## 新社区架构
 
-### 变化 1：Active Contributor 和 Reviewer
+### 变化 1：将 TiDB 用户社区纳入整体社区架构
 
-![图 2 新社区架构之 Active Contributor & Reviewer](media/tidb-community-upgrade/2.png)
+随着 TiDB 产品的成熟，TiDB 用户群体愈发壮大，用户在使用过程中遇到的问题反馈及实践经验，对于 TiDB 产品的完善及应用推广有着不可忽视的重要作用。因此我们此次正式将 TiDB 用户社区（TiDB User Group，简称 TUG）纳入新的社区架构中来，希望用户与开发者有更好的交流互动，一起推动 TiDB 社区的健康发展。
 
-<center>图 2 新社区架构之 Active Contributor & Reviewer</center>
+![图 2 新社区架构之 User Group](media/tidb-community-upgrade/2.png)
 
-上图是升级后的社区总架构图概览，反映了这次社区架构升级的第 1 个变化：在开发者社区中，新增了 Reviewer 和 Active Contributor 的角色。
+<center>图 2 新社区架构之 User Group</center>
+
+TiDB User Group（TUG）是由 TiDB 用户发起的独立、非盈利的第三方组织，用户实行自我管理，旨在加强 TiDB 用户之间的交流和学习。TUG 的形式包括但不限于线上问答和技术文章分享、线下技术沙龙、走进名企、官方互动活动等等。TUG 成员可以通过线上、线下的活动，学习前沿技术知识，发表技术见解，共同建设 TiDB 项目。更多信息可以登陆 TUG 问答论坛 [asktug.com](https://asktug.com) 查看。
+
+### 变化 2：Active Contributor 和 Reviewer
+
+![图 3 新社区架构之 Active Contributor & Reviewer](media/tidb-community-upgrade/3.png)
+
+<center>图 3 新社区架构之 Active Contributor & Reviewer</center>
+
+上图是升级后的社区总架构图概览，反映了这次社区架构升级的第 2 个变化：在开发者社区中，新增了 Reviewer 和 Active Contributor 的角色。
 
 Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从 Active Contributor 中诞生，具有 Review PR 的义务，并且对 TiDB 或者 TiKV 某个子模块的 PR 的点赞（LGTM）有效。关于这些角色，我们将在后文介绍 Special Interest Group 时更详细的介绍。
 
-### 变化 2：Special Interest Group
+### 变化 3：Special Interest Group
 
 让我们把开发者社区架构图放大再看看：
 
-![图 3 新社区架构之 Special Interest Group](media/tidb-community-upgrade/3.png)
+![图 4 新社区架构之 Special Interest Group](media/tidb-community-upgrade/4.png)
 
-<center>图 3 新社区架构之 Special Interest Group</center>
+<center>图 4 新社区架构之 Special Interest Group</center>
 
-上图展示了以垂直的视角来细看开发者社区的整体架构，反应了这次社区架构升级的第 2 个变化：引入了 “专项兴趣小组”（Special Interest Group，简称 SIG）。
+上图展示了以垂直的视角来细看开发者社区的整体架构，反应了这次社区架构升级的第 3 个变化：引入了 “专项兴趣小组”（Special Interest Group，简称 SIG）。
 
-专项兴趣小组主要负责 TiDB/TiKV 某个模块的开发和维护工作，对该模块代码的质量负责。我们将邀请满足条件的 Active Contributor 加入专项兴趣小组，开发者们将在专项兴趣小组中获得来自 Lead 和 Co-Lead 们的持续指导，一边锻炼技术能力，一边优化和完善该模块。社区开发者们可通过专项兴趣小组逐渐从初始的 Active Contributor 成长为受到社区认可的 Reviewer、Committer 和 Maintainer。一般而言每个专项兴趣小组都会周期性的组织会议，讨论最近进展和遇到的问题，所有的会议讨论都公开在社区上，方便感兴趣的同学一起参与和讨论。
+专项兴趣小组主要负责 TiDB/TiKV 某个模块的开发和维护工作，对该模块代码的质量负责。我们将邀请满足条件的 Active Contributor 加入专项兴趣小组，开发者们将在专项兴趣小组中获得来自 Tech Lead 们的持续指导，一边锻炼技术能力，一边优化和完善该模块。社区开发者们可通过专项兴趣小组逐渐从初始的 Active Contributor 成长为受到社区认可的 Reviewer、Committer 和 Maintainer。一般而言每个专项兴趣小组都会周期性的组织会议，讨论最近进展和遇到的问题，所有的会议讨论都公开在社区上，方便感兴趣的同学一起参与和讨论。
 
 具体可参考目前我们正在运营的表达式专项兴趣小组：[Expression Special Interest Group](https://github.com/pingcap/community/pull/51)。
 
@@ -62,9 +73,9 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
     + Reviewer 从 Active Contributor 中诞生，当 Active Contributor 对该模块拥有比较深度的贡献，并且得到 2 个或 2 个以上 Committer 的提名时，将被邀请成为该模块的 Reviewer。
     + Reviewer 对该模块代码的点赞（LGTM）有效（注：TiDB 要求每个 PR 至少拥有 2 个 LGTM 后才能够合并到开发分支）。
 
-3.  Lead 和 Co-Lead
+3.  Tech Lead
     + 即 SIG 的组织者，负责 SIG 的日常运营，包括组织会议，解答疑问等。
-    + Lead 和 Co-Lead 需要为 SIG 的管理和成长负责，责任重大。目前暂时由 PingCAP 内部同事担任，将来可由社区开发者一起担任，和 PingCAP 同事一起为 SIG 的进步而努力。
+    + Tech Lead 需要为 SIG 的管理和成长负责，责任重大。目前暂时由 PingCAP 内部同事担任，将来可由社区开发者一起担任，和 PingCAP 同事一起为 SIG 的进步而努力。
 
 再来看看另外两个角色：
 
@@ -77,13 +88,13 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
 
 >以上社区角色的详细的定义和权责内容可以在 [这里](https://pingcap.com/community-cn/developer-group/) 查看。
 
-### 变化 3：Working Group
+### 变化 4：Working Group
 
-让我们再来看看开发者社区中的第 3 个变化：
+让我们再来看看开发者社区中的第 4 个变化：
 
-![图 4 新社区架构之 Working Group](media/tidb-community-upgrade/4.png)
+![图 5 新社区架构之 Working Group](media/tidb-community-upgrade/5.png)
 
-<center>图 4 新社区架构之 Working Group</center>
+<center>图 5 新社区架构之 Working Group</center>
 
 开发者社区架构中的最后一个变化是引入了 “工作小组”（Working Group，简称 WG）。工作小组是由为了完成某个特定目标而聚集在一起的社区开发者与 PingCAP 同事一起成立。为了完成目标，有些工作小组可能跨越多个 SIG，有些小组可能只会专注在某个具体的 SIG 中做某个具体的事情。
 
@@ -95,11 +106,13 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
 
 总的来说，这次社区架构升级主要有如下改进：
 
-1. 引入了 Active Contributor、Reviewer 的社区角色。
+1. 引入了 TiDB 用户社区（TiDB User Group）。
 
-2. 引入了 Special Interest Group（SIG）。
+2. 引入了 Active Contributor、Reviewer 的社区角色。
 
-3. 引入了 Working Group（WG）。
+3. 引入了 Special Interest Group（SIG）。
+
+4. 引入了 Working Group（WG）。
 
 在社区运营方面，我们未来还将继续：
 
