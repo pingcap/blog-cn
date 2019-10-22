@@ -3,7 +3,7 @@ title: 新架构、新角色：TiDB Community Upgrade！
 author: ['Jian Zhang']
 date: 2019-10-22
 summary: TiDB 社区已经逐渐成熟，但是随着社区的发展壮大，我们逐渐感受到了现在社区架构上的一些不足。经过一系列的思考和总结，我们决定升级和调整目前社区组织架构，引入更多的社区角色和社区组织，以便更好的激发社区活力，维护积极健康的社区环境。
-image: /images/blog-cn/tidb-community-upgrade/tidb-community-upgrade.jpg
+image: /images/blog-cn/tidb-community-upgrade/6.jpg
 tags: ['社区','社区动态']
 ---
 
