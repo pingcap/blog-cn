@@ -45,7 +45,7 @@ TiDB User Group（TUG）是由 TiDB 用户发起的独立、非盈利的第三�
 
 上图是升级后的社区总架构图概览，反映了这次社区架构升级的第 2 个变化：在开发者社区中，新增了 Reviewer 和 Active Contributor 的角色。
 
-Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从 Active Contributor 中诞生，具有 Review PR 的义务，并且对 TiDB 或者 TiKV 某个子模块的 PR 的点赞（LGTM）有效。关于这些角色，我们将在后文介绍 Special Interest Group 时更详细的介绍。
+Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从 Active Contributor 中诞生，具有 Review PR 的义务，并且对 TiDB 或者 TiKV 某个子模块的 PR 的点赞（LGTM）有效。关于这些角色，我们将在后文介绍 Special Interest Group 时更详细地介绍。
 
 ### 变化 3：Special Interest Group
 
@@ -89,19 +89,18 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
 
 ### 变化 4：Working Group
 
-让我们再来看看开发者社区中的第 4 个变化：
 
 ![图 5 新社区架构之 Working Group](media/tidb-community-upgrade/5.png)
 
 <center>图 5 新社区架构之 Working Group</center>
 
-开发者社区架构中的最后一个变化是引入了 “工作小组”（Working Group，简称 WG）。工作小组是由为了完成某个特定目标而聚集在一起的社区开发者与 PingCAP 同事一起成立。为了完成目标，有些工作小组可能跨越多个 SIG，有些小组可能只会专注在某个具体的 SIG 中做某个具体的事情。
+第 4 个变化是开发者社区架构中引入了 “工作小组”（Working Group，简称 WG）。工作小组是由为了完成某个特定目标而聚集在一起的社区开发者与 PingCAP 同事一起成立。为了完成目标，有些工作小组可能跨越多个 SIG，有些小组可能只会专注在某个具体的 SIG 中做某个具体的事情。
 
 工作小组具有生命周期，一旦目标完成，工作小组即可解散。工作小组运营和管理的唯一目标是确保该小组成立时设置的目标在适当的时间内完成。一般而言，工作小组也会有周期性的会议，用于总结目前项目进展，确定下一步实施方案等。
 
 可参考目前我们正在运营的表达式工作小组：[Vectorized Expression Working Group](https://github.com/pingcap/community/blob/master/working-groups/wg-vec-expr.md)。
 
-## 总结和未来工作
+## 总结和未来的工作
 
 总的来说，这次社区架构升级主要有如下改进：
 
