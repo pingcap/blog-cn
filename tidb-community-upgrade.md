@@ -3,6 +3,7 @@ title: 新架构、新角色：TiDB Community Upgrade！
 author: ['Jian Zhang']
 date: 2019-10-22
 summary: TiDB 社区已经逐渐成熟，但是随着社区的发展壮大，我们逐渐感受到了现在社区架构上的一些不足。经过一系列的思考和总结，我们决定升级和调整目前社区组织架构，引入更多的社区角色和社区组织，以便更好的激发社区活力，维护积极健康的社区环境。
+image: /images/blog-cn/tidb-community-upgrade/tidb-community-upgrade.jpg
 tags: ['社区','社区动态']
 ---
 
@@ -10,7 +11,7 @@ tags: ['社区','社区动态']
 
 ## 老社区架构
 
-这是之前官网上的社区架构图：
+下图是之前官网上的社区架构图：
 
 ![图 1 老社区架构](media/tidb-community-upgrade/1.png)
 
@@ -48,15 +49,15 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
 
 专项兴趣小组主要负责 TiDB/TiKV 某个模块的开发和维护工作，对该模块代码的质量负责。我们将邀请满足条件的 Active Contributor 加入专项兴趣小组，开发者们将在专项兴趣小组中获得来自 Lead 和 Co-Lead 们的持续指导，一边锻炼技术能力，一边优化和完善该模块。社区开发者们可通过专项兴趣小组逐渐从初始的 Active Contributor 成长为受到社区认可的 Reviewer、Committer 和 Maintainer。一般而言每个专项兴趣小组都会周期性的组织会议，讨论最近进展和遇到的问题，所有的会议讨论都公开在社区上，方便感兴趣的同学一起参与和讨论。
 
-具体可参考目前我们正在运营的表达式专项兴趣小组：[Expression Special Interest Grouop](https://github.com/pingcap/community/pull/51)。
+具体可参考目前我们正在运营的表达式专项兴趣小组：[Expression Special Interest Group](https://github.com/pingcap/community/pull/51)。
 
 另外这张图也反映了社区角色和专项兴趣小组的关系，我们来仔细看看 SIG 中的社区角色：
 
-1.  Active Contributor：
+1.  Active Contributor
     + 即一年贡献超过 8 个 PR 的 Contributor。
     + 如果要加入某个 SIG，某个 Contributor 需要在 1 年内为该 SIG 所负责的模块贡献超过 8 个以上的 PR，这样即可获得邀请，加入该 SIG 进行针对性的学习和贡献。
 
-2.  Reviewer：
+2.  Reviewer
     + 隶属于某个 SIG，具有 Review PR 的义务。
     + Reviewer 从 Active Contributor 中诞生，当 Active Contributor 对该模块拥有比较深度的贡献，并且得到 2 个或 2 个以上 Committer 的提名时，将被邀请成为该模块的 Reviewer。
     + Reviewer 对该模块代码的点赞（LGTM）有效（注：TiDB 要求每个 PR 至少拥有 2 个 LGTM 后才能够合并到开发分支）。
@@ -67,11 +68,11 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
 
 再来看看另外两个角色：
 
-1. Committer：
+1. Committer
     + 资深的社区开发者，从 Reviewer 中诞生。
     + 当 Reviewer 对该模块拥有非常深度的贡献，或者在保持当前模块 Reviewer 角色的同时，也在别的模块深度贡献成为了 Reviewer，这时他就在深度或者广度上具备了成为 Committer 的条件，只要再得到 2 个或 2 个以上 Maintainer 的提名时，即可成为 Committer。
 
-2. Maintainer：
+2. Maintainer
     + 重度参与 TiDB 社区的开发者，从 Committer 中诞生，对代码 repo 拥有写权限。
 
 >以上社区角色的详细的定义和权责内容可以在 [这里](https://pingcap.com/community-cn/developer-group/) 查看。
@@ -88,7 +89,7 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
 
 工作小组具有生命周期，一旦目标完成，工作小组即可解散。工作小组运营和管理的唯一目标是确保该小组成立时设置的目标在适当的时间内完成。一般而言，工作小组也会有周期性的会议，用于总结目前项目进展，确定下一步实施方案等。
 
-可参考目前我们正在运营的表达式工作小组：[Vectorized Expression Working Group](https://github.com/pingcap/community/blob/master/working-groups/wg-vec-expr.md)
+可参考目前我们正在运营的表达式工作小组：[Vectorized Expression Working Group](https://github.com/pingcap/community/blob/master/working-groups/wg-vec-expr.md)。
 
 ## 总结和未来工作
 
@@ -100,7 +101,7 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
 
 3. 引入了 Working Group（WG）。
 
-在社区运营方面，我们会：
+在社区运营方面，我们未来还将继续：
 
 1. 完善社区成员晋级的指导机制，让社区同学从 Contributor 成长到 Committer 或 Maintainer 有路可循。
 
