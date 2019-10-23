@@ -97,7 +97,7 @@ raft-election-timeout = raft-base-tick-interval * raft-election-timeout-ticks
 raft-heartbeat-interval = raft-base-tick-interval * raft-heartbeat-ticks
 ```
 
-follower 在 `raft-election-timeout` 间隔内未收到来自 leader 的心跳会认为 leader 出现故障而发起新的选举，而 `raft-heartbeat-interval` 是 leader 向 follow 发送心跳的间隔，因此增大 `raft-base-tick-interval` 可以减少单位时间内 Raft 发送的网络消息，但也会让 Raft 检测到 leader 故障的时间更长。
+follower 在 `raft-election-timeout` 间隔内未收到来自 leader 的心跳会认为 leader 出现故障而发起新的选举，而 `raft-heartbeat-interval` 是 leader 向 follower 发送心跳的间隔，因此增大 `raft-base-tick-interval` 可以减少单位时间内 Raft 发送的网络消息，但也会让 Raft 检测到 leader 故障的时间更长。
 
 #### v3.0 版本
 
