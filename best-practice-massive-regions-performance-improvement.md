@@ -135,7 +135,7 @@ PD 需要将 Region Meta 信息持久化在 etcd 以保证 PD Leader 节点切�
 
 <center>图 4 查看 pd-worker</center>
 
-在 master 上已经对 pd-worker 进行了效率优化，预计会在 v2.1.19 和 v3.0.5 中带上相关优化，如碰到类似问题建议升级。
+我们在 master 上已经对 pd-worker 进行了效率优化，预计会在 v2.1.19 和 v3.0.5 中带上相关优化，如碰到类似问题建议升级。
 
 #### Prometheus 查询慢
 
