@@ -42,7 +42,7 @@ tags: ['性能调优','最佳实践']
 
 * Raft Propose 下的 `Propose wait duration`
 
-  发送请求给 Raftstore，到 Raftstore 真正处理请求之间的延迟。如果该延迟比较长，说明 Raftstore 比较繁忙或者 append log 比较耗时导致 Raftstore 不能及时处理请求。
+  `Propose wait duration` 是发送请求给 Raftstore、到 Raftstore 真正处理请求之间的延迟。如果该延迟比较长，说明 Raftstore 比较繁忙或者 append log 比较耗时导致 Raftstore 不能及时处理请求。
   
   参考值：最好低于 50-100ms。
   
@@ -117,7 +117,7 @@ follower 在 `raft-election-timeout` 间隔内未收到来自 leader 的心跳�
 
 ## 其他可能出现的问题
 
-#### PD Leader 切换慢
+### PD Leader 切换慢
 
 PD 需要将 Region Meta 信息持久化在 etcd 以保证 PD Leader 节点切换后能快速继续提供 Region 路由服务。随着 Region 数量的增长，Etcd 的性能问题会使得 PD 在切换 Leader 时从 etcd 获取这些信息时比较慢，在百万 Region 量级时可能达到十几秒甚至几十秒。
 
@@ -125,7 +125,7 @@ PD 需要将 Region Meta 信息持久化在 etcd 以保证 PD Leader 节点切�
 
 在 v3.0 版本中 PD 已经默认开启配置 `use-region-storage`，而 v2.1 版本如碰到类似问题建议升级到 v3.0。
 
-#### PD 路由信息更新不及时
+### PD 路由信息更新不及时
 
 在 TiKV 中是由 pd-worker 这个模块来将 Region Meta 信息定期上报给 PD，在 TiKV 重启或者 Region Leader 切换时需要通过统计信息重新计算 Region 的 `approximate size/keys`。那么在 Region 数量比较多的情况下，pd-worker 单线程可能成为瓶颈，造成任务的堆积不能及时处理，因此 PD 不能及时获取某些 Region Meta 信息以致路由信息更新不及时。该问题不会影响实际的读写，但可能导致 PD 调度的不准确以及 TiDB 更新 region cache 时需要多几次 round-trip。
 
@@ -137,7 +137,7 @@ PD 需要将 Region Meta 信息持久化在 etcd 以保证 PD Leader 节点切�
 
 我们在 master 上已经对 pd-worker 进行了效率优化，预计会在 v2.1.19 和 v3.0.5 中带上相关优化，如碰到类似问题建议升级。
 
-#### Prometheus 查询慢
+### Prometheus 查询慢
 
 在大规模集群中，TiKV 实例数的增加会让 Prometheus 的查询时的计算压力较大导致 Grafana 查看 metrics 时较慢，在 v3.0 版本中通过设置了一些 metrics 的预计算有所缓解。
 
