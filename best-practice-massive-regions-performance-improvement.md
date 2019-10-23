@@ -1,18 +1,18 @@
 ---
-title: TiDB 最佳实践系列（四） 海量 Region 集群调优
+title: TiDB 最佳实践系列（四）海量 Region 集群调优
 author: ['张博康']
 date: 2019-10-23
-summary: 本文将介绍 TiKV 的 Raftstore 的处理流程以使大家更好得理解海量 Region 导致性能问题的根源，以及针对这种情况的一些优化手段。
+summary: 本文将介绍 TiKV 核心模块 Raftstore 的处理流程以使大家更好得理解海量 Region 导致性能问题的根源，以及针对这种情况的一些优化手段。
 tags: ['性能调优','最佳实践']
 ---
 
 在 TiDB 的架构中，所有的数据按照 range 划分成一个个 Region 分布在多个 TiKV 实例上。随着数据的写入，一个集群中会产生上百万，甚至千万个 Region。而量变引起质变，单 TiKV 实例上过多的 Region 无疑会带来比较大的负担，进而影响整个集群的性能表现。
 
-本文将介绍 TiKV 的 Raftstore 的处理流程以使大家更好得理解海量 Region 导致性能问题的根源，以及针对这种情况的一些优化手段。
+本文将介绍 TiKV 核心模块 Raftstore 的处理流程以使大家更好得理解海量 Region 导致性能问题的根源，以及针对这种情况的一些优化手段。
 
 ## Raftstore 的处理流程
 
-在一个 TiKV 实例上会有多个 Region，那么这些 Region 消息处理就是通过 Raftstore 这个模块来驱动的，包括 Region 上读写请求的处理，Raft log 的持久化以及复制，还有 Raft 的心跳处理等等。为什么 Region 数多了就会影响到整个集群的性能呢？我们来看看 TiKV 的核心模块 Raftstore 是怎样工作的。
+大家都知道在一个 TiKV 实例上会有多个 Region，这些 Region 消息处理就是通过 Raftstore 这个模块来驱动的，包括 Region 上读写请求的处理，Raft log 的持久化以及复制，还有 Raft 的心跳处理等等。为什么 Region 数多了就会影响到整个集群的性能呢？为了解释这个问题，我们先来看看 TiKV 的核心模块 Raftstore 是怎样工作的。
 
 ![图 1 Raftstore 处理流程示意图](media/best-practice-massive-regions-performance-improvement/1.png)
 
@@ -24,7 +24,7 @@ tags: ['性能调优','最佳实践']
 
 ## 性能问题及优化方法
 
-从上面我们可以看到，这么多 Region 的消息是一个接一个地处理。那么在 Region 很多的情况下，Raftstore 会需要花费一些时间处理大量 Region 的心跳，势必会引入一些延迟，让读写请求不被那么及时的处理到。如果在读写压力大的情况下，很容易使得 Raftstore 线程 CPU 达到瓶颈，而延迟会被进一步放大，进而影响性能表现。
+从上面我们可以看到，这么多 Region 的消息是一个接一个地处理。那么在 Region 很多的情况下，Raftstore 会需要花费一些时间处理大量 Region 的心跳，势必会引入一些延迟，导致读写请求不被那么及时的处理到。如果在读写压力大的情况下，很容易使得 Raftstore 线程 CPU 达到瓶颈，而延迟会被进一步放大，进而影响性能表现。
 
 ### 常见现象
 
@@ -32,15 +32,15 @@ tags: ['性能调优','最佳实践']
 
 相关 metrics 可在 TiKV grafana 面板下查看：
 
-* Thread-CPU 下的 Raftstore CPU
+* Thread-CPU 下的 `Raft store CPU`
 
   参考值：最好低于 `raftstore.store-pool-size * 85%`（v2.1 版本中无此配置项，可认为 `raftstore.store-pool-size = 1`）。
 
   ![图 2 查看 Raftstore CPU](media/best-practice-massive-regions-performance-improvement/2.png)
 
-  <center>图 2 查看 Raftstore CPU</center>
+  <center>图 2 查看 Raft store CPU</center>
 
-* Raft Propose 下的 Propose wait duration
+* Raft Propose 下的 `Propose wait duration`
 
   发送请求给 Raftstore，到 Raftstore 真正处理请求之间的延迟。如果该延迟比较长，说明 Raftstore 比较繁忙或者 append log 比较耗时导致 Raftstore 不能及时处理请求。
   
@@ -53,7 +53,7 @@ tags: ['性能调优','最佳实践']
 
 ### 优化方法
 
-前面我们已经知道了性能问题的根源，那么就可以从两方面入手：减少单个 TiKV 实例的 Region 数；减少单个 Region 的消息数。根据不同版本，具体可以参考以下优化方法：
+既然我们已经知道了性能问题的根源，那么就可以从两方面入手：减少单个 TiKV 实例的 Region 数；减少单个 Region 的消息数。根据不同版本，具体可以参考以下优化方法：
 
 #### v2.1 版本
 
@@ -77,11 +77,11 @@ tags: ['性能调优','最佳实践']
 
 关于更多详情请参考这两个文档 [如何配置 Region Merge](https://github.com/tikv/tikv/blob/master/docs/how-to/configure/region-merge.md) 和 [PD 配置文件描述](https://pingcap.com/docs-cn/dev/reference/configuration/pd-server/configuration-file/#schedule)，在此不再展开。
 
-同时，默认配置的 Region Merge 默认参数设置相对保守，可以根据需求参考最佳实践系列——[PD 调度策略](https://pingcap.com/blog-cn/best-practice-pd/#5-region-merge-%E9%80%9F%E5%BA%A6%E6%85%A2) 中提及的具体方法加快 Region Merge 速度。
+同时，默认配置的 Region Merge 默认参数设置相对保守，可以根据需求参考 [《TiDB 最佳实践系列（二）PD 调度策略》](https://pingcap.com/blog-cn/best-practice-pd/#5-region-merge-%E9%80%9F%E5%BA%A6%E6%85%A2) 中提及的具体方法加快 Region Merge 速度。
 
 **3. 调整 raft-base-tick-interval**
 
-除了减小 Region 个数，我们还可以通过尽量减少 Region 单位时间内的消息数量以减小 Raftstore 压力。比如，在 TiKV 配置中适当增大 raft-base-tick-interval 
+除了减小 Region 个数，我们还可以通过尽量减少 Region 单位时间内的消息数量以减小 Raftstore 压力。比如，在 TiKV 配置中适当增大 `raft-base-tick-interval`： 
 
 ```
 [raftstore]
@@ -107,13 +107,13 @@ follower 在 `raft-election-timeout` 间隔内未收到来自 leader 的心跳�
 
 在 v3.0 版本中 Raftstore 已经扩展为多线程，极大降低了 Raftstore 线程成为瓶颈的可能性。
 
-默认 TiKV 配置 `raftstore.store-pool-size` 为 2，如果在 Raftstore 出现瓶颈的时候可以根据实际情况适当提高，但不建设设置过大以防引入不必要的线程切换开销。
+默认 TiKV 配置 `raftstore.store-pool-size` 为 `2`，如果在 Raftstore 出现瓶颈的时候可以根据实际情况适当提高，但不建设设置过大以防引入不必要的线程切换开销。
 
 **2. 开启 Hibernate Region**
 
 在实际情况下，读写请求并不会均匀的打在每个 Region 上，而是主要集中在少数的 Region 上，那么对于暂时空闲的 Region 我们是不是可以尽量减少它们的消息数量。这也就是 Hibernate Region 的主要思想，在无必要的时候不进行 `raft-base-tick`，也就是不去驱动那些空闲 Region 的 Raft 状态机，那么就不会触发这些 Region 的 Raft 心跳信息的产生，极大得减小了 Raftstore 的工作负担。
 
-截止发稿时 Hibernate Region 还是一个实验 feature，在 master 上已经默认开启。如有需要，可酌情开启，相关配置说明请参考  [配置 Hibernate Region](https://github.com/tikv/tikv/blob/master/docs/reference/configuration/raftstore-config.md#hibernate-region)
+截止发稿时 Hibernate Region 还是一个实验 feature，在 master 上已经默认开启。如有需要，可酌情开启，相关配置说明请参考  [配置 Hibernate Region](https://github.com/tikv/tikv/blob/master/docs/reference/configuration/raftstore-config.md#hibernate-region)。
 
 ## 其他可能出现的问题
 
