@@ -20,7 +20,7 @@ tags: ['性能调优','最佳实践']
 
 >注：该示意图仅仅表意，不代表代码层面的实际结构。
 
-上图是 Raftstore 处理流程的示意图，可以看到，从 TiDB 发来的请求会通过 gRPC 和 storage 模块变成最终的 KV 读写消息发往相应的 Region，而这些消息并不会立即处理而是暂存下来。而在 Raftstore 中会轮询检查每个为 leader 的 Region 是否有需要处理的消息。如果有消息，那么 Raftstore 会驱动 Raft 状态机去处理这些消息，并根据这些消息所产生的状态变更去完成一些后续动作。比如，在有写请求时，Raft 状态机需要将日志落盘并且将日志发送给其他副本；在达到心跳间隔时，Raft 状态机需要将心跳信息发送给其他副本。
+上图是 Raftstore 处理流程的示意图，可以看到，从 TiDB 发来的请求会通过 gRPC 和 storage 模块变成最终的 KV 读写消息发往相应的 Region，而这些消息并不会立即处理而是暂存下来。而在 Raftstore 中会轮询检查每个 Region 是否有需要处理的消息。如果有消息，那么 Raftstore 会驱动 Raft 状态机去处理这些消息，并根据这些消息所产生的状态变更去完成一些后续动作。比如，在有写请求时，Raft 状态机需要将日志落盘并且将日志发送给其他副本；在达到心跳间隔时，Raft 状态机需要将心跳信息发送给其他副本。
 
 ## 性能问题及优化方法
 
@@ -57,7 +57,7 @@ tags: ['性能调优','最佳实践']
 
 #### v2.1 版本
 
-在 v2.1 版本中 Raftstore 只能是单线程，因此一般在 Region 数达到 10W+ 时就会逐渐成为瓶颈。
+在 v2.1 版本中 Raftstore 只能是单线程，因此一般在 Region 数超过 10 万时就会逐渐成为瓶颈。
 
 **1. 增加 TiKV 实例**
 
@@ -97,7 +97,7 @@ raft-election-timeout = raft-base-tick-interval * raft-election-timeout-ticks
 raft-heartbeat-interval = raft-base-tick-interval * raft-heartbeat-ticks
 ```
 
-follower 在 `raft-election-timeout` 间隔内未收到来自 leader 的心跳会认为 leader 出现故障而发起新的选举，而 `raft-heartbeat-interval` 是 leader 向 follow 发送心跳的间隔，因此增大 `raft-base-tick-interval` 可以减少单位时间内 Raft 发送的网络消息，但也会让 Raft 检测到 leader 故障的时间更长。
+follower 在 `raft-election-timeout` 间隔内未收到来自 leader 的心跳会认为 leader 出现故障而发起新的选举，而 `raft-heartbeat-interval` 是 leader 向 follower 发送心跳的间隔，因此增大 `raft-base-tick-interval` 可以减少单位时间内 Raft 发送的网络消息，但也会让 Raft 检测到 leader 故障的时间更长。
 
 #### v3.0 版本
 
@@ -135,7 +135,7 @@ PD 需要将 Region Meta 信息持久化在 etcd 以保证 PD Leader 节点切�
 
 <center>图 4 查看 pd-worker</center>
 
-在 master 上已经对 pd-worker 进行了效率优化，预计会在 v2.1.19 和 v3.0.5 中带上相关优化，如碰到类似问题建议升级。
+我们在 master 上已经对 pd-worker 进行了效率优化，预计会在 v2.1.19 和 v3.0.5 中带上相关优化，如碰到类似问题建议升级。
 
 #### Prometheus 查询慢
 
