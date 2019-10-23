@@ -59,11 +59,11 @@ tags: ['性能调优','最佳实践']
 
 在 v2.1 版本中 Raftstore 只能是单线程，因此一般在 Region 数达到 10W+ 时就会逐渐成为瓶颈。
 
-##### 1. 增加 TiKV 实例
+**1. 增加 TiKV 实例**
 
 如果 IO 资源和 CPU 资源都还有比较多的盈余的话，可以在单个机器上部署多个 TiKV 实例，以减少单个 TiKV 实例上的 Region 个数，或者扩容集群的 TiKV 机器数。
 
-##### 2. 开启 Region Merge
+**2. 开启 Region Merge**
 
 另外一种可以减少 Region 个数的办法是开启 Region Merge。与 Region Split 相反，Region Merge 是通过调度把相邻的小 Region 合并的过程。在集群有删除数据或者进行过 Drop Table/Truncate Table 后，可以将那些小 Region 甚至空 Region 进行合并以减少资源的消耗。
 
@@ -79,7 +79,7 @@ tags: ['性能调优','最佳实践']
 
 同时，默认配置的 Region Merge 默认参数设置相对保守，可以根据需求参考最佳实践系列——[PD 调度策略](https://pingcap.com/blog-cn/best-practice-pd/#5-region-merge-%E9%80%9F%E5%BA%A6%E6%85%A2) 中提及的具体方法加快 Region Merge 速度。
 
-##### 3. 调整 raft-base-tick-interval
+**3. 调整 raft-base-tick-interval**
 
 除了减小 Region 个数，我们还可以通过尽量减少 Region 单位时间内的消息数量以减小 Raftstore 压力。比如，在 TiKV 配置中适当增大 raft-base-tick-interval 
 
@@ -103,13 +103,13 @@ follower 在 `raft-election-timeout` 间隔内未收到来自 leader 的心跳�
 
 除了以上提及的优化方法外（注：Region Merge 在 v3.0 版本中默认开启），v3.0 版本中还可以进行以下优化：
 
-##### 1. 提高 Raftstore 并发数
+**1. 提高 Raftstore 并发数**
 
 在 v3.0 版本中 Raftstore 已经扩展为多线程，极大降低了 Raftstore 线程成为瓶颈的可能性。
 
 默认 TiKV 配置 `raftstore.store-pool-size` 为 2，如果在 Raftstore 出现瓶颈的时候可以根据实际情况适当提高，但不建设设置过大以防引入不必要的线程切换开销。
 
-##### 2. 开启 Hibernate Region
+**2. 开启 Hibernate Region**
 
 在实际情况下，读写请求并不会均匀的打在每个 Region 上，而是主要集中在少数的 Region 上，那么对于暂时空闲的 Region 我们是不是可以尽量减少它们的消息数量。这也就是 Hibernate Region 的主要思想，在无必要的时候不进行 `raft-base-tick`，也就是不去驱动那些空闲 Region 的 Raft 状态机，那么就不会触发这些 Region 的 Raft 心跳信息的产生，极大得减小了 Raftstore 的工作负担。
 
