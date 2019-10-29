@@ -38,7 +38,7 @@ select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 
 
 1. AND 表达式无关的 filter 并不会影响其可以计算 range 的子项。所以直接舍去无关的表示即可。以流程图中的一个子表达式 `a > 1 and a < 5 and b > 2` 为例，我们只要将 `b > 2` 扔掉，保留 `a > 1 and a < 5` 即可。
 
-2. OR 表达式中，每个子项都要可以用来计算 range，如果有不可以计算 range 的子项，那么这整个表达式都不可用来计算 range。以 `a = 1 or b = 2` 为例，`b = 2` 这一子项不可以用来计算 a 的 range，所以这个表达式整体上无法计算 a 的 range。而如果是 `a > 1 or ( a < 2 and b = 1)`，根据 1 中的规则，第二个子项会留下 `a < 2` 的部分，可以用来计算 a 的 range，因此整个表达式会返回 `a > 1 and a < 2` 来供接下来计算 range 的部分处理。
+2. OR 表达式中，每个子项都要可以用来计算 range，如果有不可以计算 range 的子项，那么这整个表达式都不可用来计算 range。以 `a = 1 or b = 2` 为例，`b = 2` 这一子项不可以用来计算 a 的 range，所以这个表达式整体上无法计算 a 的 range。而如果是 `a > 10 or ( a < 2 and b = 1)`，根据 1 中的规则，第二个子项会留下 `a < 2` 的部分，可以用来计算 a 的 range，因此整个表达式会返回 `a > 10 or a < 2` 来供接下来计算 range 的部分处理。
 
 这里补充说明一点，TiDB 的主键在实现方式上限定了只有整数类型的单列主键会把主键值当做 RowID，然后编码成 RowKey，和这行数据存储在一起。其他类型的单列主键会作为普通的 unique key 看待，当查询的列包含索引上没有的列时，需要一次查索引 + 一次扫表。所以我们将这种整数类型作为主键的索引处理逻辑单独抽取出来，其入口函数为 [DetachCondsForTableRange](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L329) 。其中对 AND 表达式和 OR 表达式的处理入口分别为 [detachColumnCNFConditions](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L28) 和 [detachColumnDNFConditions](https://github.com/pingcap/tidb/blob/source-code/util/ranger/detacher.go#L61)。这两个函数也用来处理其他类型的主键或者索引的的 range 计算。
 
