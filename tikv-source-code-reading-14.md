@@ -102,7 +102,9 @@ pub struct BatchExecuteResult {
 ### TableScan
 
 + 定义：根据指定主键范围扫表数据，并过滤出一部分列返回。它只会作为最底层算子出现，从底层 KV 获取数据。
+
 + 源码路径：`components/tidb_query/src/batch/executors/table_scan_executor.rs`
+
 + 案例：`select col from t`
 
 ### IndexScan
@@ -137,7 +139,7 @@ pub struct BatchExecuteResult {
 
 ### TopN
 
-+ 定义：按照给定表达式进行排序后，取出前若干行数据
++ 定义：按照给定表达式进行排序后，取出前若干行数据。
 
 + 源码路径：`components/tidb_query/src/batch/executors/top_n_executor.rs`
 
@@ -147,7 +149,7 @@ pub struct BatchExecuteResult {
 
 ### Aggregation
 
-+ 定义：按照给定表达式进行分组、聚合
++ 定义：按照给定表达式进行分组、聚合。
 
 + 源码路径：`components/tidb_query/src/batch/executors/*_aggr_executor.rs`
 
@@ -157,7 +159,7 @@ pub struct BatchExecuteResult {
 
 ### 混合使用各个算子
 
-综上，各个算子之间可以按照以下方式任意组合：
+综上，各个算子之间可以按照以下方式任意组合，如下图所示：
 
 ![9-混合使用各个算子](media/tikv-source-code-reading-14/9-混合使用各个算子.png)
 
