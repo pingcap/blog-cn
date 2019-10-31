@@ -12,7 +12,7 @@ tags: ['TiKV 源码解析','社区']
 
 熟悉 [TiDB 整体框架](https://pingcap.com/docs-cn/v3.0/overview/) 的同学可能记得，TiDB 是无状态的，数据存储在 TiKV 层。当 TiDB 在收到一个来自客户端的查询请求时，会向 TiKV 获取具体的数据信息。那么一个读请求最朴素的处理过程如下：
 
-![1-no-coprocessor](media/tikv-source-code-reading-14/1.png)
+![1-no-coprocessor](media/tikv-source-code-reading-14/1-no-coprocessor.png)
 
 首先需要肯定的是这种方式固然能解决问题，但是性能如何呢？我们来一起分析一下：
 
@@ -27,7 +27,7 @@ TiKV 读取数据并计算的模块，我们定义为 Coprocessor，该概念灵
 
 有了 Coprocessor 后，从宏观看一个读请求是如何下发到 TiKV 的呢？以下面的请求为例：
 
-![2-有-Coprocessor-之后的读请求流程](media/tikv-source-code-reading-14/2.png)
+![2-有-Coprocessor-之后的读请求流程](media/tikv-source-code-reading-14/2-read-process.png)
 
 如图，以上查询语句在 TiDB 中处理如下：
 
@@ -46,7 +46,7 @@ TiKV Coprocessor 处理的读请求目前主要分类三种：
 
 那么 TiKV 在收到 Coprocessor 请求后，何时区分这三种请求的呢？
 
-![3-TiKV-区分-coprocessor-请求](media/tikv-source-code-reading-14/3.png)
+![3-TiKV-区分-coprocessor-请求](media/tikv-source-code-reading-14/3-tikv.png)
 
 请求到了 TiKV 层，处理过程如下：
 
@@ -68,7 +68,7 @@ DAG 顾名思义，是由一系列算子组成的有向无环图，算子在代�
 
 在目前的 TiKV master 上，处于火山模型向向量化模型的过度阶段，因而两种计算模型同时存在。TiKV 收到请求时，会优先检测是否可走向量化模型，若部分功能在向量化模型中没有实现，则走旧的计算模型，具体处理逻辑流程如下：
 
-![4-处理逻辑流程图](media/tikv-source-code-reading-14/4.png)
+![4-处理逻辑流程图](media/tikv-source-code-reading-14/4-logical-process.png)
 
 相关代码在：`src/coprocessor/dag/mod.rs`。
 
@@ -123,7 +123,7 @@ pub struct BatchExecuteResult {
 
 + 案例：`select col from t where a+b=10`
 
-![5-举例-1](media/tikv-source-code-reading-14/5.png)
+![5-举例-1](media/tikv-source-code-reading-14/5-sample-1.png)
 
 
 ### Limit
@@ -134,7 +134,7 @@ pub struct BatchExecuteResult {
 
 + 案例：`select col from t limit 10`
 
-![6-举例-2](media/tikv-source-code-reading-14/6.png)
+![6-举例-2](media/tikv-source-code-reading-14/6-sample-2.png)
 
 
 ### TopN
@@ -145,7 +145,7 @@ pub struct BatchExecuteResult {
 
 + 案例：`select col from t order by a+1 limit 10`
 
-![7-举例-3](media/tikv-source-code-reading-14/7.png)
+![7-举例-3](media/tikv-source-code-reading-14/7-sample-3.png)
 
 ### Aggregation
 
@@ -155,17 +155,17 @@ pub struct BatchExecuteResult {
 
 + 案例： `select count(1) from t group by score + 1`
 
-![8-举例-4](media/tikv-source-code-reading-14/8.png)
+![8-举例-4](media/tikv-source-code-reading-14/8-sample-4.png)
 
 ### 混合使用各个算子
 
 综上，各个算子之间可以按照以下方式任意组合，如下图所示：
 
-![9-混合使用各个算子](media/tikv-source-code-reading-14/9.png)
+![9-混合使用各个算子](media/tikv-source-code-reading-14/9-mixed-using.png)
 
 案例：`select count(1) from t where age>10`
 
-![10-举例-5](media/tikv-source-code-reading-14/10.png)
+![10-举例-5](media/tikv-source-code-reading-14/10-sample-5.png)
 
 ## 小结
 
