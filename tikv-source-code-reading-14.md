@@ -6,7 +6,7 @@ summary: 本文将简要介绍 TiKV Coprocessor 的基本原理，面向想要�
 tags: ['TiKV 源码解析','社区']
 ---
 
-本文将简要介绍 TiKV Coprocessor 的基本原理，面向想要了解 TiKV 数据读取执行过程的同学，同时也面向想对该模块贡献代码的同学。阅读本文前，建议读者对 TiDB 整体架构有所了解，阅读过三篇文章了解 TiDB 技术内幕：[说存储](https://pingcap.com/blog-cn/tidb-internal-1/)、[说计算](https://pingcap.com/blog-cn/tidb-internal-2/)、[谈调度](https://pingcap.com/blog-cn/tidb-internal-3/)。
+本文将简要介绍 TiKV Coprocessor 的基本原理，面向想要了解 TiKV 数据读取执行过程的同学，同时也面向想对该模块贡献代码的同学。阅读本文前，建议读者对 TiDB 整体架构有所了解，先阅读三篇文章了解 TiDB 技术内幕：[说存储](https://pingcap.com/blog-cn/tidb-internal-1/)、[说计算](https://pingcap.com/blog-cn/tidb-internal-2/)、[谈调度](https://pingcap.com/blog-cn/tidb-internal-3/)。
 
 ## 什么是 Coprocessor
 
@@ -52,10 +52,10 @@ TiKV Coprocessor 处理的读请求目前主要分类三种：
 
 + 由 gRPC server 接收并将请求分发给 Coprocessor Endpoint 进行处理。
 + Endpoint 在收到请求后，根据请求的优先级，将请求分发给对应的线程池。
-+ 所有请求会先异步从存储层获取 snapshot, 然后开始真正的处理阶段。
++ 所有请求会先异步从存储层获取 snapshot，然后开始真正的处理阶段。
 + 根据请求的不同类型，构造不同的 Handler 进行数据的处理。
 
-目前 Coprocessor 支持的三种接口，后面两种接口相对比较简单，而 DAG 是里面最复杂也是最常用的，所以本文后续将重点介绍 DAG 类请求。
+目前 Coprocessor 支持的三种接口中，后面两种接口相对比较简单，而 DAG 是里面最复杂也是最常用的，所以本文后续将重点介绍 DAG 类请求。
 
 ## DAG Request 概览
 
@@ -95,9 +95,9 @@ pub struct BatchExecuteResult {
 
 + `next_batch` 中 `scan_rows` 由上层控制，由于扫的数据过多会慢，因此该数字从 32 倍增到 1024。
 
-+ 返回值 `BatchExecuteResult` 中，由于返回了一批空数据不代表所有数据都处理完毕了，例如可能只是全被过滤，因而使用单独字段表示所有数据处理完毕
++ 返回值 `BatchExecuteResult` 中，由于返回了一批空数据不代表所有数据都处理完毕了，例如可能只是全被过滤，因而使用单独字段表示所有数据处理完毕。
 
-目前 TiKV 支持的算子主要有一下几类：
+目前 TiKV 支持的算子主要有以下几类。
 
 ### TableScan
 
