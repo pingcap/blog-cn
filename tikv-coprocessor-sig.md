@@ -48,7 +48,7 @@ tags: ['社区','社区动态']
 	
 	* Function: 维护现有的 UDF / AggrFn 实现或从  TiDB port 新的 UDF / AggrFn 实现；
 	
-	* 代码位置：[https://github.com/tikv/tikv/src/tidb_query](https://github.com/tikv/tikv/src/tidb_query)
+	* 代码位置：[https://github.com/tikv/tikv/tree/master/components/tidb_query](https://github.com/tikv/tikv/tree/master/components/tidb_query)
 
 3. 设计与演进 Proposal
 
