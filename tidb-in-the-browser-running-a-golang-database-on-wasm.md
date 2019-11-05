@@ -14,7 +14,7 @@ tags: ['wasm', 'SQL', 'Go']
 
 首先在笔记本浏览器打开 [play.pingcap.com](https://play.pingcap.com)（这里用的是 MacOS 上面的 Chrome，不确定其它浏览器是否正常），可能需要几秒来加载页面，然后就能看到熟悉的 Shell 了。现在来试试几个 SQL 语句吧！由于 TiDB 基本兼容 MySQL 协议和语法，因此我们可以用熟悉的 MySQL 风格操作，如下图所示：
 
-![图 1 在浏览器上运行 TiDB](media/tidb-in-the-browser-running-a-golang-database-on-wasm/演示-1.gif)
+![图 1 在浏览器上运行 TiDB](media/tidb-in-the-browser-running-a-golang-database-on-wasm/demo-1.gif)
 
 <center>图 1 在浏览器上运行 TiDB</center>
 
@@ -24,7 +24,7 @@ tags: ['wasm', 'SQL', 'Go']
 
 有了这些，那么是时候给在线学习 SQL 教程的网站加点功能了，比如在文字教程时，同步运行 SQL 语句。这里有个简单的 [演示](https://tour.pingcap.com/)：
 
-![图 2 SQL 教程网站演示](media/tidb-in-the-browser-running-a-golang-database-on-wasm/演示-2.png)
+![图 2 SQL 教程网站演示](media/tidb-in-the-browser-running-a-golang-database-on-wasm/demo-2.png)
 
 <center>图 2 SQL 教程网站演示</center>
 
