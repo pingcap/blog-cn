@@ -3,7 +3,7 @@ title: 浏览器上可以运行数据库吗？TiDB + WebAssembly 告诉你答案
 author: ['Max']
 date: 2019-11-05
 summary: 今天的 TiDB 可以直接运行在浏览器本地。打开浏览器，你可以直接创建数据库，对数据进行增删改查。关掉浏览器，一切都消失了，干净绿色环保
-tags: ['wasm', 'SQL', 'Go']
+tags: ['WebAssembly', 'SQL', 'Go']
 ---
 
 一直以来我都有个梦想：
