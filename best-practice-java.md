@@ -42,7 +42,7 @@ Java 应用尽管可以选择在不同的框架中封装，但在最底层一般
 
 目前多数上层框架都会调用 Prepare API 进行 SQL 执行，如果直接使用 JDBC API 进行开发，注意选择使用 Prepare API。
 
-另外需要注意 MySQL Connector/J 实现中默认只会做客户端的语句预处理，会将 ? 在客户端替换后以文本形式发送到客户端，所以除了要使用 Prepare API，还需要在 JDBC 连接参数中配置 `useServerPrepStmts = true`，才能在 TiDB 服务器端进行语句预处理（下面参数配置章节有详细介绍）。
+另外需要注意 MySQL Connector/J 实现中默认只会做客户端的语句预处理，会将 `?` 在客户端替换后以文本形式发送到客户端，所以除了要使用 Prepare API，还需要在 JDBC 连接参数中配置 `useServerPrepStmts = true`，才能在 TiDB 服务器端进行语句预处理（下面参数配置章节有详细介绍）。
 
 #### 1.2 使用 Batch 批量插入更新
 
@@ -202,7 +202,7 @@ Java 的连接池实现很多（比如，[HikariCP](https://github.com/brettwool
 The last packet sent successfully to the server was 3600000 milliseconds ago. The driver has not received any packets from the server. com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
 ```
 
-如果 `n milliseconds ago` 中的 `n` 如果是 `0` 或很小的值，则通常是执行的 SQL 导致 TiDB 异常退出引起的报错，推荐查看 TiDB stderr 日志；如果 `n` 是一个非常大的值（比如这里的 3600000），很可能是因为这个连接空闲太久然后被中间 proxy 关闭了，通常解决方式除了调大 proxy 的 idle 配置，还可以让连接池：
+如果 `n milliseconds ago` 中的 `n` 是 `0` 或很小的值，则通常是执行的 SQL 导致 TiDB 异常退出引起的报错，推荐查看 TiDB stderr 日志；如果 `n` 是一个非常大的值（比如这里的 3600000），很可能是因为这个连接空闲太久然后被中间 proxy 关闭了，通常解决方式除了调大 proxy 的 idle 配置，还可以让连接池：
 
 *   每次使用连接前检查连接是否可用。
 
@@ -324,6 +324,4 @@ Java 应用中获取火焰图较繁琐，可参阅 [Java Flame Graphs Introducti
 
 ## 总结
 
-本文从从常用 Java 数据库交互组件的角度，阐述了开发 Java 应用程序使用 TiDB 的常见问题与解决办法。TiDB 是高度兼容 MySQL 协议的数据库，基于 MySQL 开发的 Java 应用的最佳实践也多适用于 TiDB。
-
-如果大家在使用上遇到了任何问题，可以在 asktug.com 提问，也欢迎更多小伙伴和我们一起分享讨论 Java 应用使用 TiDB 的实践技巧。
+本文从常用 Java 数据库交互组件的角度，阐述了开发 Java 应用程序使用 TiDB 的常见问题与解决办法。TiDB 是高度兼容 MySQL 协议的数据库，基于 MySQL 开发的 Java 应用的最佳实践也多适用于 TiDB。如果大家在使用上遇到了任何问题，可以在 [asktug.com](https://asktug.com/) 提问，也欢迎更多小伙伴和我们一起分享讨论 Java 应用使用 TiDB 的实践技巧。
