@@ -42,11 +42,11 @@ Java 应用尽管可以选择在不同的框架中封装，但在最底层一般
 
 目前多数上层框架都会调用 Prepare API 进行 SQL 执行，如果直接使用 JDBC API 进行开发，注意选择使用 Prepare API。
 
-另外需要注意 MySQL Connector/J 实现中默认只会做客户端的语句预处理，会将 ? 在客户端替换后以文本形式发送到客户端，所以除了要使用 Prepare API，还需要在 JDBC 连接参数中配置 useServerPrepStmts = true，才能在 TiDB 服务器端进行语句预处理（下面参数配置章节有详细介绍）。
+另外需要注意 MySQL Connector/J 实现中默认只会做客户端的语句预处理，会将 ? 在客户端替换后以文本形式发送到客户端，所以除了要使用 Prepare API，还需要在 JDBC 连接参数中配置 `useServerPrepStmts = true`，才能在 TiDB 服务器端进行语句预处理（下面参数配置章节有详细介绍）。
 
 #### 1.2 使用 Batch 批量插入更新
 
-对于批量插入更新，如果插入记录较多，可以选择使用 [addBatch/executeBatch API](https://www.tutorialspoint.com/jdbc/jdbc-batch-processing)。通过 addBatch 的方式将多条 SQL 的插入更新记录先缓存在客户端，然后在 executeBatch 时一起发送到数据库服务器。
+对于批量插入更新，如果插入记录较多，可以选择使用 [addBatch/executeBatch API](https://www.tutorialspoint.com/jdbc/jdbc-batch-processing)。通过 `addBatch` 的方式将多条 SQL 的插入更新记录先缓存在客户端，然后在 `executeBatch` 时一起发送到数据库服务器。
 
 >注意：
 >
@@ -224,9 +224,9 @@ The last packet sent successfully to the server was 3600000 milliseconds ago. Th
 
 MyBatis 的 Mapper 中支持两种参数：
 
-*   `select 1 from t where id = #{param1}` 会作为 prepare 语句转换为 `select 1 from t where id = ?` 进行 prepare， 并使用实际参数来复用执行，通过配合前面的 Prepare 连接参数能获得最佳性能
+*   `select 1 from t where id = #{param1}` 会作为 prepare 语句转换为 `select 1 from t where id = ?` 进行 prepare， 并使用实际参数来复用执行，通过配合前面的 Prepare 连接参数能获得最佳性能。
 
-*   `select 1 from t where id = ${param2}` 会做文本替换为 `select 1 from t where id = 1` 执行，如果这条语句被 prepare 成了不同参数，可能会导致 TiDB 缓存大量的 prepare 语句，并且这种方式执行 SQL 有注入安全风险
+*   `select 1 from t where id = ${param2}` 会做文本替换为 `select 1 from t where id = 1` 执行，如果这条语句被 prepare 成了不同参数，可能会导致 TiDB 缓存大量的 prepare 语句，并且这种方式执行 SQL 有注入安全风险。
 
 #### 1.2 动态 SQL Batch
 
@@ -252,11 +252,11 @@ MyBatis 的 Mapper 中支持两种参数：
 
 前面介绍了在 JDBC 中如何使用流式读取结果，除了 JDBC 相应的配置外，在 MyBatis 中如果希望读取超大结果集合也需要注意：
 
-*   可以通过在 mapper 配置中对单独一条 SQL 设置 `fetchSize`（见上一段代码段），效果等同于调用 JDBC setFetchSize
+*   可以通过在 mapper 配置中对单独一条 SQL 设置 `fetchSize`（见上一段代码段），效果等同于调用 JDBC setFetchSize。
 
-*   可以使用带 ResultHandler 的查询接口来避免一次获取整个结果集
+*   可以使用带 ResultHandler 的查询接口来避免一次获取整个结果集。
 
-*   可以使用 Cursor 类来进行流式读取
+*   可以使用 Cursor 类来进行流式读取。
 
 对于使用 xml 配置映射，可以通过在映射 `<select>` 部分配置 `fetchSize="-2147483648"`(`Integer.MIN_VALUE`) 来流式读取结果。
 
