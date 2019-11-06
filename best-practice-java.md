@@ -1,7 +1,7 @@
 ---
 title: TiDB 最佳实践系列（五）Java 数据库应用开发指南
 author: ['Su Li','Zhang Ming']
-date: 2018-06-19
+date: 2019-11-06
 summary: 本文将从 Java 数据库交互组件开发的角度出发，介绍各组件的推荐配置和推荐使用方式，希望能帮助 Java 开发者在使用 TiDB 时能更好的发挥数据库性能。
 tags: ['java','最佳实践','TiDB']
 ---
