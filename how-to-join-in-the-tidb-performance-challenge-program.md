@@ -1,5 +1,5 @@
 ---
-title: TiDB 性能挑战赛到底怎么玩？本文教你 30 分钟入门拿积分！
+title: TiDB 性能挑战赛到底怎么玩？本文教你 30 分钟快速上手拿积分！
 author: ['Wish']
 date: 2019-11-11
 summary: 本文以 TiKV 性能挑战赛 Easy 级别任务“PCP：Migrate functions from TiDB”为例，教大家如何快速又正确地完成这个任务。
@@ -8,7 +8,7 @@ tags: ['TiKV','社区','性能挑战赛']
 
 上周我们正式宣布了 [TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/)。在赛季内，通过向 TiDB、TiKV、PD 贡献代码完成指定类别任务的方式，你可以获得相应的积分，最终你可以使用积分兑换礼品或奖金。在性能挑战赛中，你首先需要完成几道 Easy 的题目，积累一定量积分后，才能开始挑战 Medium / Hard 难度的题目。
 
-活动发布后，大家向我们反馈 TiKV 任务的资料比较少，上手难度比较高。因此本文以 TiKV 性能挑战赛 Easy 级别任务 [PCP: Migrate functions from TiDB](https://github.com/tikv/tikv/issues/5751) 为例，教大家如何快速又正确地完成这个任务。这个任务中每项完成后均可以获得 50 分，是积累分数从而挑战更高难度任务的好机会。既能改进 TiKV 为性能提升添砖加瓦、又能参与比赛得到积分，还能成为 Contributor，心动不如行动！
+活动发布后，大家向我们反馈 TiKV 任务的资料比较少，上手难度比较高。因此本文以 TiKV 性能挑战赛 Easy 级别任务 [PCP: Migrate functions from TiDB](https://github.com/tikv/tikv/issues/5751) 为例，教大家如何快速又正确地完成这个任务，从而玩转“TiDB 性能挑战赛”。这个任务中每项完成后均可以获得 50 分，是积累分数从而挑战更高难度任务的好机会。既能改进 TiKV 为性能提升添砖加瓦、又能参与比赛得到积分，还能成为 Contributor，心动不如行动！
 
 ## 背景知识
 
