@@ -12,7 +12,7 @@ tags: ['TiKV','社区','性能挑战赛']
 
 ## 背景知识
 
-TiKV Coprocessor（协处理）模块为 TiDB 提供了在存储引擎侧直接进行部分 SQL 计算的功能，支持按表达式进行过滤、聚合等，这样不仅利用起了 TiKV 机器的 CPU 资源，还能显著减少网络传输及相应的 RPC 开销，显著提升性能。大家可以阅读[「TiKV 源码解析系列文章（十四）Coprocessor 概览」](https://pingcap.com/blog-cn/tikv-source-code-reading-14/)一文进一步了解 Coprocessor 模块。
+TiKV Coprocessor（协处理）模块为 TiDB 提供了在存储引擎侧直接进行部分 SQL 计算的功能，支持按表达式进行过滤、聚合等，这样不仅利用起了 TiKV 机器的 CPU 资源，还能显著减少网络传输及相应的 RPC 开销，显著提升性能。大家可以阅读 [《TiKV 源码解析系列文章（十四）Coprocessor 概览》](https://pingcap.com/blog-cn/tikv-source-code-reading-14/)一文进一步了解 Coprocessor 模块。
 
 表达式计算是 Coprocessor 非常重要的一个功能，例如用户输入了这样的 SQL：
 
@@ -36,7 +36,7 @@ TiDB 和 MySQL 有非常多的内置函数，但 TiKV 目前只实现了一部�
 
 3.  火山模型和向量化都已实现，如 `LTReal` 函数。
 
-[「PCP: Migrate functions from TiDB」](https://github.com/tikv/tikv/issues/5751)这个任务就是希望大家能帮助我们在 TiKV 侧实现更多 TiDB 所支持的内置函数，并支持向量化计算。这个 issue 中 Non-Vectorize 打钩意味着函数已有火山模型的实现，Vectorized 打钩意味着函数已有向量化模型的实现。因此你可以：
+[PCP: Migrate functions from TiDB](https://github.com/tikv/tikv/issues/5751)这个任务就是希望大家能帮助我们在 TiKV 侧实现更多 TiDB 所支持的内置函数，并支持向量化计算。这个 issue 中 Non-Vectorize 打钩意味着函数已有火山模型的实现，Vectorized 打钩意味着函数已有向量化模型的实现。因此你可以：
 
 *   选择一个完全没有实现的函数，如 `FromDays`，从 TiDB 侧迁移它的代码到 TiKV 并实现在火山模型（Non-Vectorize）上，提个 PR +50 积分，再迁移到向量化模型（Vectorize）上，从而再提个 PR +50 积分。
 
@@ -48,7 +48,7 @@ TiDB 和 MySQL 有非常多的内置函数，但 TiKV 目前只实现了一部�
 
 这部分在我们之前的文章中有介绍：[三十分钟成为 Contributor | 为 TiKV 添加 built-in 函数](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247486438&idx=1&sn=7c3994542c072e8be5296f1602408d4d)，大家可以照着这个教程来，这里就不再赘述。
 
-唯一需要注意的是，这篇公众号中的代码路径已经发生了变更，例如原文章中的路径 src/coprocessor/dag/expr/builtin_arithmetic.rs 现在是 components/tidb_query/src/expr/builtin_arithmetic.rs。这些路径基本都只是目录结构发生了变更，所以大家找不到对应文件时候不用惊慌，再不济搜一下文件名就能找到。
+唯一需要注意的是，这篇公众号中的代码路径已经发生了变更，例如原文章中的路径 `src/coprocessor/dag/expr/builtin_arithmetic.rs` 现在是 `components/tidb_query/src/expr/builtin_arithmetic.rs`。这些路径基本都只是目录结构发生了变更，所以大家找不到对应文件时候不用惊慌，再不济搜一下文件名就能找到。
 
 >注：由于 Coprocessor 框架实现的是 Fallback 机制，不允许函数只有向量化实现而没有火山模型实现。因此，若一个内置函数完全没有在 TiKV 侧实现，请先将它在火山模型上进行实现，再迁移至向量化模型。
 
@@ -278,3 +278,5 @@ EXTRA_CARGO_ARGS="test_logical_xor" make dev
 ## 完成！
 
 至此，你新实现的内置函数有了单元测试，也有了与 TiDB 的集成下推测试，是一个合格的 PR 了，可以接受我们的 review。在 merge 后，你就能拿到相应的积分，积分可以在赛季结束后兑换 [TiDB 限量周边礼品](https://pingcap.com/community-cn/tidb-performance-challenge/)！
+
+最后欢迎大家加入 [TiDB Community Slack Workspace](https://join.slack.com/t/tidbcommunity/shared_invite/enQtNzc0MzI4ODExMDc4LWYwYmIzMjZkYzJiNDUxMmZlN2FiMGJkZjAyMzQ5NGU0NGY0NzI3NTYwMjAyNGQ1N2I2ZjAxNzc1OGUwYWM0NzE) 和 [tikv-wg Slack Workspace](http://tikv.org/chat)，参赛过程中遇到任何问题都可以直接通过 **#performance-challenge-program** channel 与我们取得联系。
