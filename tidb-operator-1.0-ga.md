@@ -38,7 +38,7 @@ TiDB 是一个复杂的分布式系统，它的部署和运维需要比较深入
 
 ## 体验 TiDB Operator
 
-大家可以通过 Terraform 在 AWS（[部署文档](https://pingcap.com/docs-cn/v3.0/how-to/deploy/tidb-in-kubernetes/aws-eks/)）、谷歌云（[部署文档](https://pingcap.com/docs-cn/v3.0/how-to/deploy/tidb-in-kubernetes/gcp-gke/)）、阿里云（[部署文档](https://pingcap.com/docs-cn/v3.0/how-to/deploy/tidb-in-kubernetes/alibaba-cloud/)）上快速部署 TiDB Operator 以及下属的 TiDB 集群，也可以参考 [通用 Kubernetes 部署文档](https://pingcap.com/docs-cn/v3.0/how-to/deploy/tidb-in-kubernetes/general-kubernetes/) 在任何 Kubernetes 集群上部署并体验 TiDB Operator。
+大家可以通过 Terraform 在 AWS（[部署文档](https://pingcap.com/docs-cn/v3.0/tidb-in-kubernetes/deploy/aws-eks/)）、谷歌云（[部署文档](https://pingcap.com/docs-cn/v3.0/tidb-in-kubernetes/deploy/gcp-gke/)）、阿里云（[部署文档](https://pingcap.com/docs-cn/v3.0/tidb-in-kubernetes/deploy/alibaba-cloud/)）上快速部署 TiDB Operator 以及下属的 TiDB 集群，也可以参考 [通用 Kubernetes 部署文档](https://pingcap.com/docs-cn/v3.0/tidb-in-kubernetes/deploy/general-kubernetes/) 在任何 Kubernetes 集群上部署并体验 TiDB Operator。
 
 对于 Pre GA 版本的用户，请参考 [1.0 Release Note](https://github.com/pingcap/tidb-operator/blob/master/CHANGELOG.md) 了解 1.0 的变更内容和升级指南。
 
