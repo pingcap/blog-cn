@@ -272,7 +272,7 @@ EXTRA_CARGO_ARGS="test_logical_xor" make dev
 
 ### 7. 在 TiDB 中增添签名映射
 
-如果上一步 copr-test 的测试挂了，一般来说有两种情况，一种情况是内置函数的实现有问题，被 copr-test 测了出来，另一种情况是你新实现的内置函数在 TiDB 侧还未建立函数签名与下推枚举签名 `ScalarFuncSig` 之间的映射关系。后者会在测试中产生 “TiDB internal error (unspecified PbCode)” 错误，非常容易辨别。如果出现了这种情况，大家可以参考 [https://github.com/pingcap/tidb/pull/12864](https://github.com/pingcap/tidb/pull/12864) 的做法，为 TiDB 提 PR 增添相应内置函数的 PbCode 映射。添加完毕之后，可以在 TiKV PR 中回复 `/run-integration-copr-test copr-test=pr/X tidb=pr/Y`（其中 `X` 是你提的 copr-test PR 号，`Y` 是你提的 TiDB PR 号）进行联合测试。
+如果上一步 copr-test 的测试挂了，一般来说有两种情况，一种情况是内置函数的实现有问题，被 copr-test 测了出来，另一种情况是你新实现的内置函数在 TiDB 侧还未建立函数签名与下推枚举签名 `ScalarFuncSig` 之间的映射关系。后者会在测试中产生 “unspecified PbCode” 错误，非常容易辨别。如果出现了这种情况，大家可以参考 [https://github.com/pingcap/tidb/pull/12864](https://github.com/pingcap/tidb/pull/12864) 的做法，为 TiDB 提 PR 增添相应内置函数的 PbCode 映射。添加完毕之后，可以在 TiKV PR 中回复 `/run-integration-copr-test copr-test=pr/X tidb=pr/Y`（其中 `X` 是你提的 copr-test PR 号，`Y` 是你提的 TiDB PR 号）进行联合测试。
 
 ## 完成！
 
