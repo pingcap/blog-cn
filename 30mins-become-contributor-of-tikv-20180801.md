@@ -147,7 +147,7 @@ TiKV 在对一行数据执行具体的 expression 时，会调用 `eval` 函数�
 
 ### Step 7：添加测试
 
-在函数 `multiply_int_unsigned` 所在文件 [builtin_arithmetic.rs](https://github.com/pingcap/tikv/blob/master/src/coprocessor/dag/expr/builtin_arithmetic.rs) 底部的 test 模块中加入对该函数签名的单元测试，要求覆盖到上述添加的所有代码，这一部分也可以参考 TiDB 中相关的测试代码。本例在 TiKV 中实现的测试代码如下：
+在函数 `multiply_int_unsigned` 所在文件 [builtin_arithmetic.rs](https://github.com/tikv/tikv/blob/master/components/tidb_query/src/expr/builtin_arithmetic.rs) 底部的 test 模块中加入对该函数签名的单元测试，要求覆盖到上述添加的所有代码，这一部分也可以参考 TiDB 中相关的测试代码。本例在 TiKV 中实现的测试代码如下：
 
 ```
     #[test]

@@ -8,7 +8,7 @@ tags: ['TiKV','社区','性能挑战赛']
 
 上周我们正式宣布了 [TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/)。在赛季内，通过向 TiDB、TiKV、PD 贡献代码完成指定类别任务的方式，你可以获得相应的积分，最终你可以使用积分兑换礼品或奖金。在性能挑战赛中，你首先需要完成几道 Easy 的题目，积累一定量积分后，才能开始挑战 Medium / Hard 难度的题目。
 
-活动发布后，大家向我们反馈 TiKV 任务的资料比较少，上手难度比较高。因此本文以 TiKV 性能挑战赛 Easy 级别任务 [PCP: Migrate functions from TiDB](https://github.com/tikv/tikv/issues/5751) 为例，教大家如何快速又正确地完成这个任务，从而玩转“TiDB 性能挑战赛”。这个任务中每项完成后均可以获得 50 分，是积累分数从而挑战更高难度任务的好机会。既能改进 TiKV 为性能提升添砖加瓦、又能参与比赛得到积分，还能成为 Contributor，心动不如行动！
+活动发布后，大家向我们反馈 TiKV 任务的资料比较少，上手难度比较高。因此本文以 TiKV 性能挑战赛 Easy 级别任务 [PCP: Migrate functions from TiDB](https://github.com/tikv/tikv/issues/5751) 为例，教大家如何快速又正确地完成这个任务，从而玩转“TiDB 性能挑战赛”。这个任务中每项完成后均可以获得 50 分，是积累分数从而挑战更高难度任务的好机会。既能改进 TiKV 为性能提升添砖加瓦、又能参与比赛得到积分，还能成为 Contributor，感兴趣的小伙伴们一起来“打怪”吧！
 
 ## 背景知识
 
@@ -24,7 +24,7 @@ TiKV Coprocessor 使用表达式 `sqrt(col_area) > 10` 对每一行进行求值�
 
 TiDB 和 MySQL 有非常多的内置函数，但 TiKV 目前只实现了一部分，只有当用户输入的表达式完全被 TiKV 支持并已经进行充分测试时，对应的表达式才会被下推到 Coprocessor 执行，否则 TiDB 只能从 TiKV 捞完整数据上来，达不到加速目的。
 
-另外，TiKV 3.0 起包含两套 Coprocessor 执行框架，一套是老的框架，基于火山模型（推荐阅读 paper： [Volcano - An Extensible and Parallel Query Evaluation System](https://paperhub.s3.amazonaws.com/dace52a42c07f7f8348b08dc2b186061.pdf)）实现，另一套是 3.0 的新框架，基于向量化模型（推荐阅读 paper：[MonetDB/X100: Hyper-Pipelining Query Execution](http://cidrdb.org/cidr2005/papers/P19.pdf)）实现。火山模型中每个算子和函数都按行一个一个计算，向量化模型中则按列批量计算。由于在向量化模型中一个批次进行的处理操作是一样的，因此它可以规避条件分支，且能更好地利用流水线与缓存，从而具有更高的计算效率，差距可达 10 倍以上。
+另外，TiKV 从 3.0 版本开始就包含两套 Coprocessor 执行框架，一套是老的框架，基于火山模型（推荐阅读 paper： [Volcano - An Extensible and Parallel Query Evaluation System](https://paperhub.s3.amazonaws.com/dace52a42c07f7f8348b08dc2b186061.pdf)）实现，另一套是 3.0 的新框架，基于向量化模型（推荐阅读 paper：[MonetDB/X100: Hyper-Pipelining Query Execution](http://cidrdb.org/cidr2005/papers/P19.pdf)）实现。火山模型中每个算子和函数都按行一个一个计算，向量化模型中则按列批量计算。由于在向量化模型中一个批次进行的处理操作是一样的，因此它可以规避条件分支，且能更好地利用流水线与缓存，从而具有更高的计算效率，差距可达 10 倍以上。
 
 既然两个模型中函数处理的数据单位是不一样的，它们自然也有不一样的函数签名及实现，因此还有一大批内置函数虽然在 TiKV 侧已经实现了，但只有火山模型的实现，而没有向量化模型的实现。这类函数虽然 TiDB 已下推计算，但 TiKV 会回退到使用火山模型而不是向量化模型，无法达成最优计算效率。
 
@@ -156,7 +156,7 @@ fn logical_xor_scalar_scalar(arg0: Int, arg1: Int) -> []Int {
 
 你只需要关注内置函数本身的逻辑实现，其他的全部自动搞定！这些所有的奥秘都隐藏在了 `#[rpn_fn]` 过程宏中。
 
-当然，上面的伪代码只是便于你进行理解。这个过程宏的实际实现并不是像上面这样粗暴地组装代码。它巧妙地利用了 Rust 的泛型机制，让编译器去生成不同个数参数情况下的最优实现。感兴趣的同学可以阅读代码自行学习，这里有点偏题就不继续展开细说了，我们后续的源码阅读文章对这个机制会有进一步分析。
+当然，上面的伪代码只是便于你进行理解。这个过程宏的实际实现并不是像上面这样粗暴地组装代码。它巧妙地利用了 Rust 的泛型机制，让编译器去生成不同个数参数情况下的最优实现。这里有点偏题就不继续展开细说了，我们后续的源码阅读文章对这个机制会有进一步分析，感兴趣的同学可以阅读代码自行学习。
 
 ### 3. 增加函数入口
 
