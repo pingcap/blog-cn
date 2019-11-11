@@ -188,7 +188,7 @@ Java 的连接池实现很多（比如，[HikariCP](https://github.com/brettwool
 
 *   `maximumPoolSize`：连接池最大连接数，配置过大会导致 TiDB 消耗资源维护无用连接，配置过小则会导致应用获取连接变慢，所以需根据应用自身特点配置合适的值，可参考 [这篇文章](https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing)。
 
-*   `minimumIdle`：连接池最大空闲连接数，主要用于在应用空闲时存留一些连接以应对突发请求，同样是需要根据业务情况进行配置。
+*   `minimumIdle`：连接池最小空闲连接数，主要用于在应用空闲时存留一些连接以应对突发请求，同样是需要根据业务情况进行配置。
 
 应用在使用连接池时需要注意连接使用完成后归还连接，推荐应用使用对应的连接池相关监控（如 `metricRegistry`），通过监控能及时定位连接池问题。
 
@@ -252,11 +252,11 @@ MyBatis 的 Mapper 中支持两种参数：
 
 前面介绍了在 JDBC 中如何使用流式读取结果，除了 JDBC 相应的配置外，在 MyBatis 中如果希望读取超大结果集合也需要注意：
 
-*   可以通过在 mapper 配置中对单独一条 SQL 设置 `fetchSize`（见上一段代码段），效果等同于调用 JDBC setFetchSize。
+*   可以通过在 mapper 配置中对单独一条 SQL 设置 `fetchSize`（见上一段代码段），效果等同于调用 JDBC `setFetchSize`。
 
-*   可以使用带 ResultHandler 的查询接口来避免一次获取整个结果集。
+*   可以使用带 `ResultHandler` 的查询接口来避免一次获取整个结果集。
 
-*   可以使用 Cursor 类来进行流式读取。
+*   可以使用 `Cursor` 类来进行流式读取。
 
 对于使用 xml 配置映射，可以通过在映射 `<select>` 部分配置 `fetchSize="-2147483648"`(`Integer.MIN_VALUE`) 来流式读取结果。
 
@@ -266,7 +266,7 @@ MyBatis 的 Mapper 中支持两种参数：
 </select>
 ```
 
-而使用代码配置映射，则可以使用 `@Options(fetchSize = Integer.MIN_VALUE)` 并返回 Cursor 从而让 SQL 结果能被流式读取。
+而使用代码配置映射，则可以使用 `@Options(fetchSize = Integer.MIN_VALUE)` 并返回 `Cursor` 从而让 SQL 结果能被流式读取。
 
 ```java
 @Select("select * from post")
@@ -276,11 +276,11 @@ Cursor<Post> queryAllPost();
 
 ### 2. ExecutorType
 
-在 `openSession` 的时候可以选择 `ExecutorType`，MyBatis 支持三种 executor：
+在 `openSession` 的时候可以选择 `ExecutorType`，MyBatis 支持三种 `executor`：
 
 *   `Simple`：每次执行都会向 JDBC 进行 prepare 语句的调用（如果 JDBC 配置有开启 `cachePrepStmts`，重复的 prepare 语句会复用）。
 
-*   `Reuse`：在 executor 中缓存 prepare 语句，这样不用 JDBC 的 `cachePrepStmts` 也能减少重复 prepare 语句的调用。
+*   `Reuse`：在 `executor` 中缓存 prepare 语句，这样不用 JDBC 的 `cachePrepStmts` 也能减少重复 prepare 语句的调用。
 
 *   `Batch`：每次更新只有在 `addBatch` 到 query 或 commit 时才会调用 `executeBatch` 执行，如果 JDBC 层开启了 `rewriteBatchStatements`，则会尝试改写，没有开启则会一条条发送。
 
