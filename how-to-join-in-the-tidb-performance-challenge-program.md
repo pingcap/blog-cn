@@ -8,7 +8,7 @@ tags: ['TiKV','社区','性能挑战赛']
 
 上周我们正式宣布了 [TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/)。在赛季内，通过向 TiDB、TiKV、PD 贡献代码完成指定类别任务的方式，你可以获得相应的积分，最终你可以使用积分兑换礼品或奖金。在性能挑战赛中，你首先需要完成几道 Easy 的题目，积累一定量积分后，才能开始挑战 Medium / Hard 难度的题目。
 
-活动发布后，大家向我们反馈 TiKV 任务的资料比较少，上手难度比较高。因此本文以 TiKV 性能挑战赛 Easy 级别任务 [PCP: Migrate functions from TiDB](https://github.com/tikv/tikv/issues/5751) 为例，教大家如何快速又正确地完成这个任务。这个任务中每项完成后均可以获得 50 分，是积累分数从而挑战更高难度任务的好机会。既能改进 TiKV 为性能提升添砖加瓦、又能参与比赛得到积分、还能成为 Contributor，心动不如行动！
+活动发布后，大家向我们反馈 TiKV 任务的资料比较少，上手难度比较高。因此本文以 TiKV 性能挑战赛 Easy 级别任务 [PCP: Migrate functions from TiDB](https://github.com/tikv/tikv/issues/5751) 为例，教大家如何快速又正确地完成这个任务。这个任务中每项完成后均可以获得 50 分，是积累分数从而挑战更高难度任务的好机会。既能改进 TiKV 为性能提升添砖加瓦、又能参与比赛得到积分，还能成为 Contributor，心动不如行动！
 
 ## 背景知识
 
@@ -36,7 +36,7 @@ TiDB 和 MySQL 有非常多的内置函数，但 TiKV 目前只实现了一部�
 
 3.  火山模型和向量化都已实现，如 `LTReal` 函数。
 
-[PCP: Migrate functions from TiDB](https://github.com/tikv/tikv/issues/5751)这个任务就是希望大家能帮助我们在 TiKV 侧实现更多 TiDB 所支持的内置函数，并支持向量化计算。这个 issue 中 Non-Vectorize 打钩意味着函数已有火山模型的实现，Vectorized 打钩意味着函数已有向量化模型的实现。因此你可以：
+[PCP: Migrate functions from TiDB](https://github.com/tikv/tikv/issues/5751) 这个任务就是希望大家能帮助我们在 TiKV 侧实现更多 TiDB 所支持的内置函数，并支持向量化计算。这个 issue 中 Non-Vectorize 打钩意味着函数已有火山模型的实现，Vectorized 打钩意味着函数已有向量化模型的实现。因此你可以：
 
 *   选择一个完全没有实现的函数，如 `FromDays`，从 TiDB 侧迁移它的代码到 TiKV 并实现在火山模型（Non-Vectorize）上，提个 PR +50 积分，再迁移到向量化模型（Vectorize）上，从而再提个 PR +50 积分。
 
@@ -46,7 +46,7 @@ TiDB 和 MySQL 有非常多的内置函数，但 TiKV 目前只实现了一部�
 
 ## 如何从 TiDB 迁移内置函数在火山模型上实现
 
-这部分在我们之前的文章中有介绍：[三十分钟成为 Contributor | 为 TiKV 添加 built-in 函数](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247486438&idx=1&sn=7c3994542c072e8be5296f1602408d4d)，大家可以照着这个教程来，这里就不再赘述。
+这部分在 [《三十分钟成为 Contributor | 为 TiKV 添加 built-in 函数》](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247486438&idx=1&sn=7c3994542c072e8be5296f1602408d4d) 中有所介绍，大家可以照着这个教程来，这里就不再赘述。
 
 唯一需要注意的是，这篇公众号中的代码路径已经发生了变更，例如原文章中的路径 `src/coprocessor/dag/expr/builtin_arithmetic.rs` 现在是 `components/tidb_query/src/expr/builtin_arithmetic.rs`。这些路径基本都只是目录结构发生了变更，所以大家找不到对应文件时候不用惊慌，再不济搜一下文件名就能找到。
 
@@ -89,9 +89,8 @@ pub fn logical_xor(arg0: &Option<Int>, arg1: &Option<Int>) -> Result<Option<Int>
 }
 ```
 
-注：Int 是 i64 的 Type Alias。你既可以写 Int 也可以写 i64，不过更推荐 Int 一些。你可以从 [这里](https://github.com/tikv/tikv/blob/d019ccecefc260ff760a53b7b8742fb84ffca9b5/components/tidb_query/src/codec/data_type/mod.rs#L10) 找到所有的 Type Alias。`eval_xxx` 函数与类型的对应关系如下：
 
-> 注：`Int` 是 `i64` 的 Type Alias。你既可以写 `Int` 也可以写 `i64`，不过更推荐 `Int` 一些。你可以从[这里](https://github.com/tikv/tikv/blob/d019ccecefc260ff760a53b7b8742fb84ffca9b5/components/tidb_query/src/codec/data_type/mod.rs#L10)找到所有的 Type Alias。`eval_xxx` 函数与类型的对应关系如下：
+> 注：`Int` 是 `i64` 的 Type Alias。你既可以写 `Int` 也可以写 `i64`，不过更推荐 `Int` 一些。你可以从[这里](https://github.com/tikv/tikv/blob/d019ccecefc260ff760a53b7b8742fb84ffca9b5/components/tidb_query/src/codec/data_type/mod.rs#L10)找到所有的 Type Alias。`eval_xxx` 函数与类型的对应关系如下表所示。
 
 | 火山模型函数名 | 对应参数类型 | 参数类型别名 |
 |:-- |:-- |:----- | 
@@ -261,13 +260,13 @@ EXTRA_CARGO_ARGS="test_logical_xor" make dev
 
 **测试通过就可以提 PR 了。注意要在 PR 的开头写上 `PCP #5751` 指明这个 PR 对应的性能挑战赛题目，不然合了是得不到积分的。另外我们鼓励每个 PR 都专注于做一件事情，所以请尽量不要在同一个 PR 内迁移或实现多个内置函数，否则只能得到一次 50 积分。**
 
-### 6\. 运行下推测试
+### 6. 运行下推测试
 
-众所周知，手工编写的测试样例往往会遗漏一些考虑欠缺的边缘情况，并且可能由于犯了一些错误，测试的预期输出实际与 TiDB 不一致。为了能覆盖这些边缘情况，进一步确保 TiKV 中的内置函数实现与 TiDB 的实现一致，我们有一批使用 [randgen](https://github.com/MariaDB/randgen) 自动生成的下推测试，位于 [https://github.com/tikv/copr-test](https://github.com/tikv/copr-test) 。不管你是在 TiKV 中引入一个新的函数实现，还是迁移一个现有实现，都需要确保能跑过这个测试。流程如下：
+众所周知，手工编写的测试样例往往会遗漏一些考虑欠缺的边缘情况，并且可能由于犯了一些错误，测试的预期输出实际与 TiDB 不一致。为了能覆盖这些边缘情况，进一步确保 TiKV 中的内置函数实现与 TiDB 的实现一致，我们有一批使用 [randgen](https://github.com/MariaDB/randgen) 自动生成的下推测试，位于 [https://github.com/tikv/copr-test](https://github.com/tikv/copr-test)。不管你是在 TiKV 中引入一个新的函数实现，还是迁移一个现有实现，都需要确保能跑过这个测试。流程如下：
 
 1.  需要确保你新实现的函数在 [copr-test](https://github.com/tikv/copr-test) 项目的 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt) 文件中，如果没有的话需要往 [copr-test](https://github.com/tikv/copr-test) 项目提 PR 将函数加入测试列表中。你需要将 SQL 里的函数名追加在文件中，或者可以参考 [all_functions_reference.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/all_functions_reference.txt) 文件，这个文件里列出了所有可以写的函数名，从中挑出你的那个函数名，加入 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt)。
 
-2.  假设 [copr-test](https://github.com/tikv/copr-test) 中提的 PR 是 #10，则在你之前提的 TiKV PR 中回复 /run-integration-copr-test copr-test=pr/10 运行下推测试。如果你的函数之前已经在 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt) 列表中了，可以直接回复 `/run-integration-copr-test` 运行下推测试。
+2.  假设 [copr-test](https://github.com/tikv/copr-test) 中提的 PR 是 #10，则在你之前提的 TiKV PR 中回复 `/run-integration-copr-test copr-test=pr/10` 运行下推测试。如果你的函数之前已经在 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt) 列表中了，可以直接回复 `/run-integration-copr-test` 运行下推测试。
 
 当然，我们更推荐你能直接往 [copr-test](https://github.com/tikv/copr-test) 中添加人工编写的测试，更准确地覆盖边缘情况，具体方式参见 [copr-test](https://github.com/tikv/copr-test) 的 README。
 
