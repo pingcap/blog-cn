@@ -1,5 +1,5 @@
 ---
-title: TiDB 性能挑战赛到底怎么玩？本文教你 30 分钟快速上手拿积分！
+title: 如何玩转 TiDB 性能挑战赛？本文教你 30 分钟快速上手拿积分！
 author: ['Wish']
 date: 2019-11-11
 summary: 本文以 TiKV 性能挑战赛 Easy 级别任务“PCP：Migrate functions from TiDB”为例，教大家如何快速又正确地完成这个任务。
