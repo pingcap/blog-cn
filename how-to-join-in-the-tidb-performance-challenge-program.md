@@ -48,8 +48,6 @@ TiDB 和 MySQL 有非常多的内置函数，但 TiKV 目前只实现了一部�
 
 这部分在 [《三十分钟成为 Contributor | 为 TiKV 添加 built-in 函数》](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247486438&idx=1&sn=7c3994542c072e8be5296f1602408d4d) 中有所介绍，大家可以照着这个教程来，这里就不再赘述。
 
-唯一需要注意的是，这篇公众号中的代码路径已经发生了变更，例如原文章中的路径 `src/coprocessor/dag/expr/builtin_arithmetic.rs` 现在是 `components/tidb_query/src/expr/builtin_arithmetic.rs`。这些路径基本都只是目录结构发生了变更，所以大家找不到对应文件时候不用惊慌，再不济搜一下文件名就能找到。
-
 >注：由于 Coprocessor 框架实现的是 Fallback 机制，不允许函数只有向量化实现而没有火山模型实现。因此，若一个内置函数完全没有在 TiKV 侧实现，请先将它在火山模型上进行实现，再迁移至向量化模型。
 
 ## 如何为函数适配向量化模型接口
@@ -266,13 +264,13 @@ EXTRA_CARGO_ARGS="test_logical_xor" make dev
 
 1.  需要确保你新实现的函数在 [copr-test](https://github.com/tikv/copr-test) 项目的 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt) 文件中，如果没有的话需要往 [copr-test](https://github.com/tikv/copr-test) 项目提 PR 将函数加入测试列表中。你需要将 SQL 里的函数名追加在文件中，或者可以参考 [all_functions_reference.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/all_functions_reference.txt) 文件，这个文件里列出了所有可以写的函数名，从中挑出你的那个函数名，加入 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt)。
 
-2.  假设 [copr-test](https://github.com/tikv/copr-test) 中提的 PR 是 #10，则在你之前提的 TiKV PR 中回复 `/run-integration-copr-test copr-test=pr/10` 运行下推测试。如果你的函数之前已经在 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt) 列表中了，可以直接回复 `/run-integration-copr-test` 运行下推测试。
+2.  假设 [copr-test](https://github.com/tikv/copr-test) 中提的 PR 是 #10，则在你之前提的 TiKV PR 中回复 `@sre-bot /run-integration-copr-test copr-test=pr/10` 运行下推测试。如果你的函数之前已经在 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt) 列表中了，可以直接回复 `@sre-bot /run-integration-copr-test` 运行下推测试。
 
 当然，我们更推荐你能直接往 [copr-test](https://github.com/tikv/copr-test) 中添加人工编写的测试，更准确地覆盖边缘情况，具体方式参见 [copr-test](https://github.com/tikv/copr-test) 的 README。
 
 ### 7. 在 TiDB 中增添签名映射
 
-如果上一步 copr-test 的测试挂了，一般来说有两种情况，一种情况是内置函数的实现有问题，被 copr-test 测了出来，另一种情况是你新实现的内置函数在 TiDB 侧还未建立函数签名与下推枚举签名 `ScalarFuncSig` 之间的映射关系。后者会在测试中产生 “unspecified PbCode” 错误，非常容易辨别。如果出现了这种情况，大家可以参考 [https://github.com/pingcap/tidb/pull/12864](https://github.com/pingcap/tidb/pull/12864) 的做法，为 TiDB 提 PR 增添相应内置函数的 PbCode 映射。添加完毕之后，可以在 TiKV PR 中回复 `/run-integration-copr-test copr-test=pr/X tidb=pr/Y`（其中 `X` 是你提的 copr-test PR 号，`Y` 是你提的 TiDB PR 号）进行联合测试。
+如果上一步 copr-test 的测试挂了，一般来说有两种情况，一种情况是内置函数的实现有问题，被 copr-test 测了出来，另一种情况是你新实现的内置函数在 TiDB 侧还未建立函数签名与下推枚举签名 `ScalarFuncSig` 之间的映射关系。后者会在测试中产生 “unspecified PbCode” 错误，非常容易辨别。如果出现了这种情况，大家可以参考 [https://github.com/pingcap/tidb/pull/12864](https://github.com/pingcap/tidb/pull/12864) 的做法，为 TiDB 提 PR 增添相应内置函数的 PbCode 映射。添加完毕之后，可以在 TiKV PR 中回复 `@sre-bot /run-integration-copr-test copr-test=pr/X tidb=pr/Y`（其中 `X` 是你提的 copr-test PR 号，`Y` 是你提的 TiDB PR 号）进行联合测试。
 
 ## 完成！
 

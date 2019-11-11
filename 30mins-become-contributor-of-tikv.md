@@ -45,11 +45,11 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 ### Step 1：准备下推函数
 
-在 TiKV 的 [https://github.com/pingcap/tikv/issues/3275](https://github.com/pingcap/tikv/issues/3275) issue 中，找到未实现的函数签名列表，选一个您想要实现的函数。
+在 TiKV 的 [https://github.com/tikv/tikv/issues/3275](https://github.com/tikv/tikv/issues/3275) issue 中，找到未实现的函数签名列表，选一个您想要实现的函数。
 
 ### Step 2：获取 TiDB 中可参考的逻辑实现
 
-在 TiDB 的 [expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下查找相关 builtinXXXSig 对象，这里 XXX 为您要实现的函数签名，本例中以 [MultiplyIntUnsigned](https://github.com/pingcap/tikv/pull/3277) 为例，可以在 TiDB 中找到其对应的函数签名（`builtinArithmeticMultiplyIntUnsignedSig`）及 [实现](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532)。
+在 TiDB 的 [expression](https://github.com/pingcap/tidb/tree/master/expression) 目录下查找相关 builtinXXXSig 对象，这里 XXX 为您要实现的函数签名，本例中以 [MultiplyIntUnsigned](https://github.com/tikv/tikv/pull/3277) 为例，可以在 TiDB 中找到其对应的函数签名（`builtinArithmeticMultiplyIntUnsignedSig`）及 [实现](https://github.com/pingcap/tidb/blob/master/expression/builtin_arithmetic.go#L532)。
 
 ### Step 3：确定函数定义
 
