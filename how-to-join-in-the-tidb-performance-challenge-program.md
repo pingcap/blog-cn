@@ -46,7 +46,7 @@ TiDB 和 MySQL 有非常多的内置函数，但 TiKV 目前只实现了一部�
 
 ## 如何从 TiDB 迁移内置函数在火山模型上实现
 
-这部分在 [《三十分钟成为 Contributor | 为 TiKV 添加 built-in 函数》](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247486438&idx=1&sn=7c3994542c072e8be5296f1602408d4d) 中有所介绍，大家可以照着这个教程来，这里就不再赘述。
+这部分在 [《三十分钟成为 Contributor | 为 TiKV 添加 built-in 函数》](https://pingcap.com/blog-cn/30mins-become-contributor-of-tikv) 中有所介绍，大家可以照着这个教程来，这里就不再赘述。
 
 >注：由于 Coprocessor 框架实现的是 Fallback 机制，不允许函数只有向量化实现而没有火山模型实现。因此，若一个内置函数完全没有在 TiKV 侧实现，请先将它在火山模型上进行实现，再迁移至向量化模型。
 
