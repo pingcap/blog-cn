@@ -11,7 +11,7 @@ tags: ['事务','最佳实践']
 
 在前两篇的文章中，我们分别介绍了 [TiDB 高并发写入常见热点问题及规避方法](https://pingcap.com/blog-cn/tidb-in-high-concurrency-scenarios/) 和 [PD 调度策略最佳实践](https://pingcap.com/blog-cn/best-practice-pd/)，本文我们将深入浅出介绍 TiDB 乐观事务原理，并给出多种场景下的最佳实践，希望大家能够从中收益。同时，也欢迎大家给我们提供相关的优化建议，参与到我们的优化工作中来。
 
-建议大家在阅读之前先了解 [TiDB 的整体架构](https://pingcap.com/docs-cn/v3.0/architecture/#tidb-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84) 和 [Percollator](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 事务模型。另外，本文重点关注原理及最佳实践路径，具体的 TiDB 事务语句大家可以在 [官方文档](https://pingcap.com/docs-cn/v3.0/reference/transactions/overview/) 中查阅。
+建议大家在阅读之前先了解 [TiDB 的整体架构](https://pingcap.com/docs-cn/v3.0/architecture/#tidb-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84) 和 [Percolator](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 事务模型。另外，本文重点关注原理及最佳实践路径，具体的 TiDB 事务语句大家可以在 [官方文档](https://pingcap.com/docs-cn/v3.0/reference/transactions/overview/) 中查阅。
 
 ## TiDB 事务定义
 
