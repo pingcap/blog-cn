@@ -308,12 +308,12 @@ go.run(result.instance);
 
 ```go
 js.Global().Set("executeSQL", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-go func() {
-	// Simplified code
-		sql := args[0].String()
-		args[1].Invoke(k.Exec(sql))
-	}()
-	return nil
+    go func() {
+	    // Simplified code
+	    sql := args[0].String()
+	    args[1].Invoke(k.Exec(sql))
+    }()
+    return nil
 }))
 ```
 
@@ -337,17 +337,17 @@ go func() {
 
 ```go
 js.Global().Get("upload").Invoke(js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-go func() {
-	fileContent := args[0].String()
-		_, e := doSomething(fileContent)
-		c <- e
-	}()
-	return nil
+    go func() {
+        fileContent := args[0].String()
+        _, e := doSomething(fileContent)
+        c <- e
+    }()
+    return nil
 }), js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-	go func() {
-		c <- errors.New(args[0].String())
-	}()
-	return nil
+    go func() {
+        c <- errors.New(args[0].String())
+    }()
+    return nil
 }))
 ```
 
