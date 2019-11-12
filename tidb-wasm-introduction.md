@@ -10,7 +10,7 @@ tags: ['Hackathon','社区','WebAssembly']
 
 10 月 27 日，为期两天的 Hackathon 落下帷幕，我们用一枚二等奖为此次上海之行画上了圆满的句号，不枉我们风尘仆仆跑去异地参赛（强烈期待明年杭州能作为赛场，主办方也该鼓励鼓励杭州当地的小伙伴呀 :D ）。
 
-我们几个 PingCAP 的小伙伴找到了 Tony 同学一起组队，组队之后找了一个周末进行了“秘密会晤”——Hackathon kick off。想了 N 个 idea，包括使用 unikernel 技术将 TiDB 直接跑在裸机上，或者将网络协议栈做到用户态以提升 TiDB 集群性能，亦或是使用异步 io 技术提升 TiKV的读写能力，这些都被一一否决，原因是这些 idea 不是和 Tony 的工作内容相关，就是和我们 PingCAP 的小伙伴工作相关，做这些相当于我们在 Hackathon 加了两天班，这一点都不酷。按照和工作无关的标准我们想了一个 idea：把 TiDB 编译成 Wasm 运行在浏览器里，让用户无需安装就可以使用 TiDB。我们一致认为这很酷，于是给队伍命名为 Ti-Cool（太酷了）。
+我们几个 PingCAP 的小伙伴找到了 Tony 同学一起组队，组队之后找了一个周末进行了“秘密会晤”——Hackathon kick off。想了 N 个 idea，包括使用 unikernel 技术将 TiDB 直接跑在裸机上，或者将网络协议栈做到用户态以提升 TiDB 集群性能，亦或是使用异步 io 技术提升 TiKV 的读写能力，这些都被一一否决，原因是这些 idea 不是和 Tony 的工作内容相关，就是和我们 PingCAP 小伙伴的日常工作相关，做这些相当于我们在 Hackathon 加了两天班，这一点都不酷。本着「与工作无关」的标准，我们想了一个 idea：把 TiDB 编译成 Wasm 运行在浏览器里，让用户无需安装就可以使用 TiDB。我们一致认为这很酷，于是给队伍命名为 Ti-Cool（太酷了）。
 
 ## WebAssembly 简介
 
@@ -250,7 +250,7 @@ emm… 编译的时候没有函数可以说这个函数没有 Wasm/js 对应的�
 
 <center>图 9 异常栈</center> 
 
-看这个错是运行时没实现 os.stat 操作，这是因为目前的 Golang 没有很好的支持 WASI，它仅在 `wasm_exec.js` 中 mock 了一个 `fs`:
+可以看到这个错是运行时没实现 os.stat 操作，这是因为目前的 Golang 没有很好的支持 WASI，它仅在 `wasm_exec.js` 中 mock 了一个 `fs`:
 
 ```js
 global.fs = {
@@ -267,7 +267,7 @@ global.fs = {
 }
 ```
 
-然后这个 mock 的 `fs` 并没有实现 `stat`, `lstat`, `unlink`, `mkdir` 之类的调用，那么解决方案就是我们在启动之前在全局的 `fs` 对象上 mock 一下这几个函数：
+而且这个 mock 的 `fs` 并没有实现 `stat`, `lstat`, `unlink`, `mkdir` 之类的调用，那么解决方案就是我们在启动之前在全局的 `fs` 对象上 mock 一下这几个函数：
 
 ```js
 function unimplemented(callback) {
@@ -389,7 +389,7 @@ source 命令执行之后弹出文件选择框：
 
 ## 总结与展望
 
-这次 Hackathon 为了移植 TiDB 我们主要解决了几个问题：
+总的来说，这次 Hackathon 为了移植 TiDB 我们主要解决了几个问题：
 
 1.  浏览器中无法监听端口，我们给 TiDB 嵌入了一个 SQL 终端。
 
@@ -403,7 +403,7 @@ source 命令执行之后弹出文件选择框：
 
 6.  支持 source 命令批量执行 SQL。
 
-**目前而言我们已经将这个项目作为 TiDB Playground ([https://play.pingcap.com/](https://play.pingcap.com/)) 和 TiDB Tour ([https://tour.pingcap.com/](https://tour.pingcap.com/)) 开放给用户使用。由于它不需要用户安装配置就能让用户在阅读文档的同时进行尝试，很大程度上降低了用户学习使用 TiDB 的成本，社区有小伙伴已经基于这些自己做数据库教程了，譬如：[imiskolee/tidb-wasm-markdown](https://github.com/imiskolee/tidb-wasm-markdown)。**
+**目前而言我们已经将这个项目作为 TiDB Playground ([https://play.pingcap.com/](https://play.pingcap.com/)) 和 TiDB Tour ([https://tour.pingcap.com/](https://tour.pingcap.com/)) 开放给用户使用。由于它不需要用户安装配置就能让用户在阅读文档的同时进行尝试，很大程度上降低了用户学习使用 TiDB 的成本，社区有小伙伴已经基于这些自己做数据库教程了，譬如：[imiskolee/tidb-wasm-markdown](https://github.com/imiskolee/tidb-wasm-markdown)（[相关介绍文章](https://mp.weixin.qq.com/s/0Vo4apK4VdBfOs0-KyWXZA)）。**
 
 ![图 15 TiDB Playground](media/tidb-wasm-introduction/0-tidb-playground.png)
 
@@ -417,4 +417,4 @@ source 命令执行之后弹出文件选择框：
 
 3.  给 TiDB 的 Wasm 二进制文件瘦身：目前编译出来的二进制文件有将近 80M，对浏览器不太友好，同时运行时占用内存也比较多。
 
-欢迎感兴趣的社区小伙伴们加入进来，一起在这个项目上愉快的玩耍（[https://github.com/pingcap/tidb/projects/27](https://github.com/pingcap/tidb/projects/27)）也可以通过 [info@pingcap.com](mailto:info@pingcap.com) 联系我们。
+欢迎更多感兴趣的社区小伙伴们加入进来，一起在这个项目上愉快的玩耍（[github.com/pingcap/tidb/projects/27](https://github.com/pingcap/tidb/projects/27)），也可以通过 [info@pingcap.com](mailto:info@pingcap.com) 联系我们。
