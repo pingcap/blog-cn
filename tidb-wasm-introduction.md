@@ -6,7 +6,11 @@ summary: TiDB-Wasm 项目实现了将 TiDB 编译成 Wasm 运行在浏览器里�
 tags: ['Hackathon','社区','WebAssembly']
 ---
 
->本文作者是 TiDB Hackathon 2019 参赛队伍 Ti-Cool 的成员，他们的项目 TiDB-Wasm 获得了二等奖。[TiDB-Wasm 项目](https://pingcap.com/blog-cn/tidb-in-the-browser-running-a-golang-database-on-wasm/) 实现了将 TiDB 编译成 Wasm 运行在浏览器里，让用户无需安装就可以使用 TiDB。
+>上周我们推送了《[让数据库运行在浏览器里？TiDB + WebAssembly 告诉你答案](https://pingcap.com/blog-cn/tidb-in-the-browser-running-a-golang-database-on-wasm/)》，向大家展示了 TiDB-Wasm 的魅力：TiDB-Wasm 项目是 TiDB Hackathon 2019 中诞生的二等奖项目，实现了将 TiDB 编译成 Wasm 运行在浏览器里，让用户无需安装就可以使用 TiDB。
+>
+>本文由 Ti-Cool 队成员主笔，为大家详细介绍 TiDB-Wasm 设计与实现细节。
+
+
 
 10 月 27 日，为期两天的 Hackathon 落下帷幕，我们用一枚二等奖为此次上海之行画上了圆满的句号，不枉我们风尘仆仆跑去异地参赛（强烈期待明年杭州能作为赛场，主办方也该鼓励鼓励杭州当地的小伙伴呀 :D ）。
 
