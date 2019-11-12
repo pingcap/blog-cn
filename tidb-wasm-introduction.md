@@ -1,15 +1,16 @@
 ---
-title: TiDB-Wasm 原理与实现 | Hackathon 2019 优秀项目介绍
+title: TiDB-Wasm 原理与实现 | Hackathon 优秀项目介绍
 author: ['Ti-Cool']
 date: 2019-11-12
-summary: 
+summary: TiDB-Wasm 项目实现了将 TiDB 编译成 Wasm 运行在浏览器里，让用户无需安装就可以使用 TiDB，最终获得了 TiDB Hackathon 2019 的二等奖。
 tags: ['Hackathon','社区','WebAssembly']
 ---
 
+>本文作者是 TiDB Hackathon 2019 参赛队伍 Ti-Cool 的成员，他们的项目 TiDB-Wasm 获得了二等奖。[TiDB-Wasm 项目](https://pingcap.com/blog-cn/tidb-in-the-browser-running-a-golang-database-on-wasm/) 实现了将 TiDB 编译成 Wasm 运行在浏览器里，让用户无需安装就可以使用 TiDB。
 
 10 月 27 日，为期两天的 Hackathon 落下帷幕，我们用一枚二等奖为此次上海之行画上了圆满的句号，不枉我们风尘仆仆跑去异地参赛（强烈期待明年杭州能作为赛场，主办方也该鼓励鼓励杭州当地的小伙伴呀 :D ）。
 
-我们几个 PingCAP 的小伙伴找到了 Tony 同学一起组队，组队之后找了一个周末进行了“秘密会晤”——Hackathon kick off。想了 N 个 idea，包括使用 unikernel 技术将 TiDB 直接跑在裸机上，或者将网络协议栈做到用户态以提升 TiDB 集群性能，亦或是使用异步 io 技术提升 TiKV的读写能力，这些都被一一否决，原因是这些 idea 不是和 Tony 的工作内容相关，就是和我们 PingCAP 的小伙伴工作相关，做这些相当于我们在 Hackathon 加了两天班，这一点都不酷。按照和工作无关的标准我们想了一个 idea：把 TiDB 编译成 Wasm 运行在浏览器里，让用户无需安装就可以使用 TiDB。我们一致认为这很酷，于是给队伍命名为 ti-cool（太酷了）。
+我们几个 PingCAP 的小伙伴找到了 Tony 同学一起组队，组队之后找了一个周末进行了“秘密会晤”——Hackathon kick off。想了 N 个 idea，包括使用 unikernel 技术将 TiDB 直接跑在裸机上，或者将网络协议栈做到用户态以提升 TiDB 集群性能，亦或是使用异步 io 技术提升 TiKV的读写能力，这些都被一一否决，原因是这些 idea 不是和 Tony 的工作内容相关，就是和我们 PingCAP 的小伙伴工作相关，做这些相当于我们在 Hackathon 加了两天班，这一点都不酷。按照和工作无关的标准我们想了一个 idea：把 TiDB 编译成 Wasm 运行在浏览器里，让用户无需安装就可以使用 TiDB。我们一致认为这很酷，于是给队伍命名为 Ti-Cool（太酷了）。
 
 ## WebAssembly 简介
 
@@ -402,7 +403,11 @@ source 命令执行之后弹出文件选择框：
 
 6.  支持 source 命令批量执行 SQL。
 
-目前而言我们已经将这个项目作为 TiDB Playground ([https://play.pingcap.com/](https://play.pingcap.com/)) 和 TiDB Tour ([https://tour.pingcap.com/](https://tour.pingcap.com/)) 开放给用户使用，由于它不需要用户安装配置就能让用户在阅读文档的同时进行尝试，很大程度上降低了用户学习使用 TiDB 的成本，社区有小伙伴已经基于这些自己做数据库教程了，譬如：[imiskolee/tidb-wasm-markdown](https://github.com/imiskolee/tidb-wasm-markdown)。
+**目前而言我们已经将这个项目作为 TiDB Playground ([https://play.pingcap.com/](https://play.pingcap.com/)) 和 TiDB Tour ([https://tour.pingcap.com/](https://tour.pingcap.com/)) 开放给用户使用。由于它不需要用户安装配置就能让用户在阅读文档的同时进行尝试，很大程度上降低了用户学习使用 TiDB 的成本，社区有小伙伴已经基于这些自己做数据库教程了，譬如：[imiskolee/tidb-wasm-markdown](https://github.com/imiskolee/tidb-wasm-markdown)。**
+
+![图 15 TiDB Playground](media/tidb-wasm-introduction/0-tidb-playground.png)
+
+<center>图 15 TiDB Playground</center> 
 
 由于 Hackathon 时间比较紧张，其实很多想做的东西还没实现，比如：
 
