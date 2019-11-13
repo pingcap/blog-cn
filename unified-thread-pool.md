@@ -1,17 +1,14 @@
-Unified Thread Pool | Hackathon 2019 优秀项目介绍
-
 ---
-title: 十分钟成为 Contributor 系列 | TiDB 向量化表达式活动第二弹
-author: ['Yuanjia Zhang']
-date: 2019-09-30
-summary: 在上篇文章中，我们介绍了 TiDB 如何实现表达式的向量化优化，以及社区同学如何参与这项工程。两周过去了，我们收到了很多来自社区小伙伴们的建议和反馈，今天在这里和大家分享一下活动进展和这些建议及反馈。
+title: Unified Thread Pool | Hackathon 2019 优秀项目介绍
+author: ['夏锐航']
+date: 2019-11-14
+summary: Unified Thread Pool 项目实现了在 TiKV 中使用一个统一的自适应线程池处理读请求，能够显著提升性能，并可预测性地限制大查询对小请求的干扰，最终在 TiDB Hackathon 2019 中斩获一等奖。
 tags: ['TiKV','社区','Hackathon']
 ---
 
+>本文由逊馁队的成员夏锐航同学主笔，介绍 Unified Thread Pool 项目的设计与实现过程。该项目实现了在 TiKV 中使用一个统一的自适应线程池处理读请求，能够显著提升性能，并可预测性地限制大查询对小请求的干扰，最终在 TiDB Hackathon 2019 中斩获一等奖。
 
-by 夏锐航
-
-这次 TiDB Hackathon 命题为 “Improve”，即提升 TiDB 及相关项目的性能、易用性等。我们设计的切入点是： 
+这次 TiDB Hackathon 主题为 “Improve”，即提升 TiDB 及相关项目的性能、易用性等。我们设计的切入点是： 
 
 * TiKV 现有的线程池在大小查询混合场景下的表现不太优秀。
 
