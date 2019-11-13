@@ -6,7 +6,7 @@ summary: Unified Thread Pool 项目实现了在 TiKV 中使用一个统一的自
 tags: ['TiKV','社区','Hackathon']
 ---
 
->本文由逊馁队的成员夏锐航同学主笔，介绍 Unified Thread Pool 项目的设计与实现过程。该项目实现了在 TiKV 中使用一个统一的自适应线程池处理读请求，能够显著提升性能，并可预测性地限制大查询对小请求的干扰，最终在 TiDB Hackathon 2019 中斩获一等奖。
+>本文由逊馁队的成员夏锐航同学主笔，介绍 Unified Thread Pool 项目的设计与实现过程。该项目实现了在 TiKV 中使用一个统一的自适应线程池处理读请求，能够显著提升性能，并可预测性地限制大查询对小请求的干扰，最终在 [TiDB Hackathon 2019](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247490046&idx=1&sn=962bb8aa4619c3815fcc561ed96331d7&chksm=eb163e94dc61b7826b7e73a057f4c9823261c1a79005104dd41dbd6ef4276c01bd6e41a69d14&scene=21&token=1896003006&lang=zh_CN#wechat_redirect) 中斩获一等奖。
 
 这次 TiDB Hackathon 主题为 “Improve”，即提升 TiDB 及相关项目的性能、易用性等。我们设计的切入点是： 
 
@@ -62,7 +62,7 @@ Unified Thread Pool 的调度方案参考自多级反馈队列算法，在 Unifi
 
 在 10 月 26 日上午拿到 UCloud 提供的机器（8C16G）后，我们开始部署 TiDB 集群便于测试。第一次部署方案是 3TiDB + 3TiKV，但是当集群运行起来之后我们发现当请求压来时瓶颈似乎在 TiDB 上，于是我们将 TiKV 集群 down 掉一台，情况虽然有所好转但还是无法将 TiKV 跑到满负荷。一番挣扎无果后我们将整个集群铲掉重新部署，第二次按照 4TiDB + 1TiKV + 1Tester 部署完之后终于让瓶颈出现在 TiKV 上。
 
-详细的测试方案是使用 Tester 机器向四台 TiDB 发送请求然后检测延时和 QPS，sysbench 测试数据三十二张表，每张 10,000,000 条数据，总计容量约 80G。我们模拟了大小两种规格的请求，小请求是使用 sysbench 的 point_select 和 read_only，大请求则是使用四个 clients 不断地 SELECT COUNT(*) FROM .. 来扫表。下图是我们在上述测试环境中对 Unified Thread Pool 与 TiKV master 版本所做的对比，可以看到在单纯的小请求情况下吞吐量提高了20%~50%。
+详细的测试方案是使用 Tester 机器向四台 TiDB 发送请求然后检测延时和 QPS，sysbench 测试数据三十二张表，每张 10,000,000 条数据，总计容量约 80G。我们模拟了大小两种规格的请求，小请求是使用 sysbench 的 `point_selec t` 和 `read_only`，大请求则是使用四个 clients 不断地 `SELECT COUNT(*) FROM ..` 来扫表。下图是我们在上述测试环境中对 Unified Thread Pool 与 TiKV master 版本所做的对比，可以看到在单纯的小请求情况下吞吐量提高了 20%~50%。
 
 ![图 4 fully utilize](media/unified-thread-pool/4-fully-utilize.png)
 
