@@ -24,7 +24,7 @@ tags: ['TiKV','社区','Hackathon']
 
 * 每套任务中又对应二至三个不同优先级的线程池，但是从实际效果来讲这个隔离也没能很好的发挥用处。
 
-* 在目前的 TiKV 中需要对每个线程池单独配置，如 [Scheduler](https://pingcap.com/docs-cn/v3.0/reference/configuration/tikv-server/configuration-file/#scheduler-worker-pool-size)、[Storage](https://pingcap.com/docs-cn/v3.0/reference/configuration/tikv-server/configuration-file/#readpoolstorage)、[Coprocessor](https://pingcap.com/docs-cn/v3.0/reference/configuration/tikv-server/configuration-file/#readpoolcoprocessor) 。
+* 在目前的 TiKV 中需要对每个线程池单独配置，如 [Scheduler](https://pingcap.com/docs-cn/v3.0/reference/configuration/tikv-server/configuration-file/#scheduler-worker-pool-size)、[Storage](https://pingcap.com/docs-cn/v3.0/reference/configuration/tikv-server/configuration-file/#readpoolstorage)、[Coprocessor](https://pingcap.com/docs-cn/v3.0/reference/configuration/tikv-server/configuration-file/#readpoolcoprocessor)。
 
 我们的 Unified Thread Pool 是一个在用户态模拟多级反馈队列调度的线程池，能较好的解决上述现行线程池方案的几个缺点。两者具体的对比如下表所示：
 
@@ -80,6 +80,6 @@ Unified Thread Pool 的调度方案参考自多级反馈队列算法，在 Unifi
 
 ## 写在 Hackathon 之后
 
-比赛最后 Demo Time 的时候看别人的项目都好优秀，看得有点想提前跑路了，还好不是我上去做 presentation，能夺魁事实上挺让我感到意外的，现在 Hackathon 虽然已经结束了，但还想继续完善这个作品。现在它虽然能提升最大吞吐量，但是在延时方面的表现还能更进一步。在比赛时我们的线程池是基于比较简单的 juliex 来设计的，后续计划参考一些比如 tokio 之类的成熟的线程池来进行优化，希望能够将它完善合进 master。该项目对应的 [PCP](https://github.com/tikv/tikv/issues/5765)。
+比赛最后 Demo Time 的时候看别人的项目都好优秀，看得有点想提前跑路了，还好不是我上去做 presentation，能夺魁事实上挺让我感到意外的，现在 Hackathon 虽然已经结束了，但还想继续完善这个作品。现在它虽然能提升最大吞吐量，但是在延时方面的表现还能更进一步。在比赛时我们的线程池是基于比较简单的 juliex 来设计的，后续计划参考一些比如 tokio 之类的成熟的线程池来进行优化，希望能够将它完善合进 master。大家可以在 [TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/) 中继续一起鼓捣这个项目，该项目对应的 [PCP 链接](https://github.com/tikv/tikv/issues/5765)。
 
 最后感谢奕霖老师这么强还愿意带我玩，感谢 PingCAP 让我蹭吃蹭喝的辛苦付出 :D 
