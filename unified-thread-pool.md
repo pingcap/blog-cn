@@ -44,7 +44,7 @@ Unified Thread Pool 的调度方案参考自多级反馈队列算法，在 Unifi
 
 因此在这里我们需要以 TiDB 的 query 为单位进行调度。为了实现这一点我们让 TiDB 在发送 query 的时候带上一个 token 来作为标识，在线程池内我们也以 token（query）为整体来调整优先级。
 
-另一点很重要的改动是，现在 TiKV 中可能会出现一些大的 Coprocessor 请求，这些请求按batch执行，一个请求可能包含数百个batches，执行一次就需要秒级的时间，使得对它们的调度无法进行。关于Coprocessor 向量化执行的内容PingCAP后续也会有相关文章进行介绍。因此我们使用 Rust 最新的 async/await 协程机制，在 Coprocessor batches 之间手动埋点移交执行权，如下图所示，一个原本需要约一秒钟，包含约 500 个 batch 的任务在现在将会变为许多个时间约为一毫秒的小任务，在每个小任务之间会主动移交执行权。
+另一点很重要的改动是，现在 TiKV 中可能会出现一些大的 Coprocessor 请求，这些请求按 batch 执行，一个请求可能包含数百个 batches，执行一次就需要秒级的时间，使得对它们的调度无法进行。关于 Coprocessor 向量化执行的内容 PingCAP 后续也会有相关文章进行介绍。因此我们使用 Rust 最新的 async/await 协程机制，在 Coprocessor batches 之间手动埋点移交执行权，如下图所示，一个原本需要约一秒钟，包含约 500 个 batch 的任务在现在将会变为许多个时间约为一毫秒的小任务，在每个小任务之间会主动移交执行权。
 
 ![图 2 将请求分成多次执行](media/unified-thread-pool/2-将请求分成多次执行.png)
 
@@ -62,7 +62,7 @@ Unified Thread Pool 的调度方案参考自多级反馈队列算法，在 Unifi
 
 在 10 月 26 日上午拿到 UCloud 提供的机器（8C16G）后，我们开始部署 TiDB 集群便于测试。第一次部署方案是 3TiDB + 3TiKV，但是当集群运行起来之后我们发现当请求压来时瓶颈似乎在 TiDB 上，于是我们将 TiKV 集群 down 掉一台，情况虽然有所好转但还是无法将 TiKV 跑到满负荷。一番挣扎无果后我们将整个集群铲掉重新部署，第二次按照 4TiDB + 1TiKV + 1Tester 部署完之后终于让瓶颈出现在 TiKV 上。
 
-详细的测试方案是使用 Tester 机器向四台 TiDB 发送请求然后检测延时和 QPS，sysbench 测试数据三十二张表，每张 10,000,000 条数据，总计容量约 80G。我们模拟了大小两种规格的请求，小请求是使用 sysbench 的 `point_selec t` 和 `read_only`，大请求则是使用四个 clients 不断地 `SELECT COUNT(*) FROM ..` 来扫表。下图是我们在上述测试环境中对 Unified Thread Pool 与 TiKV master 版本所做的对比，可以看到在单纯的小请求情况下吞吐量提高了 20%~50%。
+详细的测试方案是使用 Tester 机器向四台 TiDB 发送请求然后检测延时和 QPS，sysbench 测试数据 32 张表，每张 10,000,000 条数据，总计容量约 80G。我们模拟了大小两种规格的请求，小请求是使用 sysbench 的 `point_selec t` 和 `read_only`，大请求则是使用四个 clients 不断地 `SELECT COUNT(*) FROM ..` 来扫表。下图是我们在上述测试环境中对 Unified Thread Pool 与 TiKV master 版本所做的对比，可以看到在单纯的小请求情况下吞吐量提高了 20%~50%。
 
 ![图 4 fully utilize](media/unified-thread-pool/4-fully-utilize.png)
 
@@ -80,6 +80,6 @@ Unified Thread Pool 的调度方案参考自多级反馈队列算法，在 Unifi
 
 ## 写在 Hackathon 之后
 
-比赛最后 Demo Time 的时候看别人的项目都好优秀，看得有点想提前跑路了，还好不是我上去做 presentation，能夺魁事实上挺让我感到意外的，现在 Hackathon 虽然已经结束了，但还想继续完善这个作品。现在它虽然能提升最大吞吐量，但是在延时方面的表现还能更进一步。在比赛时我们的线程池是基于比较简单的 juliex 来设计的，后续计划参考一些比如 tokio 之类的成熟的线程池来进行优化，希望能够将它完善合进 master。大家可以在 [TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/) 中继续一起鼓捣这个项目，该项目对应的 [PCP 链接](https://github.com/tikv/tikv/issues/5765)。
+比赛最后 Demo Time 的时候看别人的项目都好优秀，看得有点想提前跑路了，还好不是我上去做 presentation，能夺魁事实上挺让我感到意外的，现在 Hackathon 虽然已经结束了，但还想继续完善这个作品。现在它虽然能提升最大吞吐量，但是在延时方面的表现还能更进一步。在比赛时我们的线程池是基于比较简单的 juliex 来设计的，后续计划参考一些比如 tokio 之类的成熟的线程池来进行优化，希望能够将它完善合进 master。大家可以在 [TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/) 中继续一起鼓捣这个项目，该项目对应的 [链接](https://github.com/tikv/tikv/issues/5765)。
 
 最后感谢奕霖老师这么强还愿意带我玩，感谢 PingCAP 让我蹭吃蹭喝的辛苦付出 :D 
