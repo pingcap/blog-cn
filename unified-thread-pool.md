@@ -8,7 +8,7 @@ tags: ['TiKV','社区','Hackathon']
 
 >本文由逊馁队的成员夏锐航同学主笔，介绍 Unified Thread Pool 项目的设计与实现过程。该项目实现了在 TiKV 中使用一个统一的自适应线程池处理读请求，能够显著提升性能，并可预测性地限制大查询对小请求的干扰，最终在 [TiDB Hackathon 2019](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247490046&idx=1&sn=962bb8aa4619c3815fcc561ed96331d7&chksm=eb163e94dc61b7826b7e73a057f4c9823261c1a79005104dd41dbd6ef4276c01bd6e41a69d14&scene=21&token=1896003006&lang=zh_CN#wechat_redirect) 中斩获一等奖。
 
-距离 TiDB Hackathon 落幕已经过去了半个多月，回忆这次比赛、获奖的经历，依然让我感到非常兴奋。我目前是华南理工大学大三的学生，和正在 PingCAP 实习的学长奕霖一起组队参加了这次 TiDB Hackathon，比赛的主题为 “Improve”，即提升 TiDB 及相关项目的性能、易用性等。我们项目设计的切入点是： 
+距离 TiDB Hackathon 落幕已经过去了半个多月，回忆这次比赛、获奖的经历，依然让我感到非常兴奋。我目前是华南理工大学大三的学生，我和正在 PingCAP 实习的学长奕霖一起组队参加了这次 TiDB Hackathon，比赛的主题为 “Improve”，即提升 TiDB 及相关项目的性能、易用性等。我们项目设计的切入点是： 
 
 * TiKV 现有的线程池在大小查询混合场景下的表现不太优秀。
 
