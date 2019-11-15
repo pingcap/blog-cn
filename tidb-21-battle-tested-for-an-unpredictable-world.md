@@ -98,9 +98,9 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 
 为了让用户更方便的使用 TiDB，我们提供了三个工具：
 
-* [TiDB Lightning](https://pingcap.com/docs/tools/lightning/overview-architecture/) 用于将全量数据导入到 TiDB 中，这个工具可以提升全量数据导入速度，目前内部测试场景中，一小时可以导入 100GB 数据。
-* [TiDB Binlog](https://pingcap.com/docs/v3.0/reference/tools/tidb-binlog/overview/) 用于将 TiDB 中的数据更新实时同步到下游系统中，可以用于做主从集群同步或者是将 TiDB 中的数据同步回 MySQL。
-* [TiDB Data Migration](https://pingcap.com/docs/tools/data-migration-overview/) 用于将 MySQL/MariaDB 中的数据通过 Binlog 实时同步到 TiDB 集群中，并且提供 Binlog 数据转换功能，可以将 Binlog 中的表/库名称进行修改，或者是对数据内容本身做修改和裁剪。
+* [TiDB Lightning](https://pingcap.com/docs-cn/stable/reference/tools/tidb-lightning/overview/) 用于将全量数据导入到 TiDB 中，这个工具可以提升全量数据导入速度，目前内部测试场景中，一小时可以导入 100GB 数据。
+* [TiDB Binlog](https://pingcap.com/docs-cn/stable/reference/tidb-binlog/overview/) 用于将 TiDB 中的数据更新实时同步到下游系统中，可以用于做主从集群同步或者是将 TiDB 中的数据同步回 MySQL。
+* [TiDB Data Migration](https://pingcap.com/docs-cn/stable/reference/tools/data-migration/overview/) 用于将 MySQL/MariaDB 中的数据通过 Binlog 实时同步到 TiDB 集群中，并且提供 Binlog 数据转换功能，可以将 Binlog 中的表/库名称进行修改，或者是对数据内容本身做修改和裁剪。
 
 上述三个工具可以将 TiDB 和周边的系统打通，既能将数据同步进 TiDB，又可以将数据同步出来。所以无论是迁移、回退还是做数据热备，都有完整的解决方案。
 
