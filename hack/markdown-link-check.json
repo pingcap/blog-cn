@@ -1,8 +1,21 @@
 {
     "ignorePatterns": [
         {
-            "pattern": "^(?!(https?://(pingcap.com|github.com|tikv.org)/|media/))"
+            "pattern": "^(http|https|ftp|mailto):"
+        },
+        {
+            "pattern": "\\.\\./media/"
+        },
+        {
+            "comment": "anchors to current file are ignored",
+            "pattern": "^#.+$"
         }
     ],
-    "replacementPatterns": []
+    "replacementPatterns": [
+        {
+            "comment": "remove anchor part",
+            "pattern": "#.+$",
+            "replacement": ""
+        }
+    ]
 }
