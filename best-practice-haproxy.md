@@ -2,7 +2,7 @@
 title: TiDB 最佳实践系列（六）HAProxy 的使用
 author: ['李仲舒']
 date: 2019-11-19
-summary: 本文将从 Java 数据库交互组件开发的角度出发，介绍各组件的推荐配置和推荐使用方式，希望能帮助 Java 开发者在使用 TiDB 时能更好的发挥数据库性能。
+summary: TiDB Server 作为无限水平扩展的无状态计算节点，需要像 HAProxy 能提供稳定且高性能的负载均衡组件用对外统一的接口地址来提供服务。本文将介绍在 TiDB 下使用 HAProxy 的最佳实践。
 tags: ['HAProxy','最佳实践','TiDB']
 ---
 
@@ -10,7 +10,7 @@ HAProxy 是一个使用 C 语言编写的自由及开放源代码软件，其提
 
 TiDB Server 作为无限水平扩展的无状态计算节点，需要像 HAProxy 能提供稳定且高性能的负载均衡组件用对外统一的接口地址来提供服务。HAProxy 在负载均衡的生态中占有很大的市场，TiDB 的用户也可以将这一成熟稳定的开源工具应用的自己的线上业务中承担负载均衡、高可用的功能。
 
-![图 1 部署架构](media/best-practice-haproxy/部署架构.png)
+![图 1 部署架构](media/best-practice-haproxy/部署架构.jpg)
 
 ## HAProxy 简介
 
@@ -35,7 +35,7 @@ HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，�
 
 ### 1. 硬件要求 
 
-根据[HAProxy 官方文档]([http://cbonte.github.io/haproxy-dconv/2.0/management.html#1](http://cbonte.github.io/haproxy-dconv/2.0/management.html#1))对 HAProxy 的服务器硬件配置有以下建议（也可以根据负载均衡环境进行实际推算，在此基础上提高服务器配置）：
+根据 [HAProxy 官方文档]([http://cbonte.github.io/haproxy-dconv/2.0/management.html#1](http://cbonte.github.io/haproxy-dconv/2.0/management.html#1)) 对 HAProxy 的服务器硬件配置有以下建议（也可以根据负载均衡环境进行实际推算，在此基础上提高服务器配置）：
 
 |硬件资源|最低配置|
 |:---|:---|
@@ -67,7 +67,7 @@ HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，�
 
 ### 3. 推荐版本
 
-根据官方建议，目前 HAProxy 稳定版本为稳定版 2.0，特性介绍参考 [这篇文章]( [https://www.haproxy.com/blog/haproxy-2-0-and-beyond/](https://www.haproxy.com/blog/haproxy-2-0-and-beyond/))。
+根据官方建议，目前 HAProxy 稳定版本为稳定版 2.0，特性介绍参考 [这篇文章](https://www.haproxy.com/blog/haproxy-2-0-and-beyond/)。
 
 ### 4.操作步骤
 
@@ -205,4 +205,6 @@ listen tidb-cluster                        # 配置 database 负载均衡
 
 ## 总结
 
-本文介绍了 TiDB 下使用 HAProxy 的最佳实践，全文对于 HAProxy 的基本使用方法进行较为详细的介绍，这里唯一遗憾的是没有将 HAProxy 的高可用架构和方案加以文字描述，在线上使用中可以通过 Linux 的 Keepalived 来实现主备配置，实现 HAProxy 的高可用。在按照该文档搭建 HAProxy 时候，一定要结合自己的具体业务需求和场景，适当调整参数，为业务的负载均衡和可用性提供最佳的保障方案。也希望活跃在 TiDB 社区的小伙伴可以踊跃分享 TiDB 的最佳实践，将自己智慧和经验分享到 TiDB User Group 问答论坛（ [https://asktug.com/](https://asktug.com/)）。
+本文介绍了在 TiDB 下使用 HAProxy 的最佳实践，全文对于 HAProxy 的基本使用方法进行较为详细的介绍，这里唯一遗憾的是没有将 HAProxy 的高可用架构和方案加以文字描述，大家在线上使用中可以通过 Linux 的 Keepalived 来实现主备配置，实现 HAProxy 的高可用；在按照该文档搭建 HAProxy 时候，一定要结合自己的具体业务需求和场景，适当调整参数，为业务的负载均衡和可用性提供最佳的保障方案。
+
+最后也希望活跃在 TiDB 社区的小伙伴可以踊跃分享 TiDB 的最佳实践，将自己智慧和经验分享到 TiDB User Group 问答论坛（[https://asktug.com/](https://asktug.com/)）。
