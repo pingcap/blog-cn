@@ -14,7 +14,7 @@ TiDB Server 作为无限水平扩展的无状态计算节点，需要像 HAProxy
 
 ## HAProxy 简介
 
-HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，他现在仍然负责该项目的维护，并在开源社区免费提供版本迭代。最新的稳定版本 2.0.0 于 2019 年 8 月 16 日发布，带来更多[优秀的特性](https://www.haproxy.com/blog/haproxy-2-0-and-beyond/)。
+HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，他现在仍然负责该项目的维护，并在开源社区免费提供版本迭代。最新的稳定版本 2.0.0 于 2019 年 8 月 16 日发布，带来更多 [优秀的特性](https://www.haproxy.com/blog/haproxy-2-0-and-beyond/)。
 
 ## HAProxy 部分核心功能
 
@@ -73,9 +73,7 @@ HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，�
 
 HAProxy 配置 Database 负载均衡场景操作简单，以下 step by step 操作具有普遍性，不具有特殊性，建议根据实际场景，个性化配置相关的配置文件。
 
-1. 安装 HAProxy
-
-	yum 安装 (推荐)
+1. 安装 HAProxy：推荐 yum 安装
 	
 	```
 	# yum 安装 HAProxy
@@ -99,7 +97,7 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下 step by step 操
 	haproxy -f /etc/haproxy/haproxy.cfg
 	```
 
-	方法二：systemd 启动 HAProxy，默认读取 （推荐）
+	方法二：systemd 启动 HAProxy，默认读取（推荐）
 	
 	```
 	/etc/haproxy/haproxy.cfg
@@ -122,9 +120,9 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下 step by step 操
 	systemctl stop haproxy.service
 	```
 
-### HAProxy 命令介绍
+## HAProxy 命令介绍
 
-通过以下命令查看 HAProxy 的命令列表，
+通过以下命令查看 HAProxy 的命令列表：
 
 ```
 $ haproxy --help
