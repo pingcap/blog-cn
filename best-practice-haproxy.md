@@ -2,13 +2,13 @@
 title: TiDB 最佳实践系列（六）HAProxy 的使用
 author: ['李仲舒']
 date: 2019-11-19
-summary: TiDB Server 作为无限水平扩展的无状态计算节点，需要像 HAProxy 能提供稳定且高性能的负载均衡组件用对外统一的接口地址来提供服务。本文将介绍在 TiDB 下使用 HAProxy 的最佳实践。
+summary: TiDB Server 作为无限水平扩展的无状态计算节点，需要能提供稳定且高性能的负载均衡组件用对外统一的接口地址来提供服务，而 HAProxy 在负载均衡的生态中占有很大的市场。本文将介绍在 TiDB 下使用 HAProxy 的最佳实践。
 tags: ['HAProxy','最佳实践','TiDB']
 ---
 
 HAProxy 是一个使用 C 语言编写的自由及开放源代码软件，其提供高可用性、负载均衡，以及基于 TCP 和 HTTP 的应用程序代理。GitHub、Bitbucket、Stack Overflow、Reddit、Tumblr、Twitter 和 Tuenti 在内的知名网站，及亚马逊网络服务系统都在使用 HAProxy。
 
-TiDB Server 作为无限水平扩展的无状态计算节点，需要像 HAProxy 能提供稳定且高性能的负载均衡组件用对外统一的接口地址来提供服务。HAProxy 在负载均衡的生态中占有很大的市场，TiDB 的用户也可以将这一成熟稳定的开源工具应用的自己的线上业务中承担负载均衡、高可用的功能。
+TiDB Server 作为无限水平扩展的无状态计算节点，需要能提供稳定且高性能的负载均衡组件用对外统一的接口地址来提供服务，而 HAProxy 在负载均衡的生态中占有很大的市场，TiDB 用户可以将这一成熟稳定的开源工具应用在自己的线上业务中，承担负载均衡、高可用的功能。
 
 ![图 1 部署架构](media/best-practice-haproxy/部署架构.jpg)
 
@@ -128,7 +128,6 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下 step by step 操
 $ haproxy --help
 Usage : haproxy [-f <cfgfile|cfgdir>]* [ -vdVD ] [ -n <maxconn> ] [ -N <maxpconn> ]
         [ -p <pidfile> ] [ -m <max megs> ] [ -C <dir> ] [-- <cfgfile>*]
-
 ```
 
 | 命令 | 含义 | 解释 |
