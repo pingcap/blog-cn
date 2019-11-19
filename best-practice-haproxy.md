@@ -130,33 +130,34 @@ Usage : haproxy [-f <cfgfile|cfgdir>]* [ -vdVD ] [ -n <maxconn> ] [ -N <maxpconn
         [ -p <pidfile> ] [ -m <max megs> ] [ -C <dir> ] [-- <cfgfile>*]
 ```
 
-| 命令 | 含义 | 解释 |
-|:-----|:----------|:-------------|
-| -v  | displays version ; | 显示版本。 |
-| -vv | shows known build options. | 显示编译选项。 |
-| -d | enters debug mode ; | debug 模式开启。 |
-| -db | only disables background mode. | 禁止后台模式。 |
-| -dM | [<byte>] poisons memory with <byte> (defaults to 0x50) | 执行分配内存。 |
-| -V | enters verbose mode (disables quiet mode) | 启动过程显示配置和轮询信息。 |
-| -D | goes daemon ;  | 开启守护进程模式。 |
-| -C  | changes to <dir> before loading files. | 在加载配置文件之前更改目录。 |
-| -W | master-worker mode. | 主从模式。 |
-| -q  | quiet mode : don't display messages | 静默模式，不输出信息。 |
-| -c | check mode : only check config files and exit | 检查配置信息文件。 |
-| -n | sets the maximum total # of connections (2000) | 最大总连接数。 |
-| -m | limits the usable amount of memory (in MB) | 最大使用内存。 |
-| -N | sets the default, per-proxy maximum # of connections (2000) | 单点最大连接数。 |
-| -L | set local peer name (default to hostname) | 本地实例对等名称。 |
-| -p | writes pids of all children to this file | HAProxy 进程 pid 信息写入 file。 |
-| -de | disables epoll() usage even when available | 禁止使用 speculative epoll。epoll 仅在 Linux 2.6 和某些定制的 Linux 2.4 系统上可用。 |
-| -dp | disables poll() usage even when available | 禁止使用 epoll。epoll 仅在 Linux 2.6 和某些定制的 Linux 2.4 系统上可用。 |
-| -dS | disables splice usage (broken on old kernels) | 禁止使用 speculativeepoll。epoll 仅在 Linux 2.6 和某些定制的 Linux 2.4 系统上可用。|
-| -dR | disables SO_REUSEPORT usage | 禁止使用 `SO_REUSEPORT`。 |
-| -dr | ignores server address resolution failures | 忽略失败的 server。  |
-| -dV | disables SSL verify on servers side | 禁止使用 SSL 在 servers 端。 |
-| -sf/-st | <unix_socket> get listening sockets from a unix socket | 在启动后，在 pidlis t 中发送 FINISH 信号给 pid。收到此信号的进程将等待所有会话在退出之前完成。此选项必须最后指定，后跟任意数量的 PID。 从技术上讲，SIGTTOU 和 SIGUSR1 都被发送。 |
-| -x | <unix_socket>[,<bind options>...] new stats socket for the master | 获取 socket 信息。 |
-| -S | <unix_socket>[,<bind options>...] new stats socket for the master | 分配新的 socket。 |
+|参数|描述|
+|:-----|:-----|
+|-v|显示简略的版本信息|
+|-vv|显示详细的版本信息|
+|-d|debug 模式开启|
+| -db|仅禁止后台模式|
+|-dM [\<byte>]|执行分配内存|
+|-V|启动过程显示配置和轮询信息|
+|-D|开启守护进程模式|
+|-C \<dir>|在加载配置文件之前更改目录位置|
+|-W|主从模式|
+|-q|静默模式，不输出信息|
+|-c|只检查配置文件并在尝试绑定之前退出|
+|-n|设置最大总连接数为 2000 |
+|-m|限制最大可用内存（单位：MB）|
+|-N|设置单点最大连接数，默认为 2000 |
+|-L|本地实例对等名称|
+|-p|将 HAProxy 所有子进程的 PID 信息写入该文件 |
+|-de|禁止使用 speculative epoll，epoll 仅在 Linux 2.6 和某些定制的 Linux 2.4 系统上可用。|
+|-dp|禁止使用 epoll，epoll 仅在 Linux 2.6 和某些定制的 Linux 2.4 系统上可用。|
+|-dS|禁止使用 speculative epoll，epoll 仅在 Linux 2.6 和某些定制的 Linux 2.4 系统上可用。|
+|-dR|禁止使用 SO_REUSEPORT|
+|-dr|忽略服务器地址解析失败|
+|-dV|禁止在服务器端使用 SSL|
+|-sf/-st \<unix_socket> |在启动后，在 pidlist 中发送 FINISH 信号给 PID。收到此信号的进程将等待所有会话在退出之前完成，即优雅停止服务。此选项必须最后指定，后跟任意数量的 PID，SIGTTOU 和 SIGUSR1 都被发送。|
+|-x \<unix_socket>,[\<bind options>...]|获取 socket 信息|
+|-S \<unix_socket>,[\<bind options>...]|分配新的 socket|
+
 
 ## HAProxy 最佳实践
 
