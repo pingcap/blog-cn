@@ -35,7 +35,7 @@ HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，�
 
 ### 1. 硬件要求 
 
-根据 [HAProxy 官方文档]([http://cbonte.github.io/haproxy-dconv/2.0/management.html#1](http://cbonte.github.io/haproxy-dconv/2.0/management.html#1)) 对 HAProxy 的服务器硬件配置有以下建议（也可以根据负载均衡环境进行实际推算，在此基础上提高服务器配置）：
+根据 [HAProxy 官方文档](http://cbonte.github.io/haproxy-dconv/2.0/management.html#1) 对 HAProxy 的服务器硬件配置有以下建议（也可以根据负载均衡环境进行实际推算，在此基础上提高服务器配置）：
 
 |硬件资源|最低配置|
 |:---|:---|
