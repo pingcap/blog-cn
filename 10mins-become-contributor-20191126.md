@@ -6,7 +6,7 @@ summary: 我们将这个系列再向着数据库的核心前进一步，挑战�
 tags: ['TiDB','社区','Contributor','优化器']
 ---
 
-到今天为止，“成为 Contributor 系列”已经推出了 “支持 AST 还原为 SQL”，“为 TiKV 添加 built-in 函数”，“重构 TiDB built-in 函数“等一列活动。**这一次借着 TiDB 优化器重构的契机，我们将这个系列再向着数据库的核心前进一步，挑战一下「为 TiDB 的优化器增加优化规则」，带大家初步体验一下可以对查询的执行时间产生数量级影响的优化器的魅力。**
+到今天为止，“成为 Contributor 系列”已经推出了 “[支持 AST 还原为 SQL](https://pingcap.com/blog-cn/support-ast-restore-to-sql-text/)”，“[为 TiKV 添加 built-in 函数](https://pingcap.com/blog-cn/30mins-become-contributor-of-tikv/)”，“[向量化表达式](https://pingcap.com/blog-cn/10mins-become-contributor-of-tidb-20190916/)”等一列活动。**这一次借着 TiDB 优化器重构的契机，我们将这个系列再向着数据库的核心前进一步，挑战一下「为 TiDB 的优化器增加优化规则」，带大家初步体验一下可以对查询的执行时间产生数量级影响的优化器的魅力。**
 
 众所周知优化器是数据库的核心组件，需要在合理的时间内寻找到一个合理的执行计划，确保查询可以稳定快速地返回正确的结果。最初的优化器只有一些启发式的优化规则，随着数据量和业务的变化，业界设计出了 System R 优化器框架来处理越来越多的复杂 SQL 查询。它将查询优化分为逻辑优化和物理优化两个阶段，逻辑优化根据规则对执行计划做等价变形，物理优化则根据统计信息和代价计算将逻辑执行计划转化为能更快执行的物理计划。目前 TiDB 优化器采用的也是该优化器模型。
 
@@ -22,7 +22,7 @@ tags: ['TiDB','社区','Contributor','优化器']
 
 2. 只针对特定的模式添加优化规则，不再需要遍历整个逻辑执行计划，不用熟知所有逻辑算子的功能，极大的降低了优化器的开发门槛。
 
-在这篇文章中，我们主要聚焦在一条优化规则是如何工作以及如何给这个新优化器添加规则上，先让大家对这个优化器有一个直观的感受——“优化器没什么难的，不过如此”。下一篇文章，我们将更加详细的介绍 TiDB Cascades Planner 的原理和框架，供感兴趣的同学深入研究，如果大家等不及的话，可以先阅读下面的参考文献，提前了解一下 Cascades 优化器模型：
+在这篇文章中，我们主要聚焦在一条优化规则是如何工作以及如何给新优化器添加规则上，先让大家对这个优化器有一个直观的感受——“优化器没什么难的，不过如此”。下一篇文章，我们将更加详细的介绍 TiDB Cascades Planner 的原理和框架，供感兴趣的同学深入研究，如果大家等不及的话，可以先阅读下面的参考文献，提前了解一下 Cascades 优化器模型：
 
 1.  [The Cascades Framework for Query Optimization](https://15721.courses.cs.cmu.edu/spring2018/papers/15-optimizer1/graefe-ieee1995.pdf)
 
@@ -113,7 +113,7 @@ func (r *PushSelDownProjection) GetPattern() *memo.Pattern {
 
 ## 如何添加一个 Transformation Rule
 
-添加一个 Transformation Rule 简单来说编写一个新的结构体，实现 `Transformation` 这个 interface 的三个接口。Cascades 架构的优势就是它做了足够的抽象，让添加 Rule 的工作不需要考虑太多繁杂的事情。如果你在添加 Rule 时觉得有些地方写起来不是那么顺手，可以立刻停下手中的键盘来 [#sig-planner](https://tidbcommunity.slack.com/messages/sig-planner) 中和我们做一些讨论。
+添加一个 Transformation Rule 简单来说就是编写一个新的结构体，实现 `Transformation` 这个 interface 的三个接口。Cascades 架构的优势就是它做了足够的抽象，让添加 Rule 的工作不需要考虑太多繁杂的事情。如果你在添加 Rule 时觉得有些地方写起来不是那么顺手，可以立刻停下手中的键盘来 [#sig-planner](https://tidbcommunity.slack.com/messages/sig-planner) 中和我们做一些讨论。
 
 当然这里还是要列出一些注意事项方便大家在添加 Transformation Rule 时不走歪路：
 
@@ -129,11 +129,11 @@ func (r *PushSelDownProjection) GetPattern() *memo.Pattern {
 
 ## 如何成为 Contributor
 
-为了方便和社区讨论 Planner 相关事情，我们在 [TiDB Community Slack](https://pingcap.com/tidbslack/) 中创建了[#sig-planner](https://tidbcommunity.slack.com/messages/sig-planner) 供大家交流讨论，之后还将成立优化器的专项兴趣小组，不设门槛，欢迎感兴趣的同学加入。尤其是在添加规则时遇到一些问题时，可以毫不犹豫的来 channel 里和我们吐槽～
+为了方便和社区讨论 Planner 相关事情，我们在 [TiDB Community Slack](https://pingcap.com/tidbslack/) 中创建了[#sig-planner](https://tidbcommunity.slack.com/messages/sig-planner) 供大家交流讨论，之后还将成立优化器的专项兴趣小组，不设门槛，欢迎感兴趣的同学加入。大家在添加规则时遇到一些问题时，可以毫不犹豫的来 channel 里和我们吐槽～
 
 **参与流程：**
 
-1.  在此 [Cascades Tracking Issue](https://github.com/pingcap/tidb/issues/13709) 中 `porting the existing rules in the old planner` 选择感兴趣的函数并告诉大家你会完成它。
+1.  在 [Cascades Tracking Issue](https://github.com/pingcap/tidb/issues/13709) 中 `porting the existing rules in the old planner` 选择感兴趣的函数并告诉大家你会完成它。
 
 2.  添加一个 rule 并为其增加单元测试。
 
