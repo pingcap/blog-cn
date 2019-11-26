@@ -2,12 +2,11 @@
 title: 十分钟成为 Contributor 系列 | 为 Cascades Planner 添加优化规则
 author: ['崔一丁']
 date: 2019-11-26
-summary: 最近我们扩展了 TiDB 表达式计算框架，增加了向量化计算接口，初期的性能测试显示，多数表达式计算性能可大幅提升，部分甚至可提升 1~2 个数量级。为了让所有的表达式都能受益，我们需要为所有内建函数实现向量化计算。
-tags: ['TiDB','社区','Contributor']
+summary: 我们将这个系列再向着数据库的核心前进一步，挑战一下「为 TiDB 的优化器增加优化规则」，带大家初步体验一下可以对查询的执行时间产生数量级影响的优化器的魅力。
+tags: ['TiDB','社区','Contributor','优化器']
 ---
 
-
-到今天为止，“成为 contributor 系列”已经推出了 “支持 AST 还原为 SQL”，“为 TiKV 添加 built-in 函数”，“重构 TiDB built-in 函数“等一列活动。这一次借着 TiDB 优化器重构的契机，我们将这个系列再向着数据库的核心前进一步，挑战一下**「为 TiDB 的优化器增加优化规则」**，帮助大家初步体验一下可以对查询的执行时间产生数量级影响的优化器的魅力。
+到今天为止，“成为 contributor 系列”已经推出了 “支持 AST 还原为 SQL”，“为 TiKV 添加 built-in 函数”，“重构 TiDB built-in 函数“等一列活动。这一次借着 TiDB 优化器重构的契机，我们将这个系列再向着数据库的核心前进一步，挑战一下**「为 TiDB 的优化器增加优化规则」**，带大家初步体验一下可以对查询的执行时间产生数量级影响的优化器的魅力。
 
 众所周知优化器是数据库的核心组件，需要在合理的时间内寻找到一个合理的执行计划，确保查询可以稳定快速地返回正确的结果。最初的优化器只有一些启发式的优化规则，随着数据量和业务的变化，业界设计出了 System R 优化器框架来处理越来越多的复杂 SQL 查询。它将查询优化分为逻辑优化和物理优化两个阶段，逻辑优化根据规则对执行计划做等价变形，物理优化则根据统计信息和代价计算将逻辑执行计划转化为能更快执行的物理计划。目前 TiDB 优化器采用的也是该优化器模型。
 
@@ -130,11 +129,9 @@ func (r *PushSelDownProjection) GetPattern() *memo.Pattern {
 
 ## 如何成为 Contributor
 
-**为了推进 Cascades Planner，我们正式成立 Planner SIG，其具体的目标和制度详见 XX**。
+为了方便和社区讨论 Planner 相关事情，我们在 [TiDB Community Slack](https://pingcap.com/tidbslack/) 中创建了[#sig-planner](https://tidbcommunity.slack.com/messages/sig-planner) 供大家交流讨论，之后还将成立优化器的专项兴趣小组，不设门槛，欢迎感兴趣的同学加入。尤其是在添加规则时遇到一些问题时，可以毫不犹豫的来 channel 里和我们吐槽～
 
-与此对应，我们在 [TiDB Community Slack](https://pingcap.com/tidbslack/) 中创建了[#sig-planner](https://tidbcommunity.slack.com/messages/sig-planner) 供大家交流讨论，不设门槛，欢迎感兴趣的同学加入。尤其是在添加规则时遇到一些问题时，可以毫不犹豫的来 channel 里和我们吐槽~
-
-代码贡献具体步骤：
+**参与流程：**
 
 1.  在此 [Cascades Tracking Issue](https://github.com/pingcap/tidb/issues/13709) 中 `porting the existing rules in the old planner` 选择感兴趣的函数并告诉大家你会完成它。
 
@@ -143,7 +140,5 @@ func (r *PushSelDownProjection) GetPattern() *memo.Pattern {
 3.  运行 `make dev`，保证所有 test 都能通过。
 
 4.  发起 Pull Request 并完成 merge 到主分支。
-
-如果贡献突出，你可能被提名为 Reviewer，Reviewer 的介绍请看 [这里](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#reviewer)。
 
 如果你有任何疑问，也欢迎到 [#sig-planner](https://tidbcommunity.slack.com/messages/sig-planner) 中提问和讨论。
