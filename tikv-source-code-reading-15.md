@@ -28,33 +28,33 @@ SELECT (count * price) AS sum FROM orders WHERE order_id < 100
 
 由于数学上习惯写法是中序遍历，我们通常要加上括号消除歧义（比如加减和乘除的顺序）。通过把操作符后移 我们得到 `RPN：2 3 4 + * 5 +`，这样我们无需括号就能无歧义地遍历这个表达式：
 
-1. 执行 RPN 的过程需要一个栈来缓存中间结果，比如说对于 `2 3 4 + * 5 +`，我们从左到右遍历表达式，遇到值就压入栈中。直到 `+` 操作符，栈中已经压入了 `2 3 4`。
-  
-  ![图 2 sample(2/8)](media/tikv-source-code-reading-15/2-sample-2.png)
+![图 2 sample(2/8)](media/tikv-source-code-reading-15/2-sample-2.png)
 
-2. 因为 `+` 是二元操作符，需要从栈中弹出两个值 `3 4`，结果为 `7`，重新压入栈中：
+执行 RPN 的过程需要一个栈来缓存中间结果，比如说对于 `2 3 4 + * 5 +`，我们从左到右遍历表达式，遇到值就压入栈中。直到 `+` 操作符，栈中已经压入了 `2 3 4`。
 
-  ![图 3 sample(3/8)](media/tikv-source-code-reading-15/3-sample-3.png)
+![图 3 sample(3/8)](media/tikv-source-code-reading-15/3-sample-3.png)
+ 
+因为 `+` 是二元操作符，需要从栈中弹出两个值 `3 4`，结果为 `7`，重新压入栈中：
 
-  ![图 4 sample(4/8)](media/tikv-source-code-reading-15/4-sample-4.png)
+![图 4 sample(4/8)](media/tikv-source-code-reading-15/4-sample-4.png)
 
-3. 此时栈中的值为 `2 7`。
+此时栈中的值为 `2 7`。
 
-  ![图 5 sample(5/8)](media/tikv-source-code-reading-15/5-sample-5.png)
+![图 5 sample(5/8)](media/tikv-source-code-reading-15/5-sample-5.png)
 
-4. 下一个是 `*` 运算符，也需要弹出两个值 `2 7`，结果为 `14` 压入栈中。
+下一个是 `*` 运算符，也需要弹出两个值 `2 7`，结果为 `14` 压入栈中。
 
-  ![图 6 sample(6/8)](media/tikv-source-code-reading-15/6-sample-6.png)
+![图 6 sample(6/8)](media/tikv-source-code-reading-15/6-sample-6.png)
 
-5. 接着压入 `5` 。
+接着压入 `5` 。
 
-  ![图 7 sample(7/8)](media/tikv-source-code-reading-15/7-sample-7.png)
+![图 7 sample(7/8)](media/tikv-source-code-reading-15/7-sample-7.png)
 
-6. 最后 `+` 运算符弹出 `14 5`，结果为 `19 `，压入栈。
+最后 `+` 运算符弹出 `14 5`，结果为 `19 `，压入栈。
 
-  ![图 8 sample(8/8)](media/tikv-source-code-reading-15/8-sample-8.png)
+![图 8 sample(8/8)](media/tikv-source-code-reading-15/8-sample-8.png)
 
-7. 最后留在栈里的就是表达式的结果。
+最后留在栈里的就是表达式的结果。
 
 ## 构建 RPN 表达式
 
