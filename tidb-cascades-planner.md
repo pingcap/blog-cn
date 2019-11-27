@@ -52,7 +52,7 @@ TiDB 中，一个 SQL 在进入到逻辑优化阶段之前，它的 AST（抽象
 
 上述的物理优化过程，存在几个潜在的问题：
 
-* 算子下推逻辑过于简单，难以应对未来添加的新的下推算子（例如 Projection 等），同时也没法针对某些特殊场景进行灵活地算子下推。
+* 算子下推逻辑过于简单，除了 Selection 之外只允许下推一个算子，难以应对未来添加的新的下推算子（例如 Projection 等），同时也没法针对某些特殊场景进行灵活地算子下推。
 
 * 扩展性差：难以扩展支持其他的存储引擎，并实现相应的算子下推，例如 [TiFlash](https://pingcap.com/blog-cn/tidb-with-tiflash-extension)（一个尚未开源的列存引擎）。
 
@@ -102,9 +102,10 @@ Pattern 用于描述 Group Expression 的局部特征。每个 Rule 都有自己
 
 #### Searching Algorithm
 
-Cascades Optimizer 的搜索算法与 Volcano Optimizer 有所不同，Volcano Optimizer 将搜索分为两个阶段，在第一个阶段枚举所有逻辑等价的  Logical Algebra，而在第二阶段运用动态规划的方法自顶向下地搜索代价最小的 Physical Algebra。Cascades Optimizer 则将这两个阶段融合在一起，在枚举逻辑等价算子的同时也进行物理算子的生成，这样就可以提早对一些搜索分支进行剪枝。
 
 Cascades Optimizer 为 Rule 的应用顺序做了很细致的设计，例如每个 Rule 都有 promise 和 condition 两个方法，其中 promise 用来表示 Rule 在当前搜索过程中的重要性，promise 值越高，则该规则越可能有用，当 promise 值小于等于 0 时，这个 Rule 就不会被执行；而 condition 直接通过返回一个布尔值决定一个 Rule 是否可以在当前过程中被应用。当一个 Rule 被成功应用之后，会计算下一步有可能会被应用的 Rule 的集合。
+
+Cascades Optimizer 的搜索算法与 Volcano Optimizer 有所不同，Volcano Optimizer 将搜索分为两个阶段，在第一个阶段枚举所有逻辑等价的  Logical Algebra，而在第二阶段运用动态规划的方法自顶向下地搜索代价最小的 Physical Algebra。Cascades Optimizer 则将这两个阶段融合在一起，通过提供一个 Guidance 来指导 Rule 的执行顺序，在枚举逻辑等价算子的同时也进行物理算子的生成，这样做可以避免枚举所有的逻辑执行计划，但是其弊端就是错误的 Guidance 会导致搜索在局部收敛，因而搜索不到最优的执行计划。
 
 Volcano/Cascades Optimzier 都使用了 Branch-And-Bound 的方法对搜索空间进行剪枝。由于两者都采用了自顶向下的搜索，在搜索的过程中可以为算子设置其 Cost Upper Bound，如果在向下搜索的过程中还没有搜索到叶子节点就超过了预设的 Cost Upper Bound，就可以对这个搜索分支预先进行剪枝。
 
@@ -216,7 +217,7 @@ type Transformation interface {
 
 #### Implementation/Implementation Rule
 
-Implementation 是对 PhysicalPlan 的一个封装，记录了一个 PhysicalPlan Tree 的 Physical Plan 和 Cost。
+Implementation 是对 PhysicalPlan 及其对应 cost 计算的一个封装。
 
 ```golang
 type Implementation interface {
@@ -230,7 +231,7 @@ type Implementation interface {
 }
 ```
 
-`ImplementationRule` 是一个接口类型，用来定义一个物理算子的选择。
+`ImplementationRule` 是一个接口类型，用来定义一个逻辑算子的一种物理实现方式。
 
 *   `ImplementationRule` 只能通过 Operand 来匹配，因此也需要一个 `Match()` 方法来对算子内部的细节做更细粒度的匹配。
 
@@ -308,15 +309,15 @@ TiDB Cascades Planner 在当前的设计中将搜索过程分为三个阶段：
 
 在搜索算法的实现中，主要涉及三个函数，下面我们自底向上的介绍这三个函数的作用。
 
-##### findMoreEquiv(group, groupExpr)
+**1）findMoreEquiv(group, groupExpr)**
 
 `findMoreEquiv(group, groupExpr)` 是对一个 GroupExpr 应用所有的 Transformation 来搜索更多的逻辑等价的 GroupExpr，其过程如下：
 
 1.  首先根据 GroupExpr 中对应的 Operand 来获取有可能匹配的 Transformation rule，我们在这里为所有的 Transformation rule 根据其 Pattern 中的最顶部 Operand 进行了分组，例如当 GroupExpr 是 Selection 时，只会尝试匹配所有 Pattern 以 Selection 开头的 Transformation rule。
 
-2.  寻找是否有以 GroupExpr 为根且与之对应 Pattern 匹配的结构；
+2.  寻找是否有以 GroupExpr 为根且与之对应 Pattern 匹配的结构。
 
-3.  如果找到这样的结构，则通过 `Match()` 方法进一步判断是否能够匹配相应的细节内容（例如 Join 的类型）；
+3.  如果找到这样的结构，则通过 `Match()` 方法进一步判断是否能够匹配相应的细节内容（例如 Join 的类型）。
 
 4.  最后如果 `Match()` 成功，则调用 `OnTransformation()` 方法来应用相应的变换规则。
 
@@ -326,7 +327,7 @@ TiDB Cascades Planner 在当前的设计中将搜索过程分为三个阶段：
 
 7.  如果 `OnTransformation` 返回的 `eraseAll` 为 `True`，那么可以删除当前 Group 中的所有 GroupExpr，插入新的 GroupExpr 并结束当前 Group 的搜索。
 
-##### exploreGroup(group)
+**2）exploreGroup(group)**
 
 `exploreGroup()` 方法自底向上递归地对整个 Group Tree 中的 GroupExpr 调用 `findMoreEquiv()`，主要过程如下：
 
@@ -334,7 +335,7 @@ TiDB Cascades Planner 在当前的设计中将搜索过程分为三个阶段：
 
 2.  当某个 GroupExpr 的子 Group 被搜索完全后，对当前 GroupExpr 调用 `findMoreEquiv()`，若返回的 `eraseCur` 为 `True`，则将这个 GroupExpr 从 Group 中删除。
 
-##### OnPhaseExploration(group)
+**3）OnPhaseExploration(group)**
 
 最后一个部分就是对顶部的 Group (root Group)，循环调用 `exploreGroup()`，直至所有的 Group 都不再产生新的 GroupExpr 为止。
 
@@ -346,7 +347,7 @@ Implementation Phase 与现行的优化器中的 Physical Optimize 类似，都�
 
 我们可以将这个过程分为三部分：
 
-**1. implGroupExpr(groupExpr, reqPhysicalProp)**
+**1）implGroupExpr(groupExpr, reqPhysicalProp)**
 
 `implGroupExpr` 为一个 GroupExpr 根据上层传递下来的 PhysicalProperty 来生成 Implementation。过程十分简单，就是尝试对当前的 GroupExpr 应用所有对应的 ImplementationRule，最后将匹配成功后产生的 Implementations 返回。
 
@@ -369,7 +370,7 @@ func (opt *Optimizer) implGroupExpr(groupExpr *memo.GroupExpr, reqPhysProp *prop
 ```
 
 
-**2. implGroup(group, reqPhysicalProp, costLimit)**
+**2）implGroup(group, reqPhysicalProp, costLimit)**
 
 `implGroup()` 根据上层传递下来的 PhysicalProperty 递归地为 Group 生成最优的 Implementation。
 
@@ -383,7 +384,7 @@ func (opt *Optimizer) implGroupExpr(groupExpr *memo.GroupExpr, reqPhysProp *prop
 
 * 最后就是调用 `implGroupExpr()` 来产生 Implementation 和递归调用 `implGroup()`来搜索子 Group 的过程。
 
-**3. EnforcerRule**
+**3）EnforcerRule**
 
 上文中我们没有详细介绍 Enforcer 的概念，我们在这里补充。例如我们有这样一个 SQL：
 
@@ -392,6 +393,8 @@ select b, sum(c) over (partition by b) from t
 ```
 
 这是一个带有 Window Function 的查询，Window 中以 `b` 列为分组，由于目前 Window 的实现是需要下层算子根据分组列有序，当没有可以使 `b` 列有序的索引时，我们必须在 Window 算子下面强制添加一个 Sort 算子来满足 Window 算子向下传递的 PhysicalProperty。
+
+当在 `ImplGroup()` 中上层传递下来的 PhysicalProperty 不为空时，我们会为这个 Group 调用 EnforcerRule，EnforcerRule 会先强制添加一个 Sort 算子，然后再用空的 PhysicalProperty 来重新对当前的 Group 调用 `ImplGroup()`。
 
 ## 总结
 
