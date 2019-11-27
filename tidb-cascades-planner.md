@@ -44,7 +44,7 @@ TiDB 中，一个 SQL 在进入到逻辑优化阶段之前，它的 AST（抽象
 
 下图展示了一个简单的聚合查询如何经过优化得到最后的物理计划：
 
-![](media/tidb-cascades-planner/1.png)
+![1-聚合查询](media/tidb-cascades-planner/1-聚合查询.png)
 
 1. 首先在逻辑优化阶段，Selection 中的过滤条件会被下推到 DataSource 中的 AccessConds 中。
 2. 在物理优化阶段其中的 `A.pk > 10` 会转换为主键的范围条件，而 `A.value > 1` 则会产生一个 TiKV 层的 Selection。
@@ -82,11 +82,11 @@ Cascades Optimizer 是 Volcano Optimizer 的后续作品，其对 Volcano Optimi
 
 Cascades Optimizer 在搜索的过程中，其搜索的空间是一个关系代数算子树所组成的森林，而保存这个森林的数据结构就是 Memo。Memo 中两个最基本的概念就是 Expression Group（下文简称 Group） 以及 Group Expression（对应关系代数算子）。每个 Group 中保存的是逻辑等价的 Group Expression，而 Group Expression 的子节点是由 Group 组成。下图是由五个 Group 组成的 Memo：
 
-![](media/tidb-cascades-planner/2.png)
+![2-Memo](media/tidb-cascades-planner/2-Memo.png)
 
 我们可以通过上面的 Memo 提取出以下两棵等价的算子树，使用 Memo 存储下面两棵树，可以避免存储冗余的算子（如 Scan A 以及 Scan B）。
 
-![](media/tidb-cascades-planner/3.png)
+![3-等价算子树](media/tidb-cascades-planner/3-等价算子树.png)
 
 #### Rule
 
@@ -98,7 +98,7 @@ Cascades Optimizer 在搜索的过程中，其搜索的空间是一个关系代�
 
 Pattern 用于描述 Group Expression 的局部特征。每个 Rule 都有自己的 Pattern，只有满足了相应 Pattern 的 Group Expression 才能够应用该 Rule。下图中左侧定义了一个 `Selection->Projection` 的 Pattern，并在右侧 Memo 中红色虚线内出现了匹配的 Group Expression。
 
-![](media/tidb-cascades-planner/4.png)
+![4-Pattern](media/tidb-cascades-planner/4-Pattern.png)
 
 #### Searching Algorithm
 
@@ -205,7 +205,7 @@ type Transformation interface {
 
 参考下图：
 
-![](media/tidb-cascades-planner/5.png)
+![5-sample](media/tidb-cascades-planner/5-sample.png)
 
 1.  在 Group0 中的 Selection 匹配到了 Pattern `Selection -> Aggregation`。
 
@@ -283,7 +283,7 @@ PhysicalProperty 中记录 OrderBy Items 以及 ExpectedCount，这两者与 [Ti
 
 * 若 TiDB 想要使用别的存储引擎，在优化器中只需要实现对应的 Gather 算子以及物理优化阶段的 Reader 算子。
 
-![](media/tidb-cascades-planner/6.png)
+![6-Adapter-Model](media/tidb-cascades-planner/6-Adapter-Model.png)
 
 
 ### 优化过程
@@ -314,7 +314,7 @@ TiDB Cascades Planner 在当前的设计中将搜索过程分为三个阶段：
 
 1.  首先根据 GroupExpr 中对应的 Operand 来获取有可能匹配的 Transformation rule，我们在这里为所有的 Transformation rule 根据其 Pattern 中的最顶部 Operand 进行了分组，例如当 GroupExpr 是 Selection 时，只会尝试匹配所有 Pattern 以 Selection 开头的 Transformation rule。
 
-2.  寻找是否有以 GroupExpr 为首且与之对应 Pattern 匹配的结构；
+2.  寻找是否有以 GroupExpr 为根且与之对应 Pattern 匹配的结构；
 
 3.  如果找到这样的结构，则通过 `Match()` 方法进一步判断是否能够匹配相应的细节内容（例如 Join 的类型）；
 
@@ -375,9 +375,9 @@ func (opt *Optimizer) implGroupExpr(groupExpr *memo.GroupExpr, reqPhysProp *prop
 
 *  Implementation Phase 实际上是一个记忆化搜索的过程，每个 Group 搜索到一个 PhysicalProperty 对应最优的 Implementation 后都会将其记录下来，因此在搜索之前可以先查看是否可以从历史结果中查询到 `reqPhysicalProp` 对应的最优 Implementation。
 
-* CostLimit 是在搜索过程中用于预剪枝的 Cost 上界，要注意的是使用 CostLimit 的前提是：Cost 必须的自底向上单调递增。我们以下图为例，Expr0 和 Expr1 是 Group0 中逻辑等价的 GroupExpr，Expr0 产生的最优的 Implementation 的 Cost 是 1000，此时我们会用 CostLimit = 1000 去搜索 Expr1，我们的目的是让 Expr1 产生更好的（Cost 更小的）Implementation，但是 Expr1 在向下搜索的过程中，Expr4 的最优 Implementation 的 Cost 是 1200，大于了 CostLimit，也就是说 Expr1 产生的 Implementation 的 Cost 一定是大于 1200 的，所以 Expr1 在这条路径上无论如何都不会比 Expr0 产生的 Implementation 更优，因此我们会将这条搜索路径剪枝，不对 Expr1、Expr3 再进行搜索。
+* CostLimit 是在搜索过程中用于预剪枝的 Cost 上界，要注意的是使用 CostLimit 的前提是：Cost 必须自底向上单调递增。我们以下图为例，Expr0 和 Expr1 是 Group0 中逻辑等价的 GroupExpr，Expr0 产生的最优的 Implementation 的 Cost 是 1000，此时我们会用 CostLimit = 1000 去搜索 Expr1，我们的目的是让 Expr1 产生更好的（Cost 更小的）Implementation，但是 Expr1 在向下搜索的过程中，Expr4 的最优 Implementation 的 Cost 是 1200，大于了 CostLimit，也就是说 Expr1 产生的 Implementation 的 Cost 一定是大于 1200 的，所以 Expr1 在这条路径上无论如何都不会比 Expr0 产生的 Implementation 更优，因此我们会将这条搜索路径剪枝，不对 Expr1、Expr3 再进行搜索。
 
-![](media/tidb-cascades-planner/7.png)
+![7-CostLimit](media/tidb-cascades-planner/7-CostLimit.png)
 
 * 在生成 Implementation 之前会先对当前的 Group 调用`fillGroupStats()`来填充LogicalProperty 里的统计信息。
 
