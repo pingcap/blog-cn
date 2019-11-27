@@ -22,7 +22,7 @@ TiDB 中，一个 SQL 在进入到逻辑优化阶段之前，它的 AST（抽象
 
 2.  不管什么样的 SQL，在逻辑优化阶段，所有的优化规则都按照同一个固定的顺序依次去看是否能够作用于当前的逻辑执行计划，例如最先执行的规则总是列剪裁。逻辑优化规则之间的顺序需要经过有经验的优化器老手精心的安排，例如分区表处理（PartitionProcess）要在谓词下推后进行。这就导致所有人在添加优化规则的时候都需要小心翼翼地安排这个顺序，添加一个优化规则需要了解其他所有优化规则，门槛较高。
 
-3.  逻辑优化阶段，每个规则至多只会在被顺序遍历到的时候执行一次，但实际场景中，往往存在之前某个已经执行过的优化规则可以再次被执行的情况。我们以一个例子来说明，对于这个简单的 SQL：`select b from t where a >1`，其中 `a` 是 `int` 类型的主键，我们最终会产生这样一个物理执行计划：
+3.  逻辑优化阶段，每个规则至多只会在被顺序遍历到的时候执行一次，但实际场景中，往往存在之前某个已经执行过的优化规则可以再次被执行的情况。我们以一个例子来说明，对于这个简单的 SQL：`select b from t where a > 1`，其中 `a` 是 `int` 类型的主键，我们最终会产生这样一个物理执行计划：
 
 	```
 	TableScan(table: t, range:(1, inf]) -> TableReader(a, b) -> Projection(b)
@@ -32,7 +32,7 @@ TiDB 中，一个 SQL 在进入到逻辑优化阶段之前，它的 AST（抽象
 
 ### 物理优化
 
-物理优化是一个将逻辑算子树转化为物理算子树的过程，我们在之前的[TiDB 源码阅读系列文章（八）基于代价的优化](https://pingcap.com/blog-cn/tidb-source-code-reading-8/) 中做过详细的介绍。在物理优化中，优化器会结合数据的分布（统计信息）情况来对查询计划进行优化，物理优化是一个记忆化搜索的过程，搜索的目标是为逻辑执行计划寻找满足特定物理属性的物理执行计划，并在其中选择代价最低的作为搜索结果，因此也被称为基于代价的优化（Cost-Based Optimization，CBO），例如 DataSource 应该选择怎样的扫描路径（使用哪个索引），Join 应该选择怎样的执行方式（HashJoin、MergeJoin 或 IndexJoin）等。
+物理优化是一个将逻辑算子树转化为物理算子树的过程，我们在之前的 [TiDB 源码阅读系列文章（八）基于代价的优化](https://pingcap.com/blog-cn/tidb-source-code-reading-8/) 中做过详细的介绍。在物理优化中，优化器会结合数据的分布（统计信息）情况来对查询计划进行优化，物理优化是一个记忆化搜索的过程，搜索的目标是为逻辑执行计划寻找满足特定物理属性的物理执行计划，并在其中选择代价最低的作为搜索结果，因此也被称为基于代价的优化（Cost-Based Optimization，CBO），例如 DataSource 应该选择怎样的扫描路径（使用哪个索引），Join 应该选择怎样的执行方式（HashJoin、MergeJoin 或 IndexJoin）等。
 
 在 TiDB 中，物理优化不仅仅是选择物理算子，还完成了算子下推 TiKV 的任务，例如将 Aggregation 算子分裂成 FinalMode 和 PartialMode 两部分，并将 PartialMode 的 Aggregation 下推到 TiKV Coprocessor 中执行，具体可以参考 [TiDB 源码阅读系列文章（二十二）Hash Aggregation](https://pingcap.com/blog-cn/tidb-source-code-reading-22/)。
 
@@ -54,7 +54,7 @@ TiDB 中，一个 SQL 在进入到逻辑优化阶段之前，它的 AST（抽象
 
 * 算子下推逻辑过于简单，难以应对未来添加的新的下推算子（例如 Projection 等），同时也没法针对某些特殊场景进行灵活地算子下推。
 
-* 扩展性差：难以扩展支持其他的存储引擎，并实现相应的算子下推，例如 TiFlash（一个尚未开源的列存引擎）。
+* 扩展性差：难以扩展支持其他的存储引擎，并实现相应的算子下推，例如 [TiFlash](https://pingcap.com/blog-cn/tidb-with-tiflash-extension)（一个尚未开源的列存引擎）。
 
 * 难以添加针对特殊数据源的优化规则，优化器的搜索空间进一步被限制。
 
@@ -189,7 +189,6 @@ Transformation 是一个接口类型，用来定义一个逻辑变换规则。
 *   `OnTransform()` 方法中定义了变换规则的具体内容，返回的内容分别是新的 GroupExpr，是否删除旧的 `GroupExpr`，是否删除旧的 Group 中所有的 `GroupExpr`。
 
 ```golang
-// Transformation defines the interface for the transformation rules.
 type Transformation interface {
   GetPattern() *memo.Pattern
  
@@ -200,7 +199,7 @@ type Transformation interface {
 ```
 
 
-下面我们以一个变换规则：`PushSelDownAggregation` 为例，具体介绍上面三个方法的使用方式。
+下面我们以一个变换规则：[`PushSelDownAggregation`](https://github.com/pingcap/tidb/blob/6a5955750014f239a41362059ced6d8ab420f7b4/planner/cascades/transformation_rules.go#L394) 为例，具体介绍上面三个方法的使用方式。
 
 这个规则匹配的 Pattern 是 `Selection -> Aggregation`，作用则是将这个 Selection 下推到 Aggregation 下面，例如 SQL: `select a, sum(b) from t group by a having a > 10 and max(c) > 10` 中，having 条件里的 `a > 10` 可以下推到 Aggregation 的下方。更具体地来说，只要 Selection 当中的一个 Expression 里的所有列都出现在 group by 的分组列时，我们就可以把这个 Expression 进行下推。
 
@@ -210,7 +209,7 @@ type Transformation interface {
 
 1.  在 Group0 中的 Selection 匹配到了 Pattern `Selection -> Aggregation`。
 
-2.  执行了 `OnTransform()` 的转换，Selection 中的 `a > 10` 条件被下推到了新的 Aggregation 下方，并且保留的条件 `max(c) < 10` 成为了一个新的 Selection。
+2.  执行了 `OnTransform()` 的转换，Selection 中的 `a > 10` 条件被下推到了新的 Aggregation 下方，并且保留的条件 `max(c) > 10` 成为了一个新的 Selection。
 
 3.  由于 `OnTransform()` 的 `eraseOld` 返回了 `True`，因此最终把原来的 GroupExpr 从 Group 中删除。
 
@@ -389,10 +388,10 @@ func (opt *Optimizer) implGroupExpr(groupExpr *memo.GroupExpr, reqPhysProp *prop
 上文中我们没有详细介绍 Enforcer 的概念，我们在这里补充。例如我们有这样一个 SQL：
 
 ```sql
-select b, sum(c) over (partition by b) from t`
+select b, sum(c) over (partition by b) from t
 ```
 
-这是一个带有 Window Function 的查询，Window 中以 `b `列为分组，由于目前 Window 的实现是需要下层算子根据分组列有序，当没有可以使 `b `列有序的索引时，我们必须在 Window 算子下面强制添加一个 Sort 算子来满足 Window 算子向下传递的 PhysicalProperty。
+这是一个带有 Window Function 的查询，Window 中以 `b` 列为分组，由于目前 Window 的实现是需要下层算子根据分组列有序，当没有可以使 `b` 列有序的索引时，我们必须在 Window 算子下面强制添加一个 Sort 算子来满足 Window 算子向下传递的 PhysicalProperty。
 
 ## 总结
 
