@@ -280,9 +280,9 @@ PhysicalProperty 中记录 OrderBy Items 以及 ExpectedCount，这两者与 [Ti
 
 为了使 TiDB 能够使用在各种不同的存储组件之上，我们为 TiDB Cascades Planner 引入了 Adapter Model。所谓 Adapter Model 指的是，我们在 LogicalPlan 中添加各种用来从存储引擎收集数据的算子，例如 `TiKVTableGather`、`TiFlashTableGather` 甚至 `MySQLGather` 等，这些 Gather 算子最终在物理优化阶段会被改写成 `TableReader`、`IndexReader` 等用来读取数据的算子，因此 Gather 的所有父亲算子都是在 TiDB 中执行的，而 Gather 所有子节点的算子都是在相应的存储引擎上执行的。这样做有两个好处：
 
-1.  我们可以在逻辑优化阶段就区分出不同的存储引擎，可以针对不同的存储引擎设计不同的算子下推策略。
+* 我们可以在逻辑优化阶段就区分出不同的存储引擎，可以针对不同的存储引擎设计不同的算子下推策略。
 
-2.  若 TiDB 想要使用别的存储引擎，在优化器中只需要实现对应的 Gather 算子以及物理优化阶段的 Reader 算子。
+* 若 TiDB 想要使用别的存储引擎，在优化器中只需要实现对应的 Gather 算子以及物理优化阶段的 Reader 算子。
 
 ![](media/tidb-cascades-planner/6.png)
 
