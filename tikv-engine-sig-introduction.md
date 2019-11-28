@@ -19,7 +19,7 @@ Engine SIG 的工作主要涉及的模块包括：
 *   Titan：提供 KV 分离支持的 RocksDB 存储引擎插件。
 *   未来 TiKV 对其它存储引擎的支持。
 
-## 如何加入 Engine SIG？
+## 如何加入 Engine SIG
 
 Engine SIG 欢迎所有开发者加入， 无论你是数据库开发新手，希望通过实战了解存储开发相关知识，还是 TiKV 资深用户，希望扩展 TiKV 的能力以应用到生产环境。有兴趣的开发者可以浏览 Engine SIG 文档并加入 Engine SIG 的 Slack 频道。Engine SIG 希望能够帮助 contributor 逐渐成长为 reviewer, committer 乃至 TiKV 的 maintaner。
 
@@ -43,3 +43,4 @@ Engine SIG Slack：加入 tikv-wg.slack.com 并进入 [#engine-sig](https://tikv
 
 未来 Engine SIG 会更多关注于为 TiKV 引入新的存储引擎。这上面可以做的工作很多。比如说，我们可以考虑为 TiKV 引入针对不同硬件（纯内存、持久化内存、云盘等）的存储引擎，不同数据结构的存储引擎（B-Tree 引擎等），针对特殊场景的存储引擎（全文搜索等），或者单纯是不一样的存储引擎实现（LevelDB 等）。这些工作非常需要社区的参与。我们希望这些工作未来能够扩展 TiKV 的领域和可能。目前 TiKV 正在加紧对存储引擎抽象 Engine Trait 进行开发，使以上的设想成为可能。
 
+期待社区伙伴们的加入！欢迎在 Slack [#engine-sig](https://tikv-wg.slack.com/?redir=%2Fmessages%2Fengine-sig) 中与我们交流！如果对于流程或技术细节有任何疑问，都可在 channel 中讨论～
