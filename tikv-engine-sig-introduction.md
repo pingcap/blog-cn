@@ -8,7 +8,7 @@ tags: ['TiKV','社区','存储引擎']
 
 TiKV 是一个开源项目，我们一直都欢迎和感激开源社区对 TiKV 所作出的贡献。但我们之前对开源社区的合作主要是在代码审阅和散落在各种社交媒体的线下讨论，开发者并没有合适的途径去了解和影响 TiKV 的开发计划。怎么才能更好的帮助大家找到组织，更好地参与到 TiKV 的开发中来呢？我们的设想是搭建公开的平台，邀请对 TiKV 中特定领域感兴趣的开发者加入其中，与我们一起探讨和推进相应工作。Special Interest Group（SIG）就是这样的平台。
 
-TiKV Engine SIG 是继 [Coprocessor SIG](https://pingcap.com/blog-cn/tikv-coprocessor-sig/) 以后第二个成立的 TiKV SIG 社区组织，主要职责是对 TiKV 的存储引擎的未来发展进行讨论和规划，并进行相关开发和维护。
+TiKV Engine SIG 是继 [Coprocessor SIG](https://pingcap.com/blog-cn/tikv-coprocessor-sig/) 之后成立的第二个 TiKV SIG 社区组织，主要职责是对 TiKV 的存储引擎的未来发展进行讨论和规划，并进行相关开发和维护。
 
 目前 TiKV 仅支持默认存储引擎 RocksDB，但是通过扩展接口，希望未来 TiKV 可以支持更多的存储引擎，我们也期待这部分工作可以得到社区的支持，在社区的讨论和贡献中得到更好的完善。此外，Engine SIG 也会对已有的存储引擎进行相关的开发和完善工作。
 
@@ -21,13 +21,15 @@ Engine SIG 的工作主要涉及的模块包括：
 
 ## 如何加入 Engine SIG
 
-Engine SIG 欢迎所有开发者加入， 无论你是数据库开发新手，希望通过实战了解存储开发相关知识，还是 TiKV 资深用户，希望扩展 TiKV 的能力以应用到生产环境。有兴趣的开发者可以浏览 Engine SIG 文档并加入 Engine SIG 的 Slack 频道。Engine SIG 希望能够帮助 contributor 逐渐成长为 reviewer, committer 乃至 TiKV 的 maintaner。
+无论你是数据库开发新手，希望通过实战了解存储开发相关知识；​还是 TiKV 资深用户，希望扩展 TiKV 的能力以应用到生产环境，Engine SIG 都欢迎你的加入！
 
-Engine SIG 主页：[https://github.com/tikv/community/tree/master/sig/engine](https://github.com/tikv/community/tree/master/sig/engine)
+有兴趣的开发者可以浏览 Engine SIG 文档并加入 Engine SIG 的 Slack 频道。Engine SIG 希望能够帮助 Contributor 逐渐成长为 Reviewer，Committer 乃至 TiKV 的 Maintaner。
 
-Engine SIG 章程：[https://github.com/tikv/community/blob/master/sig/engine/constitution-zh_CN.md](https://github.com/tikv/community/blob/master/sig/engine/constitution-zh_CN.md)
+* Engine SIG 主页：[https://github.com/tikv/community/tree/master/sig/engine](https://github.com/tikv/community/tree/master/sig/engine)
 
-Engine SIG Slack：加入 tikv-wg.slack.com 并进入 [#engine-sig](https://tikv-wg.slack.com/?redir=%2Fmessages%2Fengine-sig) 频道。
+* Engine SIG 章程：[https://github.com/tikv/community/blob/master/sig/engine/constitution-zh_CN.md](https://github.com/tikv/community/blob/master/sig/engine/constitution-zh_CN.md)
+
+* Engine SIG Slack：加入 tikv-wg.slack.com 并进入 [#engine-sig](https://tikv-wg.slack.com/?redir=%2Fmessages%2Fengine-sig) 频道。
 
 ## 近期工作计划
 
