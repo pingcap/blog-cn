@@ -50,7 +50,7 @@ tags: ['跨数据中心']
 
 1.  西安的 TiDB 向北京的 PD 发起获取 TSO 请求，得到一个 start_ts（事务开始阶段的 ID）。（1 RTT）
 
-2.  西安的 TiDB 为涉及到的每个 region 向北京的 TiKV leader 节点发起多个（并行）读请求（如图 4）。（1 RTT）
+2.  西安的 TiDB 为涉及到的每个 Region 向北京的 TiKV leader 节点发起多个（并行）读请求（如图 4）。（1 RTT）
 
 >名词解释：
 >
@@ -125,7 +125,7 @@ Follower Replication 的目标是将这个多次的跨数据中心传输尽量�
 
 除了我们在 Hackathon 做的两个优化，跨数据中心的场景有更多需要解决的问题和可以优化的点，我们的优化也远非最终实现，一些不难想到的优化还有：
 
-1.  Follower Read Improvement 能将一个非交互式的读事务从 2RTT 降到 1RTT，但对于交互式的读事务，由于事先不知道涉及到事务的 Region，无法预读整个读请求中所有 region `read_index`，因此只有第一次读请求和 `get_tso` 可以并行，将 n+1 RTT 优化到了 n RTT（n 为交互式事务中读语句的数量），而如果我们能将 ts 和 committed index 的对应关系找到，并且定期维护每个 region 的 safe ts（小于该 ts 的事务一定已经 committed or aborted），那么我们就可以将交互式读事务的延迟也降低到 1RTT。
+1.  Follower Read Improvement 能将一个非交互式的读事务从 2RTT 降到 1RTT，但对于交互式的读事务，由于事先不知道涉及到事务的 Region，无法预读整个读请求中所有 Region `read_index`，因此只有第一次读请求和 `get_tso` 可以并行，将 n+1 RTT 优化到了 n RTT（n 为交互式事务中读语句的数量），而如果我们能将 ts 和 committed index 的对应关系找到，并且定期维护每个 Region 的 safe ts（小于该 ts 的事务一定已经 committed or aborted），那么我们就可以将交互式读事务的延迟也降低到 1RTT。
 
 2.  跨数据中心的读请求一个很常见的场景是并不需要是最新的数据，应该提供怎么样的语义来让这种场景下的读请求完全在本地 0RTT 地读取数据，真正做到对主数据中心无依赖，做到数据中心级别的 scalability。
 
