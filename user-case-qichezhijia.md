@@ -44,11 +44,11 @@ SQL Server + .Net 是很多早期互联网企业的标配技术栈，虽然 TiDB
 
 6.  官方的技术人员经常到公司进行交流。
 
-![TiDB 的研发同学到之家进行技术交流](media/user-case-qichezhijia/1-技术交流.jpg)
+![TiDB 的研发同学到之家进行技术交流](media/user-case-qichezhijia/1-技术交流.png)
 
 <center>TiDB 的研发同学到之家进行技术交流</center>
 
-![我们去 TiDB 进行系统的课程培训](media/user-case-qichezhijia/2-技术交流-2.jpg)
+![我们去 TiDB 进行系统的课程培训](media/user-case-qichezhijia/2-技术交流-2.png)
 
 <center>我们去 TiDB 进行系统的课程培训</center>
 
@@ -78,9 +78,9 @@ SQL Server + .Net 是很多早期互联网企业的标配技术栈，虽然 TiDB
 
 	>TPC Benchmark™H（TPC-H） 是决策支持基准。 它由一套面向业务的临时查询和并发数据修改组成。 选择查询和填充数据库的数据具有广泛的行业范围相关性。 该基准测试说明了决策支持系统，该系统可检查大量数据，高度复杂地执行查询并为关键业务问题提供答案。
 
-3.  异常测试: 我们测试了 PD、TiKV 异常宕机情况下的表现，对业务影响很小，可实现自动故障恢复。
+3.  异常测试：我们测试了 PD、TiKV 异常宕机情况下的表现，对业务影响很小，可实现自动故障恢复。
 
-## 四 迁移方案
+## 四、迁移方案
 
 ### 4.1 迁移前需要解决的问题
 
@@ -118,15 +118,15 @@ SQL Server + .Net 是很多早期互联网企业的标配技术栈，虽然 TiDB
 
 ![5-流程](media/user-case-qichezhijia/5-流程.png)
 
-下面会详细介绍全量和增量同步的实施方案。
+下面我们来详细介绍全量和增量同步的实施方案。
 
-## 五 全量同步
+## 五、全量同步
 
 首先我们要感谢以下两个开源项目，站在巨人的肩膀上使我们节约了很多时间。
 
-[https://github.com/alibaba/yugong](https://github.com/alibaba/yugong) 
+* [https://github.com/alibaba/yugong](https://github.com/alibaba/yugong) 
 
-[https://github.com/alswl/yugong](https://github.com/alswl/yugong)
+* [https://github.com/alswl/yugong](https://github.com/alswl/yugong)
 
 愚公是阿里巴巴推出的一款 Oracle 数据迁移同步工具，而作者 alswl 在此基础上实现了 SQL Server 数据源的支持。在此愚公的使用方法我们不再赘述，感兴趣的同学请自行查看。
 
@@ -139,13 +139,10 @@ Yugong 数据流是标准 ETL 流程，分别有 Extractor、 Translator、Appli
 首先讲 Extractor，愚公原有的配置方式是将需要导出的库表写在配置文件当中，这对于 1000+ 张表来说，太不现实了。这里我们增了一个新特性，在不配置需要导出的表名的情况下，将数据库中所有的用户表读出来，并通过一个新增的配置项进行正则匹配，以此决定哪些表需要进行数据同步。
 
 ```
-
 #查询表
-
 SELECT name FROM sys.databases WITH (nolock) WHERE state_desc = 'ONLINE'
 
 #查询开启CDC的表
-
 SELECT name FROM %s.sys.tables t WITH (nolock) JOIN %s.[cdc].[change_tables] ct WITH (nolock) ON t.object_id = ct.source_object_id
 
 ```
@@ -153,16 +150,14 @@ SELECT name FROM %s.sys.tables t WITH (nolock) JOIN %s.[cdc].[change_tables] ct 
 其次，合库合表后，原有 SQL Server 中各个表的自增主键 ID 冲突，所以新增实现 RowDataMergeTranslator，其功能是，读取内存中的 RowData 然后进行转换，将从 SQL Server 中读取的行数据，丢弃其原有的主键列，转而使用 TiDB 生成。并根据配置文件决定哪些表需要实现这一特性。
 
 ```
-
 record.removeColumnByName(config.getDiscardKey());
-
 ```
 
 最后的 Applier 并未做改动，处理好的数据直接写入 TiDB。
 
 自此合库合表的事情我们解决了。
 
-## 六 增量同步与实时校验
+## 六、增量同步与实时校验
 
 在实现这部分需求的时候，我们应用了 SQL Server 的 CDC，并在增量同步的基础上增加了延迟验证数据正确性的功能。更多关于 CDC 的内容，这里不再赘诉，你只需要知道它能获取到增量数据，参考[CDC官方文档](https://docs.microsoft.com/en-us/sql/relational-databases/track-changes/about-change-data-capture-sql-server?view=sql-server-ver15)。
 
@@ -217,7 +212,7 @@ record.removeColumnByName(config.getDiscardKey());
 
 <center>通过业务 ID 决定数据写到哪个库表</center>
 
-## 九 、TiDB 周边体系建设
+## 九、TiDB 周边体系建设
 
 除以上迁移流程所涉及到的功能点以外，我们还制定了一些开发规范和一些实用工具的研发，用以保障 TiDB 在汽车之家更好的应用。
 
@@ -232,7 +227,7 @@ record.removeColumnByName(config.getDiscardKey());
 
 >TiSlowSQL 也是汽车之家运维组参加 Hackathon 项目，具体内容敬请期待后续文章！
 
-## 十 总结与展望
+## 十、总结与展望
 
 汽车之家社区已于 9 月底正式上线分布式数据库 TiDB，目前运行稳定。在其他业务迁移完成之后，汽车之家社区的 SQL Server 服务会逐步下线。对于本次迁移的过程我们做了以下几点总结：
 
