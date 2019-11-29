@@ -2,7 +2,7 @@
 title: 流量和延迟减半！挑战 TiDB 跨数据中心难题
 author: ['.* team']
 date: 2019-11-29
-summary: 我们针对 TiDB 跨数据中心方案做了一些优化，使得跨地域 SQL查询延迟下降 50%，跨节点消息数减半，即网络流量减半。
+summary: 我们针对 TiDB 跨数据中心方案做了一些优化，使得跨地域 SQL 查询延迟下降 50%，跨节点消息数减半，即网络流量减半。
 tags: ['跨数据中心']
 ---
 
@@ -15,7 +15,7 @@ tags: ['跨数据中心']
 
 在今年 TiDB Hackathon 的比赛过程中，我们针对以上问题做了一些有趣的事情，并获得如下优化成果：
 
-1. 跨地域 SQL查询，延迟下降 50%（图 1）。
+1. 跨地域 SQL 查询，延迟下降 50%（图 1）。
 2. 跨节点消息数减半，即网络流量减半（图 2）。
 
 ![图 1 延迟对比](media/geographic-data-distribution-traffic-and-latency-halved/1-延迟对比.png)
@@ -50,7 +50,7 @@ tags: ['跨数据中心']
 
 1.  西安的 TiDB 向北京的 PD 发起获取 TSO 请求，得到一个 start_ts（事务开始阶段的 ID）。（1 RTT）
 
-2.  西安的 TiDB 为涉及到的每个 Region 向北京的 TiKV leader 节点发起多个（并行）读请求（如图 4）。（1 RTT）
+2.  西安的 TiDB 为涉及到的每个 Region 向北京的 TiKV Leader 节点发起多个（并行）读请求（如图 4）。（1 RTT）
 
 >名词解释：
 >
@@ -71,7 +71,7 @@ tags: ['跨数据中心']
 
 #### 1. 跨地域网络宽带占用大
 
-其实针对这个问题，TiDB 已经在 3.1 版本引入了 [Follower Read](https://pingcap.com/blog-cn/follower-read-the-new-features-of-tidb/) 特性。开启该特性后，TiKV leader 上的节点从必须处理整个读请求改为只用处理一次 read_index 请求（一次 read_index 通常只是位置信息的交互，不涉及数据，所以轻量很多），负载压力大幅降低，是一个很大的优化，如下图所示。
+其实针对这个问题，TiDB 已经在 3.1 版本引入了 [Follower Read](https://pingcap.com/blog-cn/follower-read-the-new-features-of-tidb/) 特性。开启该特性后，TiKV Leader 上的节点从必须处理整个读请求改为只用处理一次 read_index 请求（一次 read_index 通常只是位置信息的交互，不涉及数据，所以轻量很多），负载压力大幅降低，是一个很大的优化，如下图所示。
 
 ![图 5 开启 Follower Read 的读流程](media/geographic-data-distribution-traffic-and-latency-halved/5-开启-Follower-Read-的读流程.png)
 
@@ -79,7 +79,7 @@ tags: ['跨数据中心']
 
 #### 2. 延迟高
 
-在读延迟上，TiDB 仍然需要 2 个跨地域的 RTT。这两个 RTT 的延迟是由一次 获取 TSO 请求 和多次（并行的） read_index 带来的。简单观察后，我们不难发现，我们完全可以将上面两个操作并行一起处理，如下图所示：
+在读延迟上，TiDB 仍然需要 2 个跨地域的 RTT。这两个 RTT 的延迟是由一次 获取 TSO 请求 和多次（并行的） read_index 带来的。简单观察后，我们不难发现，我们完全可以将上面两个操作并行一起处理，如下图所示。
 
 ![图 6 Follower Read 流程优化](media/geographic-data-distribution-traffic-and-latency-halved/6-Follower-Read-流程优化.png)
 
@@ -97,21 +97,21 @@ tags: ['跨数据中心']
 
 接下来谈一谈如何用 Follower Replication 这种方式，减少跨数据中心的带宽成本。
 
-众所周知 TiKV 集群中的一致性是依靠 Raft 协议来保证的。在 Raft 协议中，所需要被共识一致的数据可以用 Entry 来表示。一个 Entry 被共识，需要 Leader 在接收到请求之后，广播给其他 Follower 节点，之后通过不断的消息交互来使这个 Entry 被 commit。这里可能会遇到一个问题：有些时候 TiKV 被部署在世界各地不同的数据中心中，数据中心之间的网络传输成本和延迟比较高，然而leader只有一个，可想而知会发生很多次跨数据中心的消息传输。
+众所周知 TiKV 集群中的一致性是依靠 Raft 协议来保证的。在 Raft 协议中，所需要被共识一致的数据可以用 Entry 来表示。一个 Entry 被共识，需要 Leader 在接收到请求之后，广播给其他 Follower 节点，之后通过不断的消息交互来使这个 Entry 被 commit。这里可能会遇到一个问题：有些时候 TiKV 被部署在世界各地不同的数据中心中，数据中心之间的网络传输成本和延迟比较高，然而 Leader只有一个，可想而知会发生很多次跨数据中心的消息传输。
 
-举个例子，生产环境中可能需要 5 个副本来保证可用性，假设 3 副本个在北京分别是 ABC，2 个在西安分别是 DE，同时 leader 为 A，那么一条 Entry 需要北京的 leader A，广播给西安的 DE，那么这次广播至少需要两次跨数据中心的网络传输，如下图：
+举个例子，生产环境中可能需要 5 个副本来保证可用性，假设 3 副本个在北京分别是 ABC，2 个在西安分别是 DE，同时 Leader 为 A，那么一条 Entry 需要北京的 Leader A，广播给西安的 DE，那么这次广播至少需要两次跨数据中心的网络传输，如下图所示。
 
 ![图 8 正常的消息广播](media/geographic-data-distribution-traffic-and-latency-halved/8-正常的消息广播.png)
 
 <center>图 8 正常的消息广播</center>
 
-Follower Replication 的目标是将这个多次的跨数据中心传输尽量减少。要实现 Follower Replication，最关键的是需要让 leader 节点知道所有 Raft 节点与它所在的 数据中心的信息。这里我们引入了一个新概念 Group，每一个 Raft 节点都有一个对应的 Group ID，拥有相同 Group ID 的节点即在同一个数据中心中。既然有了每个 Raft 节点的 Group 信息，leader 就可以在广播消息时在每一个 Group 中选择一个代理人节点（我们称为 Follower  Delegate），将整个 Group 成员所需要的信息发给这个代理人，代理人负责将数据同步给 Group 内的其他成员，如下图
+Follower Replication 的目标是将这个多次的跨数据中心传输尽量减少。要实现 Follower Replication，最关键的是需要让 Leader 节点知道所有 Raft 节点与它所在的 数据中心的信息。这里我们引入了一个新概念 Group，每一个 Raft 节点都有一个对应的 Group ID，拥有相同 Group ID 的节点即在同一个数据中心中。既然有了每个 Raft 节点的 Group 信息，Leader 就可以在广播消息时在每一个 Group 中选择一个代理人节点（我们称为 Follower  Delegate），将整个 Group 成员所需要的信息发给这个代理人，代理人负责将数据同步给 Group 内的其他成员，如下图所示。
 
 ![图 9 选择代理人之后的消息广播](media/geographic-data-distribution-traffic-and-latency-halved/9-选择代理人之后的消息广播.png)
 
 <center>图 9 选择代理人之后的消息广播</center>
 
-通过使用 Follower Replication，leader 减少了一半的数据发送，既大大降低了跨数据中心带宽的压力，同时也减少了 leader 在发送网络消息上的开销。当然，实际 Follower Replication 的实现还是很复杂的，我们后续会专门写一篇详细的文章来介绍。
+通过使用 Follower Replication，Leader 减少了一半的数据发送，既大大降低了跨数据中心带宽的压力，同时也减少了 Leader 在发送网络消息上的开销。当然，实际 Follower Replication 的实现还是很复杂的，我们后续会专门写一篇详细的文章来介绍。
 
 关于这个对 Raft 实现的改进，我们已经提交了 RFC 和实现的 PR，后续也会贡献给 etcd，感兴趣的同学可以参考：
 
