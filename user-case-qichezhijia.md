@@ -210,7 +210,6 @@ record.removeColumnByName(config.getDiscardKey());
 
 ![11-最终效果](media/user-case-qichezhijia/11-最终效果.png)
 
-<center>通过业务 ID 决定数据写到哪个库表</center>
 
 ## 九、TiDB 周边体系建设
 
