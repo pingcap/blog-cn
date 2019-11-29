@@ -10,7 +10,7 @@ weight: 3
 logo: /images/blog-cn/customers/qichezhijia-logo.png
 ---
 
-SQL Server + .Net 是很多早期互联网企业的标配技术栈，虽然 TiDB 是兼容 MySQL 协议和生态的数据库，但是 TiDB 适用的业务场景是通用的。在开源新技术大行其道的今天，如何从 SQL Server 无缝迁移至 TiDB，汽车之家做了一个创新的示范。。
+SQL Server + .Net 是很多早期互联网企业的标配技术栈，虽然 TiDB 是兼容 MySQL 协议和生态的数据库，但是 TiDB 适用的业务场景是通用的。在开源新技术大行其道的今天，如何从 SQL Server 无缝迁移至 TiDB，汽车之家做了一个创新的示范。
 
 本文将从业务背景、迁移方案、同步、业务改造、上线效果、周边建设等多个角度，详细介绍了如何从 SQL Server 数据库迁移至 TiDB 数据库。相信无论你是架构师、业务开发、还是 DBA，都会有不同层面的收获。
 
@@ -72,7 +72,7 @@ SQL Server + .Net 是很多早期互联网企业的标配技术栈，虽然 TiDB
 
 	![3-OLTP-测试](media/user-case-qichezhijia/3-OLTP-测试.png)
 
-2.  OLAP 测试：50G TPC-H 测试，TiDB 相较 MySQL 有很大的速度优势（标红为 TiDB 优势场景）：
+2.  OLAP 测试：50G TPC-H 测试，TiDB 相较 MySQL 有很大的速度优势：
 
 	![](media/user-case-qichezhijia/表格-Query.png)
 
