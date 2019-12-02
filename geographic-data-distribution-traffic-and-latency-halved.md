@@ -3,7 +3,7 @@ title: 流量和延迟减半！挑战 TiDB 跨数据中心难题
 author: ['.* team']
 date: 2019-11-29
 summary: 我们针对 TiDB 跨数据中心方案做了一些优化，使得跨地域 SQL 查询延迟下降 50%，跨节点消息数减半，即网络流量减半。
-tags: ['跨数据中心']
+tags: ['跨数据中心','Hackathon']
 ---
 
 >作者介绍：.* team（成员：庄天翼、朱贺天、屈鹏、林豪翔）参加了 [TiDB Hackathon 2019](https://pingcap.com/community-cn/hackathon2019/)，他们项目「TiDB 跨数据中心方案的优化」斩获了二等奖。
