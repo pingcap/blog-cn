@@ -6,7 +6,7 @@ summary: 由 SQL Server 迁移至 TiDB，从传统关系型到分布式 HTAP，�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-qichezhijia/
-weight: 3
+weight: 6
 logo: /images/blog-cn/customers/qichezhijia-logo.png
 ---
 
