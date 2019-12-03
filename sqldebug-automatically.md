@@ -8,12 +8,12 @@ tags: ['测试','Hackathon']
 
 >作者介绍：我和我的 SQL 队（成员：杜沁园、韩玉博、黄宝灵、满俊朋），他们的项目「基于路径统计的 sql bug root cause 分析」获得了 TiDB Hackathon 2019 的三等奖。
 
-曾在 HackerNews 上看到过一个 [Oracle 工程师处理 bug 的 日常](https://news.ycombinator.com/item?id=1842637)：
+曾在 Hacker News 上看到过一个 Oracle 工程师处理 bug 的 [日常](https://news.ycombinator.com/item?id=1842637)：
 
 *   先花两周左右时间来理解 20 个参数如何通过神奇的组合引发 bug。
 *   改了几行代码，尝试对 bug 进行修复，提交测试集群开始跑近百万个测试 case，通常要 20~30 小时。
 *   运气好的话会有 100 多个 case 没过，有时候上千个也有可能，只好挑选几个来看，发现还有 10 个参数之前没有注意到。
-*   又过了两周，终于找到了引起 bug 的真正参数组合，并跑通了所有测试。并增加 100 多个测试 case 确保覆盖他的修改。。
+*   又过了两周，终于找到了引起 bug 的真正参数组合，并跑通了所有测试。并增加 100 多个测试 case 确保覆盖他的修改。
 *   经过一个多月的代码 review，他的修改终于合并了，开始处理下一个 bug……
 
 后来这个工程师感慨说：“I don't work for Oracle anymore. Will never work for Oracle again!”
@@ -34,7 +34,7 @@ Oracle 12.2 有将近 2500 万行 C 代码，复杂系统的测试是一件艰�
 
 ## 背后的原理
 
-项目最初是受到 VLDB 的一篇论文的启发 [APOLLO: Automatic Detection and Diagnosis of Performance Regressions in Database Systems](http://www.vldb.org/pvldb/vol13/p57-jung.pdf) ，在此感谢一下乔治亚理工学院和 eBay 公司的几位作者。该论文主要围绕如何诊断引发数据库性能回退的代码，其核心思想也同样适用于排查 bug。论文中提到的自动诊断系统由 SQLFuzz，SQLMin 和 SQLDebug 三个模块组成。
+项目最初是受到 VLDB 的一篇论文的启发 [APOLLO: Automatic Detection and Diagnosis of Performance Regressions in Database Systems](http://www.vldb.org/pvldb/vol13/p57-jung.pdf)，在此感谢一下乔治亚理工学院和 eBay 公司的几位作者。该论文主要围绕如何诊断引发数据库性能回退的代码，其核心思想也同样适用于排查 bug。论文中提到的自动诊断系统由 SQLFuzz，SQLMin 和 SQLDebug 三个模块组成。
 
 ![论文中的自动诊断系统结构](media/sqldebug-automatically/2-自动诊断系统结构.png)
 
@@ -137,27 +137,27 @@ SQLDebug 模块在获取到每条 SQL 经过的基本块信息后，会对每个
 
 看到这里，你可能觉得这个项目不过是针对数据库系统的自动化测试。而实际上借助代码自动调试的思路，可以给我们更多的启发。
 
-### 1. 源码教学
+### 源码教学
 
-阅读和分析复杂系统的源码是个头疼的事情，TiDB 就曾出过 [24 篇源码阅读系列文章](https://pingcap.com/blog-cn/#TiDB-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)，江湖人称 “二十四章经”。那么基于源码的运行时可视化跟踪能否做成一个通用工具呢？这样在程序执行的同时就可以直观地看到代码的运行过程，对快速理解源码一定会大有帮助。更进一步，配合源码在线执行有没有可能做成一个在线 web 应用呢？
+阅读和分析复杂系统的源码是个头疼的事情，TiDB 就曾出过 [24 篇源码阅读系列文章](https://pingcap.com/blog-cn/#TiDB-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)，用一篇篇文字为大家解读源码​，江湖人称 “二十四章经”。那么是否可以基于源码的运行时可视化跟踪做成一个通用工具呢？这样在程序执行的同时就可以直观地看到代码的运行过程，对快速理解源码一定会大有帮助。更进一步，配合源码在线执行有没有可能做成一个在线 web 应用呢？
 
-### 2. 全链路测试覆盖统计
+### 全链路测试覆盖统计
 
 语言本身提供的单测覆盖统计工具已经比较完备了，但一般测试流程中还要通过 e2e 测试、集成测试、稳定性测试等等。能否用本文的方法综合计算出各种测试的覆盖度，并且与 CI 系统和自动化测试平台整合起来。利用代码染色技术，还可以输出代码执行的热力图分析。结合 profiler 工具，是不是还可以辅助来定位代码的性能问题？
 
-![](media/sqldebug-automatically/11-全链路测试覆盖统计.png)
+![全链路测试覆盖统计](media/sqldebug-automatically/11-全链路测试覆盖统计.png)
 
-### 3. Chaos Engineering
+### Chaos Engineering
 
 在 [PingCAP](https://pingcap.com/) 内部有诸多的 [Chaos](https://www.infoq.cn/article/EEKM947YbboGtD_zQuLw) 测试平台，用来验证分布式系统的鲁棒性，譬如像 Schrodinger，[Jepsen](https://github.com/jepsen-io/jepsen) 等等。混沌测试有个弊端就是，当跑出问题之后想再次复现就很难，所以只能通过当时的情形去猜代码可能哪里有问题。如果能在程序运行时记录代码的执行路径，根据问题发生时间点附近的日志和监控进一步缩小范围，再结合代码路径进行分析就能精确快速的定位到问题的原因。
 
-### 4. 与分布式 Tracing 系统集成
+### 与分布式 Tracing 系统集成
 
 Google 有一篇论文是介绍其内部的 [分布式追踪系统 Dapper](https://ai.google/research/pubs/pub36356) ，同时社区也有比较出名的项目 [Open Tracing](https://opentracing.io/) 作为其开源实现，Apache 下面也有类似的项目 [Skywalking](https://skywalking.apache.org/)。一般的 Tracing 系统主要是跟踪用户请求在多个服务之间的调用关系，并通过可视化来辅助排查问题。但是 Tracing 系统的跟踪粒度一般是服务层面，如果我们把 `trace_id` 和 `span_id` 也当作标注传递给代码块进行打桩，那是不是可以在 Tracing 系统的界面上直接下钻到源码，听起来是不是特别酷？
 
 ## 接下来的工作
 
-Hackathon 因为时间有限，只完成了一个非常简单的原型，距离真正实现睡觉时程序自动查 bug 还有一段路要走，我们计划对项目持续的进行完善。
+因为 Hackathon 时间有限，我们当时只完成了一个非常简单的原型，距离真正实现睡觉时程序自动查 bug 还有一段路要走，我们计划对项目持续的进行完善。
 
 接下来，首先要支持并行执行多个测试用例，这样才能在短时间得到足够多的实验样本，分析结果才能更加准确。另外，要将注入的代码对程序性能的影响降低到最小，从而应用于更加广泛的领域，比如性能压测场景，甚至在生产环境中也能够开启。
 
