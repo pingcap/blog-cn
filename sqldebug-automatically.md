@@ -72,7 +72,7 @@ Oracle 12.2 有将近 2500 万行 C 代码，复杂系统的测试是一件艰�
 
 为了跟踪每一条 SQL 在运行时的代码执行路径，一个关键操作是对被测程序进行插桩 (Dynamic Instrumentation)。VLDB 论文中提到一个二进制插桩工具 [DynamoRIO](https://www.dynamorio.org/)，但是我们不确定用它来搞 Go 编译的二进制能否正常工作。换一个思路，如果能在编译之前直接对源码进行插桩呢？
 
-参考 [go cover tool](https://github.com/golang/tools/blob/master/cmd/cover/cover.go) 的实现，我们写了一个专门的代码插桩工具 [tidb-wrapper](https://github.com/fuzzdebugplatform/tidb-wrapper)。它能够对任意版本的 TiDB 源码进行处理，生成 [wrapped](https://github.com/DQinYuan/tidb-v3.0.0-wrapped) 代码。并且在程序中注入一个 HTTP Server，假设某条 SQL 的摘要是 `df6bfbff`（这里的摘要指的是 SQL 语句的 32 位 MurmurHash 计算结果的十六进制表示，主要目的是简化传输的数据），那么只要访问 `http://<tidb-server-ip>::43222/trace/df6bfbff` 就能获得该 SQL 所经过的源码文件和代码块信息。
+参考 [go cover tool](https://github.com/golang/tools/blob/master/cmd/cover/cover.go) 的实现，我们写了一个专门的代码插桩工具 [tidb-wrapper](https://github.com/fuzzdebugplatform/tidb-wrapper)。它能够对任意版本的 TiDB 源码进行处理，生成 [wrapped](https://github.com/DQinYuan/tidb-v3.0.0-wrapped) 代码。并且在程序中注入一个 HTTP Server，假设某条 SQL 的摘要是 `df6bfbff`（这里的摘要指的是 SQL 语句的 32 位 MurmurHash 计算结果的十六进制，主要目的是简化传输的数据），那么只要访问 `http://<tidb-server-ip>::43222/trace/df6bfbff` 就能获得该 SQL 所经过的源码文件和代码块信息。
 
 ```
 // http://localhost:43222/trace/df6bfbff
