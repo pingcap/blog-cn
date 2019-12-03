@@ -1,12 +1,12 @@
 ---
-title: 睡觉的时候，程序能不能自动查 bug？
+title: 在我们睡觉的时候，程序能不能自动查 bug？
 author: ['我和我的 SQL 队']
-date: 2018-08-01
-summary: 手把手教你如何在三十分钟内成为 TiKV 项目的 Contributor。
-tags: ['TiKV','社区','Contributor']
+date: 2019-12-03
+summary: 复杂系统的测试是一件艰难、艰苦和艰巨的事情，可不可以让程序自动帮我们查 bug？
+tags: ['测试','Hackathon']
 ---
 
->作者介绍：我和我的 SQL 队（成员：杜沁园、韩玉博、黄宝灵、满俊朋）
+>作者介绍：我和我的 SQL 队（成员：杜沁园、韩玉博、黄宝灵、满俊朋），他们的项目「基于路径统计的 sql bug root cause 分析」获得了 TiDB Hackathon 2019 的三等奖。
 
 曾在 HackerNews 上看到过一个 [Oracle 工程师处理 bug 的 日常](https://news.ycombinator.com/item?id=1842637)：
 
