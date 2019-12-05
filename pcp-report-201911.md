@@ -87,15 +87,15 @@ select * from foo where c in (
 
 目前还有更多更有挑战，更高积分的任务在等待着大家来挑战：
 
-+ [PCP-27: 通过跳过 Rocksdb Compaction 阶段的某些 SST ，以减少 RocksDB 写放大](https://github.com/tikv/rust-rocksdb/issues/375)（积分： 3600）
++ [PCP-27: 通过跳过 Rocksdb Compaction 阶段的某些 SST ，以减少 RocksDB 写放大](https://github.com/tikv/rust-rocksdb/issues/375)（积分： 3600）。
 
-+ [PCP-26: 优化 PD 获取 TSO 的性能](https://github.com/pingcap/pd/issues/1847) （积分：20000）
++ [PCP-26: 优化 PD 获取 TSO 的性能](https://github.com/pingcap/pd/issues/1847) （积分：20000）。
 
-+ [PCP-10: 优化宽表情况下的查询效率](https://github.com/pingcap/tidb/issues/12979) （积分：3000）
++ [PCP-10: 优化宽表情况下的查询效率](https://github.com/pingcap/tidb/issues/12979) （积分：3000）。
 
 当前开放的任务列表可分别在 [TiDB Tasks](https://github.com/pingcap/tidb/projects/26)、[TiKV Tasks](https://github.com/tikv/tikv/projects/20)、[PD Tasks](https://github.com/pingcap/pd/projects/2) 中找到。
 
-更多的内容，请大家参考官方网站：[TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/)
+更多的内容，请大家参考官方网站：[TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/)。
 
 ## 感谢
 
