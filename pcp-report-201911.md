@@ -1,5 +1,5 @@
 ---
-title: 赛程刚过 1/3，什么神操作让性能提升 150+ 倍？
+title: 赛程刚过 1/3，什么操作让性能提升 150+ 倍？
 author: ['Yao Wei ']
 date: 2019-12-05
 summary: TiDB 性能挑战赛的赛程刚过 1/3，参赛选手们已经取得了十分耀眼的阶段性成果～让我们来看看吧！
@@ -100,7 +100,7 @@ select * from foo where c in (
 
 更多参（奖）赛（励）详情，可以进入 [官方网站](https://pingcap.com/community-cn/tidb-performance-challenge/) 查看。
 
-## 感谢
+## 致谢
 
 这里也需要对各个 Special Interest Group（SIG） 的 Tech Lead 以及 Mentor 表达感谢，他们为 PCP 完成了出题以及指导参赛者们完成了这些令人印象深刻的挑战：
 
