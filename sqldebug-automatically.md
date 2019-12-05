@@ -1,5 +1,5 @@
 ---
-title: 在我们睡觉的时候，程序能不能自动查 bug？
+title: 你呼呼大睡，机器人却在找 bug？
 author: ['我和我的 SQL 队']
 date: 2019-12-03
 summary: 复杂系统的测试是一件艰难、艰苦和艰巨的事情，可不可以让程序自动帮我们查 bug？
@@ -20,13 +20,13 @@ tags: ['测试','Hackathon']
 
 Oracle 12.2 有将近 2500 万行 C 代码，复杂系统的测试是一件艰难、艰苦和艰巨的事情。而测试一个分布式数据库的情况就更复杂了，我们永远不知道用户可能写出什么样的 SQL，表结构和索引有多少种组合，此外还要考虑集群在什么时候节点发生宕机，以及受到网络抖动、磁盘性能退化等因素的影响，可能性几乎是无限的。
 
-**那么有没有一种方法能让程序自动帮我们查 bug？**
+**那么能不能写个机器人自动帮我们查 bug 呢？**
 
 这似乎是个不错的主意，带着这个想法我们组了团队，来参加 [TiDB Hackathon 2019](https://pingcap.com/community-cn/hackathon2019/) 比赛，并意外地斩获了三等奖。
 
 ## 如何做到「睡觉的时候让程序自动定位 bug」？
 
-项目的思路其实很简单，如果在每次跑 case 的时候能用统计学的方法对足够多次实验的代码路径进行分析，就可以找出疑似 bug 的代码，最终结果以代码染色的方式由前端可视化呈现，就得到了如下图展示的效果：
+项目的思路其实很简单，如果在跑测试 case 的时候能够用统计学的方法对足够多次实验的代码路径进行分析，就可以找出疑似 bug 的代码，最终结果以代码染色的方式由前端可视化呈现，就得到了如下图展示的效果：
 
 ![最终效果](media/sqldebug-automatically/1-demo.gif)
 
@@ -60,19 +60,19 @@ Oracle 12.2 有将近 2500 万行 C 代码，复杂系统的测试是一件艰�
 
 由于是基于统计的诊断，我们需要先构建足够多的测试用例，这个过程当然最好也由程序自动完成。事实上，grammar-based 的测试在检验编译器正确性方面有相当长的历史，DBMS 社区也采用类似的方法来验证数据库的功能性。比如：微软的 SQL Server 团队开发的 [RAGS](http://vldb.org/conf/2007/papers/industrial/p1243-bati.pdf) 系统对数据库进行持续的自动化测试，还有社区比较出名的 [SQLSmith](https://github.com/anse1/sqlsmith) 项目等等。今年 TiDB  Hackathon 的另一个获奖项目 [sql-spider](https://github.com/zyguan/sql-spider) 也是实现类似的目的。
 
-这里我们暂时采用 PingCAP 开源的随机测试框架 [go-randgen](https://github.com/pingcap/go-randgen) 实现 SQL fuzzing，它需要用户写一些规则文件来帮助生成随机的 SQL 测试用例。规则文件由一些产生式组成。randgen 每次从 query 开始随机游走一遍产生式，生成一条 SQL，产生一条像下图红线这样的路径。
+这里我们暂时采用 PingCAP 开源的随机测试框架 [go-randgen](https://github.com/pingcap/go-randgen) 实现 SQL fuzzing，它需要用户写一些规则文件来帮助生成随机的 SQL 测试用例。规则文件由一些 SQL 语法表达式组成。randgen 每次从 query 开始随机游走一遍 SQL 表达式的语法树，生成一条 SQL，产生一条像下图红线这样的路径。
 
 ![路径](media/sqldebug-automatically/4-路径.png)
 
-我们将每个产生式生成正确与错误用例的比例作为该产生式的颜色值，绘制成一个页面，作为 SQLFuzz 的展示页面。通过该页面，可以比较容易地看出哪条产生式更容易产生错误的 SQL。
+我们将每个语法表达式生成正确与错误用例的比例作为它的颜色值，绘制出 SQLFuzz 的展示页面。通过该页面，就可以比较容易地看出哪条表达式更容易产生错误的 SQL。
 
 ![sqlfuzz](media/sqldebug-automatically/5-sqlfuzz.gif)
 
 ### 代码跟踪
 
-为了跟踪每一条 SQL 在运行时的代码执行路径，一个关键操作是对被测程序进行插桩 (Dynamic Instrumentation)。VLDB 论文中提到一个二进制插桩工具 [DynamoRIO](https://www.dynamorio.org/)，但是我们不确定用它来搞 Go 编译的二进制能否正常工作。换一个思路，如果能在编译之前直接对源码进行插桩呢？
+为了跟踪每一条 SQL 在运行时的代码执行路径，一个关键操作是对被测程序进行插桩 (Dynamic Instrumentation)。VLDB 论文中提到一个二进制插桩工具 [DynamoRIO](https://www.dynamorio.org/)，但是我们用了另外一个思路，为什么不在编译之前直接对源码进行插桩呢？
 
-参考 [go cover tool](https://github.com/golang/tools/blob/master/cmd/cover/cover.go) 的实现，我们写了一个专门的代码插桩工具 [tidb-wrapper](https://github.com/fuzzdebugplatform/tidb-wrapper)。它能够对任意版本的 TiDB 源码进行处理，生成 [wrapped](https://github.com/DQinYuan/tidb-v3.0.0-wrapped) 代码。并且在程序中注入一个 HTTP Server，假设某条 SQL 的摘要是 `df6bfbff`（这里的摘要指的是 SQL 语句的 32 位 MurmurHash 计算结果的十六进制，主要目的是简化传输的数据），那么只要访问 `http://<tidb-server-ip>::43222/trace/df6bfbff` 就能获得该 SQL 所经过的源码文件和代码块信息。
+参考 [go cover tool](https://github.com/golang/tools/blob/master/cmd/cover/cover.go) 的实现，我们写了一个专门的代码插桩工具 [tidb-wrapper](https://github.com/fuzzdebugplatform/tidb-wrapper)。它能够对任意 TiDB 源码进行处理，生成一份 [wrapped](https://github.com/DQinYuan/tidb-v3.0.0-wrapped) 代码，并且在程序中注入一个 HTTP Server，假设某条 SQL 的摘要是 `df6bfbff`（这里的摘要指的是 SQL 语句的 32 位 MurmurHash 计算结果的十六进制，主要目的是简化传输的数据），那么只要访问 `http://<tidb-server-ip>::43222/trace/df6bfbff` 就能获得该 SQL 所经过的源码文件和代码块信息。
 
 ```
 // http://localhost:43222/trace/df6bfbff
@@ -139,7 +139,7 @@ SQLDebug 模块在获取到每条 SQL 经过的基本块信息后，会对每个
 
 ### 源码教学
 
-阅读和分析复杂系统的源码是个头疼的事情，TiDB 就曾出过 [24 篇源码阅读系列文章](https://pingcap.com/blog-cn/#TiDB-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)，用一篇篇文字为大家解读源码​，江湖人称 “二十四章经”。那么是否可以基于源码的运行时可视化跟踪做成一个通用工具呢？这样在程序执行的同时就可以直观地看到代码的运行过程，对快速理解源码一定会大有帮助。更进一步，配合源码在线执行有没有可能做成一个在线 web 应用呢？
+阅读和分析复杂系统的源码是个头疼的事情，TiDB 就曾出过 [24 篇源码阅读系列文章](https://pingcap.com/blog-cn/#TiDB-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)，用一篇篇文字为大家解读源码​，江湖人称 “二十四章经”。那么是否可以基于源码的可视化跟踪做成一个通用工具呢？这样在程序执行的同时就可以直观地看到代码的运行过程，对快速理解源码一定会大有帮助。更进一步，配合源码在线执行有没有可能做成一个在线 web 应用呢？
 
 ### 全链路测试覆盖统计
 
@@ -149,7 +149,7 @@ SQLDebug 模块在获取到每条 SQL 经过的基本块信息后，会对每个
 
 ### Chaos Engineering
 
-在 [PingCAP](https://pingcap.com/) 内部有诸多的 [Chaos](https://www.infoq.cn/article/EEKM947YbboGtD_zQuLw) 测试平台，用来验证分布式系统的鲁棒性，譬如像 Schrodinger，[Jepsen](https://github.com/jepsen-io/jepsen) 等等。混沌测试有个弊端就是，当跑出问题之后想再次复现就很难，所以只能通过当时的情形去猜代码可能哪里有问题。如果能在程序运行时记录代码的执行路径，根据问题发生时间点附近的日志和监控进一步缩小范围，再结合代码路径进行分析就能精确快速的定位到问题的原因。
+在 [PingCAP](https://pingcap.com/) 内部有诸多的 [Chaos](https://www.infoq.cn/article/EEKM947YbboGtD_zQuLw) 测试平台，用来验证分布式系统的鲁棒性，譬如像 [Jepsen](https://github.com/jepsen-io/jepsen) ，还有 PingCAP 自研的薛定谔稳定性测试系统等。混沌工程测试比较困扰的一点是，当跑出问题之后想再次复现就很难，只能通过当时的情形去猜代码可能哪里有问题。如果能在程序运行时记录代码的执行路径，根据问题发生时间点附近的日志和监控进一步缩小范围，再结合代码执行路径分析就能精确快速的定位到问题的原因。
 
 ### 与分布式 Tracing 系统集成
 
