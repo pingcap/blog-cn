@@ -2,7 +2,7 @@
 title: 赛程刚过 1/3，什么神操作让性能提升 150+ 倍？
 author: ['Yao Wei ']
 date: 2019-12-05
-summary: TiDB 性能挑战赛的赛程刚刚过去三分之一，就已经取得了十分耀眼的阶段性成果～让我们来看看吧！
+summary: TiDB 性能挑战赛的赛程刚过 1/3，参赛选手们已经取得了十分耀眼的阶段性成果～让我们来看看吧！
 tags: ['TiDB 性能挑战赛']
 ---
 
@@ -15,7 +15,15 @@ tags: ['TiDB 性能挑战赛']
     - TiDB 表达式框架中完成了 70+ 个函数的向量化。
     - TiKV 协处理器中完成了 40+ 个函数的向量化，其中 34 个已在 TiDB 侧新开启了下推，让下推的函数计算速度大幅上升。
 
->“因为对 Rust 感兴趣参加了这次 PCP,能够亲自改善一个自己会使用的工具的感受非常令人愉悦,项目的文档，代码结构和社区都非常友好,带来了很强的正反馈。”
+**截至发稿时积分排行榜前五名的参赛选手 / Team 分别是：.* team、ekalinin、mmyj、AerysNan、js00070。**
+
+其中 .* team 表现尤为优异，他们已经拿到了 4150 积分，在排行榜上遥遥领先。而来自俄罗斯的个人参赛者 ekalinin 获得了 1450 积分，他共提交了 17 个任务，目前完成了 12 个，其中有一个是 Medium 难度的任务，成为积分最高的个人参赛者。
+
+![积分排行榜](media/pcp-report-201911/1-积分排行榜.png)
+
+<center>积分排行榜</center>
+
+>“因为对 Rust 感兴趣参加了这次 PCP，能够亲自改善一个自己会使用的工具的感受非常令人愉悦，项目的文档，代码结构和社区都非常友好,带来了很强的正反馈。”
 >
 >—— Renkai（PCP 个人参赛者）
 >
@@ -23,19 +31,13 @@ tags: ['TiDB 性能挑战赛']
 >
 >—— TennyZhuang (PCP 团队参赛者，.* team）
 
->“I like Go & databases. TiDB has both of them. So I just decided to deep dive into internals of the TiDB and check if I can be useful for it. I'm a big fan of open source. I have a couple of open sourced projects and I understand the importance of the contribution into open source projects. I feel great after joining the PCP and TiDB community! Good docs, a lot of tests, well written code :)”
+>“I like Go & databases. TiDB has both of them. So I just decided to deep dive into internals of the TiDB and check if I can be useful for it. I'm a big fan of open source. I have a couple of open sourced projects and I understand the importance of the contribution into open source projects. 
+>
+>I feel great after joining the PCP and TiDB community! Good docs, a lot of tests, well written code :)”
 >
 >—— ekalinin (PCP 个人参赛者，来自俄罗斯）
 
-截至发稿时积分排行榜前五名的参赛选手 / Team 分别是：.* team、ekalinin、mmyj、AerysNan、js00070。
-
-其中 .* team 表现尤为优异，他们已经拿到了 4150 积分，在排行榜上遥遥领先。而来自俄罗斯的个人参赛者 ekalinin 获得了 1450 积分，他共提交了 17 个任务，完成了 12 个，其中有一个是 Medium 难度的任务，他也成为个人参赛者中的第一名。
-
-![积分排行榜](media/pcp-report-201911/1-积分排行榜.png)
-
-<center>积分排行榜</center>
-
-**下面让我们来看看过去的接近一个月里大家在「性能提升」方面有哪些突破性的战绩吧！**
+**下面让我们来看看过去的一个月里大家在「性能提升」方面有哪些突破性的战绩吧！**
 
 ### 1. IN() 函数性能提升 150+ 倍
 
@@ -87,15 +89,16 @@ select * from foo where c in (
 
 目前还有更多更有挑战，更高积分的任务在等待着大家来挑战：
 
-+ [PCP-27: 通过跳过 Rocksdb Compaction 阶段的某些 SST ，以减少 RocksDB 写放大](https://github.com/tikv/rust-rocksdb/issues/375)（积分： 3600）。
++ [PCP-27](https://github.com/tikv/rust-rocksdb/issues/375)：通过跳过 RocksDB Compaction 阶段的某些 SST，以减少 RocksDB 写放大（积分：3600）。
 
-+ [PCP-26: 优化 PD 获取 TSO 的性能](https://github.com/pingcap/pd/issues/1847) （积分：20000）。
++ [PCP-26](https://github.com/pingcap/pd/issues/1847)：优化 PD 获取 TSO 的性能 （积分：20000）。
 
-+ [PCP-10: 优化宽表情况下的查询效率](https://github.com/pingcap/tidb/issues/12979) （积分：3000）。
++ [PCP-10](https://github.com/pingcap/tidb/issues/12979) ：优化宽表情况下的查询效率（积分：3000）。
++ ……
 
 当前开放的任务列表可分别在 [TiDB Tasks](https://github.com/pingcap/tidb/projects/26)、[TiKV Tasks](https://github.com/tikv/tikv/projects/20)、[PD Tasks](https://github.com/pingcap/pd/projects/2) 中找到。
 
-更多的内容，请大家参考官方网站：[TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/)。
+更多参（奖）赛（励）详情，可以进入 [官方网站](https://pingcap.com/community-cn/tidb-performance-challenge/) 查看。
 
 ## 感谢
 
@@ -109,4 +112,4 @@ select * from foo where c in (
 + [SunRunAway](https://github.com/SunRunAway)（[@Expression SIG](https://github.com/pingcap/community/blob/master/special-interest-groups/sig-expr)）
 + [qw4990](https://github.com/qw4990)（[@Expression SIG](https://github.com/pingcap/community/blob/master/special-interest-groups/sig-expr)）
 
->[TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/) 由 PingCAP 发起，旨在激发社区创造性，使选手可以通过完成一系列的任务提升 TiDB 产品的性能。第一赛季在 2019 年 11 月 4 日正式开启，赛事将会持续 3 个月。性能挑战赛的任务分为三个难度：Easy，Medium，Hard，不同难度对应不同积分，参赛选手获得的积分可以兑换 TiDB 限量周边礼品等丰富的奖励。
+>[TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/) 由 PingCAP 发起，旨在激发社区创造性，参赛选手可以通过完成一系列的任务提升 TiDB 产品的性能。赛事于 2019 年 11 月 4 日正式开启，将持续 3 个月，比赛任务分为三个难度：Easy、Medium、Hard，不同难度对应不同积分，参赛选手获得的积分可以兑换 TiDB 限量周边礼品等丰富的奖励。
