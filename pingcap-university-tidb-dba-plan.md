@@ -45,7 +45,7 @@ PingCAP University 是 PingCAP 官方设立的对企业和个人进行 TiDB 全�
 
 ### 垂询及报名方式
 
-*  点击 [TiDB DBA 官方培训认证 · 报名表单](http://pingcaptidb.mikecrm.com/KXCarRw) 直接填写报名信息
+*  点击 TiDB DBA 官方培训认证 · 报名表单直接填写报名信息
 
 *  或联系您的客户总监
 
