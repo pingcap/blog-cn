@@ -1,12 +1,12 @@
 ---
-title: TiDB 写热点调优实战——360 智能商业业务线经验分享
+title: 360 智能商业业务线经验分享：TiDB 写热点调优实战
 author: ['代晓磊']
 date: 2019-12-06
 summary: 360 智能商业业务线从 2019 年 3 月份开始使用 TiDB，目前线上有 5 套 TiDB 集群，数据总容量 20T，主要应用在数据分析平台、广告主实时报表、物料库、实时监控平台等核心业务中。
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-360-business/
-logo: /images/blog-cn/customers/360-business-logo.png
+logo: /images/blog-cn/customers/360-business-logo.jpg
 weight: 2
 ---
 
@@ -20,7 +20,7 @@ weight: 2
 
 ### 360 智能商业业务线广告主实时报表业务简介
 
-广告主关键词实时统计报表业务的流程是：业务数据首先进入 Kafka，每  30 秒会有程序读 Kafka 数据，并进行聚合，然后存储到 TiDB 中，存储到 TiDB 的过程每批次会有几十万的写入，单表数据量1.2~1.5 亿。
+广告主关键词实时统计报表业务的流程是：业务数据首先进入 Kafka，每 30 秒会有程序读 Kafka 数据，并进行聚合，然后存储到 TiDB 中，存储到 TiDB 的过程每批次会有几十万的写入，单表数据量1.2~1.5 亿。
 
 业务写入 SQL 主要是：insert on duplicate key update，Batch 为 100，并发为 300，并且每天创建一张新表进行写入。写入初期由于没有重复的 `uniq_key`，所以主要是 insert 。随着数据量到达 2000 多万，update 的操作也越来越多。
 
@@ -201,7 +201,7 @@ pd-ctl -u http:// ${pd_host}:2379 operator show leader
 对于 PK 非整数或没有 PK 的表，在 insert 的时候 TiDB 会使用一个隐式的自增 rowid，大量 INSERT 会把数据集中写入单个 Region，造成写入热点。通过设置 `SHARD_ROW_ID_BITS` 来适度分解 Region 分片，以达到打散 Region 热点的效果。使用方式：
 
 ```
-ALTER TABLE t SHARD_ROW_ID_BITS = 4;  #值为4表示 16 个分片
+ALTER TABLE t SHARD_ROW_ID_BITS = 4;  #值为 4 表示 16 个分片
 ```
 
 由于我们每天都会新建表，所以为了更好的效果，也使用了 `PRE_SPLIT_REGIONS` 建表预切分功能，通过配置可以预切分 `2^(pre_split_regions-1)` 个 Region。
