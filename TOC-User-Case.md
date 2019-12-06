@@ -6,6 +6,7 @@
   - [知乎](user-case-zhihu.md)
   - [美团点评](user-case-meituandianping.md)
   - [网易互娱](user-case-wangyihuyu.md)
+  - [360 智能商业](user-case-360-business.md)
   - [京东云](user-case-jingdongyun.md)
   - [小红书](user-case-xiaohongshu.md)
   - [小米](user-case-xiaomi.md)
