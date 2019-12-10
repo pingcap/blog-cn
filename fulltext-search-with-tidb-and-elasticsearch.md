@@ -1,5 +1,5 @@
 ---
-title: 拥抱 Elasticsearch——给 TiDB 插上全文检索的翅膀 
+title: 拥抱 Elasticsearch：给 TiDB 插上全文检索的翅膀 
 author: ['孙晓光']
 date: 2019-12-10
 summary: 我们尝试为 TiDB 引入“全文检索”功能，为存储在 TiDB 中的文本数据提供随时随地搜索的能力。
@@ -14,7 +14,7 @@ tags: ['TiDB','Elasticsearch','全文检索']
 
 ![1-问题](media/fulltext-search-with-tidb-and-elasticsearch/1-问题.png)
 
-当前 TiDB 全文检索能力的缺失使得我们依旧需要使用传统的方式将数据同步到搜索引擎，在过程中需要根据业务特点做大量繁琐的数据流水线工作维护业务数据的全文索引。
+当前 TiDB 全文检索能力的缺失，使得我们依旧需要使用传统的方式将数据同步到搜索引擎，在过程中需要根据业务特点做大量繁琐的数据流水线工作维护业务数据的全文索引。
 
 为了减少这样的重复劳动，在今年 TiDB Hackathon 中我们尝试为 TiDB 引入“全文检索”功能，为存储在 TiDB 中的文本数据提供随时随地搜索的能力。以下是最终的效果展示：
 
@@ -22,7 +22,7 @@ tags: ['TiDB','Elasticsearch','全文检索']
 
 ## 方案设计
 
-要在短短一天的 Hackathon 时间内让 TiDB 中支持全文检索，难度还是非常大的，于是在最开始的时候，我们就选择了一条非常稳妥的设计方案 - 采用整合 [Elasticsearch](https://www.elastic.co/)（后续简称 ES） 的方式为 TiDB 扩展全文检索能力。
+要在短短一天的 Hackathon 时间内让 TiDB 中支持全文检索，难度还是非常大的，于是在最开始的时候，我们就选择了一条非常稳妥的设计方案——采用整合 [Elasticsearch](https://www.elastic.co/)（后续简称 ES）的方式为 TiDB 扩展全文检索能力。
 
 ![3-tidb-and-elasticsearch](media/fulltext-search-with-tidb-and-elasticsearch/3-tidb-and-elasticsearch.gif)
 
@@ -61,7 +61,7 @@ Hackathon 短短的 24 小时，让我们验证了整合 TiDB 和 ES 的可能�
 * TiDB 将请求发给 ES Learner 节点。
 * ES Learner 节点首先通过 Raft 协议来确保节点上面有了最新的数据，并且最新的数据已经写入到 ES。
 * ES Learner 节点通过 ES 的索引读取到对应的记录主键，返回给 TiDB。
-* TiDB 使用记录主键获取到完整的数据，并返回给客户端
+* TiDB 使用记录主键获取到完整的数据，并返回给客户端。
 
 可以看到，相比于之前让 TiDB 双写到 ES 和 TiKV 的方案，在写入上面，TiDB 并不需要跟 ES 进行交互，而在读取方面，通过 Raft 协议，TiDB 也能保证从 ES 读取到最新的数据，保证了数据的一致性。
 
