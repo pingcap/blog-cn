@@ -48,7 +48,7 @@ tags: ['TiDB','Elasticsearch','全文检索']
 
 Hackathon 短短的 24 小时，让我们验证了整合 TiDB 和 ES 的可能性，当然，我们不会满足于这套双写的方案。未来我们会参考 [TiFlash](https://medium.com/@PingCAP/delivering-real-time-analytics-and-true-htap-by-combining-columnstore-and-rowstore-1e006d3c3ef5)，基于 Raft Learner 实时将数据变更同步给 ES，将 TiDB 打造成一个真正的能支持实时全文检索的 HTAP 数据库，如下图所示：
 
-![4-架构图](media/fulltext-search-with-tidb-and-elasticsearch/4-架构图.png)
+![5-未来规划](media/fulltext-search-with-tidb-and-elasticsearch/5-未来规划.png)
 
 使用 Raft Learner，对于写流程：
 
