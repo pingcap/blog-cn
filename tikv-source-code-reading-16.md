@@ -22,19 +22,19 @@ TiDB 在解析完这条 `SQL` 语句之后，会开始制定执行计划。在�
 
 以上的 `DAG` 是一个由一系列算子组成的有向无环图，算子在 TiKV 中称为 `Executor` 。整个 `DAG` 描述了查询计划在 TiKV 的执行过程。在上边的例子中，一条查询 `SQL` 被翻译成了三个执行步骤：
 
-1. 扫表；
+1. 扫表
 
-2. 选择过滤；
+2. 选择过滤
 
-3. 取若干行；
+3. 取若干行
 
-有了基本概念后， 下面我们简单介绍一下这样的查询计划在 TiKV 内部的一个执行流程。
+有了基本概念后，下面我们简单介绍一下这样的查询计划在 TiKV 内部的一个执行流程。
 
 ## 下推算子如何执行
 
 ### 绕不开的火山
 
-TiKV 执行器是基于 Volcano Model （火山模型），一种经典的基于行的流式迭代模型。现在主流的关系型数据库都采用了这种模型，例如 Oracle，MySQL等。
+TiKV 执行器是基于 Volcano Model （火山模型），一种经典的基于行的流式迭代模型。现在主流的关系型数据库都采用了这种模型，例如 Oracle，MySQL 等。
 
 我们可以把每个算子看成一个迭代器。每次调用它的 `next()` 方法，我们就可以获得一行，然后向上返回。而每个算子都把下层算子看成一张表，返回哪些行，返回怎么样的行由算子本身决定。举个例子：
 
@@ -97,7 +97,7 @@ pub fn handle_request(&mut self) -> Result<SelectResponse> {
 
 当然向量化模型也会带来一些问题：
 
-1.  原先最上层算子按需向下层算子拿上一行，而现在拿上多行，内存开销自然会增加;
+1.  原先最上层算子按需向下层算子拿上一行，而现在拿上多行，内存开销自然会增加。
 
 2.  计算模型发生变化，原来基于标量计算的表达式框架需要重构 （详见上篇文章）。
 
@@ -105,7 +105,7 @@ pub fn handle_request(&mut self) -> Result<SelectResponse> {
 
 ![图 4 向量化查询引擎benchmark](media/tikv-source-code-reading-16/4.png)
 
-引入向量化模型后，原先的 `Execturor` trait 就变成了 `BatchExecutor`, 对应的 `next()` 方法就成了 `next_batch()`。 自然的 `next_batch` 不再返回一个行，而是一个 `BatchExecuteResult`，上边记录了扫上来的一张表 `physical_columns`，以及子表中哪些行应当被保留的 `logical_rows` 和一个 `is_drain` 用来表示下层算子是否已经没有数据可以返回。
+引入向量化模型后，原先的 `Execturor` trait 就变成了 `BatchExecutor`， 对应的 `next()` 方法就成了 `next_batch()`。 自然的 `next_batch` 不再返回一个行，而是一个 `BatchExecuteResult`，上边记录了扫上来的一张表 `physical_columns`，以及子表中哪些行应当被保留的 `logical_rows` 和一个 `is_drain` 用来表示下层算子是否已经没有数据可以返回。
 
 ```rust
 pub trait BatchExecutor: Send {
