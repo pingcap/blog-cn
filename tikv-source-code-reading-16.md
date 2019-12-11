@@ -427,7 +427,7 @@ impl AggrFunctionState for AggrFnStateCount { /* .. */ }
 
 这个时候，调用 `create_state()` 的时候就会将内部状态 Box 起来然后返回。
 
-#### 如何根据 `group by column` 分组并聚合
+#### 如何根据 `group by` column 分组并聚合
 
 `BatchFastHashAggregationExecutor` 内部会有一个 `Groups` 的结构，其核心是一个 `HashTable`，根据 `group by` 表达式具体的类型作为 `key` 的类型，而 `value` 的值则是一个 `AggrFunctionState` 数组中该组对应的聚合函数状态集合的开始下标。举个例子：
 
