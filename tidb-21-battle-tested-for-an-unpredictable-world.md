@@ -106,7 +106,7 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 
 ## Open Source Community
 
-我们相信战胜“未知”最好的武器就是社区的力量，基础软件需要坚定地走开源路线。为了让社区更深入的了解 TiDB 的技术细节并且更好地参与到项目中来，我们今年已经完成超过 20 篇源码阅读文章，项目的设计文档（[TiDB](https://github.com/pingcap/tidb/wiki/Design-Documents) 和 [TiKV](https://github.com/tikv/rfcs)）已经在 GitHub 上面公开出来，项目的开发过程也尽量通过 Github Issue/Project 向社区展示。一些 Feature 设计方案的讨论也会通过在线视频会议的方式方便社区参与进来，通过 [Proposals](https://github.com/pingcap/community/blob/master/proposals.md) 可以看到会议安排。
+我们相信战胜“未知”最好的武器就是社区的力量，基础软件需要坚定地走开源路线。为了让社区更深入的了解 TiDB 的技术细节并且更好地参与到项目中来，我们今年已经完成超过 20 篇源码阅读文章，项目的设计文档（[TiDB](https://github.com/pingcap/tidb/wiki/Design-Documents) 和 [TiKV](https://github.com/tikv/rfcs)）已经在 GitHub 上面公开出来，项目的开发过程也尽量通过 Github Issue/Project 向社区展示。一些 Feature 设计方案的讨论也会通过在线视频会议的方式方便社区参与进来，通过 Proposals 可以看到会议安排。
 
 从 TiDB 2.0 版发布到现在的半年多时间，TiDB 开源社区新增了 87 位 Contributor，其中 [杜川](https://github.com/spongedu) 成为了 TiDB Committer，他已经贡献了 [76 次 PR](https://github.com/pingcap/tidb/commits?author=spongedu)，还有一些活跃的 Contributor 有希望成为下一批 Committer。
 
