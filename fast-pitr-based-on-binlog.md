@@ -6,7 +6,7 @@ summary: 基于 TiDB Binlog 的 Fast-PITR (Fast point in time recovery)，即基
 tags: ['TiDB-Binlog']
 ---
 
->作者介绍：Better 队成员、美团点评高级 DBA 吕磊，Better 队参加了  TiDB Hackathon 2019，其项目「基于 TiDB Binlog 的 Fast-PITR」获得了最佳贡献奖。
+>作者介绍：吕磊，Better 队成员、美团点评高级 DBA，Better 队参加了  TiDB Hackathon 2019，其项目「基于 TiDB Binlog 的 Fast-PITR」获得了最佳贡献奖。
 
 维护过数据库的同学应该都能体会，数据备份对于数据库来说可以说至关重要，尤其是关键业务。TiDB 原生的备份恢复方案已经在多家客户得到稳定运行的验证，但是对于业务量巨大的系统存在如下几个痛点:
 
@@ -16,7 +16,7 @@ tags: ['TiDB-Binlog']
 
 3.  binlog 本身是有向前依赖关系的，任何一个时间点的 binlog 丢失，都会导致后面的数据无法自动恢复。
 
-4.  调大 TiDB gc_life_time 保存更多版本的快照数据，一方面保存时间不能无限长，另一方过多的版本会影响性能且占用集群空间。 
+4.  调大 TiDB gc_life_time 保存更多版本的快照数据，一方面保存时间不能无限长，另一方面过多的版本会影响性能且占用集群空间。 
 
   ![图 1 原生 Binlog 备份恢复](media/fast-pitr-based-on-binlog/1.png)
   <center>图 1 原生 binlog 备份恢复</center>
@@ -38,7 +38,7 @@ tags: ['TiDB-Binlog']
   binlog 分段方式可以灵活定义起点和终点:  
   
   ```
-   -start-datetime string
+  -start-datetime string
         recovery from start-datetime, empty string means starting from the beginning of the first file
   -start-tso int
         similar to start-datetime but in pd-server tso format
@@ -64,9 +64,9 @@ tags: ['TiDB-Binlog']
 ![图 5 Binlog 合并方式](media/fast-pitr-based-on-binlog/5.png)
 <center>图 5 binlog 合并方式</center>
  
- *   Mapping 阶段: 读取 Binlog file，通过 PITR 工具将文件按库名 + 表名输出，再根据 Key hash 成不同的小文件存储，这样同一行数据的变更都保存在同一文件下，且方便 Reduce 阶段的处理。
+ *   Mapping 阶段：读取 Binlog file，通过 PITR 工具将文件按库名 + 表名输出，再根据 Key hash 成不同的小文件存储，这样同一行数据的变更都保存在同一文件下，且方便 Reduce 阶段的处理。
 
-*   Reducing 阶段: 并发将小文件按照规则合并，去重，生成备份集文件。  
+*   Reducing 阶段：并发将小文件按照规则合并，去重，生成备份集文件。  
 
   |  原 Event 类型  | 新 Event 类型  | 合并后的 Event 类型  |
   |  ----  | ----  |----  |
@@ -119,7 +119,7 @@ Hackathon 比赛时间只有两天，时间紧任务重，我们实现了上面�
 
 我们可以将增量备份中的 insert 语句前置到全量备份集中，全量备份集配合 [Lightning 工具](https://pingcap.com/docs-cn/stable/reference/tools/tidb-lightning/overview/) 急速导入到下游 TiKV 集群，Lightning 恢复速度是逻辑恢复的 5 - 10 倍 ，再加上一份更轻量的增量备份集 (update+delete) 直接实现 PITR 功能。 
 
-### DDL预处理
+### DDL 预处理
 
 PIRT 工具实际上是一个 binlog 的 merge 过程，处理一段 binlog 期间，为了保证数据的一致性，理论上如果遇到 DDL 变更，merge 过程就要主动断掉，生成备份集，再从这个断点继续 merge 工作，因此会生成两个备份集，影响 binlog 的压缩率。
 
