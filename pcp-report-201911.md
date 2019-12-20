@@ -3,6 +3,7 @@ title: 赛程刚过 1/3，什么操作让性能提升 150+ 倍？
 author: ['Yao Wei ']
 date: 2019-12-05
 summary: TiDB 性能挑战赛的赛程刚过 1/3，参赛选手们已经取得了十分耀眼的阶段性成果～让我们来看看吧！
+image: /images/blog-cn/pcp-report-201911/1-积分排行榜.png
 tags: ['TiDB 性能挑战赛','社区动态','社区']
 ---
 
