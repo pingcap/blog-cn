@@ -3,6 +3,7 @@ title: 开源社区怎么玩？明星项目 TiKV 的 Maintainer 这样说……
 author: ['PingCAP']
 date: 2019-11-28
 summary: “当你持续的认真投入到开源后，项目和社区就会产生双向的交流，不再只是你单向的投入，社区也会给予你反哺，这时就会形成正向循环，对项目发展会起到非常大的推动作用。”
+image: /images/blog-cn/tikv-maintainer-sunxiaoguang/2-TiKV-Logo.png
 tags: ['社区','社区动态']
 ---
 
