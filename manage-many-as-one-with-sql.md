@@ -46,11 +46,11 @@ tags: ['TiDB','SQL']
 
 *   节点的硬件信息：CPU ，memory，网卡，磁盘等硬件信息。
 
-*   节点的负载信息：CPU/Memory load, 网络/磁盘流量信息。
+*   节点的负载信息：CPU/Memory load，网络/磁盘流量信息。
 
 *   节点的配置信息。
 
-*   节点的监控信息：如 QPS, KV Duration, TSO duration 等。
+*   节点的监控信息：如 QPS，KV Duration，TSO duration 等。
 
 每个系统表都有一个对应的 cluster_ 前缀的集群系统表视图。这里不一一展示了。
 
