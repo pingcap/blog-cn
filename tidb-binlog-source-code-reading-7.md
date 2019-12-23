@@ -30,7 +30,7 @@ Server 初始化以后，就可以用 `(*Server).Start` 启动服务，启动的
 
 3.  调用 `syncer.Start()` 驱动 `Syncer` 处理单元。
 
-    ```
+    ```go
     errc := s.heartbeat(s.ctx)
     go func() {
         for err := range errc {
@@ -55,7 +55,7 @@ Checkpoint 代码在 [/drainer/checkpoint](https://github.com/pingcap/tidb-binlo
 
 首先看下 [接口定义](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/checkpoint/checkpoint.go#L29)：
 
-```
+```go
 // When syncer restarts, we should reload meta info to guarantee continuous transmission.
 type CheckPoint interface {
     // Load loads checkpoint information.
@@ -76,7 +76,7 @@ drainer 支持把 checkpoint 保存到不同类型的存储介质中，目前支
 
 当目标系统是 mysql/tidb，drainer 默认会保存 checkpoint 到 `tidb_binlog.checkpoint` 表中：
 
-```
+```shell
 mysql> select * from tidb_binlog.checkpoint;
 +---------------------+---------------------------------------------+
 | clusterID           | checkPoint                                  |
@@ -90,7 +90,7 @@ commitTS 表示这个时间戳之前的数据都已经同步到目标系统了�
 
 下面看看 MysqlCheckpoint 主要方法的实现。
 
-```
+```go
 // Load implements CheckPoint.Load interface
 func (sp *MysqlCheckPoint) Load() error {
     sp.Lock()
@@ -127,7 +127,7 @@ func (sp *MysqlCheckPoint) Load() error {
 
 Load 方法从数据库中读取 checkpoint 信息。需要注意的是，如果 drainer 读取不到对应的 checkpoint，会使用 drainer 配置的 `initial-commit-ts` 做为启动的开始同步点。
 
-```
+```go
 // Save implements checkpoint.Save interface
 func (sp *MysqlCheckPoint) Save(ts, slaveTS int64) error {
     sp.Lock()
@@ -165,7 +165,7 @@ Save 方法构造对应 SQL 将 checkpoint 写入到目标数据库中。
 
 Collector 负责获取全部 binlog 信息后，按序传给 Syncer 处理单元。我们先看下 Start 方法：
 
-```
+```go
 // Start run a loop of collecting binlog from pumps online
 func (c *Collector) Start(ctx context.Context) {
     var wg sync.WaitGroup
@@ -191,8 +191,7 @@ func (c *Collector) Start(ctx context.Context) {
 
 这里只需要关注 publishBinlogs 和 keepUpdatingStatus 两个方法。
 
-```
-
+```go
 func (c *Collector) publishBinlogs(ctx context.Context) {
     defer log.Info("publishBinlogs quit")
 
@@ -216,7 +215,7 @@ func (c *Collector) publishBinlogs(ctx context.Context) {
 
 publishBinlogs 调用 [merger](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/merge.go) 模块对从所有 pump 读取 binlog，并且按照 binlog 的 commit timestamp 进行归并排序，最后通过调用 `syncBinlog` 输出 binlog 到  Syncer 处理单元。
 
-```
+```go
 func (c *Collector) keepUpdatingStatus(ctx context.Context, fUpdate func(context.Context) error) {
     // add all the pump to merger
     c.merger.Stop()
@@ -253,7 +252,7 @@ keepUpdatingStatus 通过下面两种方式从 etcd 获取 pump 集群的最新�
 
 Syncer 代码位于 [drainer/syncer.go](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/syncer.go)，是用来处理数据同步的关键模块。
 
-```
+```go
 type Syncer struct {
     schema *Schema
     cp     checkpoint.CheckPoint
@@ -272,7 +271,7 @@ type Syncer struct {
 
 *   dsyncer 是真正同步数据到不同目标系统的执行器实现，我们会在后续章节具体介绍, 接口定义如下：
 
-    ```
+    ```go
     // Syncer sync binlog item to downstream
     type Syncer interface {
         // Sync the binlog item to downstream
