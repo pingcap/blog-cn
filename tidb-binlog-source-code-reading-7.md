@@ -6,7 +6,7 @@ summary: 本文介绍了 Drainer server 的实现。
 tags: ['TiDB Binlog 源码阅读','社区']
 ---
 
-前面文章介绍了 Pump server，接下来我们来介绍 Drainer server 的实现，Drainer server 的主要作用是从各个 Pump server 获取 binlog, 按 commit timestamp 归并排序后解析 binlog 同步到不同的目标系统，对应的源码主要集中在 TiDB Binlog 仓库的 [drainer/](https://github.com/pingcap/tidb-binlog/tree/v3.0.7/drainer) 目录下。
+前面文章介绍了 Pump server，接下来我们来介绍 Drainer server 的实现，Drainer server 的主要作用是从各个 Pump server 获取 binlog，按 commit timestamp 归并排序后解析 binlog 同步到不同的目标系统，对应的源码主要集中在 TiDB Binlog 仓库的 [drainer/](https://github.com/pingcap/tidb-binlog/tree/v3.0.7/drainer) 目录下。
 
 ## 启动 Drainer Server
 
@@ -45,7 +45,6 @@ Server 初始化以后，就可以用 `(*Server).Start` 启动服务，启动的
 
     if s.metrics != nil {
         s.tg.GoNoPanic("metrics", func() {
- 
     ```
 
 后续的章节中，我们会详细介绍 Checkpoint、Collector 与 Syncer。
@@ -126,7 +125,7 @@ func (sp *MysqlCheckPoint) Load() error {
 }
 ```
 
-Load 方法从数据库中读取 checkpoint 信息。需要注意的是，如果 drainer 读取不到对应的 checkpoint, 会使用 drainer 配置的 `initial-commit-ts` 做为启动的开始同步点。
+Load 方法从数据库中读取 checkpoint 信息。需要注意的是，如果 drainer 读取不到对应的 checkpoint，会使用 drainer 配置的 `initial-commit-ts` 做为启动的开始同步点。
 
 ```
 // Save implements checkpoint.Save interface
@@ -252,7 +251,7 @@ keepUpdatingStatus 通过下面两种方式从 etcd 获取 pump 集群的最新�
 
 ## Syncer
 
-Syncer 代码位于 [drainer/syncer.go](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/syncer.go), 是用来处理数据同步的关键模块。
+Syncer 代码位于 [drainer/syncer.go](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/syncer.go)，是用来处理数据同步的关键模块。
 
 ```
 type Syncer struct {
@@ -301,7 +300,7 @@ Syncer 运行入口在 [run](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/
 
 4.  调用 drainer/sync/Syncer.Sync()  异步地将数据同步到目标系统；
 
-5.  处理数据同步结果返回
+5.  处理数据同步结果返回。
 
   a. 通过 Succsses() 感知已经成功同步到下游的 binlog 数据，保存其对应 commit timestamp 信息到 checkpoint。
   
