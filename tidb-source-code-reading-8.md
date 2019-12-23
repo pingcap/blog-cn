@@ -30,7 +30,7 @@ TiDB 一个查询语句的简单流程：一个语句经过 parser 后会得到�
 
 ![图 1](media/tidb-source-code-reading-8/1.jpeg)
 
-<center> 图 1 </center>
+<div class="caption-center"> 图 1 </div>
 
 ### 物理算子简介
 
@@ -93,13 +93,13 @@ func dagPhysicalOptimize(logic LogicalPlan) (PhysicalPlan,  error) {
 select sum(s.a),count(t.b) from s join t on s.a = t.a and s.c < 100 and t.c > 10 group bys.a
 ```
 
-<center>（其中 a 是索引，b 也是索引）</center>
+<div class="caption-center">（其中 a 是索引，b 也是索引）</div>
 
 此语句就是基于此语句的 on 条件对表 s 和表 t 做 join，然后对 join 结果做聚合。将其用图表示如图 2（此处为了与图 3 对比，此处省略 Projection 算子）。
 
 ![图 2](media/tidb-source-code-reading-8/3.jpeg)
 
-<center> 图 2 </center>
+<div class="caption-center"> 图 2 </div>
 
 
 
@@ -131,7 +131,7 @@ for _, pp := range p.self.genPhysPlansByReqProp(prop) {
 
 ![图 3](media/tidb-source-code-reading-8/4.jpeg)
 
-<center> 图 3 </center>
+<div class="caption-center"> 图 3 </div>
 
 
 （图中黑色字体算子为逻辑算子，蓝色字体为物理算子，黄色箭头为已经计算过代价的算子，会获取已经缓存在哈希表中的结果，红色虚线箭头为不符合 prop 的算子。）
@@ -216,7 +216,7 @@ statsTable.count * distinctFactor
 N(join(s,t)) = N(s) * N(t) / (V(s.key) * V(t.key)) *Min(V(s.key), V(t.key))
 ```
 
-<center>（其中 N 为表的行数，V 为 key 的 cardinality 值）</center>
+<div class="caption-center">（其中 N 为表的行数，V 为 key 的 cardinality 值）</div>
 
 可以理解为表 s 与表 t 中不重复值的平均行数的乘积乘上小表的不重复值行数。
 
@@ -232,7 +232,7 @@ expected count 表示整个 SQL 结束前此算子期望读取的行数。例如
 
 ![图 4](media/tidb-source-code-reading-8/5.jpeg)
 
-<center> 图 4 </center>
+<div class="caption-center"> 图 4 </div>
 
 
 
@@ -246,7 +246,7 @@ expected count 表示整个 SQL 结束前此算子期望读取的行数。例如
 select *from t where c < 1 and b < 1 and a = 1
 ```
 
-<center>(其中 (a,b) 是索引, (b,a,c) 是索引，表 t 有 a、b 和 c 三列)</center>
+<div class="caption-center">(其中 (a,b) 是索引, (b,a,c) 是索引，表 t 有 a、b 和 c 三列)</div>
 
 那么可以得到如下两种路径：
 
@@ -262,7 +262,7 @@ select *from t where c < 1 and b < 1 and a = 1
 Cost(p) = N(p)*FN+M(p)*FM+C(p)*FC
 ```
 
-<center>（其中 N 表示网络开销，M 表示内存开销，C 表示 CPU 开销，F 表示因子）</center>
+<div class="caption-center">（其中 N 表示网络开销，M 表示内存开销，C 表示 CPU 开销，F 表示因子）</div>
 
 将 plan 与 task 关联，并加上此 plan 的 cost。
 

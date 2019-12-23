@@ -17,7 +17,7 @@ TiDB 是一个完全分布式的关系型数据库，从诞生的第一天起，
 
 ![Syncer 架构图](media/tidb-syncer/1.png)
 
-<center>Syncer 架构图</center>
+<div class="caption-center">Syncer 架构图</div>
 
 从整体的架构可以看到，Syncer 主要是通过把自己注册为一个 MySQL Slave 的方式，和 MySQL Master 进行通信，然后不断读取 MySQL Binlog，进行 Binlog Event 解析，规则过滤和数据同步。从工程的复杂度上来看，相对来说还是非常简单的，相对麻烦的地方主要是 Binlog Event 解析和各种异常处理，也是容易掉坑的地方。
 
@@ -36,7 +36,7 @@ TiDB 是一个完全分布式的关系型数据库，从诞生的第一天起，
 
 ![Replication 复制方案](media/tidb-syncer/2.jpg)
 
-<center>Replication 复制方案</center>
+<div class="caption-center">Replication 复制方案</div>
 
 ### MySQL Binlog
 

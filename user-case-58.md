@@ -25,7 +25,7 @@ logo: /images/blog-cn/customers/58.png
 
 ![业务及需求](media/user-case-58/1.png)
 
-<center>图 1 业务及需求</center>
+<div class="caption-center">图 1 业务及需求</div>
 
 业务需求目前有 4 点：
 
@@ -55,7 +55,7 @@ TiDB 的环境建设包括开发工具进行慢 SQL 的分析，完善监控系�
 
 ![TiDB 部署架构](media/user-case-58/2.png)
 
-<center>图 2 TiDB 部署架构</center>
+<div class="caption-center">图 2 TiDB 部署架构</div>
 
 TiDB 在 58 集团应用的架构如上图，主要分为管理机、云平台、监控、TiDB 集群等四个模块：
 
@@ -88,13 +88,13 @@ TiDB 2.X 版本的慢 SQL 收集分析相比起来复杂一些，还不支持 `p
 
 ![慢 SQL 分析工具](media/user-case-58/3.png)
 
-<center>图 3 慢 SQL 分析工具</center>
+<div class="caption-center">图 3 慢 SQL 分析工具</div>
 
 这个针对 TiDB 2.X 版本的慢 SQL 分析工具，主要是判断慢日志的采集区间，把所有的 SQL 格式化、逻辑化，把每类 SQL 的类型、具体信息采集出来，然后再把此类逻辑 SQL 的具体 SQL 放在一个具体的文件上，然后再去展示它的具体情况，如下图所示。
 
 ![慢SQL 分析结果举例](media/user-case-58/4.png)
 
-<center>图 4 慢SQL 分析结果举例</center>
+<div class="caption-center">图 4 慢SQL 分析结果举例</div>
 
 主要信息包括比如排序情况、库名、账号、平均执行时间、执行次数、具体逻辑 SQL 等。
 
@@ -104,7 +104,7 @@ TiDB 2.X 版本的慢 SQL 收集分析相比起来复杂一些，还不支持 `p
 
 ![TiDB 状态检查工具](media/user-case-58/5.png)
 
-<center>图 5 TiDB 状态检查工具</center>
+<div class="caption-center">图 5 TiDB 状态检查工具</div>
 
 主要实现方式是根据元信息来生成一个实例的拓扑的文件，我们查看集群的所有的拓扑之后再去从 Prometheus 获取数据然后汇总，最后把结果推送到 Zabbix 进行报警服务（目前我们用 Zabbix 做统一监控、报警平台，后面暂时没有用官方推荐的 Altermanager），然后再入库进行展示。其实集群状态误报的问题也可以从另外一个角度来解决，从各个组件的一个接口去获取集群的一个状态，防止 Prometheus 单点或其他的问题导致误报，这个功能目前也在开发中。
 
@@ -120,17 +120,17 @@ TiDB 2.X 版本的慢 SQL 收集分析相比起来复杂一些，还不支持 `p
 
 ![运维管理平台架构](media/user-case-58/6.png)
 
-<center>图 6 运维管理平台架构</center>
+<div class="caption-center">图 6 运维管理平台架构</div>
 
 在平台化方面，我们把 TiDB 接入到了“58 云 DB 平台”，利用开源 inception 来处理 DDL/DML 工单。平台分为管理端和用户端，管理端就是 DBA 用来做元信息维护、工单处理、运营报表、监控概览等。用户端方面，业务会在上面申请 TiDB 集群、DDL/DML 工单，账号管理，查看集群的信息及监控情况，他们还可以自助查询库中的数据。
 
 ![运维管理平台展示（1/2）](media/user-case-58/7.png)
 
-<center>图 7 运维管理平台展示（1/2）</center>
+<div class="caption-center">图 7 运维管理平台展示（1/2）</div>
 
 ![运维管理平台展示（2/2）](media/user-case-58/8.png)
 
-<center>图 8 运维管理平台展示（2/2）</center>
+<div class="caption-center">图 8 运维管理平台展示（2/2）</div>
 
 TiDB 运维管理方面主要是集群的信息展示、查看集群的监控，或者添加 TiDB/TiKV/PD 节点。另外我们也可以批量添加实例，选好机器、配好角色，然后指定开发负责人，就可以直接添加了。
 
@@ -138,7 +138,7 @@ TiDB 运维管理方面主要是集群的信息展示、查看集群的监控，
 
 ![可视化报表分类](media/user-case-58/9.png)
 
-<center>图 9 可视化报表分类</center>
+<div class="caption-center">图 9 可视化报表分类</div>
 
 可视化报表方面的工作是将 Prometheus 或者服务器的 Zabbix 的监控数据汇总放在平台上，提供给开发人员和 DBA 查看，主要维度包括服务器负载情况、CPU 内存、磁盘、网络、IO 等。集群方面是通过 Prometheus 的接口获取该集群当前使用量和总容量情况，库、表方面就是通过定期采集观察库的数据增长情况。
 
@@ -146,7 +146,7 @@ TiDB 运维管理方面主要是集群的信息展示、查看集群的监控，
 
 ![目前使用 TiDB 的业务](media/user-case-58/10.png)
 
-<center>图 10 目前使用 TiDB 的业务</center>
+<div class="caption-center">图 10 目前使用 TiDB 的业务</div>
 
 目前，58 集团使用 TiDB 的业务主要有 TEG 业务、安居客（日志类）、用户增长业务（58 咨询、通讯录数据保存）、信息安全（验真中心）、金融公司（金融实时数据仓库底层存储）、车业务（二手车话单分配） 等，其中应用最多的是 TEG 业务。
 
@@ -154,7 +154,7 @@ TiDB 运维管理方面主要是集群的信息展示、查看集群的监控，
 
 ![TiDB 数据库总量增长趋势](media/user-case-58/11.png)
 
-<center>图 11 TiDB 数据库总量增长趋势</center>
+<div class="caption-center">图 11 TiDB 数据库总量增长趋势</div>
 
 目前 TiDB 在 58 集团内部应用总量增长趋势是很快的，从 2018 年中开始接入 TiDB，到目前 TiKV 实例是达到 88 个，库的增长是达到 22 个左右，尤其是今年第二季度开始发力增长。
 
@@ -164,7 +164,7 @@ TiDB 运维管理方面主要是集群的信息展示、查看集群的监控，
 
 ![后续计划使用 TiDB 的业务](media/user-case-58/12.png)
 
-<center>图 12 后续计划使用 TiDB 的业务</center>
+<div class="caption-center">图 12 后续计划使用 TiDB 的业务</div>
 
 在运维方面，我们已经着手准备版本升级，可能会全部迁到 TiDB 3.0 版本，目前已经升级了一套，还是非常平稳的。至于监控完善，刚刚已经提到过，之后监控工具将通过多个组件接口来获取数据，防止单点问题导致误报。在报表功能方面，我们也在持续开发完善，比如包括 3.0 版本下的慢 SQL 查询的优化等。另外，因为有数仓类的业务，所以我们也考虑使用 TiSpark 和 TiFlash 提升系统性能。最后，我们也在做自动化部署、扩缩容、故障处理方面的开发。
 

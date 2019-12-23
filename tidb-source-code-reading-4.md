@@ -152,7 +152,7 @@ Insert 语句在诸多 DML 语句中算是最简单的语句，本文也没有�
 
 ![Insert](media/tidb-source-code-reading-4/1.png)
 
-<center>流程图</center>
+<div class="caption-center">流程图</div>
 
 最后给大家留一个思考题，本文描述了如何写入数据，那么 TiDB 是如何删除数据的呢？也就是 Delete 语句的执行流程是什么样子的，请大家追踪源码，调研一下这个流程，有兴趣的读者可以仿照本文写一篇源码解析文档，投稿给我们。
 

@@ -34,13 +34,13 @@ tags: ['TiKV','社区','Hackathon']
 | 通过分配到不同的线程池来实现优先级，但效果不佳 | 内部实现按时间的调度 |
 | 大请求对小请求的影响不可控 | 可预测的大请求对系统的影响 |
 
-<center>表 1 与现行线程池的对比</center>
+<div class="caption-center">表 1 与现行线程池的对比</div>
 
 Unified Thread Pool 的调度方案参考自多级反馈队列算法，在 Unified Thread Pool 中一共有三个队列，worker 每次以不同的数量从不同的队列里面拿任务执行来表示优先级。不同于 OS 场景下的调度是以每个任务为单位，在这里一个 TiDB query 可能因为跨越多个 Region 而产生多个 TiKV task，如图 1 所示：
 
 ![图 1 TiDB query 与 TiKV task 的关系](media/unified-thread-pool/1-tidb-query-tikv-task.png)
 
-<center>图 1 TiDB query 与 TiKV task 的关系</center>
+<div class="caption-center">图 1 TiDB query 与 TiKV task 的关系</div>
 
 因此在这里我们需要以 TiDB 的 query 为单位进行调度。为了实现这一点我们让 TiDB 在发送 query 的时候带上一个 token 来作为标识，在线程池内我们也以 token（query）为整体来调整优先级。
 
@@ -48,13 +48,13 @@ Unified Thread Pool 的调度方案参考自多级反馈队列算法，在 Unifi
 
 ![图 2 将请求分成多次执行](media/unified-thread-pool/2-将请求分成多次执行.png)
 
-<center>图 2 将请求分成多次执行</center>
+<div class="caption-center">图 2 将请求分成多次执行</div>
 
 至此，Unified Thread Pool 已经基本能够通过动态调节队列的参数来实现资源对大小任务的分配，并且需要设置的参数非常简单，仅有一个表示当出现大小任务混杂的情形时小任务应占的计算资源的百分数。通过测试我们看到这个的分配的效果比较精确，如下图所示。
 
 ![图 3 Configurable](media/unified-thread-pool/3-configurable.png)
 
-<center>图 3 Configurable</center>
+<div class="caption-center">图 3 Configurable</div>
 
 ## 比赛过程
 
@@ -66,7 +66,7 @@ Unified Thread Pool 的调度方案参考自多级反馈队列算法，在 Unifi
 
 ![图 4 fully utilize](media/unified-thread-pool/4-fully-utilize.png)
 
-<center>图 4 fully utilize</center>
+<div class="caption-center">图 4 fully utilize</div>
 
 ### 睁眼吃喝闭眼睡
 

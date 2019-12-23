@@ -43,7 +43,7 @@ TiKV 是一个高性能，支持分布式事务的 key-value 数据库。虽然�
 
 ![架构图](media/use-tikv-to-build-distributed-redis-service/1.png)
 
-<center>架构图</center>
+<div class="caption-center">架构图</div>
 
 整个架构非常简单，我们仅仅需要做的就是构建一个 Redis 的 Proxy，这个 Proxy 会解析 Redis 协议，然后将 Redis 的数据结构映射到 key-value 上面。
 

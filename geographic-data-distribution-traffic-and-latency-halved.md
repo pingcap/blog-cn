@@ -20,11 +20,11 @@ tags: ['跨数据中心','Hackathon']
 
 ![图 1 延迟对比](media/geographic-data-distribution-traffic-and-latency-halved/1-延迟对比.png)
 
-<center>图 1 延迟对比</center>
+<div class="caption-center">图 1 延迟对比</div>
 
 ![图 2 网络流量对比](media/geographic-data-distribution-traffic-and-latency-halved/2-网络流量对比.png)
 
-<center>图 2 网络流量对比</center>
+<div class="caption-center">图 2 网络流量对比</div>
 
 >“Google Spanner 高性能事务和强一致特性（跨区域甚至跨洲），是每一个做多数据中心架构设计的工程师心中所向往的目标。虽然当前 TiDB 在多数据中心部署时的表现同 Google Spanner 还有明显的差距，但我们很高兴的看到“多数据中心读写优化”项目让 TiDB 向 Spanner 级别多数据中心能力迈出了坚实的一步。相信在社区小伙伴们的共同努力下，假以时日 TiDB 一定能够为大家带来 Google Spanner 级别的体验。”
 >
@@ -42,7 +42,7 @@ tags: ['跨数据中心','Hackathon']
 
 ![图 3 主数据中心 & 从数据中心部署](media/geographic-data-distribution-traffic-and-latency-halved/3-主数据中心-从数据中心部署.png)
 
-<center>图 3 主数据中心 & 从数据中心部署</center>
+<div class="caption-center">图 3 主数据中心 & 从数据中心部署</div>
 
 ### Follower Read Improvement
 
@@ -59,7 +59,7 @@ tags: ['跨数据中心','Hackathon']
 
 ![图 4 不启用 Follower Read 的读流程](media/geographic-data-distribution-traffic-and-latency-halved/4-不启用-Follower-Read-的读流程.png)
 
-<center>图 4 不启用 Follower Read 的读流程</center>
+<div class="caption-center">图 4 不启用 Follower Read 的读流程</div>
 
 可以看到，虽然西安本地也有 TiKV 副本数据，但完全没有参与这个过程。该实现存在两个问题：
 
@@ -75,7 +75,7 @@ tags: ['跨数据中心','Hackathon']
 
 ![图 5 开启 Follower Read 的读流程](media/geographic-data-distribution-traffic-and-latency-halved/5-开启-Follower-Read-的读流程.png)
 
-<center>图 5 开启 Follower Read 的读流程</center>
+<div class="caption-center">图 5 开启 Follower Read 的读流程</div>
 
 #### 2. 延迟高
 
@@ -83,13 +83,13 @@ tags: ['跨数据中心','Hackathon']
 
 ![图 6 Follower Read 流程优化](media/geographic-data-distribution-traffic-and-latency-halved/6-Follower-Read-流程优化.png)
 
-<center>图 6 Follower Read 流程优化</center>
+<div class="caption-center">图 6 Follower Read 流程优化</div>
 
 通过这种优化方式，我们实现了跨数据中心读请求 2RTT -> 1RTT 的提升，并且我们在模拟的高延迟网络环境中的 benchmark 证实了这一点：
 
 ![图 7 benchmark](media/geographic-data-distribution-traffic-and-latency-halved/7-benchmark.png)
 
-<center>图 7 benchmark</center>
+<div class="caption-center">图 7 benchmark</div>
 
 考虑到没有原子钟的情况下想要保证线性一致性，一次获取 TSO 的请求是无法避免的，因此可以认为 1RTT 已经是在目前的架构下最优的解决方案了。
 
@@ -103,13 +103,13 @@ tags: ['跨数据中心','Hackathon']
 
 ![图 8 正常的消息广播](media/geographic-data-distribution-traffic-and-latency-halved/8-正常的消息广播.png)
 
-<center>图 8 正常的消息广播</center>
+<div class="caption-center">图 8 正常的消息广播</div>
 
 Follower Replication 的目标是将这个多次的跨数据中心传输尽量减少。要实现 Follower Replication，最关键的是需要让 Leader 节点知道所有 Raft 节点与它所在的 数据中心的信息。这里我们引入了一个新概念 Group，每一个 Raft 节点都有一个对应的 Group ID，拥有相同 Group ID 的节点即在同一个数据中心中。既然有了每个 Raft 节点的 Group 信息，Leader 就可以在广播消息时在每一个 Group 中选择一个代理人节点（我们称为 Follower  Delegate），将整个 Group 成员所需要的信息发给这个代理人，代理人负责将数据同步给 Group 内的其他成员，如下图所示。
 
 ![图 9 选择代理人之后的消息广播](media/geographic-data-distribution-traffic-and-latency-halved/9-选择代理人之后的消息广播.png)
 
-<center>图 9 选择代理人之后的消息广播</center>
+<div class="caption-center">图 9 选择代理人之后的消息广播</div>
 
 通过使用 Follower Replication，Leader 减少了一半的数据发送，既大大降低了跨数据中心带宽的压力，同时也减少了 Leader 在发送网络消息上的开销。当然，实际 Follower Replication 的实现还是很复杂的，我们后续会专门写一篇详细的文章来介绍。
 

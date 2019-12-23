@@ -30,7 +30,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 ![图 1  两地三中心部署架构图](media/user-case-mobike-2/1.png)
 
-<center>图 1 两地三中心部署架构图</center>
+<div class="caption-center">图 1 两地三中心部署架构图</div>
 
 整个集群部署在三个机房，同城 A、同城 B、异地 C。由于异地机房的网络延迟较高，设计原则是尽量使 PD Leader 和 TiKV Region Leader 选在同城机房（Raft 协议只有 Leader 节点对外提供服务），我们的解决方案如下：
 
@@ -42,7 +42,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 ![图 2 订单集群的迁移过程以及业务接入拓扑图](media/user-case-mobike-2/2.png)
 
-<center>图 2 订单集群的迁移过程以及业务接入拓扑图</center>
+<div class="caption-center">图 2 订单集群的迁移过程以及业务接入拓扑图</div>
 
 为了方便描述，图中 Sharding-JDBC 部分称为老 Sharding 集群，DBProxy 部分称为新 Sharding 集群。
 
@@ -79,7 +79,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 ![图 3  Raft 算法中，Follower 出现网络隔离的场景图](media/user-case-mobike-2/3.png)
 
-<center>图 3 Raft 算法中，Follower 出现网络隔离的场景图</center>
+<div class="caption-center">图 3 Raft 算法中，Follower 出现网络隔离的场景图</div>
 
 - Follower C 在 election timeout 没收到心跳之后，会发起选举，并转换为 Candidate 角色。
 - 每次发起选举时都会把 term 加 1，由于网络隔离，选举失败的 C 节点 term 会不断增大。
@@ -98,7 +98,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 ![图 4  在线业务集群拓扑图](media/user-case-mobike-2/4.png)
 
-<center>图 4 在线业务集群拓扑图</center>
+<div class="caption-center">图 4 在线业务集群拓扑图</div>
 
 ## 四、数据沙盒集群（离线业务）
 
@@ -120,7 +120,7 @@ logo: /images/blog-cn/customers/mobike-logo.png
 
 ![图 5  数据沙盒集群拓扑图](media/user-case-mobike-2/5.png)
 
-<center>图 5  数据沙盒集群拓扑图</center>
+<div class="caption-center">图 5  数据沙盒集群拓扑图</div>
 
 ### 4.1 遇到过的一些问题和解决方案
 
@@ -170,11 +170,11 @@ TiDB 在 2.1 版本后引入新的参数 `tidb_mem_quota_query`，可以设置�
 
 ![图 6 监控拓扑图](media/user-case-mobike-2/6.png)
 
-<center>图 6 监控拓扑图</center>
+<div class="caption-center">图 6 监控拓扑图</div>
 
 ![图 7 监控展示图](media/user-case-mobike-2/7.png)
 
-<center>图 7 监控展示图</center>
+<div class="caption-center">图 7 监控展示图</div>
 
 目前临时处理方案是部署多套 Pushgateway，将 TiKV 的监控信息指向不同的 Pushgateway 节点来分担流量。这个问题的最终还是要用 TiDB 的新版本（2.1.3 以上的版本已经支持），Prometheus 能够直接拉取 TiKV 的监控信息，取消对 Pushgateway 的依赖。
 

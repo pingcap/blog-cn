@@ -23,7 +23,7 @@ tags: ['TiDB','SQL']
 ## 用 SQL 查询集群信息
 
 ![图 1 查询集群系统信息](media/manage-many-as-one-with-sql/1.gif)
-<center>图 1 查询集群系统信息</center>
+<div class="caption-center">图 1 查询集群系统信息</div>
 
 
 在上面的示例中，我们通过 SQL 获得集群以下信息：
@@ -59,7 +59,7 @@ tags: ['TiDB','SQL']
 下面演示用 SQL 动态修改集群所有节点的配置:
 
 ![图 2 动态修改集群配置](media/manage-many-as-one-with-sql/2.gif)
-<center>图 2 动态修改集群配置</center>
+<div class="caption-center">图 2 动态修改集群配置</div>
 
 根据上面的动图可以看出，我们能通过 Update 语句修改 CLUSTER_CONFIG 系统表，即可完成集群配置的变更，而不需要再通过复杂的运维命令。当然，通过这个语句，也能指定只修改某个节点的某项配置。
 
@@ -90,7 +90,7 @@ tags: ['TiDB','SQL']
 要实现读取所有节点的系统信息和修改所有节点的配置，首先要打通 TiDB 节点之间的数据交互。先看下目前 TiDB 集群的架构，如下：
 
 ![图 3 原来 TiDB 集群系统架构](media/manage-many-as-one-with-sql/3.png)
-<center>图 3 原来 TiDB 集群系统架构</center>
+<div class="caption-center">图 3 原来 TiDB 集群系统架构</div>
 
 可以发现，现有结构下，其他的组件是用 RPC 来通信的，那么自然 TiDB 也应该用 RPC 通信，理由如下：
 
@@ -101,12 +101,12 @@ tags: ['TiDB','SQL']
 所以最后我们选择在 TiDB 新增一个 RPC 服务。架构如下：
 
 ![图 4 现在 TiDB 集群系统架构](media/manage-many-as-one-with-sql/4.png)
-<center>图 4 现在 TiDB 集群系统架构</center>
+<div class="caption-center">图 4 现在 TiDB 集群系统架构</div>
 
 TiDB 新增的 GPC 服务和 HTTP 服务共用 10080 端口，没有新增端口。通过以下 Explain 结果可以看出来，以下语句成功下推到了各个 TiDB。
 
 ![图 5 计算下推到其他 TiDB 节点执行](media/manage-many-as-one-with-sql/5.png)
-<center>图 5 计算下推到其他 TiDB 节点执行</center>
+<div class="caption-center">图 5 计算下推到其他 TiDB 节点执行</div>
 
 ## 写在最后
 

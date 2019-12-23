@@ -44,7 +44,7 @@ image: /images/blog-cn/tidb-2.0-ga-release-detail/2.0-ga.jpg
 
 ![TPC-H Query Result](media/tidb-2.0-ga-release-detail/1.png)
 
-<center>TPC-H Query Result</center>
+<div class="caption-center">TPC-H Query Result</div>
 
 
 ## 易用性和可运维性

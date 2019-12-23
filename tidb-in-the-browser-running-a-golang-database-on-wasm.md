@@ -16,7 +16,7 @@ tags: ['WebAssembly', 'SQL', 'Go', 'MySQL', 'TiDB']
 
 ![图 1 在浏览器上运行 TiDB](media/tidb-in-the-browser-running-a-golang-database-on-wasm/demo-1.gif)
 
-<center>图 1 在浏览器上运行 TiDB</center>
+<div class="caption-center">图 1 在浏览器上运行 TiDB</div>
 
 **是不是很酷？无痛体验 SQL 的时代到了。**
 
@@ -26,7 +26,7 @@ tags: ['WebAssembly', 'SQL', 'Go', 'MySQL', 'TiDB']
 
 ![图 2 SQL 教程网站演示](media/tidb-in-the-browser-running-a-golang-database-on-wasm/demo-2.png)
 
-<center>图 2 SQL 教程网站演示</center>
+<div class="caption-center">图 2 SQL 教程网站演示</div>
 
 **那么在浏览器里面运行数据库还有哪些好处呢？**
 

@@ -90,7 +90,7 @@ spec:
 
 ![示意图](media/tidb-opeartor-webhook/1.jpg)
 
-<center>示意图</center>
+<div class="caption-center">示意图</div>
 
 而我们的办法就是，利用 `ValidatingAdmissionWebhook`，在重要的 Pod 收到删除请求时，先在 webhook server 上请求集群进行下线前的清理和准备工作，并直接返回拒绝。这时候重点来了，Control Loop 为了达到目标状态（比如说升级到新版本），会不断地进行 reconcile，尝试删除 Pod，而我们的 webhook 则会不断拒绝，除非**集群已经完成了所有的清理和准备工作**。
 
@@ -98,7 +98,7 @@ spec:
 
 ![流程图](media/tidb-opeartor-webhook/2.jpg)
 
-<center>流程图</center>
+<div class="caption-center">流程图</div>
 
 1. 用户更新资源对象。
 2. controller-manager watch 到对象变更。

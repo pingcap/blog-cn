@@ -24,7 +24,7 @@ logo: /images/blog-cn/customers/gaea-ad-logo.png
 
 ![图 1 MySQL RDS 存储方案架构图](media/user-case-gaea-ad/1.png)
 
-<center>图 1 MySQL RDS 存储方案架构图</center>
+<div class="caption-center">图 1 MySQL RDS 存储方案架构图</div>
 
 
 ## 遭遇瓶颈，寻找解决方案
@@ -55,7 +55,7 @@ logo: /images/blog-cn/customers/gaea-ad-logo.png
 
 ![图 2 TiDB 方案架构图](media/user-case-gaea-ad/2.png)
 
-<center>图 2 TiDB 方案架构图</center>
+<div class="caption-center">图 2 TiDB 方案架构图</div>
 
 GaeaAD 系统从 2016 年 10 月上线以来，已经稳定运行了一季度多，结合实际的使用体验，我们总结了 TiDB 带来的收益，主要有以下几点：
 
@@ -63,7 +63,7 @@ GaeaAD 系统从 2016 年 10 月上线以来，已经稳定运行了一季度多
 
 ![图 3 TiDB 与 MySQL 在不同数据量下的查询时间对比](media/user-case-gaea-ad/3.png)
 
-<center>图 3 TiDB 与 MySQL 在不同数据量下的查询时间对比</center>
+<div class="caption-center">图 3 TiDB 与 MySQL 在不同数据量下的查询时间对比</div>
 
 * TiDB 支持自动 Sharding，业务端不用切表操作，TiDB 也不需要像传统的数据库中间件产品设定 Sharding key 或者分区表什么的，底层的存储会自动根据数据的分布，均匀的分散在集群中，存储空间和性能可以通过增加机器实现快速的水平扩展，极大地降低了运维成本。
 

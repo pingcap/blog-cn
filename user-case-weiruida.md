@@ -27,7 +27,7 @@ logo: /images/blog-cn/customers/weiruida-logo.png
 
 ![图 1：WindRDS 系统交互图](media/user-case-weiruida/1.png)
 
-<center>图 1：WindRDS 系统交互图</center>
+<div class="caption-center">图 1：WindRDS 系统交互图</div>
 
 ## 痛点、选型指标
 
@@ -71,13 +71,13 @@ TiDB 在我司的数据中心部署的应用情况如下：
 
 ![图 2：改造前 WindRDS 系统架构](media/user-case-weiruida/2.png)
 
-<center>图 2：改造前 WindRDS 系统架构</center>
+<div class="caption-center">图 2：改造前 WindRDS 系统架构</div>
 
 改造之后，TiDB + TiSpark 的解决方案，解决了之前方案的不足，系统数据中间件产品种类简化，OLTP + OLAP 一揽子解决方案，系统数据存储和查询计算集群结构简单，较少人工参与系统节点维护，降低运维复杂度，是一个比较理想的解决方案。
 
 ![图 3：改造后 WindRDS 部署架构](media/user-case-weiruida/3.png)
 
-<center>图 3：改造后 WindRDS 部署架构</center>
+<div class="caption-center">图 3：改造后 WindRDS 部署架构</div>
 
 ### 测试集群配置
 
@@ -104,11 +104,11 @@ TiSpark 测试集群总体配置如下：
 
 ![图 4：测试数据关键操作对比 MySQL vs TiDB](media/user-case-weiruida/6.png)
 
-<center>图 4：测试数据关键操作对比 MySQL vs TiDB</center>
+<div class="caption-center">图 4：测试数据关键操作对比 MySQL vs TiDB</div>
 
 ![图 5：测试数据关键操作 MySQL vs TiDB 耗时对比 (越低越好)](media/user-case-weiruida/7.png)
 
-<center>图 5：测试数据关键操作 MySQL vs TiDB 耗时对比 (越低越好)</center>
+<div class="caption-center">图 5：测试数据关键操作 MySQL vs TiDB 耗时对比 (越低越好)</div>
 
 ## TiDB 上线
 

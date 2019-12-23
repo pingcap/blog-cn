@@ -38,7 +38,7 @@ WebAssembly 的 [官方介绍](https://webassembly.org/) 是这样的：WebAssem
 
 ![图 1 主流浏览器对 WebAssembly 的支持程度](media/tidb-wasm-introduction/1-主流浏览器对-WebAssembly-的支持.png)
 
-<center>图 1 主流浏览器对 WebAssembly 的支持程度</center> 
+<div class="caption-center">图 1 主流浏览器对 WebAssembly 的支持程度</div> 
 
 ### 从高级语言到 Wasm 
 
@@ -46,7 +46,7 @@ WebAssembly 的 [官方介绍](https://webassembly.org/) 是这样的：WebAssem
 
 ![图 2 高级语言编译流程](media/tidb-wasm-introduction/2-高级语言编译流程.png)
 
-<center>图 2 高级语言编译流程</center> 
+<div class="caption-center">图 2 高级语言编译流程</div> 
 
 我们知道高级编程语言的特性之一就是可移植性，例如 C/C++ 既可以编译成 x86 机器可运行的格式，也可以编译到 ARM 上面跑，而我们的 Wasm 运行时和 ARM，x86_32 其实是同类东西，可以认为它是一台虚拟的机器，支持执行某种字节码，这一点其实和 Java 非常像，实际上 C/C++ 也可以编译到 JVM 上运行（参考：[compiling-c-for-the-jvm](https://stackoverflow.com/questions/4221605/compiling-c-for-the-jvm)）。
 
@@ -96,7 +96,7 @@ Example or  Hello World？
 
 ![图 3 Hello World](media/tidb-wasm-introduction/3-hello-world.png)
 
-<center>图 3 Hello World</center> 
+<div class="caption-center">图 3 Hello World</div> 
 
 ## 改造工作
 
@@ -167,14 +167,14 @@ func (tk *TestKit) Exec(sql string, args ...interface{}) (sqlexec.RecordSet, err
 
 ![图 4 按照 Golang 官方文档编译（1/2）](media/tidb-wasm-introduction/4-按照-Golang-官方文档编译.png)
 
-<center>图 4 按照 Golang 官方文档编译（1/2）</center> 
+<div class="caption-center">图 4 按照 Golang 官方文档编译（1/2）</div> 
 
 
 果然出师不利，查看 goleveldb 的代码发现，storage 包下面的代码针对不同平台有各自的实现，唯独没有 Wasm/js 的：
 
 ![图 5 按照 Golang 官方文档编译（2/2）](media/tidb-wasm-introduction/5-按照-Golang-官方文档编译-2.png)
 
-<center>图 5 按照 Golang 官方文档编译（2/2）</center> 
+<div class="caption-center">图 5 按照 Golang 官方文档编译（2/2）</div> 
 
 所以在 Wasm/js 环境下编译找不到一些函数。所以这里的方案就是添加一个 `file_storage_js.go`，然后给这些函数一个 unimplemented 的实现：
 
@@ -212,13 +212,13 @@ func syncDir(name string) error {
 
 ![图 6 再次编译的结果](media/tidb-wasm-introduction/6-再次编译的结果.png)
 
-<center>图 6 再次编译的结果</center> 
+<div class="caption-center">图 6 再次编译的结果</div> 
 
 emm… 编译的时候没有函数可以说这个函数没有 Wasm/js 对应的版本，没有 body 是个什么情况？好在我们有代码可以看，到 `arith_decl.go` 所在的目录看一下就知道怎么回事了：
 
 ![图 7 查看目录](media/tidb-wasm-introduction/7-查看目录.png)
 
-<center>图 7 查看目录</center> 
+<div class="caption-center">图 7 查看目录</div> 
 
 然后 `arith_decl.go` 的内容是一些列的函数声明，但是具体的实现放到了上面的各个平台相关的汇编文件中了。
 
@@ -244,7 +244,7 @@ emm… 编译的时候没有函数可以说这个函数没有 Wasm/js 对应的�
 
 ![图 8 编译成功](media/tidb-wasm-introduction/8-编译成功.png)
 
-<center>图 8 编译成功</center> 
+<div class="caption-center">图 8 编译成功</div> 
 
 ### 兼容性问题
 
@@ -252,7 +252,7 @@ emm… 编译的时候没有函数可以说这个函数没有 Wasm/js 对应的�
 
 ![图 9 异常栈](media/tidb-wasm-introduction/9-异常栈.png)
 
-<center>图 9 异常栈</center> 
+<div class="caption-center">图 9 异常栈</div> 
 
 可以看到这个错是运行时没实现 os.stat 操作，这是因为目前的 Golang 没有很好的支持 WASI，它仅在 `wasm_exec.js` 中 mock 了一个 `fs`:
 
@@ -294,7 +294,7 @@ go.run(result.instance);
 
 ![图 10 日志信息](media/tidb-wasm-introduction/10-日志.png)
 
-<center>图 10 日志信息</center> 
+<div class="caption-center">图 10 日志信息</div> 
 
 到目前为止就已经解决了 TiDB 编译到 Wasm 的所有技术问题，剩下的工作就是找一个合适的能运行在浏览器里的 SQL 终端替换掉前面写的终端，和 TiDB 对接上就能让用户在页面上输入 SQL 并运行起来了。
 
@@ -325,13 +325,13 @@ js.Global().Set("executeSQL", js.FuncOf(func(this js.Value, args []js.Value) int
 
 ![图 11 在浏览器控制台运行 SQL](media/tidb-wasm-introduction/11-运行-SQL.png)
 
-<center>图 11 在浏览器控制台运行 SQL</center> 
+<div class="caption-center">图 11 在浏览器控制台运行 SQL</div> 
 
 然后将用 jquery.console.js 搭建一个 SQL 终端，再将 executeSQL 作为 callback 传入，大功告成：
 
 ![图 12 搭建 SQL 终端](media/tidb-wasm-introduction/12-搭建-SQL-终端.png)
 
-<center>图 12 搭建 SQL 终端</center> 
+<div class="caption-center">图 12 搭建 SQL 终端</div> 
 
 现在算是有一个能运行的版本了。
 
@@ -383,13 +383,13 @@ source 命令执行之后弹出文件选择框：
 
 ![图 13 source 命令执行（1/2）](media/tidb-wasm-introduction/13-source-命令执行.png)
 
-<center>图 13 source 命令执行（1/2）</center> 
+<div class="caption-center">图 13 source 命令执行（1/2）</div> 
 
 选中 SQL 文件上传后自动执行，可以对数据库进行相应的修改：
 
 ![图 14 source 命令执行（2/2）](media/tidb-wasm-introduction/14-source-命令执行-2.png)
 
-<center>图 14 source 命令执行（2/2）</center> 
+<div class="caption-center">图 14 source 命令执行（2/2）</div> 
 
 ## 总结与展望
 
@@ -411,7 +411,7 @@ source 命令执行之后弹出文件选择框：
 
 ![图 15 TiDB Playground](media/tidb-wasm-introduction/0-tidb-playground.png)
 
-<center>图 15 TiDB Playground</center> 
+<div class="caption-center">图 15 TiDB Playground</div> 
 
 由于 Hackathon 时间比较紧张，其实很多想做的东西还没实现，比如：
 

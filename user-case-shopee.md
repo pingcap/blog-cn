@@ -25,7 +25,7 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 ![图 1 Shopee 电商平台展示图](media/user-case-shopee/1.png)
 
-<center>图 1 Shopee 电商平台展示图</center>
+<div class="caption-center">图 1 Shopee 电商平台展示图</div>
 
 **我们从 2018 年初开始调研 TiDB，6 月份上线了第一个 TiDB 集群。到目前为止我们已经有两个集群、60 多个节点在线运行，主要用于以下 Shopee 业务领域：**
 
@@ -39,7 +39,7 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 ![图 2 风控日志收集和处理示意图](media/user-case-shopee/2.png)
 
-<center>图 2 风控日志收集和处理示意图</center>
+<div class="caption-center">图 2 风控日志收集和处理示意图</div>
 
 风控系统基于大量历史订单以及用户行为日志，以实时和离线两种方式识别平台上的异常行为和欺诈交易。它的重要数据源之一是各种用户行为日志数据。最初我们将其存储于 MySQL 数据库，并按照 USER_ID 把数据均分为 100 个表。随着 Shopee 用户活跃度见长，数据体积开始疯长，到 2017 年底磁盘空间显得十分捉襟见肘了。作为应急措施，我们启用了 InnoDB 表透明压缩将数据体积减半；同时，我们把 MySQL 服务器磁盘空间从 2.5TB 升级到了 6TB。这两个措施为后续迁移 MySQL 数据到 TiDB 多争取了几个月时间。
 
@@ -78,7 +78,7 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 ![图 3 迁移过程图：保持双写，逐步从读 MySQL 改为读 TiDB](media/user-case-shopee/3.png)
 
-<center>图 3 迁移过程图：保持双写，逐步从读 MySQL 改为读 TiDB</center>
+<div class="caption-center">图 3 迁移过程图：保持双写，逐步从读 MySQL 改为读 TiDB</div>
 
 双写方式使得我们可以把整个切换过程拖长至几个月时间。这期间开发团队和 DBA 团队有机会逐步熟悉新的 TiDB 集群，并充分对比新旧数据库的表现。理论上，在双写停掉之前，若新的 TiDB 集群遭遇短时间内无法修复的问题，则应用程序有可能快速回退到 MySQL。
 
@@ -103,13 +103,13 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 ![图 4 风控日志 TiDB 数据库存储容量和使用状况](media/user-case-shopee/4.png)
 
-<center>图 4 风控日志 TiDB 数据库存储容量和使用状况</center>
+<div class="caption-center">图 4 风控日志 TiDB 数据库存储容量和使用状况</div>
 
 ### 性能
 
 ![图 5 风控日志 TiDB 数据库 QPS Total 曲线](media/user-case-shopee/5.png)
 
-<center>图 5 风控日志 TiDB 数据库 QPS Total 曲线</center>
+<div class="caption-center">图 5 风控日志 TiDB 数据库 QPS Total 曲线</div>
 
 风控日志数据库的日常 QPS（如图 5 所示）一般低于每秒 20K，在最近的双 12 促销日我们看到峰值一度攀升到了每秒 100K 以上。
 
@@ -117,7 +117,7 @@ logo: /images/blog-cn/customers/shopee-logo.png
 
 ![图 6 风控日志 TiDB 数据库两天 pct99 查询响应时间曲线](media/user-case-shopee/6.png)
 
-<center>图 6 风控日志 TiDB 数据库两天 pct99 查询响应时间曲线</center>
+<div class="caption-center">图 6 风控日志 TiDB 数据库两天 pct99 查询响应时间曲线</div>
 
 ## 五、问题和对策
 
