@@ -72,7 +72,7 @@ TiDB 的事务采用 2-phase-commit 算法，一次事务提交会分为 Prewrit
 
 ![写入流程图](media/tidb-binlog-source-code-reading-3/1.png)
 
-<center>写入流程图</center>
+<div class="caption-center">写入流程图</div>
 
 这里我们说的 P-binlog 和 C-binlog 都是通过 RPC `WriteBinlog` 接口写入，对应着参数 `WriteBinlogReq` 里面包含的 [binlog event](https://github.com/pingcap/tipb/blob/87cb1e27ab4a86efc534fd4c5b62fda621e38465/proto/binlog/binlog.proto#L57)，只是字段有些区别：
 

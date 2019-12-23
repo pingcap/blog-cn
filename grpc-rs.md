@@ -18,7 +18,7 @@ Core 能异步处理 RPC 请求，在考虑到 Rust 中已有较为成熟的异�
 
 ![gRPC-rs 架构图](media/grpc-rs/1.png)
 
-<center>gRPC-rs 架构图</center>
+<div class="caption-center">gRPC-rs 架构图</div>
 
 我们将根据架构图从底向上地讲一下，在 [深入了解 gRPC：协议](./grpc.md) 中已经讨论过传输层和协议，在这就不再赘述。
 

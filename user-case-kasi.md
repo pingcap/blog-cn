@@ -17,7 +17,7 @@ logo: /images/blog-cn/customers/kasi-logo.png
 
 ![图 1 卡思数据产品展示图](media/user-case-kasi/1.jpeg)
 
-<center>图 1 卡思数据产品展示图</center>
+<div class="caption-center">图 1 卡思数据产品展示图</div>
 
 ## 业务发展遇到的痛点
 
@@ -31,7 +31,7 @@ logo: /images/blog-cn/customers/kasi-logo.png
 
 ![图 2 起初卡思数据架构图](media/user-case-kasi/2.png)
 
-<center>图 2 起初卡思数据架构图</center>
+<div class="caption-center">图 2 起初卡思数据架构图</div>
 
 但是随着业务发展，暴露出一些问题：
 
@@ -93,17 +93,17 @@ PolarDB 是阿里云新推出新一代关系型数据库，主要思想是计算
 
 ![图 3 目前卡思数据架构图](media/user-case-kasi/3.jpeg)
 
-<center>图 3 目前卡思数据架构图</center>
+<div class="caption-center">图 3 目前卡思数据架构图</div>
 
 查询性能，单表最小 1000 万，最大 8 亿，有比较复杂的连表查询，整体响应延时非常稳定，监控展示如图 4、图 5。
 
 ![图 4 Duration 监控展示图](media/user-case-kasi/4.jpeg)
 
-<center>图 4 Duration 监控展示图</center>
+<div class="caption-center">图 4 Duration 监控展示图</div>
 
 ![图 5 QPS 监控展示图](media/user-case-kasi/5.jpeg)
 
-<center>图 5 QPS 监控展示图</center>
+<div class="caption-center">图 5 QPS 监控展示图</div>
 
 ## 未来展望
 

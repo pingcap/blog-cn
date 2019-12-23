@@ -16,7 +16,7 @@ tags: ['性能调优','最佳实践']
 
 ![图 1 Raftstore 处理流程示意图](media/best-practice-massive-regions-performance-improvement/1.png)
 
-<center>图 1 Raftstore 处理流程示意图</center>
+<div class="caption-center">图 1 Raftstore 处理流程示意图</div>
 
 >注：该示意图仅仅表意，不代表代码层面的实际结构。
 
@@ -38,7 +38,7 @@ tags: ['性能调优','最佳实践']
 
   ![图 2 查看 Raftstore CPU](media/best-practice-massive-regions-performance-improvement/2.png)
 
-  <center>图 2 查看 Raft store CPU</center>
+  <div class="caption-center">图 2 查看 Raft store CPU</div>
 
 * Raft Propose 下的 `Propose wait duration`
 
@@ -48,7 +48,7 @@ tags: ['性能调优','最佳实践']
   
   ![图 3 查看 Propose wait duration](media/best-practice-massive-regions-performance-improvement/3.png)
 
-  <center>图 3 查看 Propose wait duration</center>
+  <div class="caption-center">图 3 查看 Propose wait duration</div>
 
 
 ### 优化方法
@@ -133,7 +133,7 @@ PD 需要将 Region Meta 信息持久化在 etcd 以保证 PD Leader 节点切�
 
 ![图 4 查看 pd-worker](media/best-practice-massive-regions-performance-improvement/4.png)
 
-<center>图 4 查看 pd-worker</center>
+<div class="caption-center">图 4 查看 pd-worker</div>
 
 我们在 master 上已经对 pd-worker 进行了效率优化，预计会在 v2.1.19 和 v3.0.5 中带上相关优化，如碰到类似问题建议升级。
 

@@ -13,7 +13,7 @@ TiDB Binlog 主要由 Pump 和 Drainer 两部分组成，其中 Pump 负责存�
 
 ![TiDB Binlog 架构](media/tidb-binlog-source-code-reading-2/1.png)
 
-<center>TiDB Binlog 架构</center>
+<div class="caption-center">TiDB Binlog 架构</div>
 
 **在《[TiDB Binlog 架构演进与实现原理](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/)》一文中，我们对 TiDB Binlog 整体架构有更详细的说明，建议先行阅读该文。**
 

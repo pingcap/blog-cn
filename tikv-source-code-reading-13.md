@@ -139,7 +139,7 @@ tags: ['TiKV 源码解析','社区']
 
 ![TiKV 扫数据算法示意](media/tikv-source-code-reading-13/1.png)
 
-<center>图 1 TiKV 扫数据算法示意</center>
+<div class="caption-center">图 1 TiKV 扫数据算法示意</div>
 
 单次迭代的具体流程为：
 
@@ -191,7 +191,7 @@ Write Cursor 指向空，Lock Cursor 指向空：说明两个 CF 都扫完了，
 
 ![示意图 1](media/tikv-source-code-reading-13/2.png)
 
-<center>图 2 进入本分支的一种情况，若 Seek 的是 e，则处于 Write Cursor 和 Lock Cursor 都指向空的状态</center>
+<div class="caption-center">图 2 进入本分支的一种情况，若 Seek 的是 e，则处于 Write Cursor 和 Lock Cursor 都指向空的状态</div>
 
 ```rust
 (current_user_key_slice, has_write, has_lock) = match (w_key, l_key) {
@@ -242,7 +242,7 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说
 
 ![示意图 2](media/tikv-source-code-reading-13/3.png)
 
-<center>图 3 进入本分支的一种情况，若 Seek 的是 a，则处于 Write Cursor 和 Lock Cursor 都指向某个值的状态</center>
+<div class="caption-center">图 3 进入本分支的一种情况，若 Seek 的是 a，则处于 Write Cursor 和 Lock Cursor 都指向某个值的状态</div>
 
 ```rust
 (current_user_key_slice, has_write, has_lock) = match (w_key, l_key) {
@@ -309,7 +309,7 @@ match super::util::check_lock(&current_user_key, self.cfg.ts, &lock)? {
 >
 > ![示意图 3](media/tikv-source-code-reading-13/4.png)
 >
-> <center>图 4 一种 User Cursor 和 Lock Cursor 具有相同 User Key 的情况，Seek 的是 c</center>
+> <div class="caption-center">图 4 一种 User Cursor 和 Lock Cursor 具有相同 User Key 的情况，Seek 的是 c</div>
 
 走到了目前这一步，说明我们需要从 Write Info 中读取 User Key 满足 `scan_ts` 的记录。需要注意，此时 User Key 可能是存在 Lock 的，但已被判定为应当忽略。
 
@@ -438,7 +438,7 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
 ![样例事务在 RocksDB 的存储数据](media/tikv-source-code-reading-13/5.png)
 
-<center>图 5 样例事务在 RocksDB 的存储数据</center>
+<div class="caption-center">图 5 样例事务在 RocksDB 的存储数据</div>
 
 现在尝试以 scan_ts = 0x05 顺序扫 `[-∞, +∞)`。
 
@@ -446,7 +446,7 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/6.png)
 
-  <center>图 6 执行完毕后各个 Cursor 位置示意</center>
+  <div class="caption-center">图 6 执行完毕后各个 Cursor 位置示意</div>
 
 
 - 执行步骤 2：对比 Lock Cursor 与 Write Cursor，进入分支 2.4。
@@ -461,7 +461,7 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/7.png)
 
-  <center>图 7 执行完毕后各个 Cursor 位置示意</center>
+  <div class="caption-center">图 7 执行完毕后各个 Cursor 位置示意</div>
 
 
 - 执行步骤 4.2：此时 Write Key 指向 bar 与 User Key 相同，因此依据 `PUT (start_ts=1)` 从 Default CF 中获取到 `value = bar_value`。
@@ -470,7 +470,7 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/8.png)
 
-  <center>图 8 执行完毕后各个 Cursor 位置示意</center>
+  <div class="caption-center">图 8 执行完毕后各个 Cursor 位置示意</div>
 
 
 - 执行步骤 4.4：对外返回 Key Value 对 `(bar, bar_value)`。
@@ -485,7 +485,7 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/9.png)
 
-  <center>图 9 执行完毕后各个 Cursor 位置示意</center>
+  <div class="caption-center">图 9 执行完毕后各个 Cursor 位置示意</div>
 
 - 执行步骤 3：User Key = box 来自于 Lock，继续。
 
@@ -495,7 +495,7 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/10.png)
 
-  <center>图 10 执行完毕后各个 Cursor 位置示意</center>
+  <div class="caption-center">图 10 执行完毕后各个 Cursor 位置示意</div>
 
 - 执行步骤 4：User Key = box 不来自于 Write，跳过，回到步骤 2。
 
@@ -505,13 +505,13 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/11.png)
 
-  <center>图 11 执行完毕后各个 Cursor 位置示意</center>
+  <div class="caption-center">图 11 执行完毕后各个 Cursor 位置示意</div>
 
 - 执行步骤 3：User Key = foo 来自于 Lock，继续。与之前类似，锁被忽略，且 Lock Cursor 往后移动。
 
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/12.png)
 
-  <center>图 12 执行完毕后各个 Cursor 位置示意</center>
+  <div class="caption-center">图 12 执行完毕后各个 Cursor 位置示意</div>
 
 - 执行步骤 4：User Key = foo 同样来自于 Write，继续。
 
@@ -523,7 +523,7 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/13.png)
 
-  <center>图 13 执行完毕后各个 Cursor 位置示意</center>
+  <div class="caption-center">图 13 执行完毕后各个 Cursor 位置示意</div>
 
 - 执行步骤 4.4：对外返回 Key Value 对 `(foo, foo_value)`。
 
@@ -535,7 +535,7 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/14.png)
 
-  <center>图 14 执行完毕后各个 Cursor 位置示意</center>
+  <div class="caption-center">图 14 执行完毕后各个 Cursor 位置示意</div>
 
 - 执行步骤 2.1：Write Cursor 和 Lock Cursor 都指向空，没有更多数据了。
 

@@ -12,7 +12,7 @@ tags: ['DM 源码阅读','社区']
 
 ![Binlog replication 处理流程](media/dm-source-code-reading-5/1.png)
 
-<center>Binlog replication 处理流程</center>
+<div class="caption-center">Binlog replication 处理流程</div>
 
 从上图可以大致了解到 Binlog replication 的逻辑处理流程，对应的 [逻辑入口代码](https://github.com/pingcap/dm/blob/8bfa3e0e99b1bb1d59d9efd6320d9a86fa468217/syncer/syncer.go#L886)。
 

@@ -129,7 +129,7 @@ TiDB 实现悲观事务的方式很聪明而且优雅，我们仔细思考了 Pe
 
 ![TiDB 悲观锁的死锁检测](media/pessimistic-transaction-the-new-features-of-tidb/5.png)
 
-<center>TiDB 悲观锁的死锁检测</center>
+<div class="caption-center">TiDB 悲观锁的死锁检测</div>
 
 在具体的实现中，TiKV 会动态选举出一个 TiKV node 负责死锁检测（实际上，我们就是直接使用 Region1 所在的 TiKV node），在这个 TiKV node 上会开辟一块内存的记录和检测正在执行的这些事务的依赖关系。在悲观事务在等锁的时候，第一步会经过这个死锁检测模块，所以这部分可能会多引入一次 RPC 进行死锁检测，实际实现时死锁检测是异步的，不会增加延迟（回想一下交给饭店的定金 :P）。因为是纯内存的，所以性能还是很不错的，我们简单的对死锁检测模块进行了 benchmark，结果如下：
 

@@ -13,7 +13,7 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 
 ![](media/30mins-become-contributor-of-tikv/1.png)
 
-<center>图 1</center>
+<div class="caption-center">图 1</div>
 
 如图 1，当 TiDB 收到来自客户端的查询请求
 

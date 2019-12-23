@@ -64,7 +64,7 @@ tags: ['开源', '社区']
  
   ![TiDB Docs](media/how-to-contribute/1.jpg)
   
-  <center>TiDB Docs</center>
+  <div class="caption-center">TiDB Docs</div>
 
 
 ## 齐步走成为 Contributor
@@ -87,13 +87,13 @@ tags: ['开源', '社区']
 
     ![TiDB Issue 模版](media/how-to-contribute/2.png)
     
-    <center>TiDB Issue 模版</center>
+    <div class="caption-center">TiDB Issue 模版</div>
 
     TiKV Issue 模版如下：
     
     ![TiKV Issue 模版](media/how-to-contribute/3.png)
     
-    <center>TiKV Issue 模版</center>
+    <div class="caption-center">TiKV Issue 模版</div>
 
 * **给出你的代码链接** 使用像 [JSFiddle](http://jsfiddle.net/) 或者 [CodePen](http://codepen.io/) 等工具，贴出你的代码，好帮助别人复现你的问题。
 
@@ -130,7 +130,7 @@ tags: ['开源', '社区']
 
 ![Open Pull Requests](media/how-to-contribute/4.png)
 
-<center>Open Pull Requests</center>
+<div class="caption-center">Open Pull Requests</div>
 
 如果你的 pull request 被合并，这会非常棒。如果没有被合并，不要灰心。也许你的更改不是项目维护者需要的。或者更改已经存在了。发生这种情况时，我们建议你根据收到的任何反馈来修改代码，并再次提出 pull request。或创建自己的开源项目。
 

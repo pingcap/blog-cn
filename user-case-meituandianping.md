@@ -19,7 +19,7 @@ aliases: ['/cases-cn/user-case-meituan/']
 
 ![图 1 美团点评产品展示图](media/user-case-meituandianping/1.png)
 
-<center>图 1 美团点评产品展示图</center>
+<div class="caption-center">图 1 美团点评产品展示图</div>
 
 立项之初，我们进行了大量解决方案的对比，深入了解了业界多种 scale-out、scale-up 方案，考虑到技术架构的前瞻性、发展潜力、社区活跃度、以及服务本身与 MySQL 的兼容性，最终敲定了基于 TiDB 数据库进行二次开发的整体方案，并与 PingCAP 官方和开源社区进行深入合作的开发模式。
 
@@ -78,7 +78,7 @@ TiDB 架构分层清晰，服务平稳流畅，但在美团当前的数据量规
 
 ![图 2 业务架构图](media/user-case-meituandianping/2.png)
 
-<center>图 2 业务架构图</center>
+<div class="caption-center">图 2 业务架构图</div>
 
 后面我们会逐渐过渡到当前大量使用的 Zebra 接入方式来访问 TiDB，从而保持与访问 MySQL 的方式一致，一方面减少业务改造的成本，另一方面尽量实现从 MySQL 到 TiDB 的透明迁移。
 
@@ -88,7 +88,7 @@ TiDB 架构分层清晰，服务平稳流畅，但在美团当前的数据量规
 
 ![图 3 监控架构图](media/user-case-meituandianping/3.png)
 
-<center>图 3 监控架构图</center>
+<div class="caption-center">图 3 监控架构图</div>
 
 而 TiDB 有丰富的监控指标，使用流行的 Prometheus + Grafana，一套集群有 700+ 的 Metric。从官方的架构图可以看出，每个组件会推送自己的 Metric 给 PushGateWay，Prometheus 会直接到 PushGateWay 去抓数据。
 
@@ -110,7 +110,7 @@ TiDB 使用 Ansible 实现自动化部署。迭代快，是 TiDB 的一个特点
 
 ![图 4 自动化运维平台展示图](media/user-case-meituandianping/4.png)
 
-<center>图 4 自动化运维平台展示图</center>
+<div class="caption-center">图 4 自动化运维平台展示图</div>
 
 ### 3.5 上下游异构数据同步
 
@@ -128,7 +128,7 @@ TiDB 是在线存储体系中的一环，它同时也需要融入到公司现有
 
 ![图 5 TiDB to Hive 方案图](media/user-case-meituandianping/5.png)
 
-<center>图 5 TiDB to Hive 方案图</center>
+<div class="caption-center">图 5 TiDB to Hive 方案图</div>
 
 ## 四、线上使用磨合
 
@@ -164,7 +164,7 @@ TiKV 底层有 2 个 RocksDB 作为存储。新写的数据写入 L0 层，当 R
 
 ![图 6 TiKV 发生 Write Stall 监控展示图](media/user-case-meituandianping/6.png)
 
-<center>图 6 TiKV 发生 Write Stall 监控展示图</center>
+<div class="caption-center">图 6 TiKV 发生 Write Stall 监控展示图</div>
 
 我们通过以下措施，解决了 Write Stall 的问题：
 
@@ -192,7 +192,7 @@ TiKV 底层有 2 个 RocksDB 作为存储。新写的数据写入 L0 层，当 R
 
 ![图 7 insert 响应时间优化前后对比图](media/user-case-meituandianping/7.png)
 
-<center>图 7 insert 响应时间优化前后对比图</center>
+<div class="caption-center">图 7 insert 响应时间优化前后对比图</div>
 
 * 彻底解决
     * 需要减少 Region 个数，Merge 掉空 Region，官方在 2.1 版本中已经实现了 Region Merge 功能，我们在升级到 2.1 后，得到了彻底解决。
@@ -258,7 +258,7 @@ TiDB 的物理优化阶段需要依靠统计信息。在 2.0 版本统计信息�
 
 ![图 8 TiDB HTAP Platform 整体架构图](media/user-case-meituandianping/8.png)
 
-<center>图 8 TiDB HTAP Platform 整体架构图</center>
+<div class="caption-center">图 8 TiDB HTAP Platform 整体架构图</div>
 
 后续的物理备份方案，跨机房多写等也是我们接下来逐步推进的场景，总之我们坚信未来 TiDB 在美团的使用场景会越来越多，发展也会越来越好。
 

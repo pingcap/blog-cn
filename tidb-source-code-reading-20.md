@@ -170,7 +170,7 @@ select * from p3 where id < MAXVALUE)
 
 ![EXPLAN 输出](media/tidb-source-code-reading-20/1.png)
 
-<center>图 1：EXPLAIN 输出</center>
+<div class="caption-center">图 1：EXPLAIN 输出</div>
 
 用户在使用分区表时，往往只需要访问其中部分的分区, 就像程序局部性原理一样，优化器分析 `FROM` 和 `WHERE` 子句来消除不必要的分区，具体还要优化器根据实际的 SQL 语句中所带的条件，避免访问无关分区的优化过程我们称之为分区裁剪（Partition Pruning），具体实现在 [这里](https://github.com/pingcap/tidb/blob/release-2.1/planner/core/rule_partition_processor.go#L70)，分区裁剪是分区表提供的重要优化手段，通过分区的裁剪，避免访问无关数据，可以加速查询速度。当然用户可以刻意利用分区裁剪的特性在 SQL 加入定位分区的条件，优化查询性能。
 

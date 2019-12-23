@@ -35,13 +35,13 @@ TiDB 是一款定位于在线事务处理/在线分析处理（HTAP）的融合�
 
 ![](media/user-case-yuanfudao/1.jpeg)
 
-<center>图为 TiDB 与传统的 MySQL 中间件方案的一些对比</center>
+<div class="caption-center">图为 TiDB 与传统的 MySQL 中间件方案的一些对比</div>
 
 TiDB 集群主要分为三个组件：TiDB Server、TiKV Server、PD Server。
 
 ![](media/user-case-yuanfudao/2.jpeg)
 
-<center>TiDB 整体架构图</center>
+<div class="caption-center">TiDB 整体架构图</div>
 
 TiDB Server 负责处理 SQL 请求，随着业务的增长，可以简单的添加 TiDB Server 节点，提高整体的处理能力，提供更高的吞吐。TiKV 负责存储数据，随着数据量的增长，可以部署更多的 TiKV Server 节点解决数据 Scale 的问题。PD 会在 TiKV 节点之间以 Region 为单位做调度，将部分数据迁移到新加的节点上。所以企业在业务的早期，可以只部署少量的服务实例，随着业务量的增长，按照需求添加 TiKV 或者 TiDB 实例。
 

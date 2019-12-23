@@ -46,11 +46,11 @@ SQL Server + .Net 是很多早期互联网企业的标配技术栈，虽然 TiDB
 
 ![TiDB 的研发同学到之家进行技术交流](media/user-case-qichezhijia/1-技术交流.png)
 
-<center>TiDB 的研发同学到之家进行技术交流</center>
+<div class="caption-center">TiDB 的研发同学到之家进行技术交流</div>
 
 ![我们去 TiDB 进行系统的课程培训](media/user-case-qichezhijia/2-技术交流-2.png)
 
-<center>我们去 TiDB 进行系统的课程培训</center>
+<div class="caption-center">我们去 TiDB 进行系统的课程培训</div>
 
 
 下面引用 TiDB 官方的一段描述：
@@ -187,11 +187,11 @@ record.removeColumnByName(config.getDiscardKey());
 
 ![9-解析-Binlog-Protobuf-协议](media/user-case-qichezhijia/9-解析-Binlog-Protobuf-协议.png)
 
-<center>解析 Binlog (Protobuf 协议)</center>
+<div class="caption-center">解析 Binlog (Protobuf 协议)</div>
 
 ![10-通过业务-ID-决定数据写到哪个库表](media/user-case-qichezhijia/10-通过业务-ID-决定数据写到哪个库表.png)
 
-<center>通过业务 ID 决定数据写到哪个库表</center>
+<div class="caption-center">通过业务 ID 决定数据写到哪个库表</div>
 
 
 ## 八、汽车之家社区业务 TiDB 迁移改造

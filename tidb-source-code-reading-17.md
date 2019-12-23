@@ -26,7 +26,7 @@ TiDB 的 DDL 通过实现 Google F1 的在线异步 schema 变更算法，来完
 
 ![TiDB 中 DDL SQL 的处理流程](media/tidb-source-code-reading-17/1.png)
 
-<center>图 1：TiDB 中 DDL SQL 的处理流程</center>
+<div class="caption-center">图 1：TiDB 中 DDL SQL 的处理流程</div>
 
 TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
@@ -130,7 +130,7 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 ![图 2：并行 DDL 处理流程](media/tidb-source-code-reading-17/2.png)
 
-<center>图 2：并行 DDL 处理流程</center>
+<div class="caption-center">图 2：并行 DDL 处理流程</div>
 
 并行 DDL 同时也引入了 job 依赖的问题。job 依赖是指同一 table 的 DDL job，job ID 小的需要先执行。因为对于同一个 table 的 DDL 操作必须是顺序执行的。比如说，`add column a`，然后 `add index on column a`, 如果 `add index` 先执行，而 `add column` 的 DDL 假设还在排队未执行，这时 `add index on column a` 就会报错说找不到 `column a`。所以当 `add index job queue` 中的 job2 执行前，需要检测 job queue 是否有同一 table 的 job1 还未执行，通过对比 job 的 job ID 大小来判断。执行 job queue 中的 job 时也需要检查 `add index job queue` 中是否有依赖的 job 还未执行。
 

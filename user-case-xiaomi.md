@@ -19,7 +19,7 @@ MIUI 是小米公司旗下基于 Android 系统深度优化、定制、开发的
 
 ![图 1  MIUI Android 系统界面图](media/user-case-xiaomi/1.png)
 
-<center>图 1  MIUI Android 系统界面图</center>
+<div class="caption-center">图 1  MIUI Android 系统界面图</div>
 
 目前 TiDB 主要应用在：
 
@@ -46,7 +46,7 @@ TiDB 的架构及原理在 [官网](https://pingcap.com/) 里有详细介绍，�
 
 ![图 2  TiDB 基础架构图](media/user-case-xiaomi/2.png)
 
-<center>图 2  TiDB 基础架构图</center>
+<div class="caption-center">图 2  TiDB 基础架构图</div>
 
 ## 三、背景
 
@@ -109,7 +109,7 @@ TiDB 的架构及原理在 [官网](https://pingcap.com/) 里有详细介绍，�
 
 ![图 3  标准 Select 压测图](media/user-case-xiaomi/3.png)
 
-<center>图 3  标准 Select 压测图</center>
+<div class="caption-center">图 3  标准 Select 压测图</div>
 
 #### 5.3.2 标准 OLTP 压测
 
@@ -124,7 +124,7 @@ TiDB 的架构及原理在 [官网](https://pingcap.com/) 里有详细介绍，�
 
 ![图 4  标准 OLTP  压测图](media/user-case-xiaomi/4.png)
 
-<center>图 4  标准 OLTP  压测图</center>
+<div class="caption-center">图 4  标准 OLTP  压测图</div>
 
 #### 5.3.3 标准 Insert 压测
 
@@ -139,7 +139,7 @@ TiDB 的架构及原理在 [官网](https://pingcap.com/) 里有详细介绍，�
 
 ![图 5  标准 Insert 压测图](media/user-case-xiaomi/5.png)
 
-<center>图 5  标准 Insert 压测图</center>
+<div class="caption-center">图 5  标准 Insert 压测图</div>
 
 通过压测发现 TiDB 稳定性上与预期稍有差别，不过压测的 Load 会明显高于生产中的业务 Load，参考低 Threads 时 TiDB 的表现，基本可以满足业务对 DB 的性能要求，决定灰度一部分 MySQL 从库读流量体验一下实际效果。
 
@@ -159,7 +159,7 @@ Syncer 结构如图 6，主要依靠各种 Rule 来实现不同的过滤、合�
 
 ![图 6  Syncer 结构图](media/user-case-xiaomi/6.png)
 
-<center>图 6  Syncer 结构图</center>
+<div class="caption-center">图 6  Syncer 结构图</div>
 
 使用 Syncer 需要注意：
 
@@ -191,7 +191,7 @@ Syncer 结构如图 6，主要依靠各种 Rule 来实现不同的过滤、合�
 
 ![图 7  监控图](media/user-case-xiaomi/7.png) 
 
-<center>图 7  监控图</center>
+<div class="caption-center">图 7  监控图</div>
 
 ## 八、遇到的问题、原因及解决办法
 

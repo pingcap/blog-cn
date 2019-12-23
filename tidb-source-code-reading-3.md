@@ -218,7 +218,7 @@ TiDB 的执行引擎是以 Volcano 模型运行，所有的物理 Executor 构�
 
 ![执行器树](media/tidb-source-code-reading-3/1.png)
 
-<center>执行器树</center>
+<div class="caption-center">执行器树</div>
 
 大家可以从图中看到 Executor 之间的调用关系，以及数据的流动方式。那么最上层的 Next 是在哪里调用，也就是整个计算的起始点在哪里，谁来驱动这个流程？ 有两个地方大家需要关注，这两个地方分别处理两类语句。 第一类语句是 Select 这种查询语句，需要对客户端返回结果，这类语句的执行器调用点在[给客户端返回数据的地方](https://github.com/pingcap/tidb/blob/master/server/conn.go#L909)：
 
@@ -246,7 +246,7 @@ TiDB 的执行引擎是以 Volcano 模型运行，所有的物理 Executor 构�
 
 ![SQL 层执行过程](media/tidb-source-code-reading-3/2.png)
 
-<center>SQL 层执行过程</center>
+<div class="caption-center">SQL 层执行过程</div>
 
 通过这篇文章，相信大家已经了解了 TiDB 中语句的执行框架，整个逻辑还是比较简单，框架中具体的模块的详细解释会在后续章节中给出。下一篇文章会用具体的语句为例，帮助大家理解本篇文章。
 

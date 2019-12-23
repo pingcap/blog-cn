@@ -38,11 +38,11 @@ logo: /images/blog-cn/customers/keruyun-logo.png
 
 ![图：老的框架](media/user-case-keruyun/1.png)
 
-<center>图：老的框架</center>
+<div class="caption-center">图：老的框架</div>
 
 ![图：新的框架](media/user-case-keruyun/2.png)
 
-<center>图：新的框架</center>
+<div class="caption-center">图：新的框架</div>
 
 ## TiDB 测试应用
 

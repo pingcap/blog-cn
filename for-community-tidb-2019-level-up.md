@@ -26,7 +26,7 @@ image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 
 ![Raft Group Merge](media/for-community-tidb-2019-level-up/2.png)
 
-<center>Raft Group Merge</center>
+<div class="caption-center">Raft Group Merge</div>
 
 在性能方面，我们花了很大的精力重构了我们单机上多 Raft Group 的线程模型（[https://github.com/tikv/tikv/pull/3568](https://github.com/tikv/tikv/pull/3568)）， 虽然还没有合并到 master 分支，在我们测试中，这个优化带来了两倍以上的吞吐提升，同时写入延迟降低至现在的版本的 1/2 ，预计在这两周我们会完成这个巨大的 PR 的 Code Review，各位同学可以期待一下 :)
 
@@ -47,7 +47,7 @@ image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 
 ![多租户 TiDB](media/for-community-tidb-2019-level-up/4.png)
 
-<center>多租户 TiDB</center>
+<div class="caption-center">多租户 TiDB</div>
 
 今年还做了一件很大的事情，我们成立了一个新的部门 TEP（TiDB Enterprise Platform）专注于商业化组件及相关的交付质量控制。作为一个企业级的分布式数据库，TiDB 今年完成了商业化从0到1的跨越，越来越多的付费客户证明 TiDB 的核心的成熟度已经可以委以重任，成立 TEP 小组也是希望在企业级产品方向上继续发力。从 [TiDB-Lightning](https://pingcap.com/blog-cn/tidb-ecosystem-tools-2/)（MySQL 到 TiDB 高速离线数据导入工具）到 [TiDB-DM](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)（TiDB-DataMigration，端到端的数据迁移-同步工具）能看到发力的重点在让用户无缝的从上游迁移到 TiDB 上。另一方面，[TiDB-Binlog](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/) 虽然不是今年的新东西，但是今年这一年在无数个社区用户的场景中锻炼，越来越稳定。做工具可能在很多人看来并不是那么「高科技」， 很多时候也确实是脏活累活，但是这些经过无数用户场景打磨的周边工具和生态才是一个成熟的基础软件的护城河和竞争壁垒，在 PingCAP 内部，负责工具和外围系统研发的团队规模几乎和内核团队是 1:1 的配比，重要性可见一斑。
 
@@ -55,7 +55,7 @@ image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 
 ![TiDB 的用户数统计](media/for-community-tidb-2019-level-up/5.png)
 
-<center>TiDB 的用户数统计</center>
+<div class="caption-center">TiDB 的用户数统计</div>
 
 今年几个比较典型的 [用户案例](https://pingcap.com/cases-cn/)，从 [美团](https://pingcap.com/cases-cn/user-case-meituan/) 的横跨 OLTP 和实时数仓的深度实践，到 [转转](https://pingcap.com/cases-cn/user-case-zhuanzhuan/) 的 All-in TiDB 的体验，再到 TiDB 支撑的北京银行的核心交易系统。可以看到，这些案例从互联网公司的离线线数据存储到要求极端 SLA 的传统银行核心交易系统，TiDB 在这些场景里面都发光发热，甚至有互联网公司（转转）都喊出了 All-in TiDB 的口号，我们非常珍视这份信任，一定尽全力做出漂亮的产品，高质量的服务好我们的用户和客户。另一方面，TiDB 也慢慢开始产生国际影响力的，在线视频巨头葫芦软件（Hulu.com），印度最大的在线票务网站 BookMyShow，东南亚最大的电商之一 [Shopee](https://pingcap.com/cases-cn/user-case-shopee/) 等等都在大规模的使用 TiDB，在北美和欧洲也已经不少准上线和测试中的的巨头互联网公司。
 
@@ -79,11 +79,11 @@ image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 
 ![TiDB 2019 年会变成这个样子](media/for-community-tidb-2019-level-up/6.png)
 
-<center>TiDB 2019 年会变成这个样子</center>
+<div class="caption-center">TiDB 2019 年会变成这个样子</div>
 
 ![Learner 在 HTAP 中的应用](media/for-community-tidb-2019-level-up/7.png)
 
-<center>Learner 在 HTAP 中的应用</center>
+<div class="caption-center">Learner 在 HTAP 中的应用</div>
 
 在执行器方面，我们会继续推进向量化，不出意外的话，今年会完成所有算子的全路径的向量化执行。
 
@@ -92,7 +92,7 @@ image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 
 ![TiKV 新的本地存储引擎 Titan](media/for-community-tidb-2019-level-up/8.png)
 
-<center>TiKV 新的本地存储引擎 Titan</center>
+<div class="caption-center">TiKV 新的本地存储引擎 Titan</div>
 
 在 Titan 走向稳定的同时，我们也在调研从头构建一个更适合 TiDB 的 OLTP workload 的存储引擎，前面说到 2018 年做了抽象 TiKV 的本地存储引擎的事情就是为了这个打基础，当然我们仍然会走 LSM-Tree 的路线。这里多提一句，其实很多人都误解了 LSM-Tree 模型的真正优势，在我看来并不是性能，而是：做到可接受的性能的同时，LSM-Tree 的实现非常简单可维护，只有简单的东西才可以依赖，这个决定和我们在 Raft 与 Paxos 之间的选择偏好也是一致的。另外 LSM-Tree 的设计从宏观上来说，更加符合「冷热分层」以适配异构存储介质的想法，这个我相信是未来在存储硬件上的大趋势。
 

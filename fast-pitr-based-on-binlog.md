@@ -19,7 +19,7 @@ tags: ['TiDB-Binlog']
 4.  调大 TiDB gc_life_time 保存更多版本的快照数据，一方面保存时间不能无限长，另一方面过多的版本会影响性能且占用集群空间。 
 
   ![图 1 原生 Binlog 备份恢复](media/fast-pitr-based-on-binlog/1.png)
-  <center>图 1 原生 binlog 备份恢复</center>
+  <div class="caption-center">图 1 原生 binlog 备份恢复</div>
   
 我们在线上使用 TiDB 已经超过 2 年，从 1.0 RC 版本到 1.0 正式版、2.0、2.1 以及现在的 3.0，我们能感受到 TiDB 的飞速进步和性能提升，但备份恢复的这些痛点，是我们 TiDB 在关键业务中推广的一个掣肘因素。于是，我们选择了这个题目:  基于 TiDB Binlog 的 Fast-PITR (Fast point in time recovery)，即基于 TiDB Binlog 的快速时间点恢复，实现了基于 TiDB Binlog 的逐级 merge，以最小的代价实现快速 PITR，解决了现有 TiDB 原生备份恢复方案的一些痛点问题。 
 
@@ -28,12 +28,12 @@ tags: ['TiDB-Binlog']
 1.  根据互联网行业特征和 2/8 原则，每天真正会被更新的数据只有 20% 而且是频繁更新。我们也统计了线上万亿级别 DML 中 CUD 真实占比为 15:20:2，其中 update 超过了 50%。row 模式的 binlog 中我们只记录前镜像和最终镜像，可以得到一份非常轻量的“差异备份”，如图所示:    
 
    ![图 2 Binlog merge 原则](media/fast-pitr-based-on-binlog/2.png)
-   <center>图 2 binlog merge 原则</center>
+   <div class="caption-center">图 2 binlog merge 原则</div>
   
 2.  我们将 binlog 按照时间分段，举例说，每天的 binlog 为一个分段，每段按照上面的原则进行 merge，这段 binlog 合并后成为一个备份集，备份集是一些独立的文件。由于每一个备份集在 merge 阶段已经去掉了冲突，所以一方面对体积进行了压缩，另一方面可以以行级并发回放，提高回放速度，结合 full backup 快速恢复到目标时间点，完成 PITR 功能。而且，这种合并的另一个好处是，生成的备份集与原生 binlog file 可以形成互备关系，备份集能够通过原生 binlog file 重复生成。
 
   ![图 3 binlog 并行回放](media/fast-pitr-based-on-binlog/3.png)
-  <center>图 3 binlog 并行回放</center>
+  <div class="caption-center">图 3 binlog 并行回放</div>
     
   binlog 分段方式可以灵活定义起点和终点:  
   
@@ -51,7 +51,7 @@ tags: ['TiDB-Binlog']
 3.  在此基础上，我们做了些优化:    
 
   ![图 4 优化后](media/fast-pitr-based-on-binlog/4.png)
-  <center>图 4 优化后</center>
+  <div class="caption-center">图 4 优化后</div>
   
   备份集的格式与 TiDB Binlog 相同，所以，备份集之间可以根据需要再次合并，形成新的备份集，加速整个恢复流程。  
   
@@ -62,7 +62,7 @@ tags: ['TiDB-Binlog']
 由于需要将同一 key（主键或者唯一索引键）的所有变更合并到一条 Event 中，需要在内存中维护这个 key 所在行的最新合并数据。如果 binlog 中包含大量不同的 key 的变更，则会占用大量的内存。因此设计了 Map-Reduce 模型来对 binlog 数据进行处理：
 
 ![图 5 Binlog 合并方式](media/fast-pitr-based-on-binlog/5.png)
-<center>图 5 binlog 合并方式</center>
+<div class="caption-center">图 5 binlog 合并方式</div>
  
  *   Mapping 阶段：读取 Binlog file，通过 PITR 工具将文件按库名 + 表名输出，再根据 Key hash 成不同的小文件存储，这样同一行数据的变更都保存在同一文件下，且方便 Reduce 阶段的处理。
 
@@ -83,7 +83,7 @@ tags: ['TiDB-Binlog']
 Drainer 输出的 binlog 文件中只包含了各个列的数据，缺乏必要的表结构信息（PK/UK），因此需要获取初始的表结构信息，并且在处理到 DDL binlog 数据时更新表结构信息。DDL 的处理主要实现在 DDL Handle 结构中：
 
 ![图 6 DDL 处理](media/fast-pitr-based-on-binlog/6.png)
-<center>图 6 DDL 处理</center>
+<div class="caption-center">图 6 DDL 处理</div>
 
 
 首先通过配置 TiDB 的 Restful API 获取 TiKV 中保存的历史 DDL 信息，通过这些历史 DDL 获取 binlog 处理时的初始表结构信息，然后在处理到 DDL binlog 时更新表结构信息。
@@ -111,7 +111,7 @@ Hackathon 比赛时间只有两天，时间紧任务重，我们实现了上面�
 ### 增量与全量的合并
 
 ![图 7 方案展望](media/fast-pitr-based-on-binlog/7.png)
-<center>图 7 方案展望</center>
+<div class="caption-center">图 7 方案展望</div>
 
 增量备份集，逻辑上是一些 insert+update+delete 语句。
 
@@ -126,7 +126,7 @@ PIRT 工具实际上是一个 binlog 的 merge 过程，处理一段 binlog 期�
 为了加速恢复速度，我们可以将 DDL 做一些预处理，比如发现一段 binlog 中包含某个表的 Drop table 操作，那么完全可以将 Drop table 前置，在程序一开始就忽略掉这个表的 binlog 不做处理，通过这些“前置”或“后置”的预处理，来提高备份和恢复的效率。
 
 ![图 8  DDL 预处理](media/fast-pitr-based-on-binlog/8.png)
-<center>图 8  DDL 预处理</center>
+<div class="caption-center">图 8  DDL 预处理</div>
 
 ## 结语
 

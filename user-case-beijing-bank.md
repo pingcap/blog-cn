@@ -28,7 +28,7 @@ logo: /images/blog-cn/customers/beijing-bank-logo.png
 
 ![](media/user-case-beijing-bank/1.png)
 
-<center>图 1</center>
+<div class="caption-center">图 1</div>
 
 在图 1 中 ，我列出了几项，比如**高并发的要求**，要求你具备很快的扩展能力。再比如产品发布，要求你**具备快速的发布能力**，在座的应该有很多做产品、做实施的团队，大家应该很有感触，比如可能前一天还无人问津的产品，第二天可能就会卖的很火爆，来的每个项目都是紧急项目，都要求你在最快的时间发布出去。当然还包括一些老生常谈的问题，像**传统架构成本难以控制**，还有**自主可控亟待攻关**，其实在传统闭源的生态里面，我们很难达到自主可控的要求。
 
@@ -36,7 +36,7 @@ logo: /images/blog-cn/customers/beijing-bank-logo.png
 
 ![](media/user-case-beijing-bank/2.png)
 
-<center>图 2</center>
+<div class="caption-center">图 2</div>
 
 在这种背景下，我们从全局的角度出发，对银行以往的技术形态做了系统性的分析，图 2 中列举了一些典型的架构形态，有一些在现在的银行架构里边还是存在的，比如单体的应用，再比如传统的数据库，现在用的最多的 DB2 和 Oracle，还有传统的单机或者集群部署模式，以及瀑布开发模型，当然还有面向传统架构的运维模式。
 
@@ -54,7 +54,7 @@ logo: /images/blog-cn/customers/beijing-bank-logo.png
 
 ![](media/user-case-beijing-bank/3.png)
 
-<center>图 3</center>
+<div class="caption-center">图 3</div>
 
 在介绍具体内容之前，先跟大家同步一下，我们现在的工作进展。2018 年 3 月，我们投产了行业内首个面向核心金融业务的分布式数据库，采用的是**两地三中心五副本**的架构模式。以分布式数据库为基础，5 月份我们投产了网联支付清算平台，这也是很重要的一个带资金业务的实时交易系统，6 月份投产了银联无卡支付平台。这张图（图 3）可能稍微有点老，现在我们投产的还包括金融互联服务平台，IFRS9 减值系统。我们未来要做的事其实和刚才[刘奇](http://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247487846&idx=1&sn=5d349facbf078b19b886ccfa16b152c4&chksm=eb16360cdc61bf1a29efb65e0413877e3cb31bf4e8a3e439c615ae03eeb94a937ccb23948942&scene=21#wechat_redirect)讲的比较一致，包括 HTAP，包括容器云的这些方案等等，这也是我们目前最迫切的需求。
 
@@ -64,7 +64,7 @@ logo: /images/blog-cn/customers/beijing-bank-logo.png
 
 ![](media/user-case-beijing-bank/4.png)
 
-<center>图 4</center>
+<div class="caption-center">图 4</div>
 
 图 4 左上角是面向这个功能的测试，比如数据库有没有高可用性，能不能做线性扩展，有没有在线升级能力，这些都是我们的测试点。图 4 左下角这块，是面向性能的测试，**我们并没有采用市面上已经有的工具，比如 TPCC、Sysbench 等等。因为我们实际分析下来觉得市面已经有的这些工具和我们的金融场景有一些距离，用它们来测试可能不会有很好的参考意义****，所以我们自研了这套面向分布式数据库的金融性能评测体系，能够让我们明确出分布式数据库可以应用在金融场景，并且对于功能和性能，让大家能有一个可度量的工具**。
 
@@ -74,7 +74,7 @@ logo: /images/blog-cn/customers/beijing-bank-logo.png
  
  ![](media/user-case-beijing-bank/5.png)
 
-<center>图 5</center>
+<div class="caption-center">图 5</div>
 
 对于分布式数据库的技术层面来讲，刚才几位讲师介绍的比较多了，我就来讲一些北京银行比较不一样的、走在前面的一些地方。 大家看到图 5 这套架构是北京银行的数据存储层的架构。**北京银行的架构采用两地三中心五副本的模式部署**。
 
@@ -86,7 +86,7 @@ logo: /images/blog-cn/customers/beijing-bank-logo.png
 
 ![](media/user-case-beijing-bank/6.png)
 
-<center>图 6</center>
+<div class="caption-center">图 6</div>
 
 图 6 展示的是整个包括应用、F5 到 TiDB、PD、TiKV 等整个部署的模式。目前我们接着有网联、银联这两个比较大的系统，这两个系统业务量相对来讲比较大，每天有一两百万笔的业务。在西安，我们还部署了一个从集群，那这个从集群是做什么呢？这个从集群就是为了对接一些 OLAP 或者说比较大的报表的情况，从而避免它对主集群的负载产生过大的影响。
 
@@ -96,7 +96,7 @@ logo: /images/blog-cn/customers/beijing-bank-logo.png
 
 ![](media/user-case-beijing-bank/7.png)
 
-<center>图 7</center>
+<div class="caption-center">图 7</div>
 
 有人说“当你有了锤子，好像什么问题都看上去像钉子”。我们期待从传统数据库过渡到分布式数据库，什么问题都可以解决。但事实上，肯定是没有一个万能的技术方案。图 7 右下角，我列了一些从我们项目开展之初到现在，产生一些问题或者说一些小插曲。
 
@@ -114,7 +114,7 @@ logo: /images/blog-cn/customers/beijing-bank-logo.png
 
 ![](media/user-case-beijing-bank/8.png)
 
-<center>图 8</center>
+<div class="caption-center">图 8</div>
 
 今天很多来自互联网企业的朋友也分享了自己的经验，**那在金融行业做分布式数据库落地和互联网行业有什么不同呢**？
 
@@ -126,7 +126,7 @@ logo: /images/blog-cn/customers/beijing-bank-logo.png
 
 ![](media/user-case-beijing-bank/9.png)
 
-<center>图 9</center>
+<div class="caption-center">图 9</div>
 
 图 9 是我们系统建设架构图的一部分，最底下是分布式 NewSQL 数据库的基础平台，上边是应用系统，目前是传统架构和新型微服务架构并存。
 
@@ -134,7 +134,7 @@ logo: /images/blog-cn/customers/beijing-bank-logo.png
 
 ![](media/user-case-beijing-bank/10.png)
 
-<center>图 10</center>
+<div class="caption-center">图 10</div>
 
 最后再介绍一下未来我们的建设方向。
 

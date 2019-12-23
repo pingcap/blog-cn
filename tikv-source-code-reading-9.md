@@ -16,7 +16,7 @@ TiKV 的 Service 层的代码位于 `src/server` 文件夹下，其职责包括�
 
 ![组件层次关系](media/tikv-source-code-reading-9/1.png)
 
-<center>组件层次关系</center>
+<div class="caption-center">组件层次关系</div>
 
 接下来，我们将详细介绍这些组件。
 

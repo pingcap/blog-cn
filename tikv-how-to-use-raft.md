@@ -18,7 +18,7 @@ TiKV 的整体架构比较简单，如下：
 
 ![TiKV 架构](media/tikv-how-to-use-raft/1.png)
 
-<center>TiKV 架构</center>
+<div class="caption-center">TiKV 架构</div>
 
 **Placement Driver :** Placement Driver (PD) 负责整个集群的管理调度。
 

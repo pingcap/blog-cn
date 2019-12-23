@@ -116,7 +116,7 @@ fail_point!("transport_on_send_store", |sid| if let Some(sid) = sid {
 
 ![原理图](media/golang-failpoint/1.png)
 
-<center>原理图</center>
+<div class="caption-center">原理图</div>
 
 对于任何一个 Golang 代码的源文件，可以通过解析出这个文件的语法树，遍历整个语法树，找出所有 failpoint 注入点，然后对语法树重写，转换成想要的逻辑。
 

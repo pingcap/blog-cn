@@ -68,7 +68,7 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 ![shard DDL 协调流程示例](media/dm-source-code-reading-9/1.png)
 
-<center>shard DDL 协调流程示例</center>
+<div class="caption-center">shard DDL 协调流程示例</div>
 
 1.  DM-worker-1 将 shard DDL 信息发送给 DM-master
 

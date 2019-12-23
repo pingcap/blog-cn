@@ -42,7 +42,7 @@ logo: /images/blog-cn/customers/telaidian-logo.png
 ![图 1 数据库发展史](media/user-case-telaidian/1.png)
 
 
-<center>图 1 数据库发展史</center>
+<div class="caption-center">图 1 数据库发展史</div>
 
 如图 1 所示，数据库的发展经历了 RDBMS、NoSQL 以及现在的 NewSQL，每种不同的技术都有对应的产品，每种数据库的技术背后，都有典型的理论支撑。2003 年 Google GFS 开创了分布式文件系统、2006 年的 BigTable 论文催生了 Hadoop 生态，在 2012 年的 Spanner 和 2013 年的 F1 论文发表后，被业界认为指明了未来关系型数据库的发展。
 
@@ -54,7 +54,7 @@ TiDB 是 PingCAP 公司受 Google Spanner / F1 论文启发而设计的开�
 
 ![图 2 TiDB 架构图](media/user-case-telaidian/2.png)
 
-<center>图 2 TiDB 架构图</center>
+<div class="caption-center">图 2 TiDB 架构图</div>
 
 **TiDB 具有以下核心特性：**
 
@@ -74,7 +74,7 @@ TiDB 是 PingCAP 公司受 Google Spanner / F1 论文启发而设计的开�
 
 ![图 3 TiSpark 架构图](media/user-case-telaidian/3.png)
 
-<center>图 3 TiSpark 架构图</center>
+<div class="caption-center">图 3 TiSpark 架构图</div>
 
 TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的控制，使 Spark 能够高效的读取 TiKV 中的数据，提供索引支持以实现高速的点查。
 
@@ -93,14 +93,14 @@ TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的�
 
 ![图 4 集群配置清单](media/user-case-telaidian/4.png)
 
-<center>图 4 集群配置清单</center>
+<div class="caption-center">图 4 集群配置清单</div>
 
 **2\. 规划的应用架构**
 
 
 ![图 5 引入 TiDB 以后的应用架构图](media/user-case-telaidian/5.png)
 
-<center>图 5 引入 TiDB 以后的应用架构图</center>
+<div class="caption-center">图 5 引入 TiDB 以后的应用架构图</div>
 
 基于 TiDB 我们规划了完整的数据流处理逻辑，从数据接入到数据展现，由于 TiDB 高度兼容 MySQL，因此在数据源接入和 UI 展现就有很多成熟的工具可以使用，比如 Flume、Grafana、Saiku 等。
 
@@ -113,7 +113,7 @@ TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的�
 
 ![图 6 充电功率的分时统计](media/user-case-telaidian/6.png)
 
-<center>图 6 充电功率的分时统计</center>
+<div class="caption-center">图 6 充电功率的分时统计</div>
 
 目前我们单表数据量接近 20 亿，每天的增量接近 800 万左右。使用 TiDB 后，在进行离线计算分析时，我们的业务逻辑转成了直接在我们的离线计算平台通过 SQL 的方式进行定义和维护，极大的提高了维护效率，同时计算速度也得到了大幅提升。
 
@@ -123,7 +123,7 @@ TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的�
 
 ![图 7 充电功率的分时统计](media/user-case-telaidian/7.png)
 
-<center>图 7 充电过程分析</center>
+<div class="caption-center">图 7 充电过程分析</div>
 
 针对海量的历史数据计算我们使用了 TiSpark 进行计算，直接使用了我们现有的 Spark 集群，在使用 Spark 进行计算时，一开始由于不熟悉 TiSpark，分配的资源比较少，耗时多一些。后来和 TiDB 技术人员交流了解到最佳实践，提升配置和调整部分参数后，性能提升不少。这个场景中我们充分利用了 TiDB 和 TiSpark 进行协同工作，满足了我们的业务需求。
 
