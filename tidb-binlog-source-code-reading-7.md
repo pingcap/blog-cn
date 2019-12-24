@@ -20,7 +20,7 @@ Drainer server 的启动逻辑主要实现在两个函数中：[NewServer](https
 
 3.  collector: [collector](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/collector.go#L50)，用于收集全部 binlog 数据并按照 commit timestamp 递增的顺序进行排序。同时 collector 也负责实时维护 pump 集群的状态信息；
 
-4.  syncer: [syncer](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/syncer.go#L39)，用于将排好序的 binlog 输出到目标系统 (MySQL, Kafka...) ，同时更新同步成功的 binlog 的 commit timestamp 到 checkpoint。
+4.  syncer: [syncer](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/syncer.go#L39)，用于将排好序的 binlog 输出到目标系统 (MySQL，Kafka...) ，同时更新同步成功的 binlog 的 commit timestamp 到 checkpoint。
 
 Server 初始化以后，就可以用 `(*Server).Start` 启动服务，启动的逻辑包含：
 
@@ -72,7 +72,7 @@ type CheckPoint interface {
 }
 ```
 
-drainer 支持把 checkpoint 保存到不同类型的存储介质中，目前支持 mysql 和 file 两种类型，例如 mysql 类型的实现代码在 [mysql.go](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/checkpoint/mysql.go) 。如果用户没有指定 checkpoit 的存储类型， drainer 会根据目标系统的类型自动选择对应的 checkpoint 存储类型。
+drainer 支持把 checkpoint 保存到不同类型的存储介质中，目前支持 mysql 和 file 两种类型，例如 mysql 类型的实现代码在 [mysql.go](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/checkpoint/mysql.go) 。如果用户没有指定 checkpoit 的存储类型，drainer 会根据目标系统的类型自动选择对应的 checkpoint 存储类型。
 
 当目标系统是 mysql/tidb，drainer 默认会保存 checkpoint 到 `tidb_binlog.checkpoint` 表中：
 
@@ -86,7 +86,7 @@ mysql> select * from tidb_binlog.checkpoint;
 1 row in set (0.00 sec)
 ```
 
-commitTS 表示这个时间戳之前的数据都已经同步到目标系统了了。ts-map 是用来做 [TiDB 主从集群的数据校验](https://pingcap.com/docs-cn/stable/reference/tools/sync-diff-inspector/tidb-diff/) 而保存的上下游 snapshot 对应关系的时间戳。
+commitTS 表示这个时间戳之前的数据都已经同步到目标系统了。ts-map 是用来做 [TiDB 主从集群的数据校验](https://pingcap.com/docs-cn/stable/reference/tools/sync-diff-inspector/tidb-diff/) 而保存的上下游 snapshot 对应关系的时间戳。
 
 下面看看 MysqlCheckpoint 主要方法的实现。
 
@@ -269,7 +269,7 @@ type Syncer struct {
 
 在 Syncer 的结构定义中，我们关注下面三个对象：
 
-*   dsyncer 是真正同步数据到不同目标系统的执行器实现，我们会在后续章节具体介绍, 接口定义如下：
+*   dsyncer 是真正同步数据到不同目标系统的执行器实现，我们会在后续章节具体介绍，接口定义如下：
 
     ```go
     // Syncer sync binlog item to downstream
@@ -293,7 +293,7 @@ Syncer 运行入口在 [run](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/
 
 1.  依次处理 Collector 处理单元推送过来的 binlog 数据；
 
-2.  如果是 DDL binlog , 则更新维护的 schema 信息；
+2.  如果是 DDL binlog，则更新维护的 schema 信息；
 
 3.  利用 filter 过滤不需要同步到下游的数据；
 
