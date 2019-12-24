@@ -18,7 +18,7 @@ Prometheus 是一个拥有多维度数据模型的、灵活的查询语句的时
 
 ![图 1 TiDB 监控整体架构](media/use-grafana-to-monitor-and-analyze-tidb-metrics/1.png)
 
-<center>图 1 TiDB 监控整体架构</center>
+<div class="caption-center">图 1 TiDB 监控整体架构</div>
 
 从 TiDB 2.1.3 版本开始，监控采用 pull 的方式，而之前采用的是 push 的方式，这是一个非常好的调整，它解决了几个问题：
 
@@ -57,7 +57,7 @@ tidb_executor_statement_total{type="Use"} 466016
 
 ![图 2 metric 面板的编辑入口](media/use-grafana-to-monitor-and-analyze-tidb-metrics/2.png)
 
-<center>图 2 metric 面板的编辑入口</center>
+<div class="caption-center">图 2 metric 面板的编辑入口</div>
 
 我们可以在 `Metric` 面板上，看到利用该 metric 的 query 表达式。
 
@@ -75,7 +75,7 @@ tidb_executor_statement_total{type="Use"} 466016
 
 ![图 3 metric 面板中的表达式](media/use-grafana-to-monitor-and-analyze-tidb-metrics/3.png)
 
-<center>图 3 metric 面板中的表达式</center>
+<div class="caption-center">图 3 metric 面板中的表达式</div>
 
 Prometheus 支持很多表达式与函数，更多表达式请参考 [官网页面](https://prometheus.io/docs/prometheus/latest/querying)。
 
@@ -87,13 +87,13 @@ Prometheus 支持很多表达式与函数，更多表达式请参考 [官网页�
 
 ![图 4 编辑表达式并查看所有维度](media/use-grafana-to-monitor-and-analyze-tidb-metrics/4.png)
 
-<center>图 4 编辑表达式并查看所有维度</center>
+<div class="caption-center">图 4 编辑表达式并查看所有维度</div>
 
 得到 `instance` 这个维度后，我们调整表达式，在原有的 type 后面加上 `instance` 这个维度，调整 `legend format` 格式增加 `{{instance}}`，就可以看到每个 tidb-server 上执行的不同类型 SQL 的 QPS 了。如下图：
 
 ![图 5 给表达式增加一个 instance 维度](media/use-grafana-to-monitor-and-analyze-tidb-metrics/5.png)
 
-<center>图 5 给表达式增加一个 instance 维度</center>
+<div class="caption-center">图 5 给表达式增加一个 instance 维度</div>
 
 ### 技巧 2：调整 Y 轴标尺的计算方式
 
@@ -103,11 +103,11 @@ Prometheus 支持很多表达式与函数，更多表达式请参考 [官网页�
 
 ![图 6 标尺默认的比例尺为 2 的对数](media/use-grafana-to-monitor-and-analyze-tidb-metrics/6.png)
 
-<center>图 6 标尺默认的比例尺为 2 的对数</center>
+<div class="caption-center">图 6 标尺默认的比例尺为 2 的对数</div>
 
 ![图 7 调整标尺的比例尺为线性](media/use-grafana-to-monitor-and-analyze-tidb-metrics/7.png)
 
-<center>图 7 调整标尺的比例尺为线性</center>
+<div class="caption-center">图 7 调整标尺的比例尺为线性</div>
 
 >提示：我们可以结合技巧 1，发现这里还有一个 `sql_type` 的维度，可以立刻分析出是 select 慢还是 update 慢，并且可以分析出是在哪个 instance 上慢。
 
@@ -117,11 +117,11 @@ Prometheus 支持很多表达式与函数，更多表达式请参考 [官网页�
 
 ![图 8 基线默认为 0](media/use-grafana-to-monitor-and-analyze-tidb-metrics/8.png)
 
-<center>图 8 基线默认为 0</center>
+<div class="caption-center">图 8 基线默认为 0</div>
 
 ![图 9 调整基线为 auto](media/use-grafana-to-monitor-and-analyze-tidb-metrics/9.png)
 
-<center>图 9 调整基线为 auto</center>
+<div class="caption-center">图 9 调整基线为 auto</div>
 
 ### 技巧 4：标尺联动
 
@@ -129,17 +129,17 @@ Prometheus 支持很多表达式与函数，更多表达式请参考 [官网页�
 
 ![图 10 图形展示工具](media/use-grafana-to-monitor-and-analyze-tidb-metrics/10.png)
 
-<center>图 10 图形展示工具</center>
+<div class="caption-center">图 10 图形展示工具</div>
 
 我们调整为 `Shared crosshair` 和 `Shared Tooltip` 分别试一下效果： 可以看到标尺可以联动展示了，方便排查问题时，确认 2 个指标的关联性。
 
 ![图 11 调整图形展示工具为 Shared crosshair](media/use-grafana-to-monitor-and-analyze-tidb-metrics/11.png)
 
-<center>图 11 调整图形展示工具为 Shared crosshair</center>
+<div class="caption-center">图 11 调整图形展示工具为 Shared crosshair</div>
 
 ![图 12 调整图形展示工具为 Shared Tooltip](media/use-grafana-to-monitor-and-analyze-tidb-metrics/12.png)
 
-<center>图 12 调整图形展示工具为 Shared Tooltip</center>
+<div class="caption-center">图 12 调整图形展示工具为 Shared Tooltip</div>
 
 ### 技巧 5：调整过滤项
 
@@ -147,7 +147,7 @@ PD 的 Dashboard，只展示当前 leader 的 metric 信息，有时候会想看
 
 ![图 13 手动输入并查看 metric](media/use-grafana-to-monitor-and-analyze-tidb-metrics/13.png)
 
-<center>图 13 手动输入并查看 metric</center>
+<div class="caption-center">图 13 手动输入并查看 metric</div>
 
 ### 技巧 6：巧用 `Avg` 函数
 
@@ -156,11 +156,11 @@ PD 的 Dashboard，只展示当前 leader 的 metric 信息，有时候会想看
 
 ![图 14 增加 Avg 等汇总函数](media/use-grafana-to-monitor-and-analyze-tidb-metrics/14.png)
 
-<center>图 14 增加 Avg 等汇总函数</center>
+<div class="caption-center">图 14 增加 Avg 等汇总函数</div>
 
 ![图 15 增加 Avg 函数](media/use-grafana-to-monitor-and-analyze-tidb-metrics/15.png)
 
-<center>图 15 增加 Avg 函数</center>
+<div class="caption-center">图 15 增加 Avg 函数</div>
 
 
 ### 技巧 7：使用 Prometheus 的 API 接口获得表达式的结果
@@ -175,7 +175,7 @@ Grafana 通过 Prometheus 的接口获取数据，我们也可以用该接口获
 
 ![图 16 Prometheus 的 API 接口](media/use-grafana-to-monitor-and-analyze-tidb-metrics/16.png)
 
-<center>图 16 Prometheus 的 API 接口</center>
+<div class="caption-center">图 16 Prometheus 的 API 接口</div>
 
 ```
 curl -u user:pass 'http://__grafana_ip__:3000/api/datasources/proxy/1/api/v1/query_range?query=sum(tikv_engine_size_bytes%7Binstancexxxxxxxxx20181%22%7D)%20by%20(instance)&start=1565879269&end=1565882869&step=30' |python -m json.tool

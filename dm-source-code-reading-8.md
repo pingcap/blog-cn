@@ -19,7 +19,7 @@ tags: ['DM 源码阅读','社区']
 
 ![gh-ost 逻辑处理流程](media/dm-source-code-reading-8/1.png)
 
-<center>gh-ost 逻辑处理流程</center>
+<div class="caption-center">gh-ost 逻辑处理流程</div>
 
 从上图可以大致了解到 gh-ost 的逻辑处理流程：
 

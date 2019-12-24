@@ -28,11 +28,11 @@ logo: /images/blog-cn/customers/iqiyi-logo.png
 
 ![图 1 边控中心上层业务页面（一）](media/user-case-iqiyi/1.png)
 
-<center>图 1 边控中心上层业务页面（一）</center>
+<div class="caption-center">图 1 边控中心上层业务页面（一）</div>
 
 ![图 2 边控中心上层业务页面（二）](media/user-case-iqiyi/2.png)
 
-<center>图 2 边控中心上层业务页面（二）</center>
+<div class="caption-center">图 2 边控中心上层业务页面（二）</div>
 
 在选型过程中，也考虑过时序型数据库 Apache Druid（[http://druid.io](https://link.zhihu.com/?target=http%3A//druid.io)），但是 Druid 聚合查询不够灵活，最终放弃 Druid 选择了 TiDB 数据库。TiDB 几乎完全兼容 MySQL 的访问协议，可以使用现有的 MySQL 连接池组件访问 TiDB，业务迁移成本低，开发效率高。
 
@@ -61,13 +61,13 @@ logo: /images/blog-cn/customers/iqiyi-logo.png
 ![图 3 边控中心数据量增长情况](media/user-case-iqiyi/3.png)
 
 
-<center>图 3 边控中心数据量增长情况</center>
+<div class="caption-center">图 3 边控中心数据量增长情况</div>
 
 TiDB 底层自动分片策略：
 
 ![图 4 TiDB 底层自动分片策略](media/user-case-iqiyi/4.png)
 
-<center>图 4 TiDB 底层自动分片策略</center>
+<div class="caption-center">图 4 TiDB 底层自动分片策略</div>
 
 ### 2. 视频转码
 
@@ -79,7 +79,7 @@ TiDB-Lightning 实现架构图：
 
 ![图 5 TiDB-Lightning 实现架构图](media/user-case-iqiyi/5.png)
 
-<center>图 5 TiDB-Lightning 实现架构图</center>
+<div class="caption-center">图 5 TiDB-Lightning 实现架构图</div>
 
 
 **3\. 用户登录信息**
@@ -90,13 +90,13 @@ TiDB-Lightning 实现架构图：
 
 ![图 6 Syncer 架构](media/user-case-iqiyi/6.png)
 
-<center>图 6 Syncer 架构</center>
+<div class="caption-center">图 6 Syncer 架构</div>
 
 在我们公司业务对数据库高可用有两个需求：一个是机房宕机了，服务仍然可用。另一个是，多机房的业务，提供本机房的只读从库，提升响应速度。针对这些不同的需求，TiDB 集群采用了多机房部署的方式，保证其中任一个机房不可用时仍然正常对外提供服务（如下图）。对每个 TiKV 节点设置 label 后，TiDB 集群在每个机房都有一份数据的副本，PD 集群会自动调度到合适的副本进行读操作，也可以满足第二个要求。为了满足迁移过程中的高可用性，会在流量迁移完成后部署 TiDB 到 MySQL 的实时同步。Drainer 支持指定同步开始的时间戳，有力支持了反向同步功能。
 
 ![图 7 TiDB 集群多机房部署形式](media/user-case-iqiyi/7.png)
 
-<center>图 7 TiDB 集群多机房部署形式</center>
+<div class="caption-center">图 7 TiDB 集群多机房部署形式</div>
 
 在整个运维过程中，PingCAP 的小伙伴们提供了及时的帮助，帮助我们定位问题并提出建议，保证了业务的有序运行。在此表示由衷的感谢！
 

@@ -14,7 +14,7 @@ tags: ["TiDB","架构"]
 
 ![图 1 最初的基本信念](media/guiding-ideologies-in-the-evolution-of-tidb/1.png)
 
-<center>图 1 最初的基本信念</center>
+<div class="caption-center">图 1 最初的基本信念</div>
 
 实际上，我们开始做 TiDB 这个产品的时候，第一个信念就是相信云是未来。当年 K8s 还没火，我们就坚定的拥抱了 K8s。第二是不依赖特定硬件、特定的云厂商，也就是说 TiDB 的设计方向是希望可以 Run 在所有环境上面，包括公有云私有云等等。第三是能支持多种硬件，大家都知道我们支持 X86、AMD64、ARM 等等，可能大家不清楚的是 MIPS，MIPS 典型代表是龙芯，除此之外，TiDB 未来还可以在 GPU 上跑（TiFlash 的后续工作会支持 GPU）。
 
@@ -40,7 +40,7 @@ tags: ["TiDB","架构"]
 
 ![图 2 与调研用户第二次对话](media/guiding-ideologies-in-the-evolution-of-tidb/2.png)
 
-<center>图 2 与调研用户第二次对话</center>
+<div class="caption-center">图 2 与调研用户第二次对话</div>
 
 然而当我跟用户讲，你需要先装一个 Hadoop，可能还要装一组 Zookeeper，**但用户说：“我只想要一个更强大的 MySQL，但是让我装这一堆东西，你是解决问题还是引入问题？”**
 
@@ -48,7 +48,7 @@ tags: ["TiDB","架构"]
 
 ![图 3 开发 TiKV 前的技术考量](media/guiding-ideologies-in-the-evolution-of-tidb/3.png)
 
-<center>图 3 开发 TiKV 前的技术考量</center>
+<div class="caption-center">图 3 开发 TiKV 前的技术考量</div>
 
 开始开发 KV 层时候又会面临很多技术选择，我们有很多考量（如图 3）。
 
@@ -66,13 +66,13 @@ tags: ["TiDB","架构"]
 
 ![图 4 与调研用户第三次对话](media/guiding-ideologies-in-the-evolution-of-tidb/4.png)
 
-<center>图 4 与调研用户第三次对话</center>
+<div class="caption-center">图 4 与调研用户第三次对话</div>
 
 但是用户这时候给了一个让我们非常伤心非常难受的回答：没有，我们不敢上线，虽然你们的产品听起来挺好的，但是数据库后面有很大的责任，心理上的担心确实是过不去。于是我们回去开始加班加点写 TiDB Binlog，让用户可以把 binlog 同步给 MySQL。**毕竟用户需要一个 Backup：万一 TiDB 挂了怎么办，我需要切回 MySQL，这样才放心，因为数据是核心资产。**
 
 ![图 5 第一个上线用户的架构图](media/guiding-ideologies-in-the-evolution-of-tidb/5.png)
 
-<center>图 5 第一个上线用户的架构图</center>
+<div class="caption-center">图 5 第一个上线用户的架构图</div>
 
 所以最终我们第一个用户上线的时候，整个 TiDB 的架构是这样的（如图 5）。用户通过 Client 连上 TiDB，然后 TiDB 后面就通过 Binlog 同步到 MySQL。后来过了一段时间，用户就把后面的 MySQL 撤了。我们当时挺好奇为什么撤了，用户说，第一个原因是后面 MySQL 撑不起一个集群给它回吐 Binlog，第二就是用了一段时间觉得 TiDB 挺稳定的，然后就不需要 Binlog 备份了。
 
@@ -86,7 +86,7 @@ tags: ["TiDB","架构"]
 
 ![图 6 理论到实践的距离](media/guiding-ideologies-in-the-evolution-of-tidb/6.png)
 
-<center>图 6 理论到实践的距离</center>
+<div class="caption-center">图 6 理论到实践的距离</div>
 
 #### 2.2.1 TLA+ 证明
 
@@ -106,7 +106,7 @@ tags: ["TiDB","架构"]
 
 ![图 7 前 Oracle 员工的描述](media/guiding-ideologies-in-the-evolution-of-tidb/7.png)
 
-<center>图 7 前 Oracle 员工的描述</center>
+<div class="caption-center">图 7 前 Oracle 员工的描述</div>
 
 这是一篇 [在 HackNews上面的讨论](https://news.ycombinator.com/item?id=18442941&utm_source=wanqu.co&utm_campaign=Wanqu+Daily&utm_medium=website)，讨论的问题是：你觉得这个最坏的、规模最大的代码是什么样子的？下面就有一个 Oracle 的前员工就介绍了 Oracle Database 12.2 这个版本的情况。他说这个整体的源代码接近 2500 万行 C 代码，可能大家维护 25 万行 C 代码的时候就会痛不欲生了，可以想想维护这么多代码的是一种什么样的感受。到现在为止，TiDB 的代码应该还不到 25 万行。当然 TiDB 的功能远远没有 Oracle 那么多，Oracle 的功能其实是很多的，历史积累一直往上加，加的很凶。
 
@@ -114,7 +114,7 @@ tags: ["TiDB","架构"]
 
 ![图 8  Oracle 开发者 fix bug 的过程](media/guiding-ideologies-in-the-evolution-of-tidb/8.png)
 
-<center>图 8  Oracle 开发者 fix bug 的过程</center>
+<div class="caption-center">图 8  Oracle 开发者 fix bug 的过程</div>
 
 比如用户报了一个 Bug，然后他开始 fix。第一件事是花两周左右的时间去理解 20 个不同的 flag，看看有没有可能因为内部乱七八糟的原因来造成这个 Bug。大家可能不知道 MySQL 有多少变量，我刚做 TiDB 的时候也不知道，当时我觉得自己是懂数据库的，后来去看了一下 MySQL 的 flag 的变量数就惊呆了，但看到 Oracle 的 flag 变量数，那不是惊呆了，是绝望了。大家可能知道开启 1 个 flag 的时候会对什么东西有影响，但是要去理解 20 个 flag 开启时和另外几个 flag 组合的时候都有什么影响，可能会崩溃。所以其实精通 Oracle 这件事情，实际上可能比精通 C++ 这件事情更困难的。一个 Oracle 开发者在内部处理这件事情都这么复杂，更何况是外面的用户。但 Oracle 确实是功能很强大。
 
@@ -138,7 +138,7 @@ tags: ["TiDB","架构"]
 
 ![图 9 出现的新问题](media/guiding-ideologies-in-the-evolution-of-tidb/9.png)
 
-<center>图 9 出现的新问题</center>
+<div class="caption-center">图 9 出现的新问题</div>
 
 就在我们准备改进 TiDB 的数据分析能力的时候，突然又有一大批 TP 用户上线了，给我们报了一堆问题，比如执行计划不准确，选不到最优执行计划，数据热点分布不均匀，Raft store 单线程写入瓶颈，报表跑的慢等等……于是我们制定了 1.0 到 2.X 的计划，先把用户提的这些问题一一解决。
 
@@ -170,7 +170,7 @@ tags: ["TiDB","架构"]
 
 ![图 10 用户的新呼声](media/guiding-ideologies-in-the-evolution-of-tidb/10.png)
 
-<center>图 10 用户的新呼声</center>
+<div class="caption-center">图 10 用户的新呼声</div>
 
 我们当时非常头痛，收到了一堆意见和需求，压力特别大，然后赶紧汇总了一下，如图 10 所示。
 
@@ -193,7 +193,7 @@ tags: ["TiDB","架构"]
 
 ![图 11 成本问题](media/guiding-ideologies-in-the-evolution-of-tidb/11.png)
 
-<center>图 11 成本问题</center>
+<div class="caption-center">图 11 成本问题</div>
 
 很多用户都跟我们反馈了成本问题，用户觉得全部部署到  SSD 成本有点高。一开始听到这个反馈，我们还不能理解，SSD 已经很便宜了呀，而且在整个系统来看，存储机器只是成本的一小部分。后来我们深刻思考了一下，其实用户说得对，很多系统都是有早晚高峰的，如果在几百 T 数据里跑报表，只在每天晚上收工时统计今天营业的状况，那为什么要求用户付出最高峰值的配置呢？这个要求是不合理的，合不合理是一回事，至于做不做得到、怎么做到是另外一回事。
 
@@ -221,7 +221,7 @@ TiDB 还有一条哲学是关于横向和纵向发展的选择。
 
 ![图 12 横向发展与纵向发展](media/guiding-ideologies-in-the-evolution-of-tidb/12.png)
 
-<center>图 12 横向发展与纵向发展</center>
+<div class="caption-center">图 12 横向发展与纵向发展</div>
 
 **坚持全球化的技术视野也是一个以横向优先的发展哲学。** 最厉害的产品一定是全球在用的。这个事情的最大差异在于视野和格局，而格局最终会反映到人才上，最终竞争不是在 PingCAP 这两百个员工，也不是现在 400 多个 Contributors，未来可能会有上千人参与整个系统的进化迭代，在不同的场景下对系统进行打磨，所以竞争本质上是人才和场景的竞争。基于这一条哲学，所以才有了现在 TiDB 在新一代分布式数据库领域的全面领先，无论是从 GitHub Star 数、 Contributor 数量来看，还是从用户数据的规模、用户分布的行业来看，都是领先的。同样是在做一个数据库，大家的指导哲学不一样会导致产品最终的表现和收获不一样，迭代过程也会完全不一样。我们在做的方向是「携全球的人才和全球的场景去竞争」。
 
@@ -237,7 +237,7 @@ TiDB 还有一条哲学是关于横向和纵向发展的选择。
 
 ![图 13 2015-2019 小结](media/guiding-ideologies-in-the-evolution-of-tidb/13.png)
 
-<center>图 13 2015-2019 小结</center>
+<div class="caption-center">图 13 2015-2019 小结</div>
 
 2015 年，当我们开始做 TiDB 的时候，大家说：啊？这事儿你们也敢干？因为写一个数据库本身非常难，写一个分布式数据库就是无比的难，然后还是国人自主研发。到 2016 年的时候，大家觉得你好像折腾了点东西，听到点声音，但也没啥。到 2017、2018 年，大家看到有越来越多用户在用。2019 年，能看到更多使用后点赞的朋友了。
 
@@ -245,7 +245,7 @@ TiDB 还有一条哲学是关于横向和纵向发展的选择。
 
 ![图 14 刚创业时发的微博](media/guiding-ideologies-in-the-evolution-of-tidb/14.png)
 
-<center>图 14 刚创业时发的微博</center>
+<div class="caption-center">图 14 刚创业时发的微博</div>
 
 当时我们正准备创业，意气风发发了一条这样微博。这一堆话其实不重要，大家看一下阅读量 47.3 万，有 101 条转发，44 条评论，然而我一封简历都没收到。当时大家看到我们都觉得，这事儿外国人都没搞，你行吗？折腾到今天，我想应该没有人再对这个问题有任何的怀疑。**很多国人其实能力很强了，自信也可以同步跟上来，毕竟我们拥有全球最快的数据增速，很多厂家拥有最大的数据量，对产品有最佳的打磨场景。**
 
@@ -253,7 +253,7 @@ TiDB 还有一条哲学是关于横向和纵向发展的选择。
 
 ![图 15 对 2020 年的展望](media/guiding-ideologies-in-the-evolution-of-tidb/15.png)
 
-<center>图 15 对 2020 年的展望</center>
+<div class="caption-center">图 15 对 2020 年的展望</div>
 
 最后再说一下 2020 年。在拥有行业复制能力的之后，在产品层面我们要开始向着更高的性能、更低的延迟、更多 Cloud 支持（不管是公有云还是私有云都可以很好的使用 TiDB）等方向纵向发展。同时也会支持我刚刚说的，热点根据 Workload 自动伸缩，用极小的成本去扛，仅仅需要处理部分热点的数据，而不是复制整个数据的传统主-从思路。
 
@@ -269,4 +269,4 @@ TiDB 还有一条哲学是关于横向和纵向发展的选择。
 
 >本文根据我司 CEO 刘奇在第 100 期 Infra Meetup 上的演讲整理。
 
-<center>- END -</center>
+<div class="caption-center">- END -</div>

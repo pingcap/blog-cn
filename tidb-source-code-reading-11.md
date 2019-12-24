@@ -71,7 +71,7 @@ TiDB 中 ILJ 的执行阶段可划分为如下图所示的 5 步：
 
 ![ILJ 执行阶段划分](media/tidb-source-code-reading-11/1.jpeg)
 
-<center>ILJ 执行阶段划分</center>
+<div class="caption-center">ILJ 执行阶段划分</div>
 
 **1\. 启动 Outer Worker 及 Inner Workers**
 
@@ -147,4 +147,4 @@ select /*+ TIDB_INLJ(t) */ * from t left join s on t.a = s.a;
 
 ![查询语句执行流程图](media/tidb-source-code-reading-11/2.jpeg)
 
-<center>查询语句执行流程图</center>
+<div class="caption-center">查询语句执行流程图</div>

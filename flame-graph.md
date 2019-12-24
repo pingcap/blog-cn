@@ -44,7 +44,7 @@ aliases:
 
 ![TiKV 火焰图](media/flame-graph/1.jpg)
 
-<center>TiKV 火焰图</center>
+<div class="caption-center">TiKV 火焰图</div>
 
 上面就是生成的一个 TiKV 火焰图，我们会发现 gRPC 线程主要开销在 c gRPC core 上面，而这个也是现在 c gRPC core 大家普遍反映的一个问题，就是太费 CPU，但我相信凭借 Google gRPC team 的实力，这问题应该能够搞定。
 
@@ -80,7 +80,7 @@ perf script > out.perf
 
 ![malloc 火焰图](media/flame-graph/2.png)
 
-<center>malloc 火焰图</center>
+<div class="caption-center">malloc 火焰图</div>
 
 上面是生成的一个 malloc 火焰图，我们可以看到，大部分的内存开销仍然是在 RocksDB 上面。
 
@@ -127,7 +127,7 @@ perf script -F comm,pid,tid,cpu,time,period,event,ip,sym,dso,trace | awk '
 
 ![off CPU 火焰图](media/flame-graph/3.png)
 
-<center>off CPU 火焰图</center>
+<div class="caption-center">off CPU 火焰图</div>
 
 上面就是 TiKV 一次 off CPU 的火焰图，可以发现只要是 server event loop 和 time monitor 两个线程 off CPU 比较长，server event loop 是等待外部的网络请求，因为我在 perf 的时候并没有进行压力测试，所以 wait 是正常的。而 time monitor 则是 sleep 一段时间，然后检查时间是不是出现了 jump back，因为有长时间的 sleep，所以也是正常的。
 
@@ -156,7 +156,7 @@ chmod +x sample-bt-off-cpu
 
 ![diff 火焰图](media/flame-graph/4.png)
 
-<center>diff 火焰图</center>
+<div class="caption-center">diff 火焰图</div>
 
 但现在我仅仅只会生成，还没有详细对其研究过，这里就不做过多说明了。
 

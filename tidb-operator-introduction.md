@@ -26,7 +26,7 @@ TiDB 作为一个开源的分布式数据库产品，具有多副本强一致性
 
 ![TiDB-架构.png](media/tidb-operator-introduction/1.png)
 
-<center>TiDB 架构</center>
+<div class="caption-center">TiDB 架构</div>
 
 Kubernetes 最早是作为一个纯粹的容器编排系统而诞生的，用户部署好 Kubernetes 集群之后，直接使用其内置的各种功能部署应用服务。 
 
@@ -62,7 +62,7 @@ Operator 本质上是 Kubernetes 的控制器（Controller），其核心思想�
 
 ![TiDB-Operator.png](media/tidb-operator-introduction/2.png)
 
-<center>TiDB Operator</center>
+<div class="caption-center">TiDB Operator</div>
 
 上图是 TiDB Operator 工作流程原理图，其中 TidbCluster 是通过 CRD（Custom Resource Definition）扩展的内置资源类型：
 

@@ -24,7 +24,7 @@ TiDB 是一个分布式 NewSQL 数据库。它支持水平弹性扩展、ACID �
 
 ![图 1 贝壳金服整体数据架构图](media/user-case-beikejinfu/1.png)
 
-<center>图 1 贝壳金服整体数据架构图</center>
+<div class="caption-center">图 1 贝壳金服整体数据架构图</div>
 
 
 ## 三、业务类型
@@ -42,7 +42,7 @@ TiDB 是一个分布式 NewSQL 数据库。它支持水平弹性扩展、ACID �
 
 ![图 2 集群拓扑图](media/user-case-beikejinfu/2.png)
 
-<center>图 2 集群拓扑图</center>
+<div class="caption-center">图 2 集群拓扑图</div>
 
 ## 五、迁移实践
 
@@ -80,7 +80,7 @@ TiDB 是一个分布式 NewSQL 数据库。它支持水平弹性扩展、ACID �
 
 ![图 3](media/user-case-beikejinfu/3.jpg)
 
-<center>图 3</center>
+<div class="caption-center">图 3</div>
 
 1. 配置防火墙，将两个机房所需端口开通。
 

@@ -25,7 +25,7 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 
 ![图 1 网易互娱计费组线上 MySQL 使用架构](media/user-case-wangyihuyu/1.png) 
 
-<center>图 1 网易互娱计费组线上 MySQL 使用架构</center>
+<div class="caption-center">图 1 网易互娱计费组线上 MySQL 使用架构</div>
 
 * 线上应用 Application 通过 Keepalive + 多机部署，流量经过负载均衡，可以有效保障应用服务的高可用；
 * 数据库层架构是 Keepalive + 主从结构，利用半同步复制特性可以有效解决延迟和数据一致性的问题；
@@ -58,7 +58,7 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
     
     ![图 2 现状之数据孤岛](media/user-case-wangyihuyu/2.png) 
     
-    <center>图 2 现状之数据孤岛</center>
+    <div class="caption-center">图 2 现状之数据孤岛</div>
 
 
 
@@ -100,7 +100,7 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 
 ![图 3 对比结果](media/user-case-wangyihuyu/3.png) 
     
-<center>图 3 对比结果</center>
+<div class="caption-center">图 3 对比结果</div>
 
 在测试中发现，使用 MySQL InnoDB 集群的方案写性能比单机 MySQL 差约 30%，其他的读写测试结果也不甚满意。之后陆续测试 MySQL InnoDB Cluster 或 MySQL + 中间件的方案，不是测试结果性能不达要求，就是需要修改大量代码。
 
@@ -124,11 +124,11 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 
 ![图 4 测试：CockroachDB 集群搭建](media/user-case-wangyihuyu/4.png) 
     
-<center>图 4 CockroachDB 测试集群搭建</center>
+<div class="caption-center">图 4 CockroachDB 测试集群搭建</div>
 
 ![图 5 测试：TiDB 集群搭建](media/user-case-wangyihuyu/5.png) 
     
-<center>图 5 TiDB 测试集群搭建</center>
+<div class="caption-center">图 5 TiDB 测试集群搭建</div>
 
 **测试语句**
 
@@ -171,7 +171,7 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 
 ![图 6 一个重要的测试结果](media/user-case-wangyihuyu/6.png) 
     
-<center>图 6 测试结果</center>
+<div class="caption-center">图 6 测试结果</div>
 
 结论：
 
@@ -181,11 +181,11 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 	>
 	>![图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较](media/user-case-wangyihuyu/7.png) 
 	>
-	><center>图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较</center>
+	><div class="caption-center">图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较</div>
 	>
 	>![图 8 TiDB 2.1.15 vs 3.0.3：TPC-C](media/user-case-wangyihuyu/8.png) 
 	>
-	><center>图 8 TiDB 2.1.15 vs 3.0.3：TPC-C</center>
+	><div class="caption-center">图 8 TiDB 2.1.15 vs 3.0.3：TPC-C</div>
 
 2. CRDB 兼容 PostgreSQL，如果需要迁移则需要转协议，需 MySQL → PostgreSQL  → CRDB。迁移过程复杂，成本高；
 
@@ -208,7 +208,7 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 
 ![图 9 选择 TiDB ](media/user-case-wangyihuyu/9.png) 
 
-<center>图 9 选择 TiDB 的重要理由</center>
+<div class="caption-center">图 9 选择 TiDB 的重要理由</div>
 
 ## 三、TiDB 在网易互娱计费组的使用
 
@@ -218,7 +218,7 @@ logo: /images/blog-cn/customers/wangyihuyu-logo.png
 
 ![图 10 基于 TiDB 的架构设计](media/user-case-wangyihuyu/10.png) 
 
-<center>图 10 基于 TiDB 的架构设计</center>
+<div class="caption-center">图 10 基于 TiDB 的架构设计</div>
 
 + 整个集群分为 TiDB、TiKV 和 PD 3 个模块分层部署；
 + 使用 Nginx 作为前端负载均衡。
@@ -280,13 +280,13 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 
 ![图 11 最佳运维实践：Prometheus 实时监控](media/user-case-wangyihuyu/11.png) 
 
-<center>图 11 最佳运维实践：Prometheus 实时监控</center>
+<div class="caption-center">图 11 最佳运维实践：Prometheus 实时监控</div>
 
 如果集群运行过程出错，在监控面板上很容易就发现，下图是使用过程中的一个案例：
 
 ![图 12 最佳运维实践案例](media/user-case-wangyihuyu/12.png) 
 
-<center>图 12 最佳运维实践案例</center>
+<div class="caption-center">图 12 最佳运维实践案例</div>
 
 应用访问 TiDB 写入数据时发现特别慢，读请求正常。排查后，根据 TiKV 面板发现 Raft Store CPU 这项指标异常。深入了解原因是因为数据库副本复制是单线程操作，目前已经到了集群的瓶颈。解决办法有以下两点：
 
@@ -317,7 +317,7 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 
 ![图 13 全网数据库遍历](media/user-case-wangyihuyu/13.png) 
 
-<center>图 13 全网数据库遍历</center>
+<div class="caption-center">图 13 全网数据库遍历</div>
 
 ### 4.4 数据迁移
 
@@ -325,7 +325,7 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 
 ![图 14 数据从 MySQL 迁移到 TiDB](media/user-case-wangyihuyu/14.png) 
 
-<center>图 14 数据从 MySQL 迁移到 TiDB</center>
+<div class="caption-center">图 14 数据从 MySQL 迁移到 TiDB</div>
 
 MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
@@ -342,7 +342,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 ![图 15 数据迁出 TiDB](media/user-case-wangyihuyu/15.png) 
 
-<center>图 15 数据迁出 TiDB</center>
+<div class="caption-center">图 15 数据迁出 TiDB</div>
 
 如果数据需要反向导入或同步，可以利用 [TiDB Binlog](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/) 工具将 TiDB 集群的 binlog 同步到 MySQL。TiDB Binlog 支持以下功能场景：
 
@@ -358,7 +358,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 ![图 16 去分库分表举例](media/user-case-wangyihuyu/16.png) 
 
-<center>图 16 去分库分表举例</center>
+<div class="caption-center">图 16 去分库分表举例</div>
 
 举例：一个超级大表按天分表，现在打算查询某个账号一年间的信息。
 
@@ -396,7 +396,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 ![图 17 业务迁移之数据同步](media/user-case-wangyihuyu/17.png) 
 
-<center>图 17 业务迁移之数据同步</center>
+<div class="caption-center">图 17 业务迁移之数据同步</div>
 
 **2）读写验证**
 
@@ -406,7 +406,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 ![图 18 业务迁移之读写验证](media/user-case-wangyihuyu/18.png) 
 
-<center>图 18 业务迁移之读写验证</center>
+<div class="caption-center">图 18 业务迁移之读写验证</div>
 
 **3）灰度切换**
 
@@ -416,7 +416,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 ![图 19 业务迁移之灰度切换](media/user-case-wangyihuyu/19.png) 
 
-<center>图 19 业务迁移之灰度切换</center>
+<div class="caption-center">图 19 业务迁移之灰度切换</div>
 
 **4）迁移完成**
 
@@ -424,7 +424,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 ![图 20 完成迁移](media/user-case-wangyihuyu/20.png) 
 
-<center>图 20 完成迁移</center>
+<div class="caption-center">图 20 完成迁移</div>
 
 ## 五、总结与展望
 

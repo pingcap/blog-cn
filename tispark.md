@@ -14,7 +14,7 @@ TiSpark 是将 Spark SQL 直接运行在 TiDB 存储引擎 TiKV 上的 OLAP 解�
 
 ![TiSpark 架构图](media/tispark/1.png)
 
-<center>TiSpark 架构图</center>
+<div class="caption-center">TiSpark 架构图</div>
 
 
 + TiSpark 深度整合了 Spark Catalyst 引擎, 可以对计算提供精确的控制，使 Spark 能够高效的读取 TiKV 中的数据，提供索引支持以实现高速的点查；

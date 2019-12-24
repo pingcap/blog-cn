@@ -20,7 +20,7 @@ image: /images/blog-cn/tidb-binlog-open-source/tidb-binlog-open-source.jpg
 
 ![TiDB Binlog 架构](media/tidb-binlog-open-source/1.png)
 
-<center>TiDB Binlog 架构</center>
+<div class="caption-center">TiDB Binlog 架构</div>
 
 ## TiDB Binlog 核心特性
 

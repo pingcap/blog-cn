@@ -20,7 +20,7 @@ tags: ['TiDB','TiFlash','HTAP']
 
 ![图 1 Tranditional Data Platform](media/tidb-with-tiflash-extension/1.png)
 
-<center>图 1 Tranditional Data Platform</center>
+<div class="caption-center">图 1 Tranditional Data Platform</div>
 
 首先是复杂性问题。本身 ETL 过程就是一个很繁琐的过程，一个例证是 ETL 做的好，可以成为一个商业模式。因为是两个系统，必然带来更高的学习成本、维护成本和整合成本。如果你使用的是开源的大数据工具搭建的分析平台，那么肯定会遇到各种工具之间的磨合的问题，还有由于各种工具良莠不齐所导致的质量问题。
 
@@ -35,13 +35,13 @@ TiDB 定位为一款 HTAP 数据库，希望同时解决 TP 和 AP 问题。我�
 
 ![图 2  What is TiFlash](media/tidb-with-tiflash-extension/2.png)
 
-<center>图 2  What is TiFlash</center>
+<div class="caption-center">图 2  What is TiFlash</div>
 
 TiFlash 是 TiDB 的一个 AP 扩展。在定位上，它是与 TiKV 相对应的存储节点，与 TiKV 分开部署。它既可以存储数据，也可以下推一部分的计算逻辑。数据是通过 Raft Learner 协议，从 TiKV 同步过来的。**TiFlash 与 TiKV 最大的区别，一是原生的向量化模型，二是列式存储。** 这是都是专门为 AP 场景做的优化。TiFlash 项目借助了 Clickhouse 的向量化引擎，因此计算上继承了它高性能的优点。
 
 ![图 3 TiFlash Architecture](media/tidb-with-tiflash-extension/3.png)
 
-<center>图 3 TiFlash Architecture</center>
+<div class="caption-center">图 3 TiFlash Architecture</div>
 
 由于 TiFlash 节点和 TiKV 节点是分开部署的，所以即使我们跑很重的计算任务，也不会对线上业务产生影响。
 
@@ -55,7 +55,7 @@ TiFlash 是 TiDB 的一个 AP 扩展。在定位上，它是与 TiKV 相对应�
 
 ![图 4 Row Based vs Column Based](media/tidb-with-tiflash-extension/4.png)
 
-<center>图 4 Row Based vs Column Based</center>
+<div class="caption-center">图 4 Row Based vs Column Based</div>
 
 一般来说，AP 系统基本上都是使用列式存储，TiFlash 也不例外。列式存储天然可以做列过滤，并且压缩率很高，适合大数据的 Scan 场景。另外列式存储更适合做向量化加速，适合下推的聚合类算子也更多。TiFlash 相对于 TiKV，在 Scan 场景下性能有数量级的提升。
 
@@ -69,7 +69,7 @@ TiFlash 是 TiDB 的一个 AP 扩展。在定位上，它是与 TiKV 相对应�
 
 ![图 5 Raft Learner Replication](media/tidb-with-tiflash-extension/5.png)
 
-<center>图 5 Raft Learner Replication</center>
+<div class="caption-center">图 5 Raft Learner Replication</div>
 
 大家知道，Raft 协议为了提高数据复制效率，Raft Log 从 Leader 到 Follower / Learner 的复制通常会优化成异步复制，只要记录被复制到了 Leader + Follower 的 “多数” 节点，就认为已经 commit 了。并且 Learner 是排除在 “多数” 之外的，也就是说更新不需要等待 Learner 确认。这样的实现方式，缺点是 Learner 上的数据可能有一定延迟，优点是大大减少了引入 TiFlash 造成的额外数据复制开销。当然如果复制延迟太大，说明节点之间的网络或者机器的写入性能出现了问题，这时候我们会有报警提示做进一步的处理。
 
@@ -81,11 +81,11 @@ TiFlash 是 TiDB 的一个 AP 扩展。在定位上，它是与 TiKV 相对应�
 
 ![图 6 Learner Read (1/2)](media/tidb-with-tiflash-extension/6.png)
 
-<center>图 6 Learner Read (1/2)</center>
+<div class="caption-center">图 6 Learner Read (1/2)</div>
 
 ![图 7 Learner Read (2/2)](media/tidb-with-tiflash-extension/7.png)
 
-<center>图 7 Learner Read (2/2)</center>
+<div class="caption-center">图 7 Learner Read (2/2)</div>
 
 ### 4. 更新支持
 
@@ -93,7 +93,7 @@ TiFlash 会同步 TiKV 上的表的所有变更，是两个异构的系统之间
 
 ![图 8 Update Support](media/tidb-with-tiflash-extension/8.png)
 
-<center>图 8 Update Support</center>
+<div class="caption-center">图 8 Update Support</div>
 
 目前 TiFlash 的方案是，存储引擎使用类 LSM-Tree 的存储架构，并且使用 MVCC 来实现和 TiDB 一致的 SI 隔离级别。LSM-Tree 架构可以很好的处理 TP 类型的高频小 IO 写入；同时又有的一定的局部有序性，有利于做 Scan 优化。
 
@@ -105,7 +105,7 @@ AP 与 TP 业务的隔离性，让 TiDB 的 AP 业务对线上的 TP 影响降�
 
 ![图 9  AP 与 TP 业务隔离](media/tidb-with-tiflash-extension/9.png)
 
-<center>图 9  AP 与 TP 业务隔离</center>
+<div class="caption-center">图 9  AP 与 TP 业务隔离</div>
 
 从 TiDB 的视角，TiFlash 和 TiKV 从层次上是一致的，都是存储节点。区别在于它们在启动时候给 PD （PD 为 TiDB 集群的 Coordinator）上报的节点标签。TiDB 就可以利用这些信息，把不同类型的请求路由到相应的节点。比如我们可以根据一些启发试算法，以及统计信息，了解到一条 SQL 需要 Scan 大量的数据并且做聚合运算，那么显然这条 SQL 的 Scan 算子去 TiFlash 节点请求数据会更合理。而这些繁重的 IO 和计算并不会影响 TiKV 侧的 TP 业务。
 
@@ -113,25 +113,25 @@ TiFlash 带来了全新的融合体验。TiFlash 节点并不只是单纯的从 
 
 ![图 10 Combination of TiFlash and TiKV](media/tidb-with-tiflash-extension/10.png)
 
-<center>图 10 Combination of TiFlash and TiKV</center>
+<div class="caption-center">图 10 Combination of TiFlash and TiKV</div>
 
 如图 10 所示，比如我们遇到一条 SQL，它需要 join 两份数据，其中一份数据需要全表扫描，另外一份则可以走索引，那么很显然可以同时利用 TiFlash 强大的 Scan 和 TiKV 的点查。值得一提的是，用户通常会配置 3 或 5 份副本在 TiKV，为了节约成本，可能只部署 1 份副本到 TiFlash。那么当一个 TiFlash 节点挂掉之后，我们就需要重新从 TiKV 同步节点。
 
 ![图 11 SQL MPP Push Down](media/tidb-with-tiflash-extension/11.png)
 
-<center>图 11 SQL MPP Push Down</center>
+<div class="caption-center">图 11 SQL MPP Push Down</div>
 
 我们接下来计划让 TiFlash 节点成为 MPP 集群。即 TiDB 或者 TiSpark 接收到 SQL 之后，可以选择把计算完全下推。MPP 主要是为了进一步提升 AP 的计算效率。
 
 ![图 12  性能数据](media/tidb-with-tiflash-extension/12.png)
 
-<center>图 12  性能数据</center>
+<div class="caption-center">图 12  性能数据</div>
 
 上图是 TiFlash 某一个版本的性能数据，我们使用 TiSpark + TiFlash 来对比 Spark + Parquet。可以看到 TiFlash 在支持了实时 update 和事务一致性的情况下，仍然达到了基本一致的性能。TiFlash 目前还在快速迭代之中，最新版本相对于这里其实已经有很大幅度的提升。另外我们目前正在研发一款专门为 TiFlash 全新设计的存储引擎，至少带来 2 倍的性能提升。可以期待一下之后出来的性能。
 
 ![图 13 TiDB Data Platform](media/tidb-with-tiflash-extension/13.png)
 
-<center>图 13 TiDB Data Platform</center>
+<div class="caption-center">图 13 TiDB Data Platform</div>
 
 简单就是生产力。传统的数据平台由于技术的限制，企业需要做非常繁重的建设工作。需要把许多技术整合在一起才能实现业务需求，而系统之间使用复杂繁琐的 ETL 过程同步数据，导致数据链条很长，效果也不一定好。TiDB 希望把系统的复杂性留在工具层面，从而大幅度简化用户的应用架构。
 

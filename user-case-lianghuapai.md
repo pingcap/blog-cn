@@ -78,7 +78,7 @@ logo: /images/blog-cn/customers/lianghuapai-logo.png
 
 ![1-优化后的架构图](media/user-case-lianghuapai/1.png)
 
-<center>图 1  优化后的架构图</center>
+<div class="caption-center">图 1  优化后的架构图</div>
 
 通过图 1 可以看到，线上业务系统产生的数据统一存放在 MySQL 中，将这些孤立的数据归集在 TiDB 中，能够提供基于 SQL 的查询服务。通过 binlog 的方式直接从 MySQL 实例进行接入，接入后的数据以两种不同的形式分别存放：
 
@@ -101,7 +101,7 @@ logo: /images/blog-cn/customers/lianghuapai-logo.png
 ![2-explain 示意图](media/user-case-lianghuapai/2.png)
 
 
-<center>图 2  explain 示意图</center>
+<div class="caption-center">图 2  explain 示意图</div>
 
 同时 TiDB 技术人员也收集相关信息反馈给了研发人员。在整个问题的处理过程中，TiDB 的技术人员给予了高度的配合和及时的反馈，同时也表现出了很强的专业性，大大减少了问题排查的时间，我们非常感谢。
 

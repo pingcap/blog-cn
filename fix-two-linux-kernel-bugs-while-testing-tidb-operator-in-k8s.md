@@ -36,11 +36,11 @@ tags: ['K8s', 'TiDB Operator','Linux']
 
 ![内核路径信息-1](media/fix-two-linux-kernel-bugs-while-testing-tidb-operator-in-k8s/1.png)
 
-<center>内核路径信息-1</center>
+<div class="caption-center">内核路径信息-1</div>
 
 ![内核路径信息-2](media/fix-two-linux-kernel-bugs-while-testing-tidb-operator-in-k8s/2.png)
 
-<center>内核路径信息-2</center>
+<div class="caption-center">内核路径信息-2</div>
 
 
 从上图的信息中可以看到 I/O 抖动和文件系统执行 writepage 有关。同时捕获到性能抖动的前后，在 node 内存资源充足的情况下，`dmesg` 返回的结果也会出现大量 “SLUB: Unable to allocate memory on node -1” 的信息。

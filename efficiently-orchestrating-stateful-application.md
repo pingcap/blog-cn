@@ -19,7 +19,7 @@ tags: ['TiDB Operator','云原生']
 
 ![图 1 TiDB 架构](media/efficiently-arranging-stateful-application/1.png)
 
-<center>图 1 TiDB 架构</center>
+<div class="caption-center">图 1 TiDB 架构</div>
 
 其中 TiDB 是 SQL 计算层，TiDB 进程接收 SQL 请求，计算查询计划，再根据查询计划去查询存储层完成查询。
 
@@ -27,7 +27,7 @@ tags: ['TiDB Operator','云原生']
 
 ![图 2 TiKV Region 分布](media/efficiently-arranging-stateful-application/2.png)
 
-<center>图 2 TiKV Region 分布</center>
+<div class="caption-center">图 2 TiKV Region 分布</div>
 
 而 PD 则是集群的大脑，它接收 TiKV 进程上报的存储信息，并计算出整个集群中的 Region 分布。借由此，TiDB 便能通过 PD 获知该如何访问某块数据。更重要的是，PD 还会基于集群 Region 分布与负载情况进行数据调度。比如，将过大的 Region 拆分为两个小 Region，避免 Region 大小由于写入而无限扩张；将部分 Leader 或数据副本从负载较高的 TiKV 实例迁移到负载较低的 TiKV 实例上，以最大化集群性能。这引出了一个很有趣的事实，也就是 TiKV 虽然是存储层，但它可以非常简单地进行水平伸缩。这有点意思对吧？在传统的存储中，假如我们通过分片打散数据，那么加减节点数往往需要重新分片或手工迁移大量的数据。而在 TiKV 中，以 Region 为抽象的数据块迁移能够在 PD 的调度下完全自动化地进行，而对于运维而言，只管加机器就行了。
 
@@ -41,13 +41,13 @@ Operator 大家都很熟悉了，目前几乎每个开源的存储项目都有�
 
 ![图 3 TiDB Operator](media/efficiently-arranging-stateful-application/3.png)
 
-<center>图 3 TiDB Operator</center>
+<div class="caption-center">图 3 TiDB Operator</div>
 
 TiDB Operator 的意义在于让 TiDB 能够无缝运行在 Kubernetes 上，而 Kubernetes 又为我们抽象了基础设施。因此，TiDB Operator 也是 TiDB 多种产品形态的内核。对于希望直接使用 TiDB Operator 的用户， TiDB Operator 能做到在既有 Kubernetes 集群或公有云上开箱即用；而对于不希望有太大运维负载，又需求一套完整的分布式数据库解决方案的用户，我们则提供了打包 Kubernetes 的 on-premise 部署解决方案，用户可以直接通过方案中打包的 GUI 操作 TiDB 集群，也能通过 OpenAPI 将集群管理能力接入到自己现有的 PaaS 平台中；另外，对于完全不想运维数据库，只希望购买 SQL 计算与存储能力的用户，我们则基于 TiDB Operator 提供托管的 TiDB 服务，也即 DBaaS（Database as a Service）。
 
 ![图 4 TiDB Operator 的多种上层产品形态](media/efficiently-arranging-stateful-application/4.png)
 
-<center>图 4 TiDB Operator 的多种上层产品形态</center>
+<div class="caption-center">图 4 TiDB Operator 的多种上层产品形态</div>
 
 多样的产品形态对作为内核的 TiDB Operator 提出了更高的要求与挑战——事实上，由于数据资产的宝贵性和引入状态后带来的复杂性，有状态应用的可靠性要求与运维复杂度往往远高于无状态应用，这从 TiDB Operator 所面临的挑战中就可见一斑。
 
@@ -93,7 +93,7 @@ StatefulSet 和 Pod 的抉择，最终是灵活性和可靠性的权衡，而在
 
 ![图 5 在控制循环中协调状态](media/efficiently-arranging-stateful-application/5.png)
 
-<center>图 5 在控制循环中协调状态</center>
+<div class="caption-center">图 5 在控制循环中协调状态</div>
 
 在伪代码中，每次我们因为要将所有 Pod 收敛到新版本而进入这段控制逻辑时，都会先检查下一个要待升级的 TiKV 实例上 leader 是否迁移完毕，直到迁移完毕才会继续往下走，调整 partition 参数，开始升级对应的 TiKV 实例。缩容也是类似的逻辑。但你可能已经意识到，缩容和滚动更新两个操作是有可能同时出现在状态收敛的过程中的，也就是同时修改 replicas 和 image 字段。这时候由于控制器需要区分缩容与滚动更新，诸如此类的边界条件会让控制器越来越复杂。
 
@@ -102,7 +102,7 @@ StatefulSet 和 Pod 的抉择，最终是灵活性和可靠性的权衡，而在
 
 ![图 6 在 Webhook 中协调状态](media/efficiently-arranging-stateful-application/6.png)
 
-<center>图 6 在 Webhook 中协调状态</center>
+<div class="caption-center">图 6 在 Webhook 中协调状态</div>
 
 这种方案的好处是我们把逻辑拆分到了一个与控制器垂直的单元中，从而可以更容易地编写业务代码和单元测试。当然，这个方案也有缺点，一是引入了新的错误模式，处理 webhook 的 server 假如宕机，会造成集群功能降级；二是该方案适用面并不广，只能用于状态协调与特定的 Kubernetes API 操作强相关的场景。在实际的代码实践中，我们会按照具体场景选择方案二或方案三，大家也可以到项目中一探究竟。
 
@@ -114,7 +114,7 @@ StatefulSet 和 Pod 的抉择，最终是灵活性和可靠性的权衡，而在
 
 ![图 7 存储方案](media/efficiently-arranging-stateful-application/7.png)
 
-<center>图 7 存储方案</center>
+<div class="caption-center">图 7 存储方案</div>
 
 其中，本地临时存储中的数据会随着 Pod 被删除而清空，因此不适用于持久存储。
 
@@ -151,19 +151,19 @@ Local PV 并非免费的午餐，所有的文档都会告诉我们 Local PV 有�
 
 ![图 8 节点故障](media/efficiently-arranging-stateful-application/8.png)
 
-<center>图 8 节点故障</center>
+<div class="caption-center">图 8 节点故障</div>
 
 此时，假如我们能够确认 Node 已经宕机并且短期无法恢复，那么就可以删除 Node 对象（比如 NodeController 在公有上会查询公有云的 API 来删除已经释放的 Node）。此时，控制器通过 Node 对象不存在这一事实理解了 Node 已经无法恢复，就可以直接删除 pvc-1 来解绑 PV，并强制删除 TiKV-1，最终让 TiKV-1 调度到其它节点上。当然，我们同时也要做应用层状态的协调，也就是先在 PD 中下线 TiKV-1，再将新的 TiKV-1 作为一个新成员加入集群，此时，PD 就会通知 TiKV-1 创建 Region 副本来补齐集群中的 Region 副本数。
 
 ![图 9 能够确定节点状态时的故障转移](media/efficiently-arranging-stateful-application/9.png)
 
-<center>图 9 能够确定节点状态时的故障转移</center>
+<div class="caption-center">图 9 能够确定节点状态时的故障转移</div>
 
 当然，更多的情况下，我们是无法在自定义控制器中确定节点状态的，此时就很难针对性地进行原地恢复，因此我们通过向集群中添加新 Pod 来进行故障转移：
 
 ![图 10 无法确定节点状态时的故障转移](media/efficiently-arranging-stateful-application/10.png)
 
-<center>图 10 无法确定节点状态时的故障转移</center>
+<div class="caption-center">图 10 无法确定节点状态时的故障转移</div>
 
 上面讲的是 TiDB 特有的故障转移策略，但其实可以类推到大部分的有状态应用上。比如对于 MySQL 的 slave，我们同样可以通过新增 slave 来做 failover，而在 failover 时，我们同样也要做应用层的一些事情， 比如说去 S3 上拉一个全量备份，再通过 binlog 把增量数据补上，当 lag 达到可接受的程度之后开始对外提供读服务。因此大家就可以发现，对于有状态应用的 failover 策略是共通的，也都需要应用本身支持某种 failover 形式。比如对于 MySQL 的 master，我们只能通过 M-M 模式做一定程度上的 failover，而且还会损失数据一致性。这当然不是 Kubernetes 或云原生本身有什么问题，而是说 Kubernetes 只是改变了应用的运维模式，但并不能影响应用本身的架构特性。假如应用本身的设计就不是云原生的，那只能从应用本身去解决。
 

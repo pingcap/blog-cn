@@ -56,7 +56,7 @@ go append.writeToSorter(append.writeToKV(toKV))
 
 ![binlog 传入 Append.writeCh 的处理流程](media/tidb-binlog-source-code-reading-5/1.png)
 
-<center>图 1 binlog 传入 Append.writeCh 的处理流程</center>
+<div class="caption-center">图 1 binlog 传入 Append.writeCh 的处理流程</div>
 
 1. vlog
 
@@ -91,7 +91,7 @@ go append.writeToSorter(append.writeToKV(toKV))
 
 	![图 2 binlog 写入流程](media/tidb-binlog-source-code-reading-5/2.png)
 	
-	<center>图 2 binlog 写入流程</center>
+	<div class="caption-center">图 2 binlog 写入流程</div>
 
 	在 Prepare 阶段，TiDB 同时向 TiKV 和 Pump 发起 prewrite 请求，只有 TiKV 和 Pump 全部返回成功了，TiDB 才认为 Prepare 成功。因此可以保证只要 Prepare 阶段成功，Pump 就一定能收到 P-binlog。这里可以这样做的原因是，TiKV 和 Pump 的 prewrite 都可以回滚，因此有任一节点 prewrite 失败后，TiDB 可以回滚其他节点，不会影响数据一致性。然而 Commit 阶段则不然，Commit 是无法回滚的操作，因此 TiDB 先 Commit TiKV，成功后再向 Pump 写入 C-binlog。而 TiKV Commit 后，这个事务就已经提交成功了，如果写 C-binlog 操作失败，则会产生事务提交成功但 Pump 未收到 C-binlog 的现象。在生产环境中，C-binlog 写失败大多是由于重启 TiDB 导致的，这本身属于一个可控事件或小概率事件。
 

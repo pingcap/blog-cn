@@ -12,7 +12,7 @@ tags: ['DM 源码阅读','社区']
 
 ![DM 数据同步处理单元](media/dm-source-code-reading-3/1.png)
 
-<center>DM 数据同步处理单元</center>
+<div class="caption-center">DM 数据同步处理单元</div>
 
 从上图可以了解到目前 DM 包含 relay log、dump、load、binlog replication（sync） 4 个数据同步处理单元，涵盖了以下数据同步处理的功能：
 

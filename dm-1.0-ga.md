@@ -11,7 +11,7 @@ DM（TiDB Data Migration）是由 PingCAP 开发的一体化数据同步平台�
 
 ![DM Architecture](media/dm-1.0-ga/1.png)
 
-<center>DM Architecture</center>
+<div class="caption-center">DM Architecture</div>
 
 ## 核心特性
 

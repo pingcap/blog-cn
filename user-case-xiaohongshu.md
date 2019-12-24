@@ -26,7 +26,7 @@ logo: /images/blog-cn/customers/xiaohongshu-logo.png
 
 ![图 1](media/user-case-xiaohongshu/1.png)
 
-<center>图 1</center>
+<div class="caption-center">图 1</div>
 
 如图 1 所示，小红书数据服务整体架构最上层是在线应用层（online app），应用层往下肯定会依赖一些离线（offline）或者在线（online）的 database（其实它更多的意义应该算存储，比如 Redis 也被我们理解为 database，所以称之为“数据服务”可能会更好），这些在线数据服务（online database）会有两条线：
 
@@ -58,7 +58,7 @@ logo: /images/blog-cn/customers/xiaohongshu-logo.png
 
 ![图 2](media/user-case-xiaohongshu/2.png)
 
-<center>图 2</center>
+<div class="caption-center">图 2</div>
 
 ### 3. 产品的部署及管理
 
@@ -80,7 +80,7 @@ logo: /images/blog-cn/customers/xiaohongshu-logo.png
 
 ![图 3](media/user-case-xiaohongshu/3.png)
 
-<center>图 3</center>
+<div class="caption-center">图 3</div>
 
 ### 5. 产品可优化的空间
 
@@ -98,7 +98,7 @@ logo: /images/blog-cn/customers/xiaohongshu-logo.png
 
 ![图 4](media/user-case-xiaohongshu/4.png)
 
-<center>图 4</center>
+<div class="caption-center">图 4</div>
 
 TiDB 在小红书的第一个应用场景是展示类业务，它的 pipeline 如图 4 中红色部分所示，线上一般是 MongoDB 或者 MySQL，通过一条实时数据流（realtime dataflow） 连接 Redis 或者 TiDB，最后实现 presentation 功能。接下来介绍这类场景下的两个具体项目。
 
@@ -106,7 +106,7 @@ TiDB 在小红书的第一个应用场景是展示类业务，它的 pipeline �
 
 ![图 5](media/user-case-xiaohongshu/5.png)
 
-<center>图 5</center>
+<div class="caption-center">图 5</div>
 
 第一个项目是大促实时看板，在去年双十一期间上线，当时我们的节奏也比较快，7、8 月开始调研，11 月就上大促业务。
 
@@ -120,7 +120,7 @@ TiDB 在小红书的第一个应用场景是展示类业务，它的 pipeline �
 
 ![图 6](media/user-case-xiaohongshu/6.png)
 
-<center>图 6</center>
+<div class="caption-center">图 6</div>
 
 这个项目背景有两点：
 
@@ -138,7 +138,7 @@ TiDB 在小红书的第一个应用场景是展示类业务，它的 pipeline �
 
 ![图 7](media/user-case-xiaohongshu/7.png)
 
-<center>图 7</center>
+<div class="caption-center">图 7</div>
 
 分析类业务的 pipeline 如图 7 所示，最后的 data warehouse 构建在 AWS 上。
 
@@ -146,7 +146,7 @@ TiDB 在小红书的第一个应用场景是展示类业务，它的 pipeline �
 
 ![图 8](media/user-case-xiaohongshu/8.png)
 
-<center>图 8</center>
+<div class="caption-center">图 8</div>
 
 这个场景下的第一个项目是做分库分表的 MySQL ETL。以最大的表为例，上游 10 节点的MySQL，共计 10000 个分表，存量数据 1000 亿条左右，每日增量 10 亿+，QPS 写入均值 3000 条/s，峰值接近 10000 条/s，平台促销活动对这部分影响也不大，甚至反而会降低，因为活动主要是电商部门在做，社区的查询需求反而变少。我们在 TiDB 离线库保留了大约 30 天增量监控数据，全量数据存在 S3 上，每日夜间（白天偶尔）会有基于 sqoop 的抽数任务触发。集群规模方面，目前使用 10 节点 TiKV + 3 节点 PD。
 
@@ -156,7 +156,7 @@ TiDB 在小红书的第一个应用场景是展示类业务，它的 pipeline �
 
 ![图 9](media/user-case-xiaohongshu/9.png)
 
-<center>图 9</center>
+<div class="caption-center">图 9</div>
 
 项目 4 MySQL 归档是基于项目 3 的演进。业务背景方面，以最大的表为例，主要为物流仓储部门的订单及衍生信息，存量非常非常大，每月进行归档到 TiDB 的数据有数十亿，但对 QPS 要求不是很高，与业务方讨论之后暂定，过去一年半的记录存放在 TiDB 供业务方查询，更久远的记录归档到 S3/Cos 上。
 
@@ -166,7 +166,7 @@ TiDB 在小红书的第一个应用场景是展示类业务，它的 pipeline �
 
 ![图 10](media/user-case-xiaohongshu/10.png)
 
-<center>图 10</center>
+<div class="caption-center">图 10</div>
 
 TiDB 接入实时数据写入服务的业务有以下四个考虑：
 
@@ -186,7 +186,7 @@ TiDB 接入实时数据写入服务的业务有以下四个考虑：
 
 ![图 11](media/user-case-xiaohongshu/11.png)
 
-<center>图 11</center>
+<div class="caption-center">图 11</div>
 
 最后分享一下 TiDB 未来在小红书的接入方向。
 

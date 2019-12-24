@@ -21,7 +21,7 @@ logo: /images/blog-cn/customers/youzu-logo.png
 
 ![图1：分库分表方案架构图](media/user-case-youzu/1.png)
 
-<center>图 1：分库分表方案架构图</center>
+<div class="caption-center">图 1：分库分表方案架构图</div>
 
 为了解决上述问题，游族的技术团队急需一套同时满足如下的条件的数据库分布式集群：
 
@@ -111,7 +111,7 @@ logo: /images/blog-cn/customers/youzu-logo.png
 
 ![图2：多套业务系统 TiDB 部署图](media/user-case-youzu/2.png)
 
-<center>图 2：多套业务系统 TiDB 部署图</center>
+<div class="caption-center">图 2：多套业务系统 TiDB 部署图</div>
 
 ## RC2.2 -> GA1.0 -> GA1.1
 

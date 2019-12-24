@@ -38,7 +38,7 @@ TiDB 对于数据的切分，按 Region 为单位，一个 Region 有大小限�
 
 ![图 1 TiDB 数据概览](media/tidb-in-high-concurrency-scenarios/1.png)
 
-<center>图 1 TiDB 数据概览</center>
+<div class="caption-center">图 1 TiDB 数据概览</div>
 
 
 只要业务的写入没有 AUTO_INCREMENT 的主键或者单调递增的索引（也即没有业务上的写入热点，更多细节参见 [TiDB 正确使用方式](https://zhuanlan.zhihu.com/p/25574778)）。从原理上来说，TiDB 依靠这个架构，是可以线性扩展读写能力，并且可以充分利用分布式的资源的。这一点上 TiDB 尤其适合高并发批量写入场景的业务。
@@ -71,18 +71,18 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 
 ![图 2 监控截图](media/tidb-in-high-concurrency-scenarios/2.png)
 
-<center>图 2 监控截图</center>
+<div class="caption-center">图 2 监控截图</div>
 
 
 客户端在短时间内发起了 “密集” 的写入，TiDB 收到的请求是 3K QPS。如果没有意外的话，压力应该均摊给 6 个 TiKV 节点。但是从 TiKV 节点的 CPU 使用情况上看，存在明显的写入倾斜（tikv - 3 节点是写入热点）：
 
 ![图 3 监控截图](media/tidb-in-high-concurrency-scenarios/3.png)
 
-<center>图 3 监控截图</center>
+<div class="caption-center">图 3 监控截图</div>
 
 ![图 4 监控截图](media/tidb-in-high-concurrency-scenarios/4.png)
 
-<center>图 4 监控截图</center>
+<div class="caption-center">图 4 监控截图</div>
 
 
 [Raft store CPU](https://pingcap.com/docs-cn/v3.0/reference/key-monitoring-metrics/tikv-dashboard/) 代表 raftstore 线程的 CPU 使用率，通常代表着写入的负载，在这个场景下 tikv-3 是 raft 的 leader，tikv-0 跟 tikv-1 是 raft 的 follower，其他的 tikv 节点的负载几乎为空。
@@ -91,7 +91,7 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 
 ![图 5 监控截图](media/tidb-in-high-concurrency-scenarios/5.png)
 
-<center>图 5 监控截图</center>
+<div class="caption-center">图 5 监控截图</div>
 
 ## 反直觉的原因
 
@@ -105,7 +105,7 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 
 ![图 6 TiKV Region 分裂流程](media/tidb-in-high-concurrency-scenarios/6.png)
 
-<center>图 6 TiKV Region 分裂流程</center>
+<div class="caption-center">图 6 TiKV Region 分裂流程</div>
 
 
 上图简单描述了这个过程，持续写入，TiKV 会将 Region 切分。但是由于是由原 Leader 所在的 Store 首先发起选举，所以大概率下旧的 Store 会成为新切分好的两个 Region 的 Leader。对于新切分好的 Region 2，3。也会重复之前发生在 Region 1 上的事情。也就是压力会密集地集中在 TiKV-Node 1 中。
@@ -114,7 +114,7 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 
 ![图 7 监控截图](media/tidb-in-high-concurrency-scenarios/7.png)
 
-<center>图 7 监控截图</center>
+<div class="caption-center">图 7 监控截图</div>
 
 在持续写入一段时间以后，整个集群会被 PD 自动地调度成一个压力均匀的状态，到那个时候才会真正利用整个集群的能力。对于大多数情况来说，这个是没有问题的，这个阶段属于表 Region 的预热阶段。
 
@@ -137,7 +137,7 @@ SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)]
 
 ![图 8 Table Region Range](media/tidb-in-high-concurrency-scenarios/8.png)
 
-<center>图 8 Table Region Range</center>
+<div class="caption-center">图 8 Table Region Range</div>
 
 
 从图 8 可以知道，Table 行数据 key 的编码之中，行数据唯一可变的是行 ID （rowID）。在 TiDB 中 rowID 是一个 Int64 整形。那么是否我们将 Int64 整形范围均匀切分成我们要的份数，然后均匀分布在不同的节点就可以解决问题呢？
@@ -175,15 +175,15 @@ SPLIT TABLE TEST_HOTSPOT BETWEEN (0) AND (9223372036854775807) REGIONS 128;
 
 ![图 9 监控截图](media/tidb-in-high-concurrency-scenarios/9.png)
 
-<center>图 9 监控截图</center>
+<div class="caption-center">图 9 监控截图</div>
 
 ![图 10 监控截图](media/tidb-in-high-concurrency-scenarios/10.png)
 
-<center>图 10 监控截图</center>
+<div class="caption-center">图 10 监控截图</div>
 
 ![图 11 监控截图](media/tidb-in-high-concurrency-scenarios/11.png)
 
-<center>图 11 监控截图</center>
+<div class="caption-center">图 11 监控截图</div>
 
 
 可以看到已经消除了明显的热点问题了。
