@@ -14,11 +14,11 @@ Drainer server 的启动逻辑主要实现在两个函数中：[NewServer](https
 
 `NewServer` 根据传入的配置项创建 Server 实例，初始化 Server 运行所需的字段。其中重要字段的说明如下：
 
-1.  metrics: [MetricClient](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/pkg/util/p8s.go#L36)，用于定时向 Prometheus Pushgateway 推送 drainer 运行中的各项参数指标；
+1.  metrics: [MetricClient](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/pkg/util/p8s.go#L36)，用于定时向 Prometheus Pushgateway 推送 drainer 运行中的各项参数指标。
 
-2.  cp: [checkpoint](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/checkpoint/checkpoint.go#L29)，用于保存 drainer 已经成功输出到目标系统的 binlog 的 commit timestamp。drainer 在重启时会从 checkpoint 记录的 commit timestamp 开始同步 binlog；
+2.  cp: [checkpoint](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/checkpoint/checkpoint.go#L29)，用于保存 drainer 已经成功输出到目标系统的 binlog 的 commit timestamp。drainer 在重启时会从 checkpoint 记录的 commit timestamp 开始同步 binlog。
 
-3.  collector: [collector](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/collector.go#L50)，用于收集全部 binlog 数据并按照 commit timestamp 递增的顺序进行排序。同时 collector 也负责实时维护 pump 集群的状态信息；
+3.  collector: [collector](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/collector.go#L50)，用于收集全部 binlog 数据并按照 commit timestamp 递增的顺序进行排序。同时 collector 也负责实时维护 pump 集群的状态信息。
 
 4.  syncer: [syncer](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/syncer.go#L39)，用于将排好序的 binlog 输出到目标系统 (MySQL，Kafka...) ，同时更新同步成功的 binlog 的 commit timestamp 到 checkpoint。
 
@@ -213,7 +213,7 @@ func (c *Collector) publishBinlogs(ctx context.Context) {
 }
 ```
 
-publishBinlogs 调用 [merger](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/merge.go) 模块对从所有 pump 读取 binlog，并且按照 binlog 的 commit timestamp 进行归并排序，最后通过调用 `syncBinlog` 输出 binlog 到  Syncer 处理单元。
+publishBinlogs 调用 [merger](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/merge.go) 模块从所有 pump 读取 binlog，并且按照 binlog 的 commit timestamp 进行归并排序，最后通过调用 `syncBinlog` 输出 binlog 到  Syncer 处理单元。
 
 ```go
 func (c *Collector) keepUpdatingStatus(ctx context.Context, fUpdate func(context.Context) error) {
@@ -246,7 +246,7 @@ keepUpdatingStatus 通过下面两种方式从 etcd 获取 pump 集群的最新�
 
 1.  定时器定时触发。
 
-2.  notifyChan 触发。这是一个必须要提一下的处理逻辑：当一个 pump 需要加入 pump c集群的时候，该 pump 会在启动时通知所有在线的 drainer，只有全部 drainer 都被通知都成功后，pump 方可对外提供服务。 这个设计的目的是，防止对应的 pump 的 binlog 数据没有及时加入 drainer 的排序过程，从而导致 binlog 数据同步缺失。
+2.  notifyChan 触发。这是一个必须要提一下的处理逻辑：当一个 pump 需要加入 pump c 集群的时候，该 pump 会在启动时通知所有在线的 drainer，只有全部 drainer 都被通知都成功后，pump 方可对外提供服务。 这个设计的目的是，防止对应的 pump 的 binlog 数据没有及时加入 drainer 的排序过程，从而导致 binlog 数据同步缺失。
 
 ## Syncer
 
@@ -285,19 +285,19 @@ type Syncer struct {
     }
     ```
 
-*   schema 维护了当前同步位置点的全部 schema 信息，可以根据 ddl binlog 变更对应的 schema 信息；
+*   schema 维护了当前同步位置点的全部 schema 信息，可以根据 ddl binlog 变更对应的 schema 信息。
 
 *   filter 负责对需要同步的 binlog 进行过滤。
 
 Syncer 运行入口在 [run](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/drainer/syncer.go#L260) 方法，主要逻辑包含：
 
-1.  依次处理 Collector 处理单元推送过来的 binlog 数据；
+1.  依次处理 Collector 处理单元推送过来的 binlog 数据。
 
-2.  如果是 DDL binlog，则更新维护的 schema 信息；
+2.  如果是 DDL binlog，则更新维护的 schema 信息。
 
-3.  利用 filter 过滤不需要同步到下游的数据；
+3.  利用 filter 过滤不需要同步到下游的数据。
 
-4.  调用 drainer/sync/Syncer.Sync()  异步地将数据同步到目标系统；
+4.  调用 drainer/sync/Syncer.Sync()  异步地将数据同步到目标系统。
 
 5.  处理数据同步结果返回。
 
