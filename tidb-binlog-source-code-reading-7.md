@@ -301,9 +301,9 @@ Syncer 运行入口在 [run](https://github.com/pingcap/tidb-binlog/blob/v3.0.7/
 
 5.  处理数据同步结果返回。
 
-  a. 通过 Succsses() 感知已经成功同步到下游的 binlog 数据，保存其对应 commit timestamp 信息到 checkpoint。
+    a. 通过 Succsses() 感知已经成功同步到下游的 binlog 数据，保存其对应 commit timestamp 信息到 checkpoint。
   
-  b. 通过 Error() 感知同步过程出现的错误，drainer 清理环境退出进程。
+    b. 通过 Error() 感知同步过程出现的错误，drainer 清理环境退出进程。
 
 ## 小结
 
