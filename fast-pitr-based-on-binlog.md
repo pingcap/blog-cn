@@ -3,7 +3,7 @@ title: 直击备份恢复的痛点：基于 TiDB Binlog 的快速时间点恢复
 author: ['吕磊']
 date: 2019-12-19
 summary: 基于 TiDB Binlog 的 Fast-PITR (Fast point in time recovery)，即基于 TiDB Binlog 的快速时间点恢复，实现了基于 TiDB Binlog 的逐级 merge，以最小的代价实现快速 PITR，解决了现有 TiDB 原生备份恢复方案的一些痛点问题。
-tags: ['TiDB-Binlog']
+tags: ['TiDB Binlog']
 ---
 
 >作者介绍：吕磊，Better 队成员、美团点评高级 DBA，Better 队参加了  TiDB Hackathon 2019，其项目「基于 TiDB Binlog 的 Fast-PITR」获得了最佳贡献奖。
