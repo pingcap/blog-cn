@@ -5,23 +5,24 @@ date: 2020-01-02
 summary: 我们将混沌相关实现从自动化测试平台中抽离出来，作为 Chaos Mesh 的最初原型，并经过重新设计和完善，最终于 Github 上开源。
 tags: ['Kubernetes','Chaos Mesh']
 ---
+2019 年 12 月 31 日，我们在 GitHub 上正式开源了 Chaos Mesh。作为一个云原生的混沌测试平台，Chaos Mesh 提供在 Kubernetes 平台上进行混沌测试的能力。本篇文章将围绕 Chaos Mesh 起源及原理等方面进行介绍，并结合具体案例带领大家一起探索混沌测试的世界。
 
 ![图 1 猴子](media/chaos-mesh/1.png)
 
-现实世界中, 各类故障可能会随时随地的发生，其中有很多故障我们无法避免，例如磁盘突然写坏，或者机房突然断网断电等等。这些故障可能会给公司造成巨大损失，因此提升系统对于故障的容忍度成为很多工程师努力的目标。
+现实世界中，各类故障可能会随时随地的发生，其中有很多故障我们无法避免，例如磁盘突然写坏，或者机房突然断网断电等等。这些故障可能会给公司造成巨大损失，因此提升系统对于故障的容忍度成为很多工程师努力的目标。
 
 为了更方便地验证系统对于各种故障的容忍能力，Netflix 创造了一只名为 Chaos 的猴子，并且将它放到 AWS 云上，用于向基础设施以及业务系统中注入各类故障类型。这只 “猴子” 就是混沌工程起源。
 
 在 PingCAP 我们也面临同样的问题，所以在很早的时候就开始探索混沌工程，并逐渐在公司内部实践落地。
 
-在最初的实践中我们为 TiDB 定制了一套自动化测试平台，在平台中我们可以自己定义测试场景，并支持模拟各类错误情况，但是由于 TiDB 生态的不断成熟，各类周边工具 [TiDB Binlog](https://github.com/pingcap/tidb-binlog)、[TiDB Data Migration](https://github.com/pingcap/dm)、[TiDB Lightning](https://github.com/pingcap/tidb-lightning) 等的出现，测试需求也越来越多，逐渐出现了各个组件的的测试框架，但是混沌实验的需求是共有的，通用化的混沌工具就变的尤为重要，最终我们将混沌相关实现从自动化测试平台中抽离出来，成为了 Chaos Mesh 的最初原型，并经过重新设计和完善，最终于 [Github](https://github.com/pingcap/chaos-mesh) 上开源，项目地址: [https://github.com/pingcap/chaos-mesh](https://github.com/pingcap/chaos-mesh)。 
+在最初的实践中我们为 TiDB 定制了一套自动化测试平台，在平台中我们可以自己定义测试场景，并支持模拟各类错误情况。但是由于 TiDB 生态的不断成熟，各类周边工具 [TiDB Binlog](https://github.com/pingcap/tidb-binlog)、[TiDB Data Migration](https://github.com/pingcap/dm)、[TiDB Lightning](https://github.com/pingcap/tidb-lightning) 等的出现，测试需求也越来越多，逐渐出现了各个组件的的测试框架。但是混沌实验的需求是共有的，通用化的混沌工具就变的尤为重要。最终我们将混沌相关实现从自动化测试平台中抽离出来，成为了 Chaos Mesh 的最初原型，并经过重新设计和完善，最终于 [Github](https://github.com/pingcap/chaos-mesh) 上开源，项目地址: [https://github.com/pingcap/chaos-mesh](https://github.com/pingcap/chaos-mesh)。 
 
 ## Chaos Mesh 能做些什么？
 
 ![图 2 异常问题](media/chaos-mesh/2.png)
 <div class="caption-center"> 使用 Chaos Mesh 注入 TiKV 节点宕机后发现 QPS 恢复时间异常问题</div>
 
-这里以使用 Chaos Mesh 模拟在 TiKV 宕机的场景下观测业务 QPS 变化的实验为例。TiKV 是TiDB 的分布式存储引擎。根据我们预期，大多数情况下 TiKV 节点宕机时,  QPS 可能会出现瞬时的抖动，但是当 TiKV 节点恢复后 QPS 可以在很短的时候恢复到故障发生前的水位。从监控曲线上可以看出，前两次在 TiKV 节点恢复后，QPS 能够在短时间回到正常，但在最后一次实验中，在 TiKV 节点恢复后，业务的 QPS 并未在短时间内恢复到正常状态，这和预期不符。最后经过定位确认，当前版本（V3.0.1）的 TiDB 集群在处理 TiKV 宕机的情况下，的确存在问题，并且已经在新的版本里面修复，对应的 PR: [tidb/11391](https://github.com/pingcap/tidb/pull/11391), [tidb/11344](https://github.com/pingcap/tidb/pull/11344)。
+这里以使用 Chaos Mesh 模拟在 TiKV 宕机的场景下观测业务 QPS 变化的实验为例。TiKV 是 TiDB 的分布式存储引擎。根据我们预期，大多数情况下 TiKV 节点宕机时， QPS 可能会出现瞬时的抖动，但是当 TiKV 节点恢复后 QPS 可以在很短的时候恢复到故障发生前的水位。从监控曲线上可以看出，前两次在 TiKV 节点恢复后，QPS 能够在短时间回到正常，但在最后一次实验中，在 TiKV 节点恢复后，业务的 QPS 并未在短时间内恢复到正常状态，这和预期不符。最后经过定位确认，当前版本（V3.0.1）的 TiDB 集群在处理 TiKV 宕机的情况下，的确存在问题，并且已经在新的版本里面修复，对应的 PR: [tidb/11391](https://github.com/pingcap/tidb/pull/11391), [tidb/11344](https://github.com/pingcap/tidb/pull/11344)。
 
 上面描述的场景只是我们平时混沌实验中的一类，Chaos Mesh 还支持许多其他的错误注入：
 
@@ -59,7 +60,7 @@ tags: ['Kubernetes','Chaos Mesh']
 
 ### 拓展性
 
-*   基于现有实现, 易于扩展新的故障注入种类。
+*   基于现有实现，易于扩展新的故障注入种类。
 
 *   方便集成到其他测试框架中。
 
@@ -85,7 +86,7 @@ Chaos Mesh 中使用 [CRD](https://kubernetes.io/docs/tasks/access-kubernetes-ap
 
 所以在 Chaos Mesh 中 CRD 的定义可以自由发挥，根据不同的错误注入类型，定义单独的 CRD 对象。如果新添加的错误注入符合已有的 CRD 对象定义，就可以拓展这个 CRD 对象；如果是一个完全不同的错误注入类型，也可以自己重新增加一个 CRD 对象，这样的设计可以将不同的错误注入类型的定义以及逻辑实现从最顶层就抽离开，让代码结构看起来更加清晰，并且降低了耦合度，降低出错的几率。另一方面 [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) 提供了很好的 controller 实现的封装，不用去对每一个 CRD 对象去自己实现一套 controller 的逻辑，避免了大量的重复劳动。
 
-目前在 Chaos Mesh 中设计了三个 CRD 对象，分别是 PodChaos、NetworkChaos 以及 IOChaos, 从命名上就可以很容易的区分这几个 CRD 对象分别对应的错误注入类型。 
+目前在 Chaos Mesh 中设计了三个 CRD 对象，分别是 PodChaos、NetworkChaos 以及 IOChaos，从命名上就可以很容易的区分这几个 CRD 对象分别对应的错误注入类型。 
 
 以 PodChaos 为例： 
 
@@ -104,7 +105,7 @@ spec:
 
 PodChaos 对象用来实现注入 Pod 自身相关的错误，action 定义了具体错误，比如 pod-kill 定义了随机 kill pod 的行为，在 Kubernetes 中 Pod 宕掉是非常常见的问题，很多原生的资源对象会自动处理这种错误，比如重新拉起一个新的 Pod，但是我们的应用真的可以很好应对这样的错误吗？又或者 Pod 拉不起来怎么办？
 
-PodChaos 可以很好模拟这样的行为，通过  `selector` 选项划定想要注入混沌实验行为的范围，通过 `scheduler` 定义想要注入混沌实验的时间频率等。更多的细节介绍可以参考 Chaos-mesh 的使用文档 [https://github.com/pingcap/chaos-mesh](https://github.com/pingcap/chaos-mesh)。  
+PodChaos 可以很好模拟这样的行为，通过 `selector` 选项划定想要注入混沌实验行为的范围，通过 `scheduler` 定义想要注入混沌实验的时间频率等。更多的细节介绍可以参考 Chaos-mesh 的使用文档 [https://github.com/pingcap/chaos-mesh](https://github.com/pingcap/chaos-mesh)。  
 
 接下来我们更深入一点，聊一下 Chaos Mesh 的工作原理。 
 
@@ -124,7 +125,7 @@ PodChaos 可以很好模拟这样的行为，通过  `selector` 选项划定想
 
 *   Sidecar  
 
-    Sidecar contianer 是一类特殊的容器，由 admission-webhooks  动态的注入到目标 Pod 中，目前在 Chaos Mesh 中实现了 chaosfs sidecar  容器，chaosfs 容器内会运行 fuse-daemon, 用来劫持应用容器的 I/O 操作。 
+    Sidecar contianer 是一类特殊的容器，由 admission-webhooks  动态的注入到目标 Pod 中，目前在 Chaos Mesh 中实现了 chaosfs sidecar  容器，chaosfs 容器内会运行 fuse-daemon，用来劫持应用容器的 I/O 操作。 
     
 整体工作流如下： 
 
@@ -239,7 +240,7 @@ func main() {
 
 借助 eBPF 以及其他工具，我们可以在系统调用以及内核层面注入特定的错误，也能更方便地模拟物理机掉电的场景。 
 
-通过整合 [failpoint](https://github.com/pingcap/failpoint)，我们甚至可以注入特定的错误类型到应用函数以及语句层面, 这将极大的覆盖常规的注入方式难以覆盖到的场景。而最吸引人的是这些故障注入都可以通过一致的接口注入到应用和系统层面。 
+通过整合 [failpoint](https://github.com/pingcap/failpoint)，我们甚至可以注入特定的错误类型到应用函数以及语句层面，这将极大的覆盖常规的注入方式难以覆盖到的场景。而最吸引人的是这些故障注入都可以通过一致的接口注入到应用和系统层面。 
 
 另外我们将支持和完善 Chaos Mesh Dashboard，将故障注入对业务影响更好地进行可视化，以及提供易用的故障编排界面，帮助业务更容易地实施故障注入，理解应用对不同类型错误的容忍和故障自恢复的能力。
 
