@@ -14,11 +14,11 @@ PingCAP 一直致力于跟社区一起构建 TiDB 的生态，这其中 Tools �
 
 这次 Special Week 希望集思广益，从其他角度来改进 Tools，降低大家使用 TiDB 的门槛。
 
-为了将 SW 相关的进度公开到社区。我们创建了一个 [Github project](https://github.com/orgs/pingcap/projects/6) 来放置所有的开发任务，研发的同学自行组队去挑战相关的任务。经过了 5 天的全力开发，我们取得了一些不错的成绩，下面跟大家一起看看我们有了哪些不错的成果。
+为了将 SW 相关的进度公开到社区。我们创建了一个 [GitHub project](https://github.com/orgs/pingcap/projects/6) 来放置所有的开发任务，研发的同学自行组队去挑战相关的任务。经过了 5 天的全力开发，我们取得了一些不错的成绩，下面跟大家一起看看我们有了哪些不错的成果。
 
 ## 增量备份
 
-在这次活动中为TiDB 新推出的 [分布式快速备份和恢复工具](https://pingcap.com/docs-cn/dev/how-to/maintain/backup-and-restore/br/)（简称：BR） 实现了增量备份和恢复功能。效果展示如下：
+在这次活动中为 TiDB 新推出的 [分布式快速备份和恢复工具](https://pingcap.com/docs-cn/dev/how-to/maintain/backup-and-restore/br/)（简称：BR） 实现了增量备份和恢复功能。效果展示如下：
 
 ![1-br-效果图](media/special-week-tools-matter/1.gif)
 
@@ -26,7 +26,7 @@ PingCAP 一直致力于跟社区一起构建 TiDB 的生态，这其中 Tools �
 
 ## DM 高可用
 
-让TiDB 自研的 [DM](https://github.com/pingcap/dm) （从 MySQL 迁移数据到 TiDB 的工具） 支持了高可用的特性，使得用户免于遭受在节假日甚至凌晨发现挂掉一台服务器而紧急 OnCALL 的苦恼，也为 DM 可以用在一些关键场景中做了铺垫。
+让 TiDB 自研的 [DM](https://github.com/pingcap/dm)（从 MySQL 迁移数据到 TiDB 的工具） 支持了高可用的特性，使得用户免于遭受在节假日甚至凌晨发现挂掉一台服务器而紧急 OnCALL 的苦恼，也为 DM 可以用在一些关键场景中做了铺垫。
 
 下图是实现 DM 高可用的架构图:
 
@@ -40,7 +40,7 @@ Chaos Mesh 是我们最新开发的，基于 Kubernetes（K8s） 的一套 Chaos
 
 在这次 SW，我们将 DM、TiDB Binlog、BR 以及 CDC 都成功地跑在了 K8s 上面，然后使用 Chaos Mesh 进行了测试，也发现了一些问题，改善了整个 Tools 的稳定性。
 
-我们在 2019 月 12 月 31 日 正式开源 Chaos Mesh，项目地址：[https://github.com/pingcap/chaos-mesh](https://github.com/pingcap/chaos-mesh)，欢迎大家使用。
+我们在 2019 年 12 月 31 日正式开源 Chaos Mesh，项目地址：[https://github.com/pingcap/chaos-mesh](https://github.com/pingcap/chaos-mesh)，欢迎大家使用。
 
 ## 生态合作
 
@@ -60,7 +60,7 @@ PITR 的核心功能在之前 PingCAP 举办的 2019 Hackathon 中已经完成�
 
 ### TiKV Raw 模式备份恢复
 
-除了直接使用 TiDB，用些用户也会直接使用 TiKV，现阶段我们只提供了 TiDB 的备份工具 - BR，并没有单独针对 TiKV。
+除了直接使用 TiDB，有些用户也会直接使用 TiKV，现阶段我们只提供了 TiDB 的备份工具 - BR，并没有单独针对 TiKV。
 
 所以在这次 SW 我们跟一点资讯一起合作，让 BR 支持了 TiKV 的备份和恢复。现在已经完成了 BR 这一段的开发，还剩 TiKV 这边一点工作的收尾，欢迎感兴趣的同学关注 [https://github.com/pingcap/br/issues/86](https://github.com/pingcap/br/issues/86)。
 
@@ -74,7 +74,7 @@ PITR 的核心功能在之前 PingCAP 举办的 2019 Hackathon 中已经完成�
 
 ## 写在最后
 
-经过接近一年的探索，Special Week 在 PingCAP 已经逐渐成为一个独特的文化。刚刚结束的 Q4 Sepcial Week 把 PingCAP 与用户和开源社区紧密结合在了一起。我们希望与社区在未来有更多的合作，完成更多有价值的项目。这也是为什么大家可以看到这次的 SW 的大部分讨论，设计，进度都公开到 Github 的原因。
+经过接近一年的探索，Special Week 在 PingCAP 已经逐渐成为一个独特的文化。刚刚结束的 Q4 Sepcial Week 把 PingCAP 与用户和开源社区紧密结合在了一起。我们希望与社区在未来有更多的合作，完成更多有价值的项目。这也是为什么大家可以看到这次的 SW 的大部分讨论，设计，进度都公开到 GitHub 的原因。
 
 我们会整合这次 Sepcial Week 中产生的项目，建立一些社区可以参与的工作组，欢迎大家从 [这里](https://github.com/pingcap/community/tree/master/working-groups) 找到自己感兴趣的工作组，与我们一起构建 TiDB 生态工具社区。
 
