@@ -3,10 +3,11 @@ title: TiDB 在 OPPO 准实时数据仓库中的实践
 author: ['OPPO 数据分析与解决方案团队']
 date: 2020-01-03
 summary: OPPO 大数据中心在 2019 年初承接了接入某业务线核心数据的重要任务：一期目标是建立一个能提供准实时大数据查询服务的数据仓库。我们选用了之前从未在公司大规模正式使用过的 TiDB 作为核心数据库引擎。本文记录这次吃螃蟹的一些经验和教训，供大家参考。
-tags: ['互联网']
+tags: ['大型企业']
 category: case
 url: /cases-cn/user-case-oppo/
 weight: 2
+
 logo: /images/blog-cn/customers/oppo-logo.png
 ---
 
