@@ -48,7 +48,7 @@
   - [Ping++](user-case-ping++.md)
   - [360 金融](user-case-360.md)
 - 大型企业
-  - [OPPO] (user-case-oppo.md)
+  - [OPPO](user-case-oppo.md)
   - [海航易建](user-case-ekingtech.md)
   - [威锐达测控](user-case-weiruida.md)
   - [万达网络科技集团](user-case-wanda.md)
