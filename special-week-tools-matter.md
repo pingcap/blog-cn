@@ -44,6 +44,8 @@ Chaos Mesh 是我们最新开发的，基于 Kubernetes（K8s） 的一套 Chaos
 
 ## 生态合作
 
+在本次 SW 我们也欣喜地看到，一些企业也有很强烈的意愿跟我们一起来构建工具的生态，这次 SW 我们主要跟外部企业一起进行了三个项目：
+
 ### PITR ( Point in Time Recovery)
 
 这个项目是跟某互联网公司一起进行的，主要是将 Binlog 的增量备份进行合并，生成一个更轻量级的备份文件，加速同步的速度（项目地址 [https://github.com/lvleiice/Better-PITR](https://github.com/lvleiice/Better-PITR) ）。
