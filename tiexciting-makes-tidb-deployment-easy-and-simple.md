@@ -48,7 +48,7 @@ tags: ['运维']
 
 - 绿色环保有节操，没有全家桶。
 
-    - TiDB Ansible 强制要求进行系统配置调优满足 TiDB → 要求 TiExciting 允许用户可选地配置系统以便更好地运行 TiDB，且用户知悉各个要进行的改动。
+    - TiDB Ansible 强制要求进行系统配置调优满足 TiDB 要求 → TiExciting 允许用户可选地配置系统以便更好地运行 TiDB，且用户知悉各个要进行的改动。
 
     - TiExciting 允许用户自行勾选想要安装的组件，遵循最小化原则。
 
