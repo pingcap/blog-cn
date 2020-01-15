@@ -1,6 +1,7 @@
 ---
 title: TiKV 源码解析系列文章（十七）raftstore 概览
-author: ['李建俊','杨哲轩','王聪']
+author: ['李建俊']
+second_author: ['杨哲轩','王聪']
 date: 2020-01-15
 summary: 本文以 3.0 版本代码为例，讲述 raftstore 源码中的关键定义和设计。
 tags: ['TiKV 源码解析','社区']
