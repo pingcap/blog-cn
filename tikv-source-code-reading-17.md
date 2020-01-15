@@ -39,7 +39,7 @@ pub trait PollHandler<N, C> {
 }
 ```
 
-大体来看，状态机分成两种，normal 和 control。对于每一个 batch system，只有一个 control 状态机，负责管理和处理一些需要全局视野的任务。其他 normal 状态机负责处理其自身相关的任务。每个状态机都有其绑定的消息和消息队列。PollHandler 负责驱动状态机，处理自身队列中的消息。Batch system 的职责就是检测哪些状态机需要驱动，然后调用 PollHandler 去消费消息。消费消息会产生副作用，而这些副作用或要落盘，或要网络交互。PollHandler 在一个批次中可以处理多个 normal 状态机，这些状态机在作为参数传入 end 方法时被命名为 Batch，意思就是副作用会被聚合，一批批地处理。具体实现细节，后面的源码阅读章节会提到，这里就先不展开。
+大体来看，状态机分成两种，normal 和 control。对于每一个 batch system，只有一个 control 状态机，负责管理和处理一些需要全局视野的任务。其他 normal 状态机负责处理其自身相关的任务。每个状态机都有其绑定的消息和消息队列。PollHandler 负责驱动状态机，处理自身队列中的消息。Batch system 的职责就是检测哪些状态机需要驱动，然后调用 PollHandler 去消费消息。消费消息会产生副作用，而这些副作用或要落盘，或要网络交互。PollHandler 在一个批次中可以处理多个 normal 状态机，这些状态机在作为参数传入 end 方法时被命名为 batch，意思就是副作用会被聚合，一批批地处理。具体实现细节，后面的源码阅读章节会提到，这里就先不展开。
 
 ## RaftBatchSystem 和 ApplyBatchSystem
 
@@ -75,9 +75,6 @@ if !self.is_applying_snapshot() && !ready.committed_entries.is_empty() {
         .schedule_task(self.region_id, ApplyTask::apply(apply));
 }
 self.raft_group.advance_append(ready);
-if self.is_applying_snapshot() {
-    self.raft_group.advance_apply(self.last_applying_idx);
-}
 ```
 
 在 PeerStorage 的 handle_raft_ready 方法中，会将收集到 Ready 中的 Raft 日志收集到一个 WriteBatch 中，最终在 RaftPoller 的 end 方法中批量写入磁盘。而 Ready 中收集到的确认过的 Raft 日志，会被 `apply_router` 发送到 apply 线程中，由 ApplyBatchSystem 来处理。关于一个写入在 Raftstore 模块中从提交到确认的整条链路，将在后续的章节中更详细地探讨，这里就不作展开了。
