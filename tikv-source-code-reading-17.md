@@ -39,12 +39,12 @@ pub trait PollHandler<N, C> {
 }
 ```
 
-大体来看，状态机分成两种，normal 和 control。对于每一个 batch system，只有一个 control 状态机，负责管理和处理一些需要全局视野的任务。其他 normal 状态机负责处理其自身相关的任务。每个状态机都有其绑定的消息和消息队列。PollHandler 负责驱动状态机，处理自身队列中的消息。Batch system 的职责就是检测哪些状态机需要驱动，然后调用 PollHandler 去消费消息。消费消息会产生副作用，而这些副作用或要落盘，或要网络交互。PollHandler 在一个批次中可以处理多个 normal 状态机，这些状态机在作为参数传入 end 方法时被命名为 batch，意思就是副作用会被聚合，一批批地处理。具体实现细节，后面的源码阅读章节会提到，这里就先不展开。
+大体来看，状态机分成两种，normal 和 control。对于每一个 Batch System，只有一个 control 状态机，负责管理和处理一些需要全局视野的任务。其他 normal 状态机负责处理其自身相关的任务。每个状态机都有其绑定的消息和消息队列。PollHandler 负责驱动状态机，处理自身队列中的消息。Batch System 的职责就是检测哪些状态机需要驱动，然后调用 PollHandler 去消费消息。消费消息会产生副作用，而这些副作用或要落盘，或要网络交互。PollHandler 在一个批次中可以处理多个 normal 状态机，这些状态机在作为参数传入 end 方法时被命名为 batch，意思就是副作用会被聚合，一批批地处理。具体实现细节，后面的源码阅读章节会提到，这里就先不展开。
 
 ## RaftBatchSystem 和 ApplyBatchSystem
 
 
-在 raftstore 里，一共有两个 batch system。分别是 RaftBatchSystem 和 ApplyBatchSystem。RaftBatchSystem 用于驱动 Raft 状态机，包括日志的分发、落盘、状态跃迁等。当日志被提交以后会发往 ApplyBatchSystem 进行处理。ApplyBatchSystem 将日志解析并应用到底层 KV 数据库中，执行回调函数。所有的写操作都遵循着这个流程。
+在 raftstore 里，一共有两个 Batch System。分别是 RaftBatchSystem 和 ApplyBatchSystem。RaftBatchSystem 用于驱动 Raft 状态机，包括日志的分发、落盘、状态跃迁等。当日志被提交以后会发往 ApplyBatchSystem 进行处理。ApplyBatchSystem 将日志解析并应用到底层 KV 数据库中，执行回调函数。所有的写操作都遵循着这个流程。
 当客户端发起一个请求时，RaftBatchSystem 会将其序列化成日志，并提交给 raft。一个简化的流程如下：
 
 ![图 2 Raft group](media/tikv-source-code-reading-17/2.png)
