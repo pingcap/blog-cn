@@ -18,7 +18,7 @@ TiDB 作为 HTAP 数据库的代表在越来越多的行业得到了广泛的使
 
 ## 项目设计
 
-原先 TiDB Lightning 含有两个模块。 一个是 Lightning，一个是 Importer。 Lightning 负责将数据（要么是 csv 格式数据，要么是 MyDumper 格式数据 ）变成 TiKV 的 key-value pairs 写入 Importer。 Importer 则负责将这些 key-value pairs 排序并且写入至 TiKV 中；最后调用 ingest SST 接口将数据持久化写入底层 RocksDB 中。
+原先 TiDB Lightning 含有两个模块。 一个是 Lightning，一个是 Importer。 Lightning 负责将数据（要么是 csv 格式数据，要么是 MyDumper 格式数据 ）变成 TiKV 的 KV 对写入 Importer。 Importer 则负责将这些 KV 对排序并且写入至 TiKV 中；最后调用 ingest SST 接口将数据持久化写入底层 RocksDB 中。
 
 对于当前的 TiDB Lightning 来说，有一个缺陷是 Lightning 和 Importer 都是单机部署，并且都是 CPU-bound 的，所以文档中建议 Lightning 和 Importer 分别部署在两台机器上，最好也不要和 TiKV 一起部署。这样一来 TiDB Lightning 的性能受制于单机性能，包括 IO，CPU 以及网络，导致导入性能无法发挥至最大。同时，为了导入而新起两台机器也对用户而言不太友好。
 
@@ -50,7 +50,7 @@ TiSpark 在不久之前刚刚开始支持分布式写入，也称为“batch wri
 
 Batch write 完成的一个非常重要的事情是，处理了 Spark 类型到 TiDB 类型的转换，这为我们的项目提供了很多便利。在 Spark 中，一切分布式数据都可以由 Resilient Distributed Dataset (RDD) 形式表示，这些数据都是以 Spark DataType 的形式出现，所以为了能转换成我们的 Importer 希望接收的 key-value pair，这个转换非常关键。另外，Batch write 调用了 Spark DataSourceAPIV2 接口，使得我们可以直接在这个基础之上进入到 Spark SQL Parser 中，从而实现使用 Spark SQL 的 Insert 语句来调用 Lightning 导入接口。
 
-由于 Batch Write 功能已经做掉了大部分脏活累活，我们需要做的只是添加和 TiDB Lightning 相同的逻辑即可。我们以 TiDBRelation 作为起点，在由 Batch Write 所实现的 insert 接口中添加了我们 TiLightningWriter 的入口。剩余的逻辑就全在 TiLightningWrite.scala 内了，按照 TiDB Lightning 的逻辑，应该首先将 TiKV 节点改写状态至 Import Mode，然而在 TiSpark 中，由于我们有可能从 TiKV 中先取出数据，经过计算后再导入另一张表，所以在我们需要先把需要导入的数据取上来，所以为了避免出现重复计算或者其他问题，我们先将 TiKV 节点切换至 Normal Mode，取完数据并且在内存或磁盘上 cache 后，再将 tikv 由 Normal Mode 至 Import Mode。
+由于 Batch Write 功能已经做掉了大部分脏活累活，我们需要做的只是添加和 TiDB Lightning 相同的逻辑即可。我们以 TiDBRelation 作为起点，在由 Batch Write 所实现的 insert 接口中添加了我们 TiLightningWriter 的入口。剩余的逻辑就全在 TiLightningWrite.scala 内了，按照 TiDB Lightning 的逻辑，应该首先将 TiKV 节点改写状态至 Import Mode，然而在 TiSpark 中，由于我们有可能从 TiKV 中先取出数据，经过计算后再导入另一张表，所以在我们需要先把需要导入的数据取上来，所以为了避免出现重复计算或者其他问题，我们先将 TiKV 节点切换至 Normal Mode，取完数据并且在内存或磁盘上 cache 后，再将 TiKV 由 Normal Mode 至 Import Mode。
 
 接下来我们就需要开始做分布式 Lightning 的工作。首先我们按照 Region 大小估算导入数据会产生多少新 Region，这一点是为了更好的切分 Spark Task，以及避免数据导入后产生频繁的 region split 影响性能。接下来我们根据这个估算来切分 Spark Task，由于 TiKV 中数据是有序的，所以我们也需要排序一下，在这里由于 TiDB 中的主键 _tidb_row_id 也是唯一且增序的，所以可以直接按照这个顺序来排序。完成这步后，每一个 partition 都对应了唯一一个 Region（我们假想中的），其中的数据也是有序的，并且两个 partition 不会存在重叠部分。满足这些要求后我们可以放心进入下一步。
 
