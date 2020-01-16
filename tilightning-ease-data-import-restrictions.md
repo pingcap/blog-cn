@@ -76,11 +76,11 @@ Batch Write 完成的一个非常重要的事情是，处理了 Spark 类型到 
 
 相比较 TiDB Lightining，TiLightning 在部署上更加自由，既可以选择在空闲机器上部署 Spark 集群，也可以直接使用现有的 Spark 集群，或直接使用 Spark 的 standalone 模式启动。TiLightning 目前需要手动部署一个或多个 Importer，在未来我们希望能去掉这一步，将 Importer 也整合到 TiLightning 中。
 
-为使 TiLightning 连接并使用 Importer，我们需要先开启 TiLightning 功能，涉及具体使用细节再次不再赘述。用户可以使用 beeline，spark-shell，和 spark-submit 等等连接 Spark 集群使用 TiLightning 数据导入功能。 
+为使 TiLightning 连接并使用 Importer，我们需要先开启 TiLightning 功能，涉及具体使用细节在此不再赘述。用户可以使用 beeline，spark-shell，和 spark-submit 等等连接 Spark 集群使用 TiLightning 数据导入功能。 
 
 和原本 TiDB Lightning 不同的是， TiLightning 并未对数据源作出任何限制。 数据可以来自于 TiDB 本身，也可以是 Hive 上的数据，甚至可以是 Oracle 的数据。 可以说，只要 Spark 可以访问的数据源都可以通过 insert 语句将数据高速插入 TiDB 中。 
 
-一个简单的例子便是跑批。 跑批是指将数据从数据源捞出进行计算之后再次导入到 TiDB 集群中。再没有 TiLightning 的情况下，用户需要预先用 TiSpark 读取数据之后进行计算。 计算完毕之后的数据，需要通过 JDBC 连接器才能将数据导入到 TiDB 集群中。这个过程非常痛苦和漫长。 再 TiLightning 的加持下，我们可以直接将计算完的数据直接高速导入到 TiDB 集群中。 从我们的测试结果来说，这将是原来的几十倍（测试并未测试 Spark JDBC 导入到 TiDB，但是 TiDB Lightning 有相关的对比数据）。 小时级别任务将会变成分钟级别。 
+一个简单的例子便是跑批。 跑批是指将数据从数据源捞出进行计算之后再次导入到 TiDB 集群中。在没有 TiLightning 的情况下，用户需要预先用 TiSpark 读取数据之后进行计算。 计算完毕之后的数据，需要通过 JDBC 连接器才能将数据导入到 TiDB 集群中。这个过程非常痛苦和漫长。在 TiLightning 的加持下，我们可以直接将计算完的数据直接高速导入到 TiDB 集群中。 从我们的测试结果来说，这将是原来的几十倍（测试并未测试 Spark JDBC 导入到 TiDB，但是 TiDB Lightning 有相关的对比数据）。 小时级别任务将会变成分钟级别。 
 
 再者，大数据从业者经常需要的 ETL （Extract, Transform and Load) 任务。在没有 TiLightning 之前，如果需要将数据源导入 TiDB，能做的是只有两个。
  
