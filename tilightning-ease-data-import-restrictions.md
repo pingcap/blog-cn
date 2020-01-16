@@ -1,5 +1,5 @@
 ---
-title: Lightning + TiSpark 轻松解除数据导入限制
+title: TiLightning —— Lightning + TiSpark 轻松解除数据导入限制
 author: ['杨哲轩', '吴逸飞']
 date: 2020-01-16
 summary: Hackathon 2019 项目 TiLightning 可以轻松解除数据导入限制，解决了大数据生态系统和 TiDB 之间的鸿沟。
