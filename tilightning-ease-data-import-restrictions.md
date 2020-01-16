@@ -2,7 +2,7 @@
 title: TiLightning —— Lightning + TiSpark 轻松解除数据导入限制
 author: ['杨哲轩', '吴逸飞']
 date: 2020-01-16
-summary: Hackathon 2019 项目 TiLightning 可以轻松解除数据导入限制，解决了大数据生态系统和 TiDB 之间的鸿沟。
+summary: TiLightning 可以轻松解除数据导入限制，解决了大数据生态系统和 TiDB 之间的鸿沟。
 tags: ['TiDB', 'TiSpark']
 ---
 
@@ -32,31 +32,31 @@ TiDB 作为 HTAP 数据库的代表在越来越多的行业得到了广泛的使
 
 原本的 TiDB Lightning 工作原理可以简单分为 5 个步骤:
 
-1. 在导数据之前，tidb-lightning 会自动将 TiKV 集群切换为“导入模式” (import mode)，优化写入效率并停止自动压缩 (compaction)。
+1. 在导数据之前，TiDB Lightning 会自动将 TiKV 集群切换为“导入模式” (import mode)，优化写入效率并停止自动压缩 (compaction)。
 
-2. tidb-lightning 会在目标数据库建立库和表，并获取其元数据。
+2. TiDB Lightning 会在目标数据库建立库和表，并获取其元数据。
 
 3. 每张表都会被分割为多个连续的区块，这样来自大表 (200 GB+) 的数据就可以用增量方式导入。
 
-4. tidb-lightning 会通过 gRPC 让 tikv-importer 为每一个区块准备一个“引擎文件 (engine file)”来处理 KV 对。tidb-lightning 会并发读取 SQL dump，将数据源转换成与 TiDB 相同编码的 KV 对，然后发送到 tikv-importer 里对应的引擎文件。
+4. TiDB Lightning 会通过 gRPC 让 TiKV Importer 为每一个区块准备一个“引擎文件 (engine file)”来处理 KV 对。TiDB Lightning 会并发读取 SQL dump，将数据源转换成与 TiDB 相同编码的 KV 对，然后发送到 TiKV Importer 里对应的引擎文件。
 
-5. 当一个引擎文件数据写入完毕时，tikv-importer 便开始对目标 TiKV 集群数据进行分裂和调度，然后导入数据到 TiKV 集群。
+5. 当一个引擎文件数据写入完毕时，TiKV Importer 便开始对目标 TiKV 集群数据进行分裂和调度，然后导入数据到 TiKV 集群。
 
 对于 TiLightning 而言，我们只是实现了分布式的 Lightning，只需实现前面 4 步。
 
 ## TiSpark Lightning 部分实现
 
-TiSpark 在不久之前刚刚开始支持分布式写入，也称为“batch write”。Batch write 的功能赋予 TiSpark 分布式写入 TiKV 集群的功能，也相当于为 TiSpark 曾经的只读不可写的历史画上句号。在此提及这个功能的原因是 TiLightning 正是利用这个分布式写入框架来完成了分布式 Lightning 的功能。
+TiSpark 在不久之前刚刚开始支持分布式写入，也称为“Batch Write”。Batch Write 的功能赋予 TiSpark 分布式写入 TiKV 集群的功能，也相当于为 TiSpark 曾经的只读不可写的历史画上句号。在此提及这个功能的原因是 TiLightning 正是利用这个分布式写入框架来完成了分布式 Lightning 的功能。
 
-Batch write 完成的一个非常重要的事情是，处理了 Spark 类型到 TiDB 类型的转换，这为我们的项目提供了很多便利。在 Spark 中，一切分布式数据都可以由 Resilient Distributed Dataset (RDD) 形式表示，这些数据都是以 Spark DataType 的形式出现，所以为了能转换成我们的 Importer 希望接收的 key-value pair，这个转换非常关键。另外，Batch write 调用了 Spark DataSourceAPIV2 接口，使得我们可以直接在这个基础之上进入到 Spark SQL Parser 中，从而实现使用 Spark SQL 的 Insert 语句来调用 Lightning 导入接口。
+Batch Write 完成的一个非常重要的事情是，处理了 Spark 类型到 TiDB 类型的转换，这为我们的项目提供了很多便利。在 Spark 中，一切分布式数据都可以由 Resilient Distributed Dataset (RDD) 形式表示，这些数据都是以 Spark DataType 的形式出现，所以为了能转换成我们的 Importer 希望接收的 KV 对，这个转换非常关键。另外，Batch Write 调用了 Spark DataSourceAPIV2 接口，使得我们可以直接在这个基础之上进入到 Spark SQL Parser 中，从而实现使用 Spark SQL 的 Insert 语句来调用 Lightning 导入接口。
 
 由于 Batch Write 功能已经做掉了大部分脏活累活，我们需要做的只是添加和 TiDB Lightning 相同的逻辑即可。我们以 TiDBRelation 作为起点，在由 Batch Write 所实现的 insert 接口中添加了我们 TiLightningWriter 的入口。剩余的逻辑就全在 TiLightningWrite.scala 内了，按照 TiDB Lightning 的逻辑，应该首先将 TiKV 节点改写状态至 Import Mode，然而在 TiSpark 中，由于我们有可能从 TiKV 中先取出数据，经过计算后再导入另一张表，所以在我们需要先把需要导入的数据取上来，所以为了避免出现重复计算或者其他问题，我们先将 TiKV 节点切换至 Normal Mode，取完数据并且在内存或磁盘上 cache 后，再将 TiKV 由 Normal Mode 至 Import Mode。
 
 接下来我们就需要开始做分布式 Lightning 的工作。首先我们按照 Region 大小估算导入数据会产生多少新 Region，这一点是为了更好的切分 Spark Task，以及避免数据导入后产生频繁的 region split 影响性能。接下来我们根据这个估算来切分 Spark Task，由于 TiKV 中数据是有序的，所以我们也需要排序一下，在这里由于 TiDB 中的主键 _tidb_row_id 也是唯一且增序的，所以可以直接按照这个顺序来排序。完成这步后，每一个 partition 都对应了唯一一个 Region（我们假想中的），其中的数据也是有序的，并且两个 partition 不会存在重叠部分。满足这些要求后我们可以放心进入下一步。
 
-对于每个 partition 而言，都是一个独立的 Spark Task，到这里时我们只需要关心同一个 region 的有序数据即可，我们来看看在单机版 Lightning 中是怎么做的。 单机版 Lightning 的逻辑其实抛开 checkpoint 的逻辑是非常简单的。只是单纯的将数据文件（一般为 insert 语句或者 csv 数据）解析成为 TiKV 中的 key-value pairs。同样，每一个小的 Spark task 就需要完成单机 Lightning 的工作，首先我们对每一个 task 生成一个 uuid，并以此为依据打开一个 engine。由于时间关系我们放弃了 restore engine 的步骤，直接开始根据 partition 内的数据生成对应的 key-value pair，并通过连接 Importer 的 writeRowsV3 接口写入至 Importer 中。完成后 close engine 并 import engine 触发 ingest sst。最后依然是调用 Importer 的 cleanup engine 清理数据，整个 partition 的导入流程即完成。
+对于每个 partition 而言，都是一个独立的 Spark Task，到这里时我们只需要关心同一个 region 的有序数据即可，我们来看看在单机版 Lightning 中是怎么做的。 单机版 Lightning 的逻辑其实抛开 checkpoint 的逻辑是非常简单的。只是单纯的将数据文件（一般为 insert 语句或者 csv 数据）解析成为 TiKV 中的 KV 对。同样，每一个小的 Spark task 就需要完成单机 Lightning 的工作，首先我们对每一个 task 生成一个 uuid，并以此为依据打开一个 engine。由于时间关系我们放弃了 restore engine 的步骤，直接开始根据 partition 内的数据生成对应的 KV 对，并通过连接 Importer 的 writeRowsV3 接口写入至 Importer 中。完成后 close engine 并 import engine 触发 ingest sst。最后依然是调用 Importer 的 cleanup engine 清理数据，整个 partition 的导入流程即完成。
 
-完成代码之后的我们还是比较轻松的，因为我临时有事所以外出了几个小时。回来之后便开始部署集群准备 TiLightning 跟 tidb-lightning 的对比测试。之后我们虽然在部署集群上遇到了一些小困难，但感谢同时参加 Hackathon 的 DBA 同事王军帮助我们解决了不少问题，最后我们通过部署特定版本的 TiDB 集群顺利解决。
+完成代码之后的我们还是比较轻松的，因为我临时有事所以外出了几个小时。回来之后便开始部署集群准备 TiLightning 跟 TiDB Lightining 的对比测试。之后我们虽然在部署集群上遇到了一些小困难，但感谢同时参加 Hackathon 的 DBA 同事王军帮助我们解决了不少问题，最后我们通过部署特定版本的 TiDB 集群顺利解决。
 
 ## 测试结果
 
