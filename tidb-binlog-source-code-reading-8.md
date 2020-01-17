@@ -1,5 +1,5 @@
 ---
-title: TiDB Binlog 源码阅读系列文章（八）Drainer server 介绍
+title: TiDB Binlog 源码阅读系列文章（八）Loader Package 介绍
 author: ['赵一霖']
 date: 2020-01-20
 summary: 本文将从 Loader 的接口定义开始，由上至下的介绍 Loader 将 binlog 写入下游数据库的过程。
@@ -164,7 +164,7 @@ DML4: DELETE FROM table_name WHERE pk = 1;
 DML5: INSERT INTO table_name (pk, uk) VALUES (1, 3);
 ```
 
-首先关注 Event1 和 Event4 两条 SQL，当 DML1 是 Causality 接收到的第一个 DML时，Causality 将其索引项作为叶子节点建立一颗树 Group1，当 Causality 接收到 DML4 时，由于 DML4 中存在和 Group1 叶子节点相同的索引项，因此将 DML4 加入 Group1，如图 1 所示：
+首先关注 Event1 和 Event4 两条 SQL，当 DML1 是 Causality 接收到的第一个 DML 时，Causality 将其索引项作为叶子节点建立一颗树 Group1，当 Causality 接收到 DML4 时，由于 DML4 中存在和 Group1 叶子节点相同的索引项，因此将 DML4 加入 Group1，如图 1 所示：
 
 ![图 1 包含相同索引键值的 DML 加入同一个 Group](media/tidb-binlog-source-code-reading-8/1.png)
 
