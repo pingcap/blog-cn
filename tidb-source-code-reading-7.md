@@ -90,7 +90,7 @@ select max(id) from t
 生成的查询树会被转换成下面这种：
 
 ```sql
-select max(id) from (select id from t order by id desc limit 1 where id is not null) t
+select max(id) from (select id from t where id is not null order by id desc limit 1) t
 ```
 
 这个变换复杂一些是要处理 NULL 的情况。经过这步变换之后，还会执行其它变换。所以中间生成的额外的算子，可能在其它变换里面被继续修改掉。
