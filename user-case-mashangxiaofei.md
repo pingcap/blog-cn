@@ -29,7 +29,7 @@ weight: 5
 * **第一代数据库架构**——核心系统以 Oracle 为主，MySQL 为辅的时代。
 * **第三代数据库架构**——核心系统以 MySQL 结合 NewSQL 为主，NewSQL、MySQL、NoSQL 并存的时代。
 
-【图1】
+![数据库架构对比](media/user-case-mashangxiaofei/1-new-database.png)
 
 ## 马上金融第二代数据库架构痛点
 
@@ -83,7 +83,7 @@ MySQL 的集群基于 Binlog 主从异步复制来做，切集群主从角色以
 
 在账务系统研发团队、公共平台研发团队、DBA 团队等联合推动下，我们开始对 NewSQL 技术进行调研选型。
 
-[图2]
+![NewSQL](media/user-case-mashangxiaofei/2-NewSQL.png)
 
 在 GitHub的活跃度及社区贡献者方面，TiDB 与 CockcoachDB(CRDB) 都是国际化的全球开源级项目，是 NewSQL 行业中的代表性产品。
 
@@ -99,7 +99,7 @@ TiDB 从项目发起之初就将 MySQL 协议兼容性列为最 basic 的战略�
 
 马上消费金融账务系统归档项目是公司第一个持续实践 TiDB 的项目，也是第一个对 NewSQL 技术提出迫切需求的项目，上线后 TiDB 架构如下：
 
-【图3】
+![TiDB架构](media/user-case-mashangxiaofei/3-TiDB-architecture.png)
 
 上游分库分表的 8 套 MySQL 集群通过 DM 聚合到一套 TiDB 里，TiDB 对外提供历史归档大表查询服务。
 
@@ -113,11 +113,11 @@ TiDB 从项目发起之初就将 MySQL 协议兼容性列为最 basic 的战略�
 
 **账务 TiDB 集群每天业务高峰期将会承载约 1.3 万 QPS 的请求量（如下图所示），在做活动期间，请求量能冲击到近 3 万 QPS。**
 
-【图4】
+![QPS的请求量](media/user-case-mashangxiaofei/4-QPS.png)
 
 经过接近 1 年的不断优化提升，TiDB 集群表现越来越稳定，大部分请求能在 50ms 内返回：
 
-【图5】
+![Duration](media/user-case-mashangxiaofei/5-Duration.png)
 
 研发同事对 TiDB 的 Latency 与 TPS 的性能表现比较满意。
 
@@ -129,7 +129,8 @@ TiDB 从项目发起之初就将 MySQL 协议兼容性列为最 basic 的战略�
 
 总账项目部分模块关键流程示意图如下:
 
-【图6】
+![流程图](media/user-case-mashangxiaofei/6-flow-chart.png)
+
 
 马上消费金融总账项目是公司第一个完全运行在 TiDB 的项目，也是第一个从项目上线之初就放弃 MySQL，坚定不移选择 TiDB 的项目。
 
@@ -155,19 +156,19 @@ TiDB 是分布式 NewSQL，计算与存储分离，且计算节点与存储节�
 
 总账项目上线后，跑批期间 QPS 如下:
 
-【图7】
+![跑批QPS](media/user-case-mashangxiaofei/7-QPS.png)
 
 跑批期间的 SQL 响应时间如下:
 
-【图8】
+![SQL响应时间](media/user-case-mashangxiaofei/8-sql-response-time.png)
 
 跑批期间的 TiKV CPU 使用率如下:
 
-【图9】
+![CPU使用率](media/user-case-mashangxiaofei/9-TiKV-CPU-usage-rate.png)
 
 跑批期间事务量与性能如下:
 
-【图10】
+![跑批期间事务量](media/user-case-mashangxiaofei/10-transaction-volume.png)
 
 ## 马上金融 TiDB 经验总结分享
 
