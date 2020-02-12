@@ -22,8 +22,8 @@ tags: ['TiFlash']
 
 测试所用查询见后文，我们先来看看对比结果：
 
-| TiDB + TiFlash Delta Tree | MySQL 5.7.29 | Greenplum 6.1  16 Segments | Mariadb Columnstore 1.2.5 | Spark 2.4.5 + Parquet |
-|:------|:------|:------|:------|:------|
+| 查询语句 | TiDB + TiFlash Delta Tree | MySQL 5.7.29 | Greenplum 6.1  16 Segments | Mariadb Columnstore 1.2.5 | Spark 2.4.5 + Parquet |
+|:------|:------|:------|:------|:------|:------|
 | Q1 | 0.508 | 290.340 | 4.206 | 1.209 | 2.044 |
 | Q2 | 0.295 | 262.650 | 3.795 | 0.740 | 0.564 |
 | Q3 | 0.395 | 247.260 | 2.339 | 0.583 | 0.684 |
@@ -34,6 +34,7 @@ tags: ['TiFlash']
 | Q8 | 0.453 | 487.890 | 3.927 | 1.629 | 1.099 |
 | Q9 | 0.277 | 261.820 | 3.160 | 0.951 | 0.681 |
 | Q10 | 2.615 | 407.360 | 8.344 | 2.020 | 18.219 |
+
 
 ![](media/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/1-对比结果.png)
 
