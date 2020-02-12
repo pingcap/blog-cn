@@ -36,7 +36,7 @@ tags: ['TiFlash']
 | Q10 | 2.615 | 407.360 | 8.344 | 2.020 | 18.219 |
 
 
-![](media/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/1-对比结果.png)
+![对比结果](media/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/1-对比结果.png)
 
 >注：由于 MySQL 过慢，为了不影响比例，上图忽略了 MySQL 数据。
 
