@@ -1,5 +1,5 @@
 ---  
-title: 为了证明它的速度，我们一口气对比了 MySQL、Greenplum、Apache Spark、MariaDB ColumnStore……
+title: 为了证明它的速度，我们一口气对比了 MySQL、MariaDB、Greenplum、Apache Spark
 author: ['马晓宇']
 date: 2020-02-12
 summary: 借助 TiFlash 的一致性数据同步特型，用户可否以一个优异的速度直接对实时数据进行分析呢？
@@ -155,7 +155,9 @@ mysql> select count(*) from ontime where 1845 = CRSDepTime;
 
 ## 更快的数据到达
 
-由于为配合 TiDB 数据镜像同步而设计的可高频更新列存引擎，使得 TiFlash 得以高速更新数据。这使得它的快不仅仅意味高速返回查询，也意味着数据能更快被查询到。相较于传统的分析型数据库或者 Hadoop 数据湖需要从源数据库 T + 1 批量加载（往往是一天），TiFlash 的可以读取到最新的（而非仅仅是新鲜的）数据，且你无需关心数据到达乱序或者一致性问题。相比维护额外的数据复制作业，你不但精简了架构，也可以更实时地访问数据。
+由于为配合 TiDB 数据镜像同步而设计的可高频更新列存引擎，使得 TiFlash 得以高速更新数据。这使得它的「快」不仅仅是**「高速返回查询」**，也意味着 **「数据能更快被查询到」**。
+
+相较于传统的分析型数据库或者 Hadoop 数据湖需要从源数据库 T + 1 批量加载（往往是一天），TiFlash 的可以读取到最新的（而非仅仅是新鲜的）数据，且你无需关心数据到达乱序或者一致性问题。**相比维护额外的数据复制作业，你不但精简了架构，也可以更实时地访问数据。**
 
 ## 何不试试看？
 
@@ -175,4 +177,4 @@ mysql> select count(*) from ontime where 1845 = CRSDepTime;
 >
 >* Filesystem: ext4
 >
->* TiKV Region Size: 512M**
+>* TiKV Region Size: 512M
