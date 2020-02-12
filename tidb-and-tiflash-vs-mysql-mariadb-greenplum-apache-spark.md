@@ -22,7 +22,7 @@ tags: ['TiFlash']
 
 测试所用查询见后文，我们先来看看对比结果：
 
-| 查询语句 | TiDB + TiFlash | MySQL 5.7.29 | Greenplum 6.1  16 Segments | Mariadb Columnstore 1.2.5 | Spark 2.4.5 + Parquet | Oracle 12.2.0.1 | 
+| 查询语句 | TiDB + TiFlash | MySQL 5.7.29 | Greenplum 6.1 | Mariadb Columnstore 1.2.5 | Spark 2.4.5 + Parquet | Oracle 12.2.0.1 | 
 |:------|:------|:------|:------|:------|:------|:------|
 | Q1 | 0.508 | 290.340 | 4.206 | 1.209 | 2.044 | 88.53 |
 | Q2 | 0.295 | 262.650 | 3.795 | 0.740 | 0.564 | 76.05 |
@@ -37,7 +37,7 @@ tags: ['TiFlash']
 
 ![对比结果](media/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/1-对比结果.png)
 
->注：由于 MySQL 过慢，为了不影响比例，上图忽略了 MySQL 和 Oracle 数据。
+>注：为了不影响比例，上图忽略了 MySQL 和 Oracle 数据。
 
 从上面的对比可以看出，
 
