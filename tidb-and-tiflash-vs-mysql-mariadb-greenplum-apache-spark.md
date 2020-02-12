@@ -159,9 +159,9 @@ mysql> select count(*) from ontime where 1845 = CRSDepTime;
 
 ## 何不试试看？
 
-你可以使用 [一两台现成的机器进行测试，简单一两条命令，上线 TiFlash 节点](https://pingcap.com/blog-cn/10x-improving-analytical-processing-ability-of-tidb-with-tiflash/)，添加列存副本，等副本同步完成之后就可以看到效果，绿色无害。何不试试看呢？TiFlash 已经在进行第一轮用户测试，并在 2 到 3 月间会开启开放公测，请关注后续信息，也欢迎联系询问提前体验 [maxiaoyu@pingcap.com](mailto:maxiaoyu@pingcap.com)。
+另外，[TiFlash 上线测试非常简单](https://pingcap.com/blog-cn/10x-improving-analytical-processing-ability-of-tidb-with-tiflash/)，你可以使用一两台现成的机器进行测试，简单一两条命令，上线 TiFlash 节点，添加列存副本，等副本同步完成之后就可以看到效果，绿色无害。TiFlash 已经在进行第一轮用户测试，并在 2 到 3 月间会开启开放公测，请关注后续信息，也欢迎联系询问提前体验 [maxiaoyu@pingcap.com](mailto:maxiaoyu@pingcap.com)。
 
->附测试环境
+>附本文测试环境
 >
 >由于部分测试对象不支持集群模式，测试环境为单机（但是借助 TiDB 的可扩展体系，TiFlash 也可以进行无缝线性扩展）。测试机规格和配置如下：
 >
