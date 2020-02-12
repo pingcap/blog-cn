@@ -16,13 +16,13 @@ tags: ['TiFlash']
 
 **而 TiDB 作为 HTAP 数据库，在交易场景已经大量验证的前提下，加上 TiFlash 后在分析侧又能达到怎样的性能呢？借助 TiFlash 的一致性数据同步特型，用户可否以一个优异的速度直接对实时数据进行分析呢？**
 
-这次我们一起来看一组来自美国交通部的有趣数据，它包含了从 1987 至今的飞机起降和准点情况。这个测试参考了 ClickHouse 的官网教程 :)
+这次我们一起来看一组来自美国交通部的有趣数据，它包含了从 1987 至今的飞机起降和准点情况。
 
 大家可以使用 Percona Lab 的 [下载脚本](https://github.com/Percona-Lab/ontime-airline-performance/blob/master/download.sh) 获取数据集。数据集总共为一亿八千多万行飞机起降记录。数据集的表结构在 [这里](https://gist.github.com/ilovesoup/1806fd87a8aed66bb058ff64b5286194)。
 
 测试所用查询见后文，我们先来看看对比结果：
 
-| 查询语句 | TiDB + TiFlash Delta Tree | MySQL 5.7.29 | Greenplum 6.1  16 Segments | Mariadb Columnstore 1.2.5 | Spark 2.4.5 + Parquet |
+| 查询语句 | TiDB + TiFlash | MySQL 5.7.29 | Greenplum 6.1  16 Segments | Mariadb Columnstore 1.2.5 | Spark 2.4.5 + Parquet |
 |:------|:------|:------|:------|:------|:------|
 | Q1 | 0.508 | 290.340 | 4.206 | 1.209 | 2.044 |
 | Q2 | 0.295 | 262.650 | 3.795 | 0.740 | 0.564 |
@@ -159,7 +159,7 @@ mysql> select count(*) from ontime where 1845 = CRSDepTime;
 
 ## 何不试试看？
 
-另外，[TiFlash 上线测试非常简单](https://pingcap.com/blog-cn/10x-improving-analytical-processing-ability-of-tidb-with-tiflash/)，你可以使用一两台现成的机器进行测试，简单一两条命令，上线 TiFlash 节点，添加列存副本，等副本同步完成之后就可以看到效果，绿色无害。TiFlash 已经在进行第一轮用户测试，并在 2 到 3 月间会开启开放公测，请关注后续信息，也欢迎联系询问提前体验 [maxiaoyu@pingcap.com](mailto:maxiaoyu@pingcap.com)。
+另外，[TiFlash 上线测试非常简单](https://pingcap.com/blog-cn/10x-improving-analytical-processing-ability-of-tidb-with-tiflash/)，你可以使用一两台现成的机器进行测试，简单一两条命令，上线 TiFlash 节点，添加列存副本，等副本同步完成之后就可以看到效果，绿色无害。TiFlash 已经在进行第一轮用户测试，并在 3 月会开启开放公测，请关注后续信息，也欢迎联系询问提前体验 [maxiaoyu@pingcap.com](mailto:maxiaoyu@pingcap.com)。
 
 >附本文测试环境
 >
