@@ -2,7 +2,7 @@
 title: 为了证明它的速度，我们一口气对比了 MySQL、Greenplum、Apache Spark、MariaDB ColumnStore……
 author: ['马晓宇']
 date: 2020-02-12
-summary:  
+summary: 借助 TiFlash 的一致性数据同步特型，用户可否以一个优异的速度直接对实时数据进行分析呢？
 tags: ['TiFlash']
 ---  
 
@@ -14,7 +14,7 @@ tags: ['TiFlash']
 
 其中 MySQL 可以承担在线交易业务，但是分析速度对比针对分析场景特化的产品就相当堪忧；而列存数据库则无法承担在线交易，无论是无更实时新存储结构还是高频少量数据访问性能都很难符合在线交易业务要求。
 
-而 TiDB 作为 HTAP 数据库，在交易场景已经大量验证的前提下，加上 TiFlash 后在分析侧又能达到怎样的性能呢？借助 TiFlash 的一致性数据同步特型，用户可否以一个优异的速度直接对实时数据进行分析呢？
+**而 TiDB 作为 HTAP 数据库，在交易场景已经大量验证的前提下，加上 TiFlash 后在分析侧又能达到怎样的性能呢？借助 TiFlash 的一致性数据同步特型，用户可否以一个优异的速度直接对实时数据进行分析呢？**
 
 这次我们一起来看一组来自美国交通部的有趣数据，它包含了从 1987 至今的飞机起降和准点情况。这个测试参考了 ClickHouse 的官网教程 :)
 
@@ -35,7 +35,7 @@ tags: ['TiFlash']
 | Q9 | 0.277 | 261.820 | 3.160 | 0.951 | 0.681 |
 | Q10 | 2.615 | 407.360 | 8.344 | 2.020 | 18.219 |
 
-![](media/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/1.png)
+![](media/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/1-对比结果.png)
 
 >注：由于 MySQL 过慢，为了不影响比例，上图忽略了 MySQL 数据。
 
