@@ -1,5 +1,5 @@
 ---  
-title: 为了证明它的速度，我们一口气对比了 MySQL、MariaDB、Greenplum、Apache Spark
+title: 为了证明它的速度，我们一口气对比了 Oracle、MySQL、MariaDB、Greenplum、Apache Spark
 author: ['马晓宇']
 date: 2020-02-12
 summary: 借助 TiFlash 的一致性数据同步特型，用户可否以一个优异的速度直接对实时数据进行分析呢？
@@ -10,7 +10,7 @@ tags: ['TiFlash']
 
 ## 那么 TiFlash 到底有多快？
 
-为了更直观回答这个问题，我们用最新版 TiFlash 进行了一次全新的对比测试。测试选取了传统交易型数据库（及其列存扩展），分析型数据库和大数据计算引擎进行对比，分别是 MySQL、MariaDB ColumnStore、Greenplum 和 Apache Spark。
+为了更直观回答这个问题，我们用最新版 TiFlash 进行了一次全新的对比测试。测试选取了传统交易型数据库（及其列存扩展），分析型数据库和大数据计算引擎进行对比，分别是 Oracle、MySQL、MariaDB ColumnStore、Greenplum 和 Apache Spark。
 
 其中 MySQL 可以承担在线交易业务，但是分析速度对比针对分析场景特化的产品就相当堪忧；而列存数据库则无法承担在线交易，无论是无更实时新存储结构还是高频少量数据访问性能都很难符合在线交易业务要求。
 
