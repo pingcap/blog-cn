@@ -250,7 +250,7 @@ select * from t where c < 1 and b < 1 and a = 1
 
 那么可以得到如下两种路径：
 
-*   doubleread（即IndexLookUpReader ）：`IndexScan( a = 1 and b < 1 ) -> TableScan-> Selection(c < 1)`
+*   doubleread（即IndexLookUpReader ）：`IndexScan( a = 1 and b < 1 ) -> TableScan -> Selection(c < 1)`
 
 *   singleread（即IndexReader）：`IndexScan( b < 1 ) -> Selection( a = 1 and c < 1 )`
 
