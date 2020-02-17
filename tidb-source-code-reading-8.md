@@ -90,7 +90,7 @@ func dagPhysicalOptimize(logic LogicalPlan) (PhysicalPlan,  error) {
 那么，现在我们举个例子，SQL 如下：
 
 ```sql
-select sum(s.a),count(t.b) from s join t on s.a = t.a and s.c < 100 and t.c > 10 group bys.a
+select sum(s.a),count(t.b) from s join t on s.a = t.a and s.c < 100 and t.c > 10 group by s.a
 ```
 
 <div class="caption-center">（其中 a 是索引，b 也是索引）</div>
@@ -195,7 +195,7 @@ type statsInfo struct {
 *   方式一，使用真实的统计数据，具体公式如下：
 
 ```
-statsTable.count/ histogram.count * hist.NDV
+statsTable.count / histogram.count * hist.NDV
 ```
 
 （statsTable.count 会根据 stats lease 定期更新，histogram.count 只有用户手动 analyze 才更新）
@@ -213,7 +213,7 @@ statsTable.count * distinctFactor
 *   LogicalJoin（inner join），此算子的 count 获取的公式：
 
 ```
-N(join(s,t)) = N(s) * N(t) / (V(s.key) * V(t.key)) *Min(V(s.key), V(t.key))
+N(join(s,t)) = N(s) * N(t) / (V(s.key) * V(t.key)) * Min(V(s.key), V(t.key))
 ```
 
 <div class="caption-center">（其中 N 为表的行数，V 为 key 的 cardinality 值）</div>
@@ -224,7 +224,7 @@ N(join(s,t)) = N(s) * N(t) / (V(s.key) * V(t.key)) *Min(V(s.key), V(t.key))
 
 ### expected count
 
-expected count 表示整个 SQL 结束前此算子期望读取的行数。例如 SQL：`select* from swhere s.c1 < 5 order by id limit 3` (其中 c1 是索引列，id 是主键列)。我们可以简单认为得到两类可能的计划路径图，如图 4。 
+expected count 表示整个 SQL 结束前此算子期望读取的行数。例如 SQL：`select * from s where s.c1 < 5 order by id limit 3` (其中 c1 是索引列，id 是主键列)。我们可以简单认为得到两类可能的计划路径图，如图 4。 
 
 *   前者在 PhysicalLimit 时选择 id 有序，那么它的 expected count 为 3。因为有 c1 < 5 的过滤条件，所以在 TableScan 时 expected count 的值为 `min(n(s)，3 / f (σ(c1<5) ))` 。
 
@@ -243,7 +243,7 @@ expected count 表示整个 SQL 结束前此算子期望读取的行数。例如
 这里我们举个例子，SQL 如下：
 
 ```sql
-select *from t where c < 1 and b < 1 and a = 1
+select * from t where c < 1 and b < 1 and a = 1
 ```
 
 <div class="caption-center">(其中 (a,b) 是索引, (b,a,c) 是索引，表 t 有 a、b 和 c 三列)</div>
@@ -273,7 +273,7 @@ task 处理的代码主要在文件 `plan/task.go` 中。
 引入预处理 property 函数的原因是为了减少一些没有必要考虑的 properties，从而尽可能早的裁减掉成物理计划搜索路径上的分支，例如：
 
 ```sql
-select *from t join s on t.A = s.A and t.B = s.B
+select * from t join s on t.A = s.A and t.B = s.B
 ```
 
 它的 property 可以是 {A, B}, {B, A}。
