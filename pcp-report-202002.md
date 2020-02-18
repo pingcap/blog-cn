@@ -2,7 +2,7 @@
 title: 原来提升一个数据库的性能并没有那么难！TiDB 性能挑战赛完结撒花
 author: ['Jian Zhang']
 date: 2020-02-18
-summary: 
+summary: 三个月过去，性能挑战赛已经圆满落幕，最终的积分排行也新鲜出炉，选手们的参赛成果让人非常惊喜，今天就带大家回顾一下选手们是如何在“TiDB 性能提升”之路上，过五关斩六将的～
 image: /images/blog-cn/pcp-report-202002/1-Integral-ranking.png
 tags: ['TiDB 性能挑战赛','社区动态','社区']
 ---
