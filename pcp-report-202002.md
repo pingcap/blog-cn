@@ -27,9 +27,9 @@ tags: ['TiDB 性能挑战赛','社区动态','社区']
 
 *   优秀奖：ekalinin（1450 积分）、mmyj（1050 积分）、AerysNan（750 积分）、MaiCw4J（650 积分）、Rustin-Liu（650 积分）和 koushiro（650 积分）。
 
-感谢这些非常优秀的团队和个人参赛者，在他们的帮助下，TiDB 各方面的性能都有了飞跃式的提升（后文会为大家展示其中几个优秀项目的提升效果）。此外，非常感谢 PingCAP 内部的参赛同学，他们利用自己的业余时间参赛，为 TiDB 的性能提升做出了突出的贡献，他们将获得我们颁发的突出贡献奖，这些人是：
+感谢这些非常优秀的团队和个人参赛者，在他们的帮助下，TiDB 各方面的性能都有了飞跃式的提升（后文会为大家展示其中几个优秀项目的提升效果）。此外，非常感谢 PingCAP 内部的参赛同学，他们利用自己的业余时间参赛，为 TiDB 的性能提升做出了突出的贡献，他们将获得我们颁发的突出贡献奖：
 
-*   tabokie：通过 [PCP-21: Titan GC doesn’t affect online write](https://github.com/tikv/tikv/issues/5739) 直接获得 27000 积分，一举登顶积分榜首。
+*   tabokie：通过“[PCP-21: Titan GC doesn’t affect online write](https://github.com/tikv/tikv/issues/5739)”直接获得 27000 积分，一举登顶积分榜首。
 
 *   july2993：通过完成多项 PCP 任务获得高达 3000 的积分，位于总积分榜第 5 名。
 
@@ -119,7 +119,7 @@ TiDB 的 Window 算子原来实现是单线程的，对于 Window 算子的每�
 
 附上 pingyu 本人对这项工作的分享：[Optimize the Performance of Window Executor](https://docs.qq.com/slide/DRG5qZkdmRW9CZ2NM)。
 
-目前 pingyu 正在研究周靖人的 Paper [Incorporating Partitioning and Parallel Plans into the SCOPE Optimizer](http://www.cs.albany.edu/~jhh/courses/readings/zhou10.pdf)，尝试将 partitioning 属性集成到 TiDB 的优化器当中去，使优化器可以根据代价来选择是否插入 shuffle 算子，这一优化有望改变 TiDB 执行引擎的并发模型，使其充分利用计算机的 CPU 资源，提升执行引擎性能，非常值得期待！
+目前 pingyu 正在研究周靖人的 Paper 《[Incorporating Partitioning and Parallel Plans into the SCOPE Optimizer](http://www.cs.albany.edu/~jhh/courses/readings/zhou10.pdf)》，尝试将 partitioning 属性集成到 TiDB 的优化器当中去，使优化器可以根据代价来选择是否插入 shuffle 算子，这一优化有望改变 TiDB 执行引擎的并发模型，使其充分利用计算机的 CPU 资源，提升执行引擎性能，非常值得期待！
 
 #### 效果展示
 
@@ -175,7 +175,7 @@ TiDB 在计算时，内存中的数据是按列存放的，考虑到 Cache Local
 
 1.  从 []byte 到 string 的转化做到 zero-copy。
 
-2.  优化 Hex Encoding 和 大小写转换中的内存消耗，减少内存的申请。
+2.  优化 Hex Encoding 和大小写转换中的内存消耗，减少内存的申请。
 
 3.  使用 Streaming 的方式序列化输出。
 
@@ -187,7 +187,7 @@ TiDB 在计算时，内存中的数据是按列存放的，考虑到 Cache Local
 
 ## 总结与展望
 
-目前这些优化都会合进 4.0 分支，随着 TiDB 4.0 release 后交付给用户，预计 5 月底 4.0 的用户就能够享受到这些性能优化带来的体验改进了，让我们小小的期待下 4.0 版本的惊艳表现。
+目前这些优化都会合进 4.0 分支，将随着 TiDB 4.0 版本发布并交付给用户，预计 5 月底 4.0 的用户就能够享受到这些性能优化带来的体验改进了，让我们小小的期待下 4.0 版本的惊艳表现。
 
 **至此 TiDB 挑战赛第一季落幕，错过比赛或没玩够的小伙伴们不用遗憾，第二季挑战赛也即将开启！**
 
