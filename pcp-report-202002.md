@@ -7,7 +7,7 @@ image: /images/blog-cn/pcp-report-202002/1-Integral-ranking.png
 tags: ['TiDB 性能挑战赛','社区动态','社区']
 ---
 
-2019 年 11 月初，我们开启了「TiDB 挑战赛第一季之 [性能挑战赛](https://mp.weixin.qq.com/s/lyae8nwZ6i_V2STwacf6tA)」，比赛为期三个月，期间选手将通过完成一系列难度不同的任务来获得相应的积分。赛程过去三分之一时，已经取得了十分耀眼的 [阶段性成果](https://mp.weixin.qq.com/s/AMrkDX3O4wvYpyBN2aak1A)。三个月过去，性能挑战赛已经圆满落幕，最终的积分排行也新鲜出炉，选手们的参赛成果让人非常惊喜，今天就带大家回顾一下选手们是如何在“TiDB 性能提升”之路上，过五关斩六将的～
+2019 年 11 月初，我们开启了「TiDB 挑战赛第一季之 [性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/)」，比赛为期三个月，期间选手将通过完成一系列难度不同的任务来获得相应的积分。赛程过去三分之一时，已经取得了十分耀眼的 [阶段性成果](https://pingcap.com/blog-cn/pcp-report-201911/)。三个月过去，性能挑战赛已经圆满落幕，最终的积分排行也新鲜出炉，选手们的参赛成果让人非常惊喜，今天就带大家回顾一下选手们是如何在“TiDB 性能提升”之路上，过五关斩六将的～
 
 ## 最终积分排名与奖项揭晓
 
@@ -52,7 +52,7 @@ tags: ['TiDB 性能挑战赛','社区动态','社区']
 
 ## 优秀成果展示
 
-在比赛开始一个月的时候我们曾经做过一次 [成果展示](https://mp.weixin.qq.com/s/AMrkDX3O4wvYpyBN2aak1A)，已经过去了两个月，让我们再来回顾一下两个月中参赛选手们取得的优秀成果。
+在比赛开始一个月的时候我们曾经做过一次 [成果展示](https://pingcap.com/blog-cn/pcp-report-201911/)，已经过去了两个月，让我们再来回顾一下两个月中参赛选手们取得的优秀成果吧！
 
 ### PCP-21: Titan GC doesn’t affect online write
 
