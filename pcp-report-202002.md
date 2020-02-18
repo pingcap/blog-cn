@@ -1,5 +1,5 @@
 ---
-title: 原来提升一个数据库的性能并不难！TiDB 性能挑战赛完结撒花
+title: 原来提升一个数据库的性能并没有那么难！TiDB 性能挑战赛完结撒花
 author: ['Jian Zhang']
 date: 2020-02-18
 summary: 
@@ -7,14 +7,13 @@ image: /images/blog-cn/pcp-report-202002/1-Integral-ranking.png
 tags: ['TiDB 性能挑战赛','社区动态','社区']
 ---
 
-
 2019 年 11 月初，我们开启了「TiDB 挑战赛第一季之 [性能挑战赛](https://mp.weixin.qq.com/s/lyae8nwZ6i_V2STwacf6tA)」，比赛为期三个月，期间选手将通过完成一系列难度不同的任务来获得相应的积分。赛程过去三分之一时，已经取得了十分耀眼的 [阶段性成果](https://mp.weixin.qq.com/s/AMrkDX3O4wvYpyBN2aak1A)。三个月过去，性能挑战赛已经圆满落幕，最终的积分排行也新鲜出炉，选手们的参赛成果让人非常惊喜，今天就带大家回顾一下选手们是如何在“TiDB 性能提升”之路上，过五关斩六将的～
 
 ## 最终积分排名与奖项揭晓
 
 ![积分排行榜](media/pcp-report-202002/1-Integral-ranking.png) 
 
->注：本次比赛的完整积分榜详见[活动页面](https://pingcap.com/community-cn/tidb-performance-challenge/) 
+>注：本次比赛的完整积分榜详见 [活动页面](https://pingcap.com/community-cn/tidb-performance-challenge/) 。
 
 本次 TiDB 性能挑战赛，总共有 165 位社区开发者参赛，包括 23 支参赛队伍和 122 位个人参赛者（按照比赛规则，有 PingCAP 人员参与的小组不计入挑战赛最终排名）。
 
