@@ -20,19 +20,19 @@ tags: ['TiDB 性能挑战赛','社区动态','社区']
 
 本次比赛奖项设置为：一等奖 1 名，二等奖 2 名，三等奖 3 名，其余分数高于 600 分的团队或个人为优秀奖，各团队和个人的获奖情况如下：
 
-*   一等奖：.* Team（15050 积分）
+*   一等奖：.* Team（15050 积分）。
 
-*   二等奖：niedhui（4300 积分）和 catror（3500 积分）
+*   二等奖：niedhui（4300 积分）和 catror（3500 积分）。
 
-*   三等奖：pingyu（2600 积分）、Renkai（2550 积分）和 js00070（1800 积分）
+*   三等奖：pingyu（2600 积分）、Renkai（2550 积分）和 js00070（1800 积分）。
 
-*   优秀奖：ekalinin（1450 积分）、mmyj（1050 积分）、AerysNan（750 积分）、MaiCw4J（650 积分）、Rustin-Liu（650 积分）和 koushiro（650 积分）
+*   优秀奖：ekalinin（1450 积分）、mmyj（1050 积分）、AerysNan（750 积分）、MaiCw4J（650 积分）、Rustin-Liu（650 积分）和 koushiro（650 积分）。
 
 感谢这些非常优秀的团队和个人参赛者，在他们的帮助下，TiDB 各方面的性能都有了飞跃式的提升（后文会为大家展示项目的提升效果）。此外，非常感谢 PingCAP 内部的参赛同学，他们利用自己的业余时间参赛，为 TiDB 的性能提升做出了突出的贡献，他们将获得我们颁发的突出贡献奖，这些人是：
 
-*   tabokie：通过 [PCP-21: Titan GC doesn’t affect online write](https://github.com/tikv/tikv/issues/5739) 直接获得 27000 积分，一举登顶积分榜首
+*   tabokie：通过 [PCP-21: Titan GC doesn’t affect online write](https://github.com/tikv/tikv/issues/5739) 直接获得 27000 积分，一举登顶积分榜首。
 
-*   july2993：通过完成多项 PCP 任务获得高达 3000 的积分，位于总积分榜第 5 名
+*   july2993：通过完成多项 PCP 任务获得高达 3000 的积分，位于总积分榜第 5 名。
 
 ## 选手感想
 
@@ -139,13 +139,13 @@ TiDB 的 Window 算子原来实现是单线程的，对于 Window 算子的每�
 
 在分组过程中，有可能按照某个表达式来进行分组，如 `GROUP BY col1 + col2`，`groupChecker` 会逐行的调用表达式的 `Eval()` 接口进行计算，这个过程的计算开销非常大。
 
-#### 做法简介
+#### 实现方法
 
 TiDB 在计算时，内存中的数据是按列存放的，考虑到 Cache Locality，按列计算性能会更快。针对这个特点，程鹏做了两个优化：
 
-1.  使用表达式最新的列式计算接口，一次性求解一列的值，降低 Cache Miss；
+1.  使用表达式最新的列式计算接口，一次性求解一列的值，降低 Cache Miss。
 
-2.  分组时也借用向量化的思想，按列进行比较，进一步降低 Cache Miss；
+2.  分组时也借用向量化的思想，按列进行比较，进一步降低 Cache Miss。
 
 #### 效果展示
 
@@ -171,11 +171,11 @@ TiDB 在计算时，内存中的数据是按列存放的，考虑到 Cache Local
 
 在获取 Region 过程中，主要消耗在于中间的内存拷贝和序列化，因此这两块是优化的大头：
 
-1.  从 []byte 到 string 的转化做到 zero-copy 
+1.  从 []byte 到 string 的转化做到 zero-copy。
 
-2.  优化 Hex Encoding 和 大小写转换中的内存消耗，减少内存的申请
+2.  优化 Hex Encoding 和 大小写转换中的内存消耗，减少内存的申请。
 
-3.  使用 Streaming 的方式序列化输出
+3.  使用 Streaming 的方式序列化输出。
 
 #### 效果展示
 
