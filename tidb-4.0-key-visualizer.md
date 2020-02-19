@@ -24,7 +24,7 @@ tags: ['TiDB 4.0 新特性','社区','Key Visualizer']
 
 整个过程比较繁琐，涉及到不同的工具和组件，需要一定的学习成本，而且整个结果也很不直观。
 
-**Google 在 Bigtable 的云服务中提供了一个可视化的工具：[Key Visualizer](https://cloud.google.com/bigtable/docs/keyvis-overview)，它可以优雅的解决热点排查的问题。在 4.0 版本中 TiDB 也实现了 Key Visualizer 功能。现在，我们可以很轻松地给集群拍个 “CT”，快速直观地观察集群整体热点及流量分布情况，如下图所示。**
+**Google 在 Bigtable 的云服务中提供了一个可视化的工具：[Key Visualizer](https://cloud.google.com/bigtable/docs/keyvis-overview)，它可以优雅的解决热点排查的问题。在 4.0 版本中 TiDB 也实现了 Key Visualizer 功能。现在，我们可以很轻松地给集群拍个 “CT”，快速直观地观察集群整体热点及流量分布情况，如下图所示：**
 
 ![demo](media/tidb-4.0-key-visualizer/1-demo.gif)
 
@@ -45,7 +45,7 @@ tags: ['TiDB 4.0 新特性','社区','Key Visualizer']
 
 ![sample](media/tidb-4.0-key-visualizer/2-sample.png)
 
-说明：
+图片说明：
 
 1.  热力图的纵轴 Y 表示集群里面的 Region，横跨 TiDB 集群上所有数据库和数据表，横轴 X 表示时间；
 2.  颜色越暗（cold）表示该区域的 Region 在这个时间段上读写流量较低，颜色越亮（hot）表示读写流量越高，即越热。
@@ -101,7 +101,7 @@ tags: ['TiDB 4.0 新特性','社区','Key Visualizer']
 
 由图可见，在性能测试阶段（右半部分）`bmsql_new_order` 表的流量显著地高于其他所有表。虽然热点图中亮色带高度较高，即该热点表的 Region 个数还比较多，应当能比较好地分散到各个 TiKV 上使得负载比较均衡，但从设计上来说该表有大量读流量本身是一个不合理现象。
 
-由此，我们分析了这个表相关的 SQL 语句，发现测试程序中存在一些冗余 SQL 会重复从这个表中读取数据，我们在数据库层面改进优化器后，性能提升了 1%。
+由此，我们分析了这个表相关的 SQL 语句，发现测试程序中存在一些冗余 SQL 会重复从这个表中读取数据，因此我们在数据库层面对优化器做了一些改进，提升了这个情况下的性能。
 
 ## 其他应用场景
 
