@@ -16,11 +16,11 @@ tags: ['TiDB Binlog 源码阅读','社区']
 
 本文将按以下几个小节介绍 Drainer 如何将收到的 binlog 同步到下游：
 
-1.  Drainer Sync 模块：Drainer 通过 Sync 模块调度整个同步过程，所有的下游相关的同步逻辑统一封装成了 Syncer 接口
+1.  Drainer Sync 模块：Drainer 通过 Sync 模块调度整个同步过程，所有的下游相关的同步逻辑统一封装成了 Syncer 接口。
 
 2.  恢复工具
 
-*   Reparo （读音：reh-PAH-roh）：从下游保存的 File（增量备份）中读取 binlog 同步到 TiDB / MySQL
+*   Reparo （读音：reh-PAH-roh）：从下游保存的 File（增量备份）中读取 binlog 同步到 TiDB / MySQL。
 
 ## Drainer Sync 模块
 
@@ -30,25 +30,15 @@ tags: ['TiDB Binlog 源码阅读','社区']
 
 ```
 // Syncer sync binlog item to downstream
-
 type Syncer interface {
-
-  // Sync the binlog item to downstream
-
-  Sync(item *Item) error
-
-  // will be close if Close normally or meet error, call Error() to check it
-
-  Successes() <-chan *Item
-
-  // Return not nil if fail to sync data to downstream or nil if closed normally
-
-  Error() <-chan error
-
-  // Close the Syncer, no more item can be added by `Sync`
-
-  Close() error
-
+  // Sync the binlog item to downstream
+  Sync(item *Item) error
+  // will be close if Close normally or meet error, call Error() to check it
+  Successes() <-chan *Item
+  // Return not nil if fail to sync data to downstream or nil if closed normally
+  Error() <-chan error
+  // Close the Syncer, no more item can be added by `Sync`
+  Close() error
 }
 
 ```
@@ -63,23 +53,17 @@ type Syncer interface {
 
 ```
 type CheckPoint interface {
+  // Load loads checkpoint information.
+  Load() error
 
-  // Load loads checkpoint information.
+  // Save saves checkpoint information.
+  Save(int64) error
 
-  Load() error
+  // Pos gets position information.
+  TS() int64
 
-  // Save saves checkpoint information.
-
-  Save(int64) error
-
-  // Pos gets position information.
-
-  TS() int64
-
-  // Close closes the CheckPoint and release resources, after closed other methods should not be called again.
-
-  Close() error
-
+  // Close closes the CheckPoint and release resources, after closed other methods should not be called again.
+  Close() error
 }
 
 ```
@@ -102,19 +86,13 @@ loader.Txn 定义如下：
 
 ```
 // Txn holds transaction info, an DDL or DML sequences
-
 type Txn struct {
+  DMLs []*DML
+  DDL  *DDL
 
-  DMLs []*DML
-
-  DDL *DDL
-
-  // This field is used to hold arbitrary data you wish to include so it
-
-  // will be available when receiving on the Successes channel
-
-  Metadata interface{}
-
+  // This field is used to hold arbitrary data you wish to include so it
+  // will be available when receiving on the Successes channel
+  Metadata interface{}
 }
 ```
 
@@ -130,33 +108,21 @@ binlog 中带有一个 SchemaVersion 信息，记录这条 binlog 生成的时�
 
 ```
 func (s *Schema) handlePreviousDDLJobIfNeed(version int64) error {
+  var i int
+  for i = 0; i < len(s.jobs); i++ {
+     if s.jobs[i].BinlogInfo.SchemaVersion <= version {
+        _, _, _, err := s.handleDDL(s.jobs[i])
+        if err != nil {
+           return errors.Annotatef(err, "handle ddl job %v failed, the schema info: %s", s.jobs[i], s)
+        }
+     } else {
+        break
+     }
+  }
 
-  var i int
+  s.jobs = s.jobs[i:]
 
-for i = 0; i < len(s.jobs); i++ {
-
-     if s.jobs[i].BinlogInfo.SchemaVersion <= version {
-
-        _, _, _, err := s.handleDDL(s.jobs[i])
-
-        if err != nil {
-
-           return errors.Annotatef(err, "handle ddl job %v failed, the schema info: %s", s.jobs[i], s)
-
-        }
-
-} else {
-
-        break
-
-     }
-
-  }
-
-  s.jobs = s.jobs[i:]
-
-  return nil
-
+  return nil
 }
 ```
 
@@ -176,21 +142,14 @@ for i = 0; i < len(s.jobs); i++ {
 
 ```
 // BinlogName creates a binlog file name. The file name format is like binlog-0000000000000001-20181010101010
-
 func BinlogName(index uint64) string {
-
-  currentTime := time.Now()
-
-  return binlogNameWithDateTime(index, currentTime)
-
+  currentTime := time.Now()
+  return binlogNameWithDateTime(index, currentTime)
 }
 
 // binlogNameWithDateTime creates a binlog file name.
-
 func binlogNameWithDateTime(index uint64, datetime time.Time) string {
-
-  return fmt.Sprintf("binlog-%016d-%s", index, datetime.Format(datetimeFormat))
-
+  return fmt.Sprintf("binlog-%016d-%s", index, datetime.Format(datetimeFormat))
 }
 ```
 
@@ -198,31 +157,21 @@ func binlogNameWithDateTime(index uint64, datetime time.Time) string {
 
 ```
 // ReadDir reads and returns all file and dir names from directory
-
 func ReadDir(dirpath string) ([]string, error) {
+  dir, err := os.Open(dirpath)
+  if err != nil {
+     return nil, errors.Trace(err)
+  }
+  defer dir.Close()
 
-  dir, err := os.Open(dirpath)
+  names, err := dir.Readdirnames(-1)
+  if err != nil {
+     return nil, errors.Annotatef(err, "dir %s", dirpath)
+  }
 
-  if err != nil {
+  sort.Strings(names)
 
-     return nil, errors.Trace(err)
-
-  }
-
-  defer dir.Close()
-
-  names, err := dir.Readdirnames(-1)
-
-  if err != nil {
-
-     return nil, errors.Annotatef(err, "dir %s", dirpath)
-
-  }
-
-  sort.Strings(names)
-
-  return names, nil
-
+  return names, nil
 }
 ```
 
@@ -230,27 +179,17 @@ func ReadDir(dirpath string) ([]string, error) {
 
 ```
 func Decode(r io.Reader) (*pb.Binlog, int64, error) {
+  payload, length, err := binlogfile.Decode(r)
+  if err != nil {
+     return nil, 0, errors.Trace(err)
+  }
 
-  payload, length, err := binlogfile.Decode(r)
-
-  if err != nil {
-
-     return nil, 0, errors.Trace(err)
-
-  }
-
-  binlog := &pb.Binlog{}
-
-  err = binlog.Unmarshal(payload)
-
-  if err != nil {
-
-     return nil, 0, errors.Trace(err)
-
-  }
-
-  return binlog, length, nil
-
+  binlog := &pb.Binlog{}
+  err = binlog.Unmarshal(payload)
+  if err != nil {
+     return nil, 0, errors.Trace(err)
+  }
+  return binlog, length, nil
 }
 ```
 
