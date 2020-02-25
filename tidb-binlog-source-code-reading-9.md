@@ -18,9 +18,7 @@ tags: ['TiDB Binlog 源码阅读','社区']
 
 1.  Drainer Sync 模块：Drainer 通过 Sync 模块调度整个同步过程，所有的下游相关的同步逻辑统一封装成了 Syncer 接口。
 
-2.  恢复工具
-
-*   Reparo （读音：reh-PAH-roh）：从下游保存的 File（增量备份）中读取 binlog 同步到 TiDB / MySQL。
+2.  恢复工具 Reparo （读音：reh-PAH-roh）：从下游保存的 File（增量备份）中读取 binlog 同步到 TiDB / MySQL。
 
 ## Drainer Sync 模块
 
@@ -132,11 +130,11 @@ func (s *Schema) handlePreviousDDLJobIfNeed(version int64) error {
 
 我们知道 Drainer 除了可以将 binlog 直接还原到下游数据库以外，还支持同步到其他外部存储系统块，所以我们也提供了相应的工具来处理存储下来的文件，Reparo 是其中之一，用于读取存储在文件系统中的 Binlog 文件，写入 TiDB 中。本节简单介绍下 Reparo 的用途与实现，读者可以作为示例了解如何处理同步到文件系统的 Binlog 增量备份。
 
-#### Reparo
+### Reparo
 
 [Reparo](https://github.com/pingcap/tidb-binlog/tree/v3.0.0/reparo) 可以读取同步到文件系统上的 Binlog 增量备份并同步到 TiDB。
 
-##### 读取 binlog
+#### 读取 binlog
 
 当下游设置成 File（增量备份） 时，Drainer 会将 Protobuf 编码的 binlog 保存到指定目录，每写满 512 MB 新建一个文件。每个文件有个编号，从 0 开始依次类推。文件名格式定义如下：
 
