@@ -1,7 +1,7 @@
 ---
 title: TiDB Binlog 源码阅读系列文章 （九）同步数据到下游
 author: ['satoru']
-date: 2020-02-21
+date: 2020-02-26
 summary: 同步数据这一步重要操作由 Drainer 模块支持，它可以将 binlog 同步到 TiDB / MySQL / Kafka / File （增量备份）等下游组件
 tags: ['TiDB Binlog 源码阅读','社区']
 ---
