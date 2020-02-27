@@ -2,8 +2,8 @@
 title: 如何做到 10T 集群数据安全备份、1GB/s 快速恢复？
 author: ['沈泰宁']
 date: 2020-02-27
-summary: 从此再也不怕“删库跑路、恢复缓慢”。
-tags: ['TiDB','工具']
+summary: TiDB 目前可以满足超大集群的备份恢复的需求，经过测试，10T 数据的备份恢复速度可以达到 GB/s 级别。这得益于我们研发的分布式备份恢复工具 Backup&Restore That Scales (BR)。
+tags: ['备份恢复','BR']
 ---
 
 数据库作为基础设施，其安全性不言而明，因此数据安全备份和恢复功能是在严肃使用场景下的标配。TiDB 作为一款分布式数据库，目前可以满足超大集群的备份恢复的需求，经过测试，10T 数据的备份恢复速度可以达到 GB/s 级别。这得益于我们研发的分布式备份恢复工具  **Backup&Restore That Scales**（以下简称 BR）。
@@ -85,27 +85,19 @@ BR 目前还处于 beta 阶段，如果在使用过程中发现了任何问题�
 
 目前 BR 仍在不断的开发完善中，尤其在去年 [PingCAP Q4 Special Week](https://pingcap.com/blog-cn/special-week-tools-matter/) 活动中，富有创造力的 TiDB 社区小伙伴和 PingCAP 工程师为 BR 添了许多令人激动的新功能：
 
-- **RawKV backup restore**
-
-	<https://github.com/pingcap/br/issues/86>
+- **[RawKV backup restore](https://github.com/pingcap/br/issues/86)**
 
 	没错，BR 除了支持备份恢复 TiDB 集群之外，还能支持使用 RawKV 的 TiKV 集群，其中 TiKV 这边的 PR 由一位社区小伙伴贡献——感谢来自一点资讯的 **xinhua5**！
 	
-- **Incremental backup restore**
-
-	<https://github.com/pingcap/br/issues/90>
+- **[Incremental backup restore](https://github.com/pingcap/br/issues/90)**
 
 	增量备份不仅解决了全量备份空间占用的大的问题，也能解决了 [TiDB Binlog](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/) 损坏期间快速恢复的难题！
 
-- **Backup to common cloud storage**
-
-	<https://github.com/pingcap/br/issues/89>
+- **[Backup to common cloud storage](https://github.com/pingcap/br/issues/89)**
 
 	在云的时代，怎么能缺少对云存储的支持？BR 已经支持将备份保存到 AWS S3 上，不久也将支持备份到 Google Cloud Storage。
 
-- **Online restore**
-
-	<https://github.com/pingcap/br/issues/87>
+- **[Online restore](https://github.com/pingcap/br/issues/87)**
 	
 	最初，BR 恢复的定位和 [TiDB Lightning](https://pingcap.com/blog-cn/tidb-ecosystem-tools-2/) 一样，只支持离线恢复到全新的集群。通过这个功能，BR 即将支持在线恢复，这对 OLAP 场景中的导入数据阶段非常有帮助。
 	
@@ -116,37 +108,5 @@ BR 目前还处于 beta 阶段，如果在使用过程中发现了任何问题�
 >附：
 
 >[1] 五台 Intel® E5-2630v4, Intel® SSD P4510 4TB 物理机，每台部署一个 TiKV，使用本地模式进行备份恢复。备份数据库逻辑大小 3.34T，三副本物理大小 10.1T。备份并发参数 16，恢复并发参数 128。恢复速度受 Region 调度影响比较大，不包含调度，速度为 279MB/s。
-
->[2] loader 工具的 load 模块性能测试数据：[DM 1.0-GA 性能测试报告](https://pingcap.com/docs-cn/stable/benchmark/dm-v1.0-ga/#在-load-处理单元使用不同-pool-size-的性能测试对比)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+>
+>[2] [loader 工具的 load 模块性能测试数据。](https://pingcap.com/docs-cn/stable/benchmark/dm-v1.0-ga/#在-load-处理单元使用不同-pool-size-的性能测试对比) 
