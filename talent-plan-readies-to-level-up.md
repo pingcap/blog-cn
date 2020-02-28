@@ -46,7 +46,7 @@ Talent Plan Courses 2.0 Framework如上图所示，我们将 Talent Plan 1.0 的
 
 ## 2. 用 Go 语言设计的分布式关系型数据库（TinySQL）课程
 
-[TinySQL](https://github.com/pingcap-incubator/tinysql) 是基于 Go 语言实现的分布式关系型数据库，相比于 Talent Plan 1.0，会更加全面，几乎涵盖了分布式数据库 SQL 层最重要的部分。该课程会按照一个由简单到复杂，由静态到动态的顺序展开：
+[TinySQL](https://github.com/pingcap-incubator/tinysql) 课程是基于 Go 语言实现的分布式关系型数据库，相比于 Talent Plan 1.0，会更加全面，几乎涵盖了分布式数据库 SQL 层最重要的部分。该课程会按照一个由简单到复杂，由静态到动态的顺序展开：
 
 * 首先我们将对 SQL 和关系代数有一个简单的了解，为后面的课程做准备；
 
@@ -79,4 +79,4 @@ Talent Plan Courses 2.0 Framework如上图所示，我们将 Talent Plan 1.0 的
 
 以上课程及自动化作业分发工具都还处于调试阶段，大家可以加入 [Talent Plan Courses Working Group](https://tidbcommunity.slack.com/archives/CR746G049) 参与 2.0 课程体验、交流或吐槽，期待与各位共同打磨这门课程！
 
-另外，在 2.0 课程细节完全敲定对外公布之前，大家依然可以继续学习 Talent Plan 1.0，作业提交与成绩评定规则与之前保持一致，详见 [PingCAP University 官网](https://university.pingcap.com/talent-plan/)。 
+另外，在 2.0 课程细节完全敲定对外公布之前，大家依然可以继续学习 Talent Plan 1.0，作业提交与成绩评定规则与之前保持一致，更多细则详见 [PingCAP University 官网](https://university.pingcap.com/talent-plan/)。 
