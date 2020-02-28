@@ -34,7 +34,7 @@ Talent Plan Courses 2.0 Framework如上图所示，我们将 Talent Plan 1.0 的
 
 ### 1. 面向开源爱好者的开源协作系列课程
 
-这是我们专门为**零基础开源爱好者**准备的全新课程，希望即使是技术小白也能进入开源世界玩耍，比如不同开源软件许可协议的差异、知名开源基金会（Linux、Apache、CNCF 等）的运作方式以及开源社区运营的基础知识，快速掌握参与开源项目的小技巧。目前这个课程系列的学习资料已经准备完毕，3 月 2 日将开启为期 10 天的开源协作系列课程体验计划，任何对开源感兴趣的小伙伴都可以  [Talent Plan Courses Working Group](https://tidbcommunity.slack.com/archives/CR746G049) 参与课程体验，体验过程中你可以：
+这是我们专门为**零基础开源爱好者**准备的全新课程，希望即使是技术小白也能进入开源世界玩耍，比如不同开源软件许可协议的差异、知名开源基金会（Linux、Apache、CNCF 等）的运作方式以及开源社区运营的基础知识，快速掌握参与开源项目的小技巧。目前这个课程系列的学习资料已经准备完毕，3 月 2 日将开启为期 10 天的开源协作系列课程体验计划，任何对开源感兴趣的小伙伴都可以加入 [Talent Plan Courses Working Group](https://tidbcommunity.slack.com/archives/CR746G049) 参与课程体验，体验过程中你可以：
 
 * 分享学习成果和感受；
 
@@ -77,6 +77,6 @@ Talent Plan Courses 2.0 Framework如上图所示，我们将 Talent Plan 1.0 的
 
 ## 试玩及反馈通道
 
-以上课程及自动化作业分发工具都还处于调试阶段，大家可以加入 slack channel [#wg-talent-plan-courses](https://tidbcommunity.slack.com/archives/CR746G049) 参与 2.0 课程体验、交流或吐槽，期待与各位共同打磨这门课程！
+以上课程及自动化作业分发工具都还处于调试阶段，大家可以加入 [Talent Plan Courses Working Group](https://tidbcommunity.slack.com/archives/CR746G049) 参与 2.0 课程体验、交流或吐槽，期待与各位共同打磨这门课程！
 
-另外，在 2.0 课程细节完全敲定对外公布之前，大家依然可以继续学习 Talent Plan 1.0，作业提交与成绩评定规则与之前保持一致，1.0 课程详见 [PingCAP University 官网](https://university.pingcap.com/talent-plan/)。 
+另外，在 2.0 课程细节完全敲定对外公布之前，大家依然可以继续学习 Talent Plan 1.0，作业提交与成绩评定规则与之前保持一致，详见 [PingCAP University 官网](https://university.pingcap.com/talent-plan/)。 
