@@ -251,10 +251,10 @@ Rust 和 Servo 的共同发展创造了一个 [良性循环](https://en.wikipedi
 
 * Nicholas Nethercote 对 rustc 的优化工作：
 	*  [“2019 年 Rust 编译器如何提速”](https://blog.mozilla.org/nnethercote/2019/07/17/how-to-speed-up-the-rust-compiler-in-2019/) 
-	*  [“Rust 编译器的速度持续变快”](https://blog.mozilla.org/nnethercote/2019/07/25/the-rust-compiler-is-still-getting-faster/) 
-	*  [“可视化 Rust 编译”](https://blog.mozilla.org/nnethercote/2019/10/10/visualizing-rust-compilation/) 
+	*  [“Rust 编译器的速度持续变快”](https://blog.mozilla.org/nnethercote/2019/07/25/the-rust-compiler-is-still-getting-faster/)
+	*  [“可视化 Rust 编译”](https://blog.mozilla.org/nnethercote/2019/10/10/visualizing-rust-compilation/)
 	*  [“如何在 2019 年进一步提升 Rust 编译器的速度”](https://blog.mozilla.org/nnethercote/2019/10/11/how-to-speed-up-the-rust-compiler-some-more-in-2019/)
-	*  [“如何在 2019 年最后一次提升 Rust 编译器”](https://blog.mozilla.org/nnethercote/2019/12/11/how-to-speed-up-the-rust-compiler-one-last-time-in-2019/) 
+	*  [“如何在 2019 年最后一次提升 Rust 编译器”](https://blog.mozilla.org/nnethercote/2019/12/11/how-to-speed-up-the-rust-compiler-one-last-time-in-2019/)
 
 对于未上榜的人员或项目，我需要说一声抱歉。
 
@@ -269,3 +269,5 @@ Rust 和 Servo 的共同发展创造了一个 [良性循环](https://en.wikipedi
 >**鸣谢:**
 >
 >很多人参与了本系列博客。特别感谢 Niko Matsakis、Graydon Hoare 和 Ted Mielczarek 的真知卓见，以及 Calvin Weng 的校对和编辑。
+
+💡 有兴趣可点击查看 [英文原版](https://pingcap.com/blog/rust-compilation-model-calamity/) 。
