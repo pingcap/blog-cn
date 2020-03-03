@@ -1,3 +1,10 @@
+---
+title: TiDB 易用性挑战赛开启：解决用户的痛点，让 TiDB 更易用！
+author: ['PingCAP']
+date: 2020-03-02
+summary: TiDB 挑战赛第二季今天正式开启，赛程持续 3 个月，本赛季将围绕“提升 TiDB 的易用性”展开。考虑到用户们对 TiDB 落地实操中的“易用性”有深刻的体验，我们特地征求了一波 TiDB User Group（TUG）的意见。
+tags: ['社区','社区动态','TiDB 易用性挑战赛']
+---
 **两周前，我们发布了 [TiDB 挑战赛第一季](http://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247490854&idx=1&sn=6491780302bf66f58e58f0693fb81b19&chksm=eb163a4cdc61b35ab14afbfa4b24033ef51d854e0b7b83257eddb9a95cf83cc2091068327dd2&scene=21#wechat_redirect) 结赛公告，选手们在过去 3 个月里一顿炫酷的操作，让 TiDB 的「性能」产生了“惊人”的提升，比如：**
 
 - .*team 在比赛第一个月就将 IN() 函数性能提升了 150+ 倍，并让 LIKE() 函数性能得到指数级提升；
