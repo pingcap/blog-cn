@@ -108,6 +108,6 @@ TiDB 挑战赛第二季今天正式开启，赛程持续 3 个月，本赛季将
 
 ![](media/TiDB-usability-challenge-program/2-TiDB-Community.jpg)
 
-> 进入 [活动官网](https://pingcap.com/community-cn/tidb-usability-challenge/?utm_source=wechat&utm_medium=read%20more&utm_campaign=20200302) 查看比赛详情
+> 进入 [活动官网](https://pingcap.com/community-cn/tidb-usability-challenge/) 查看比赛详情
 > 
 >期待与各位一起创造无限可能！
