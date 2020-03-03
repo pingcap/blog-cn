@@ -5,9 +5,9 @@ date: 2020-03-02
 summary: TiDB 挑战赛第二季今天正式开启，赛程持续 3 个月，本赛季将围绕“提升 TiDB 的易用性”展开。考虑到用户们对 TiDB 落地实操中的“易用性”有深刻的体验，我们特地征求了一波 TiDB User Group（TUG）的意见。
 tags: ['社区','社区动态','TiDB 易用性挑战赛']
 ---
-**两周前，我们发布了 [TiDB 挑战赛第一季](http://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247490854&idx=1&sn=6491780302bf66f58e58f0693fb81b19&chksm=eb163a4cdc61b35ab14afbfa4b24033ef51d854e0b7b83257eddb9a95cf83cc2091068327dd2&scene=21#wechat_redirect) 结赛公告，选手们在过去 3 个月里一顿炫酷的操作，让 TiDB 的「性能」产生了“惊人”的提升，比如：**
+**两周前，我们发布了 [TiDB 挑战赛第一季](https://pingcap.com/blog-cn/pcp-report-202002/) 结赛公告，选手们在过去 3 个月里一顿炫酷的操作，让 TiDB 的「性能」产生了“惊人”的提升，比如：**
 
-- .*team 在比赛第一个月就将 IN() 函数性能提升了 150+ 倍，并让 LIKE() 函数性能得到指数级提升；
+- .* team 在比赛第一个月就将 IN() 函数性能提升了 150+ 倍，并让 LIKE() 函数性能得到指数级提升；
 - tabokie 让 Titan GC 机制不再受在线写的影响，极大提升了 TiKV 写入性能；
 - pingyu 把 Window 算子和 Sort 算子结合起来，一起进行哈希分组，超预期地提升了窗口函数的性能；
 - …… 
@@ -24,11 +24,11 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 >
 >参赛选手 C：“易用性”的话，TiDB 用户比较有感受吧，可以问问他们的痛点。
 >
->**TiDB Robot**：附议。
+>TiDB Robot：附议。
 
 ## TiDB 挑战赛第二季，说来就来！
 
-TiDB 挑战赛第二季今天正式开启，赛程持续 3 个月，本赛季将围绕“提升 TiDB 的易用性”展开。考虑到用户们对 TiDB 落地实操中的“易用性”有深刻的体验，我们特地征求了一波 TiDB User Group（TUG）的意见。最后根据 TUG 投票的前 20 个需求，再加上我们自己对“易用性”改进的想法，综合设置了本次挑战赛的任务。**值得注意的是：完成用户投票前三的需求会有额外加分哦！**排名前三的需求整体上各自分别加 10000、8000、6000 分。在需求被完整实现或者本赛季结束，该需求对应的加分将由该需求的子任务完成者们一起分享。
+TiDB 挑战赛第二季今天正式开启，赛程持续 3 个月，本赛季将围绕“提升 TiDB 的易用性”展开。考虑到用户们对 TiDB 落地实操中的“易用性”有深刻的体验，我们特地征求了一波 TiDB User Group（TUG）的意见。最后根据 TUG 投票的前 20 个需求，再加上我们自己对“易用性”改进的想法，综合设置了本次挑战赛的任务。**值得注意的是：完成用户投票前三的需求会有额外加分哦**！排名前三的需求整体上各自分别加 10000、8000、6000 分。在需求被完整实现或者本赛季结束，该需求对应的加分将由该需求的子任务完成者们一起分享。
 
 本赛季任务依然分三个等级：Easy / Medium / Hard，每个任务对应一定的积分。这次我们优化了本赛季的分级赛制：**如果你是第一次参与挑战赛的新人，Easy 的任务可以直接上手；而老玩家（在该 Repo 历史积分大于 200 分）则可直接挑战 Medium 及以上难度的任务！**
 
@@ -59,8 +59,9 @@ TiDB 挑战赛第二季今天正式开启，赛程持续 3 个月，本赛季将
 格式要求：
 
 - 标题：UCP/Sign Up
-- 内容：如果是个人参赛，请对你自己进行简要介绍，并留下可以与你取得联系的邮箱地址。
-如果是团队参赛，请对你的团队进行简要介绍，写明团队名称，每个团队成员的 GitHub ID，并留下可以与你们取得联系的邮箱地址。可参考示例。
+- 内容：  
+	如果是个人参赛，请对你自己进行简要介绍，并留下可以与你取得联系的邮箱地址。  
+	如果是团队参赛，请对你的团队进行简要介绍，写明团队名称，每个团队成员的 GitHub ID，并留下可以与你们取得联系的邮箱地址。可参考示例。
 
 ### 注意事项
 
@@ -73,7 +74,7 @@ TiDB 挑战赛第二季今天正式开启，赛程持续 3 个月，本赛季将
 - 参考 [Join GitHub](https://github.com/join) 完成 GitHub 账号的创建。
 - 参考 [Installing Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 在本地环境中安装 Git。
 - 通过 [Set up Git](https://help.github.com/en/github/getting-started-with-github/set-up-git) 配置 Git 访问 GitHub。
-- 阅读“参赛流程”文档。本次参赛流程较第一季更加科学、细化，比如：挑战某个 medium 以上的题目需要在该题所属 repo 完成 200 分以上的 easy。所以大家比赛前一定要仔细阅读哦～**请进入 [活动官网](https://pingcap.com/community-cn/tidb-usability-challenge/?utm_source=wechat&utm_medium=read%20more&utm_campaign=20200302) ，查看“挑战赛细则”。**
+- 阅读“ [挑战赛细则](https://github.com/pingcap/community/blob/master/challenge-programs/challenge-program-season-2-cn.md) ”文档。本次参赛流程较第一季更加科学、细化，比如：挑战某个 medium 以上的题目需要在该题所属 repo 完成 200 分以上的 easy。所以大家比赛前一定要仔细阅读哦～
 
 ## 学习资料
 
