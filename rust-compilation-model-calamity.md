@@ -2,8 +2,8 @@
 title: Rust 编译模型之殇
 author: ['Brian Anderson']
 date: 2020-03-01
-summary: 同步数据这一步重要操作由 Drainer 模块支持，它可以将 binlog 同步到 TiDB / MySQL / Kafka / File （增量备份）等下游组件
-tags: ['TiDB Binlog 源码阅读','社区']
+summary: 许多人抱怨构建的时间太长。有时，在开发模式下完全重新构建需要花费 15 分钟，而在发布模式则需要 30 分钟。
+tags: ['Rust','TiKV']
 ---
 >**作者介绍:**
 > 
