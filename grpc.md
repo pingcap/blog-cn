@@ -52,7 +52,7 @@ HTTP/2 是一个二进制协议，这也就意味着它的可读性几乎为 0�
 
 + Stream： 一个双向流，一条连接可以有多个 streams。
 + Message： 也就是逻辑上面的 request，response。
-+ Frame:：数据传输的最小单位。每个 Frame 都属于一个特定的 stream 或者整个连接。一个 message 可能由多个 frame 组成。
++ Frame：数据传输的最小单位。每个 Frame 都属于一个特定的 stream 或者整个连接。一个 message 可能由多个 frame 组成。
 
 ### Frame Format
 
@@ -85,7 +85,7 @@ HTTP/2 通过 stream 支持了连接的多路复用，提高了连接的利用�
 + 一条连接可以包含多个 streams，多个 streams 发送的数据互相不影响。
 + Stream 可以被 client 和 server 单方面或者共享使用。
 + Stream 可以被任意一段关闭。
-+ Stream 会确定好发送 frame 的顺序，另一端会按照接受到的顺序来处理。
++ Stream 会确定好发送 frame 的顺序，另一端会按照接收到的顺序来处理。
 + Stream 用一个唯一 ID 来标识。
 
 这里在说一下 Stream ID，如果是 client 创建的 stream，ID 就是奇数，如果是 server 创建的，ID 就是偶数。ID 0x00 和 0x01 都有特定的使用场景，不会用到。
@@ -106,7 +106,7 @@ Stream ID 不可能被重复使用，如果一条连接上面 ID 分配完了，
 
 ### Flow Control
 
-HTTP/2 也支持流控，如果 sender 端发送数据太快，receiver 端可能因为太忙，或者压力太大，或者只想给特定的 stream 分配资源，receiver 端就可能不想处理这些数据。譬如，如果 client 给 server 请求了一个视屏，但这时候用户暂停观看了，client 就可能告诉 server 别在发送数据了。
+HTTP/2 也支持流控，如果 sender 端发送数据太快，receiver 端可能因为太忙，或者压力太大，或者只想给特定的 stream 分配资源，receiver 端就可能不想处理这些数据。譬如，如果 client 给 server 请求了一个视频，但这时候用户暂停观看了，client 就可能告诉 server 别在发送数据了。
 
 虽然 TCP 也有 flow control，但它仅仅只对一个连接有效果。HTTP/2 在一条连接上面会有多个 streams，有时候，我们仅仅只想对一些 stream 进行控制，所以 HTTP/2 单独提供了流控机制。Flow control 有如下特性：
 
@@ -119,7 +119,7 @@ HTTP/2 也支持流控，如果 sender 端发送数据太快，receiver 端可�
 
 ### HPACK
 
-在一个 HTTP 请求里面，我们通常在 header 上面携带很多改请求的元信息，用来描述要传输的资源以及它的相关属性。在 HTTP/1.x 时代，我们采用纯文本协议，并且使用 `\r\n` 来分隔，如果我们要传输的元数据很多，就会导致 header 非常的庞大。另外，多数时候，在一条连接上面的多数请求，其实 header 差不了多少，譬如我们第一个请求可能 `GET /a.txt`，后面紧接着是 `GET /b.txt`，两个请求唯一的区别就是 URL path 不一样，但我们仍然要将其他所有的 fields 完全发一遍。
+在一个 HTTP 请求里面，我们通常在 header 上面携带很多该请求的元信息，用来描述要传输的资源以及它的相关属性。在 HTTP/1.x 时代，我们采用纯文本协议，并且使用 `\r\n` 来分隔，如果我们要传输的元数据很多，就会导致 header 非常的庞大。另外，多数时候，在一条连接上面的多数请求，其实 header 差不了多少，譬如我们第一个请求可能 `GET /a.txt`，后面紧接着是 `GET /b.txt`，两个请求唯一的区别就是 URL path 不一样，但我们仍然要将其他所有的 fields 完全发一遍。
 
 HTTP/2 为了结果这个问题，使用了 HPACK。虽然 HPACK 的 [RFC 文档](https://httpwg.org/specs/rfc7541.html) 看起来比较恐怖，但其实原理非常的简单易懂。
 
@@ -172,6 +172,6 @@ gRPC 的 service 接口是基于 protobuf 定义的，我们可以非常方便�
 
 上面只是对 gRPC 协议的简单理解，可以看到，gRPC 的基石就是 HTTP/2，然后在上面使用 protobuf 协议定义好 service RPC。虽然看起来很简单，但如果一门语言没有 HTTP/2，protobuf 等支持，要支持 gRPC 就是一件非常困难的事情了。
 
-悲催的是，Rust 刚好没有 HTTP/2 支持，也仅仅有一个可用的 protobuf 实现。为了支持 gRPC，我们 team 付出了很大的努力，也走了很多弯路，从最初使用纯 Rust 的 rust-grpc 项目，到后来自己基于 c-grpc 封装了 grpc-rs，还是有很多可以说的，后面在慢慢道来。如果你对 gRPC 和 rust 都很感兴趣，欢迎参与开发。
+悲催的是，Rust 刚好没有 HTTP/2 支持，也仅仅有一个可用的 protobuf 实现。为了支持 gRPC，我们 team 付出了很大的努力，也走了很多弯路，从最初使用纯 Rust 的 rust-grpc 项目，到后来自己基于 c-grpc 封装了 grpc-rs，还是有很多可以说的，后面再慢慢道来。如果你对 gRPC 和 rust 都很感兴趣，欢迎参与开发。
 
 gRPC-rs: [https://github.com/pingcap/grpc-rs](https://github.com/pingcap/grpc-rs)
