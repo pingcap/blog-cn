@@ -46,15 +46,15 @@ Sequence Generator 是 SQL 2003 标准中加入的数据库特性，通过 Seque
 
 支持添加、删除主键的功能
 
-采用 UTF8MB4 为默认字符集，同时也支持大小写敏感的 Collation（utf8mb4_general_ci）。
+采用 UTF8MB4 为默认字符集，同时也支持大小写敏感的 Collation（`utf8mb4_general_ci`）。
 
 ### CDC
 
-CDC (Change Data Capture) 工具。用于捕捉 TiDB 上的数据变更数据并将数据交付给下游系统，例如：TiDB、MySQL、消息队列、分布式文件系统等。相比于 TiDB-binlog，不再依赖 TiDB 事务模型保证数据同步的一致性，系统可水平扩展且天然提供高可用的特性。
+CDC (Change Data Capture) 工具。用于捕捉 TiDB 上的数据变更数据并将数据交付给下游系统，例如：TiDB、MySQL、消息队列、分布式文件系统等。相比于 TiDB Binlog，不再依赖 TiDB 事务模型保证数据同步的一致性，系统可水平扩展且天然提供高可用的特性。
 
-### Follower read
+### Follower Read
 
-4.0 中我们提供了 Follower read 功能，此功能可以将 Region Leader 的读压力转移一部分到 Region 的 Follower 上，这样就可以减轻  Region Leader 的压力，提升整个系统的性能，充分利用系统资源。
+4.0 中我们提供了 Follower Read 功能，此功能可以将 Region Leader 的读压力转移一部分到 Region 的 Follower 上，这样就可以减轻  Region Leader 的压力，提升整个系统的性能，充分利用系统资源。
 
 ### 系统的可观测性
 
@@ -74,9 +74,9 @@ CDC (Change Data Capture) 工具。用于捕捉 TiDB 上的数据变更数据并
 
 4.0 版本中我们将系统的配置项全部移到内核系统表中，并且可能通过 SQL 查看、修改相关的配置项，极大的提升 DBA 同学运维 TiDB 的效率。
 
-4.0 版本中我们提供一个新的部署、运维工具 TiOps，新工具可以按组件或者角色部署、重启、停止、版本升级等功能，能在 10min 以内完成一个测试集群的搭建，极大的提升运维同学部署、运维 TiDB 的效率。
+4.0 版本中我们提供一个新的部署、运维工具 TiOps，新工具可以按组件或者角色部署、重启、停止、版本升级等功能，能在 10min 以内完成一个测试集群的搭建，极大的提升运维同学部署、运维 TiDB 的效率，[TiOps 操作演示视频]()。
 
-4.0 版本中我们提供一个包管理器的工具 TiUP，管理 TiDB 生态中的所有组件。TiUP 非常适合想要快速试用、体验 TiDB 功能的场景。例如：在本地机器部署集群、部署自行编译的新版本等场景。极大的方便了喜欢尝鲜的用户。
+4.0 版本中我们提供一个包管理器的工具 TiUP，管理 TiDB 生态中的所有组件。TiUP 非常适合想要快速试用、体验 TiDB 功能的场景。例如：在本地机器部署集群、部署自行编译的新版本等场景。极大的方便了喜欢尝鲜的用户，[TiUP 操作演示视频](https://v.qq.com/x/page/o0932h32n8z.html)。
 
 ### 安全
 
@@ -86,7 +86,7 @@ CDC (Change Data Capture) 工具。用于捕捉 TiDB 上的数据变更数据并
 
 ### 性能
 
-与 3.0 版本相比 TPC-C 提升 50% 。性能的提升主要归功于提供 Coprocessor Cache 功能、提供 New Row Format 格式、Full Vectorized Expression Evaluation、Unified Thread Pool 等功能
+与 3.0 版本相比 TPC-C 提升 50% 。性能的提升主要归功于提供 New Row Format 格式、Full Vectorized Expression Evaluation、Unified Thread Pool 等功能。
 
 ## 开源社区
 
