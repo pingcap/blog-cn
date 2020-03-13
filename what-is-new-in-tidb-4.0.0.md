@@ -122,7 +122,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh
 快速部署本地集群
 
 ```
-tiup playground nigtly
+tiup playground nightly
 ```
 
 试用 TiDB
