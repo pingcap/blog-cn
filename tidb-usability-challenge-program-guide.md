@@ -120,3 +120,7 @@ Client-rust:
 * [支持清理特定 key 的锁](https://github.com/tikv/client-rust/issues/111)：在事务冲突严重时，针对小事务只清理特定 key 的锁能大大减轻 TiKV 服务器的负担。
 
 * [为 PD 客户端添加 Region 缓存](https://github.com/tikv/client-rust/issues/114)：使用本地缓存的 Region 信息对于提升性能和降低 PD 服务器负担有很大的帮助。TiDB 中已经有比较成熟的实现，这里只需要将 TiDB 的实现迁移到 Rust 中。
+
+>不知道看完以上“捞分技巧”，大家有没有摩拳擦掌、准备上阵抢积分了？报名方式、参赛细则请看 [这篇文章](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)，也欢迎大家加入 [TiDB Community Slack Workspace](https://tidbcommunity.slack.com/join/shared_invite/enQtNzc0MzI4ODExMDc4LWYwYmIzMjZkYzJiNDUxMmZlN2FiMGJkZjAyMzQ5NGU0NGY0NzI3NTYwMjAyNGQ1N2I2ZjAxNzc1OGUwYWM0NzE)，参赛过程中遇到任何问题都可以直接通过 #tidb-challenge-program channel 与我们取得联系哦～
+
+
