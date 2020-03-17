@@ -27,11 +27,11 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 ![](media/tidb-usability-challenge-program-guide/2-demand-ranking.png)
 
-为鼓励大家选择用户呼声更高的需求，本次挑战赛中，用户投票排名前三的需求对应的任务会在原有积分的基础上分别额外增加 10000、8000、6000 分。比如这个排名第三的需求：[record access statistics of databases, tables and indices](https://github.com/pingcap/tidb/issues/14998)，该需求原本的积分是 1294（积分低意味着难度低哟），再加上额外的 6000，这意味着完成这个低难度的任务总共能够获得 1294 + 6000 = 7294 分，性价比非常高！
+为鼓励大家选择用户呼声更高的任务，本次挑战赛中用户投票排名前三的需求对应的任务，会在原有积分的基础上分别额外增加 10000、8000、6000 分。比如这个排名第三的需求：[record access statistics of databases, tables and indices](https://github.com/pingcap/tidb/issues/14998)，该需求原本的积分是 1294（积分低意味着难度低哟），再加上额外的 6000，这意味着完成这个低难度的任务总共能够获得 1294 + 6000 = 7294 分，性价比非常高！
 
 ## 捞分技巧 2：Chaos Mesh Contributing Tutorial 可以帮助大家快速上手拿分
 
-[Chaos Mesh](https://github.com/pingcap/chaos-mesh) 是一款云原生的混沌测试平台，大家经常听说的 TiDB 混沌测试工具就是它。对了，Chaos Mesh 目前正处于加入 CNCF Sandbox 的孵化流程中，也就是说，以后大家也可以通过为 Chaos Mesh 做贡献的方式成为 CNCF 项目的贡献者了！对了，Chaos Mesh 项目后续会有大惊喜哦，真 · 潜力股（只能剧透到此了，你懂的）。
+[Chaos Mesh](https://github.com/pingcap/chaos-mesh) 是一款云原生的混沌测试平台，大家经常听说的 TiDB 混沌测试工具就是它。对了，Chaos Mesh 项目后续会有大惊喜哦，真 · 潜力股（只能剧透到此了，你懂的）。
 
 这份小小的 [Chaos Mesh Contributing Tutorial](https://yisaer.gitbook.io/chaos-mesh-contributing-tutorials/) 包含了 GitHub 协作基础、搭建 Chaos Mesh 开发环境和如何在 Chaos Mesh 中开发一个非常简单的新功能。内容不多，很快能看完。如果你之前没有参与过开源项目，可以看它；如果你有开源协作经验，但是没有参加过 Chaos Mesh 开发，也可以看它！看完小册子之后，大家就可以在 [Chaos Mesh 挑战赛题目合集](https://github.com/pingcap/chaos-mesh/projects/14) 轻松做任务、拿积分了！
 
@@ -55,7 +55,7 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 8.  [TiUP](https://github.com/pingcap-incubator/tiup)
 
-算上 TiDB、TiKV、PD 等总共有 10 个代码仓库参赛。按照这次挑战赛的比赛规则，每个仓库可以通过刷 Easy 难度的任务获得最多 200 积分，那么 10 个代码仓库就是 2000 分，积少成多，收获非常客观哦！多多练手之后再挑战 Medium 难度的任务，也会更加轻松。
+算上 TiDB、TiKV、PD 等总共有 10 个代码仓库参赛。按照本次比赛规则，选手在每个仓库可以通过刷 Easy 难度的任务，获得最高 200 积分。那么 10 个代码仓库就是 2000 分，积少成多，收获非常客观哦！多多练手之后再挑战 Medium 难度的任务，也会更加轻松。
 
 ## 捞分技巧 4：从一些比较简单的 Medium 任务突破
 
@@ -97,7 +97,7 @@ TiDB Dashboard：
 
 Data Migration：
 
-* [减少 DM 依赖的 TiDB 与 etcd 的日志输出](https://github.com/pingcap/dm/issues/495)：为依赖库设置一下 log level 就可以，一天就能搞定。
+* [减少 DM 依赖的 TiDB 与 etcd 的日志输出](https://github.com/pingcap/dm/issues/495)：为依赖库设置一下 log level 就可以，花一天时间就能搞定这个任务。
 
 * [修复 remove-meta 的指定方式](https://github.com/pingcap/dm/issues/496)：将配置项修改为命令参数就能实现，性价比高。
 
@@ -121,6 +121,6 @@ Client-rust:
 
 * [为 PD 客户端添加 Region 缓存](https://github.com/tikv/client-rust/issues/114)：使用本地缓存的 Region 信息对于提升性能和降低 PD 服务器负担有很大的帮助。TiDB 中已经有比较成熟的实现，这里只需要将 TiDB 的实现迁移到 Rust 中。
 
->不知道看完以上“捞分技巧”，大家有没有摩拳擦掌、准备上阵抢积分了？报名方式、参赛细则请看 [这篇文章](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)，也欢迎大家加入 [TiDB Community Slack Workspace](https://tidbcommunity.slack.com/join/shared_invite/enQtNzc0MzI4ODExMDc4LWYwYmIzMjZkYzJiNDUxMmZlN2FiMGJkZjAyMzQ5NGU0NGY0NzI3NTYwMjAyNGQ1N2I2ZjAxNzc1OGUwYWM0NzE)，参赛过程中遇到任何问题都可以直接通过 #tidb-challenge-program channel 与我们取得联系哦～
+>不知道看完以上“捞分技巧”，大家有没有摩拳擦掌、准备上阵抢积分了？报名方式、参赛细则请看 [这篇文章](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)，同时也欢迎大家加入 [TiDB Community Slack Workspace](https://tidbcommunity.slack.com/join/shared_invite/enQtNzc0MzI4ODExMDc4LWYwYmIzMjZkYzJiNDUxMmZlN2FiMGJkZjAyMzQ5NGU0NGY0NzI3NTYwMjAyNGQ1N2I2ZjAxNzc1OGUwYWM0NzE)，在参赛过程中遇到任何问题，都可以直接通过 #tidb-challenge-program channel 与我们取得联系哦～
 
 
