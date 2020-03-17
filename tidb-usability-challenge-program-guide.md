@@ -35,7 +35,7 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 这份小小的 [Chaos Mesh Contributing Tutorial](https://yisaer.gitbook.io/chaos-mesh-contributing-tutorials/) 包含了 GitHub 协作基础、搭建 Chaos Mesh 开发环境和如何在 Chaos Mesh 中开发一个非常简单的新功能。内容不多，很快能看完。如果你之前没有参与过开源项目，可以看它；如果你有开源协作经验，但是没有参加过 Chaos Mesh 开发，也可以看它！看完小册子之后，大家就可以在 [Chaos Mesh 挑战赛题目合集](https://github.com/pingcap/chaos-mesh/projects/14) 轻松做任务、拿积分了！
 
-## 捞分技巧 3：如果 Medium 题目太难，那就在多个 Repo 同时刷 Easy 题目
+## 捞分技巧 3：如果觉得 Medium 题目太难，那就在多个 Repo 同时刷 Easy 题目
 
 相比第一季，这次易用性挑战赛除了 TiDB、TiKV、PD 之外，有更多代码仓库释放了任务：
 
@@ -55,7 +55,7 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 8.  [TiUP](https://github.com/pingcap-incubator/tiup)
 
-算上 TiDB、TiKV、PD 等总共有 10 个代码仓库参赛。按照本次比赛规则，选手在每个仓库可以通过刷 Easy 难度的任务，获得最高 200 积分。那么 10 个代码仓库就是 2000 分，积少成多，收获非常客观哦！多多练手之后再挑战 Medium 难度的任务，也会更加轻松。
+算上 TiDB、TiKV、PD 等总共有十多个代码仓库参赛。按照本次比赛规则，选手在每个仓库可以通过刷 Easy 难度的任务，获得最高 200 积分。那么 10 个代码仓库就是 2000 分，积少成多，收获非常客观哦！多多练手之后再挑战 Medium 难度的任务，也会更加轻松。
 
 ## 捞分技巧 4：从一些比较简单的 Medium 任务突破
 
@@ -121,6 +121,7 @@ Client-rust:
 
 * [为 PD 客户端添加 Region 缓存](https://github.com/tikv/client-rust/issues/114)：使用本地缓存的 Region 信息对于提升性能和降低 PD 服务器负担有很大的帮助。TiDB 中已经有比较成熟的实现，这里只需要将 TiDB 的实现迁移到 Rust 中。
 
->不知道看完以上“捞分技巧”，大家有没有摩拳擦掌、准备上阵抢积分了？报名方式、参赛细则请看 [这篇文章](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)，同时也欢迎大家加入 [TiDB Community Slack Workspace](https://tidbcommunity.slack.com/join/shared_invite/enQtNzc0MzI4ODExMDc4LWYwYmIzMjZkYzJiNDUxMmZlN2FiMGJkZjAyMzQ5NGU0NGY0NzI3NTYwMjAyNGQ1N2I2ZjAxNzc1OGUwYWM0NzE)，在参赛过程中遇到任何问题，都可以直接通过 #tidb-challenge-program channel 与我们取得联系哦～
-
+>不知道看完以上“捞分技巧”，大家有没有摩拳擦掌、准备上阵抢积分了？
+>
+>报名方式、参赛细则请看 [这篇文章](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)，同时也欢迎大家加入 [TiDB Community Slack Workspace](https://tidbcommunity.slack.com/join/shared_invite/enQtNzc0MzI4ODExMDc4LWYwYmIzMjZkYzJiNDUxMmZlN2FiMGJkZjAyMzQ5NGU0NGY0NzI3NTYwMjAyNGQ1N2I2ZjAxNzc1OGUwYWM0NzE)，在参赛过程中遇到任何问题，都可以直接通过 #tidb-challenge-program channel 与我们取得联系哦～
 
