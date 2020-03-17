@@ -61,7 +61,7 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 TiDB：
 
-[通过 SQL 指纹的方式为 SQL 绑定执行计划 Hint](https://github.com/pingcap/tidb/issues/14987)：这是一个来自用户的需求，通过 SQL 指纹的方式能够极大简化创建 SQL Binding 语句的长度，增加用户体验。要实现也不麻烦，修改 parser 文件支持语法后，再修改一下 TiDB 和创建 SQL Binding 相关的代码就行了。
+[通过 SQL 指纹的方式为 SQL 绑定执行计划 Hint](https://github.com/pingcap/tidb/issues/14987)：这是一个来自用户的需求，通过 SQL 指纹的方式能够极大简化创建 SQL Binding 语句的长度，提升用户体验。实现起来也并不复杂，修改 parser 文件支持语法后，再修改一下 TiDB 和创建 SQL Binding 相关的代码就行了。
 
 TiKV：
 
@@ -105,7 +105,7 @@ Cherry Bot：
 
 * [将各 Repo 的配置分为不同文件](https://github.com/pingcap-incubator/cherry-bot/issues/3)：对 config 组件进行小幅改动就可以。
 
-* [多分支并行 auto merge](https://github.com/pingcap-incubator/cherry-bot/issues/4)：目前 PingCAP 多个开源项目（如 TiDB、TiKV 等）都在使用该功能自动 merge 通过 Reviewer 点赞的 PR。这个任务将完善这个功能，使其能够同时 merge 多个分支上的 PR。要完成它需要修改 auto merge 的主体逻辑，但因为代码模块比较独立，适合用来学习 bot。
+* [多分支并行 auto merge](https://github.com/pingcap-incubator/cherry-bot/issues/4)：目前 PingCAP 多个开源项目（如 TiDB、TiKV 等）都在使用该功能自动 merge 经过 Reviewer 点赞的 PR。这个任务将完善这个功能，使其能够同时 merge 多个分支上的 PR。要完成它需要修改 auto merge 的主体逻辑，但因为代码模块比较独立，适合用来学习 bot。
 
 TiUP:
 
