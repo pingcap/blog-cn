@@ -5,7 +5,7 @@ date: 2020-03-17
 summary: 为了帮助大家更快地上手得分，这里我们简单总结一些捞分技巧，希望能够帮助大家快速上手，追上这些排名靠前的参赛选手们。
 tags: ['社区','社区动态','TiDB 易用性挑战赛']
 ---
-TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLhbOIJaAX2dEmjt8d5w) 已经开始一周了。由于有上一季“性能挑战赛”的参赛队伍加入，这一季挑战赛的竞争格外激烈，短短一周的时间，已有 3 支队伍已经获得了上千的积分！
+TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLhbOIJaAX2dEmjt8d5w) 已经开始一周了。由于有上一季“性能挑战赛”的参赛队伍加入，这一季挑战赛的竞争格外激烈，短短一周的时间，已有 3 支队伍获得了上千的积分！
 
 ![](media/tidb-usability-challenge-program-guide/1-points-ranking.png)
 
@@ -25,7 +25,7 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 ![](media/tidb-usability-challenge-program-guide/2-demand-ranking.png)
 
-为鼓励大家优先选择用户投票结果中排名前三的需求，本次挑战赛中，这三个需求对应的任务各自分别在原有积分的基础上额外增加 10000、8000、6000 分。比如这个排名第三的需求：[record access statistics of databases, tables and indices](https://github.com/pingcap/tidb/issues/14998)，该需求原本的积分是 1294（积分低意味着难度低哟），再加上额外的 6000，这意味着完成这个低难度的任务总共能够获得 1294 + 6000 = 7294 分，性价比非常高！
+为鼓励大家选择用户呼声更高的需求，本次挑战赛中，用户投票排名前三的需求对应的任务会在原有积分的基础上分别额外增加 10000、8000、6000 分。比如这个排名第三的需求：[record access statistics of databases, tables and indices](https://github.com/pingcap/tidb/issues/14998)，该需求原本的积分是 1294（积分低意味着难度低哟），再加上额外的 6000，这意味着完成这个低难度的任务总共能够获得 1294 + 6000 = 7294 分，性价比非常高！
 
 ## 捞分技巧 2：Chaos Mesh Contributing Tutorial 可以帮助大家快速上手拿分
 
@@ -35,7 +35,7 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 看完小册子之后，如果你产生了强烈的兴趣，就可以在 [Chaos Mesh 挑战赛题目合集](https://github.com/pingcap/chaos-mesh/projects/14) 轻松做任务、拿积分了！
 
-## 捞分技巧 3：如果 Medium 题目太难，那就在多个 repo 同时刷 Easy 题目
+## 捞分技巧 3：如果 Medium 题目太难，那就在多个 Repo 同时刷 Easy 题目
 
 相比第一季，这次易用性挑战赛除了 TiDB、TiKV、PD 之外，有更多代码仓库释放了任务：
 
@@ -103,7 +103,7 @@ Data Migration：
 
 Cherry Bot：
 
-* [将各 repo 的配置分为不同文件](https://github.com/pingcap-incubator/cherry-bot/issues/3)：对 config 组件进行小幅改动就可以。
+* [将各 Repo 的配置分为不同文件](https://github.com/pingcap-incubator/cherry-bot/issues/3)：对 config 组件进行小幅改动就可以。
 
 * [多分支并行 auto merge](https://github.com/pingcap-incubator/cherry-bot/issues/4)：目前 PingCAP 多个开源项目（如 TiDB、TiKV 等）都在使用该功能自动 merge 通过 Reviewer 点赞的 PR。这个任务将完善这个功能，使其能够同时 merge 多个分支上的 PR。要完成它需要修改 auto merge 的主体逻辑，但因为代码模块比较独立，适合用来学习 bot。
 
