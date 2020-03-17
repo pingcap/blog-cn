@@ -11,13 +11,13 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 
 #### 战况简介：
 
-*   “BABAIsWatchingYou” 通过 [改进 Rust-Prometheus 中 Thread Local Metrics 的易用性](https://github.com/tikv/tikv/issues/7062) 获得 2530 分
+* “BABAIsWatchingYou” 通过 [改进 Rust-Prometheus 中 Thread Local Metrics 的易用性](https://github.com/tikv/tikv/issues/7062) 获得 2530 分
 
-*   “niedhui” 通过 [为 TiDB-Dashboard 增加 TLS 支持](https://github.com/pingcap-incubator/tidb-dashboard/issues/87) 获得 1680 分
+* “niedhui” 通过 [为 TiDB-Dashboard 增加 TLS 支持](https://github.com/pingcap-incubator/tidb-dashboard/issues/87) 获得 1680 分
 
-*   “hawking&chacha” 通过 [为 RocksDB WAL 写延迟增加监控](https://github.com/tikv/tikv/issues/6541) 获得了 1300 分
+* “hawking&chacha” 通过 [为 RocksDB WAL 写延迟增加监控](https://github.com/tikv/tikv/issues/6541) 获得了 1300 分
 
-*   “.*” 通过 [使用单独的日志文件存储 TiKV 慢查询日志](https://github.com/tikv/tikv/issues/6735) 获得了 950 分
+* “.*” 通过 [使用单独的日志文件存储 TiKV 慢查询日志](https://github.com/tikv/tikv/issues/6735) 获得了 950 分
 
 为了帮助大家更快的上手得分，这里我们简单总结一些捞分指南，希望能够帮助大家快速上手，快速追上这些排名靠前的参赛选手们。
 
@@ -91,32 +91,32 @@ TiDB Dashboard：
 
 * [日志搜索页面显示日志大小](https://github.com/pingcap-incubator/tidb-dashboard/issues/117)：前后端都要修改，但都改动不多，非常适合会写 Go 的全栈工程师。
 
-*   [生成火焰图 SVG 时不依赖于 pprof 命令行](https://github.com/pingcap-incubator/tidb-dashboard/issues/90)：Dashboard 和 pprof 都是开源 Golang 项目，代码整合一下不算难。
+* [生成火焰图 SVG 时不依赖于 pprof 命令行](https://github.com/pingcap-incubator/tidb-dashboard/issues/90)：Dashboard 和 pprof 都是开源 Golang 项目，代码整合一下不算难。
 
-*   [有 TiDB 节点不在线时重试 TiDB 请求](https://github.com/pingcap-incubator/tidb-dashboard/issues/131)：核心其实是用 Go 编写一个简单的 TCP 端口转发 + Health Check。
+* [有 TiDB 节点不在线时重试 TiDB 请求](https://github.com/pingcap-incubator/tidb-dashboard/issues/131)：核心其实是用 Go 编写一个简单的 TCP 端口转发 + Health Check。
 
 Data Migration：
 
-*   [减少 DM 依赖的 TiDB 与 etcd 的日志输出](https://github.com/pingcap/dm/issues/495)：为依赖库设置一下 log level 就可以，一天就能搞定。
+* [减少 DM 依赖的 TiDB 与 etcd 的日志输出](https://github.com/pingcap/dm/issues/495)：为依赖库设置一下 log level 就可以，一天就能搞定。
 
-*   [修复 remove-meta 的指定方式](https://github.com/pingcap/dm/issues/496)：将配置项修改为命令参数就能实现，性价比高。
+* [修复 remove-meta 的指定方式](https://github.com/pingcap/dm/issues/496)：将配置项修改为命令参数就能实现，性价比高。
 
 Cherry Bot：
 
-*   [将各 repo 的配置分为不同文件](https://github.com/pingcap-incubator/cherry-bot/issues/3)：对 config 组件进行小幅改动就可以。
+* [将各 repo 的配置分为不同文件](https://github.com/pingcap-incubator/cherry-bot/issues/3)：对 config 组件进行小幅改动就可以。
 
-*   [多分支并行 auto merge](https://github.com/pingcap-incubator/cherry-bot/issues/4)：目前 PingCAP 多个开源项目（如 TiDB、TiKV 等）都在使用该功能自动 merge 通过 Reviewer 点赞的 PR。这个任务将完善这个功能，使其能够同时 merge 多个分支上的 PR。要完成它需要修改 auto merge 的主体逻辑，但因为代码模块比较独立，适合用来学习 bot。
+* [多分支并行 auto merge](https://github.com/pingcap-incubator/cherry-bot/issues/4)：目前 PingCAP 多个开源项目（如 TiDB、TiKV 等）都在使用该功能自动 merge 通过 Reviewer 点赞的 PR。这个任务将完善这个功能，使其能够同时 merge 多个分支上的 PR。要完成它需要修改 auto merge 的主体逻辑，但因为代码模块比较独立，适合用来学习 bot。
 
 TiUP:
 
-*   [给 Playground 添加集成测试](https://github.com/pingcap-incubator/tiup/issues/66)：只需要添加单元测试 case，对于了解代码逻辑非常有帮助。
+* [给 Playground 添加集成测试](https://github.com/pingcap-incubator/tiup/issues/66)：只需要添加单元测试 case，对于了解代码逻辑非常有帮助。
 
-*   [支持为 Playground 中的 TiDB/TiKV/PD 指定配置](https://github.com/pingcap-incubator/tiup/issues/64)：支持这个功能可以极大的提升 TiUP 的易用性。要完成该任务需要添加一些 flags，同时在没有指定配置时使用默认配置。
+* [支持为 Playground 中的 TiDB/TiKV/PD 指定配置](https://github.com/pingcap-incubator/tiup/issues/64)：支持这个功能可以极大的提升 TiUP 的易用性。要完成该任务需要添加一些 flags，同时在没有指定配置时使用默认配置。
 
-*   [给 Playground 组件集成 Grafana](https://github.com/pingcap-incubator/tiup/issues/63)：支持这个功能后，使用 Playground 部署的集群就有 Grafana 监控了！实现的时候可以参考集成 Prometheus。
+* [给 Playground 组件集成 Grafana](https://github.com/pingcap-incubator/tiup/issues/63)：支持这个功能后，使用 Playground 部署的集群就有 Grafana 监控了！实现的时候可以参考集成 Prometheus。
 
 Client-rust:
 
-*   [支持清理特定 key 的锁](https://github.com/tikv/client-rust/issues/111)：在事务冲突严重时，针对小事务只清理特定 key 的锁能大大减轻 TiKV 服务器的负担。
+* [支持清理特定 key 的锁](https://github.com/tikv/client-rust/issues/111)：在事务冲突严重时，针对小事务只清理特定 key 的锁能大大减轻 TiKV 服务器的负担。
 
-*   [为 PD 客户端添加 region 缓存](https://github.com/tikv/client-rust/issues/114)：使用本地缓存的 region 信息对于提升性能和降低 PD 服务器负担有很大的帮助。TiDB 中已经有比较成熟的实现，这里只需要将 TiDB 的实现迁移到 Rust 中。
+* [为 PD 客户端添加 region 缓存](https://github.com/tikv/client-rust/issues/114)：使用本地缓存的 region 信息对于提升性能和降低 PD 服务器负担有很大的帮助。TiDB 中已经有比较成熟的实现，这里只需要将 TiDB 的实现迁移到 Rust 中。
