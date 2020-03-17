@@ -2,24 +2,26 @@
 title: Hi，你有一份 TiDB 易用性挑战赛「捞分指南」请查收
 author: ['张建']
 date: 2020-03-17
-summary: 为了帮助大家更快地上手得分，这里我们简单总结一些捞分技巧，希望能够帮助大家快速上手，追上这些排名靠前的参赛选手们。
+summary: 我们简单总结了一些捞分技巧，希望能够帮助大家快速上手，追上这些排名靠前的参赛选手们。
 tags: ['社区','社区动态','TiDB 易用性挑战赛']
 ---
-TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLhbOIJaAX2dEmjt8d5w) 已经开始一周了。由于有上一季“性能挑战赛”的参赛队伍加入，这一季挑战赛的竞争格外激烈，短短一周的时间，已有 3 支队伍获得了上千的积分！
+TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLhbOIJaAX2dEmjt8d5w) 已经开始一周了，由于有参加过上一季 [性能挑战赛](https://pingcap.com/blog-cn/pcp-report-202002/) 的老玩家强势加入，这一季挑战赛的竞争格外激烈，短短一周的时间，已有 3 支队伍获得了上千积分！
 
 ![](media/tidb-usability-challenge-program-guide/1-points-ranking.png)
 
-#### 战况简介：
+> 完整积分排行榜可以登陆 [活动官网](https://pingcap.com/community-cn/tidb-usability-challenge/) 查看。
 
-* “BABAIsWatchingYou” 通过 [改进 Rust-Prometheus 中 Thread Local Metrics 的易用性](https://github.com/tikv/tikv/issues/7062) 获得 2530 分。
+**战况简介：**
 
-* “niedhui” 通过 [为 TiDB-Dashboard 增加 TLS 支持](https://github.com/pingcap-incubator/tidb-dashboard/issues/87) 获得 1680 分。
+* BABAIsWatchingYou Team 通过 [改进 Rust-Prometheus 中 Thread Local Metrics 的易用性](https://github.com/tikv/tikv/issues/7062) 获得 2530 分。
 
-* “hawking&chacha” 通过 [为 RocksDB WAL 写延迟增加监控](https://github.com/tikv/tikv/issues/6541) 获得了 1300 分。
+* niedhui Team 通过 [为 TiDB-Dashboard 增加 TLS 支持](https://github.com/pingcap-incubator/tidb-dashboard/issues/87) 获得 1680 分。
 
-* “.*” 通过 [使用单独的日志文件存储 TiKV 慢查询日志](https://github.com/tikv/tikv/issues/6735) 获得了 950 分。
+* hawking&chacha Team 通过 [为 RocksDB WAL 写延迟增加监控](https://github.com/tikv/tikv/issues/6541) 获得了 1300 分。
 
-为了帮助大家更快地上手得分，这里我们简单总结一些捞分技巧，希望能够帮助大家快速上手，追上这些排名靠前的参赛选手们。
+* `.*` Team 通过 [使用单独的日志文件存储 TiKV 慢查询日志](https://github.com/tikv/tikv/issues/6735) 获得了 950 分。
+
+羡慕不如行动！我们也在这里简单分享一些捞分技巧，希望能够帮助大家快速上手，追上这些排名靠前的参赛选手们。
 
 ## 捞分技巧 1：用户投票结果中排名前三的需求有高额加分！
 
@@ -31,9 +33,7 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 [Chaos Mesh](https://github.com/pingcap/chaos-mesh) 是一款云原生的混沌测试平台，大家经常听说的 TiDB 混沌测试工具就是它。对了，Chaos Mesh 目前正处于加入 CNCF Sandbox 的孵化流程中，也就是说，以后大家也可以通过为 Chaos Mesh 做贡献的方式成为 CNCF 项目的贡献者了！对了，Chaos Mesh 项目后续会有大惊喜哦，真 · 潜力股（只能剧透到此了，你懂的）。
 
-这份小小的 [Chaos Mesh Contributing Tutorial](https://yisaer.gitbook.io/chaos-mesh-contributing-tutorials/) 包含了 GitHub 协作基础、搭建 Chaos Mesh 开发环境和如何在 Chaos Mesh 中开发一个非常简单的新功能。内容不多，很快能看完。如果你之前没有参与过开源项目，可以看它；如果你有开源协作经验，但是没有参加过 Chaos Mesh 开发，也可以看它！
-
-看完小册子之后，如果你产生了强烈的兴趣，就可以在 [Chaos Mesh 挑战赛题目合集](https://github.com/pingcap/chaos-mesh/projects/14) 轻松做任务、拿积分了！
+这份小小的 [Chaos Mesh Contributing Tutorial](https://yisaer.gitbook.io/chaos-mesh-contributing-tutorials/) 包含了 GitHub 协作基础、搭建 Chaos Mesh 开发环境和如何在 Chaos Mesh 中开发一个非常简单的新功能。内容不多，很快能看完。如果你之前没有参与过开源项目，可以看它；如果你有开源协作经验，但是没有参加过 Chaos Mesh 开发，也可以看它！看完小册子之后，大家就可以在 [Chaos Mesh 挑战赛题目合集](https://github.com/pingcap/chaos-mesh/projects/14) 轻松做任务、拿积分了！
 
 ## 捞分技巧 3：如果 Medium 题目太难，那就在多个 Repo 同时刷 Easy 题目
 
@@ -57,11 +57,11 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 算上 TiDB、TiKV、PD 等总共有 10 个代码仓库参赛。按照这次挑战赛的比赛规则，每个仓库可以通过刷 Easy 难度的任务获得最多 200 积分，那么 10 个代码仓库就是 2000 分，积少成多，收获非常客观哦！多多练手之后再挑战 Medium 难度的任务，也会更加轻松。
 
-## 捞分技巧 4：一些比较简单的 Medium 题目
+## 捞分技巧 4：从一些比较简单的 Medium 任务突破
 
 TiDB：
 
-[通过 SQL 指纹的方式为 SQL 绑定执行计划 Hint](https://github.com/pingcap/tidb/issues/14987)：这是一个来自用户的需求，通过 SQL 指纹的方式能够极大简化创建 SQL Binding 语句的长度，提升用户体验。实现起来也并不复杂，修改 parser 文件支持语法后，再修改一下 TiDB 和创建 SQL Binding 相关的代码就行了。
+[通过 SQL 指纹的方式为 SQL 绑定执行计划 Hint](https://github.com/pingcap/tidb/issues/14987)：这是一个来自用户的需求，通过 SQL 指纹的方式能够极大简化创建 SQL Binding 语句的长度，提升用户体验。实现起来也并不复杂，修改 parser 文件支持语法后，再修改一下 TiDB 和创建 SQL Binding 相关的代码即可。
 
 TiKV：
 
