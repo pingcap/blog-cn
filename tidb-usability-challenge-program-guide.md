@@ -1,43 +1,43 @@
 ---
-title: Hi，你有一份挑战赛捞分指南请查收
+title: Hi，你有一份 TiDB 易用性挑战赛「捞分指南」请查收
 author: ['张建']
 date: 2020-03-17
-summary: 为了帮助大家更快的上手得分，这里我们简单总结一些捞分指南，希望能够帮助大家快速上手，快速追上这些排名靠前的参赛选手们。
+summary: 为了帮助大家更快地上手得分，这里我们简单总结一些捞分技巧，希望能够帮助大家快速上手，追上这些排名靠前的参赛选手们。
 tags: ['社区','社区动态','TiDB 易用性挑战赛']
 ---
-挑战赛第二期之 “[易用性挑战赛](https://mp.weixin.qq.com/s/VNtLhbOIJaAX2dEmjt8d5w)” 已经开始一周了，因为有上一期挑战赛参赛队伍的加入，这一期挑战赛的竞争格外的激烈，短短一周的时间，排名前 3 的队伍已经获得了上千的积分！
+TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLhbOIJaAX2dEmjt8d5w) 已经开始一周了。由于有上一季“性能挑战赛”的参赛队伍加入，这一季挑战赛的竞争格外激烈，短短一周的时间，已有 3 支队伍已经获得了上千的积分！
 
 ![](media/tidb-usability-challenge-program-guide/1-points-ranking.png)
 
 #### 战况简介：
 
-* “BABAIsWatchingYou” 通过 [改进 Rust-Prometheus 中 Thread Local Metrics 的易用性](https://github.com/tikv/tikv/issues/7062) 获得 2530 分
+* “BABAIsWatchingYou” 通过 [改进 Rust-Prometheus 中 Thread Local Metrics 的易用性](https://github.com/tikv/tikv/issues/7062) 获得 2530 分。
 
-* “niedhui” 通过 [为 TiDB-Dashboard 增加 TLS 支持](https://github.com/pingcap-incubator/tidb-dashboard/issues/87) 获得 1680 分
+* “niedhui” 通过 [为 TiDB-Dashboard 增加 TLS 支持](https://github.com/pingcap-incubator/tidb-dashboard/issues/87) 获得 1680 分。
 
-* “hawking&chacha” 通过 [为 RocksDB WAL 写延迟增加监控](https://github.com/tikv/tikv/issues/6541) 获得了 1300 分
+* “hawking&chacha” 通过 [为 RocksDB WAL 写延迟增加监控](https://github.com/tikv/tikv/issues/6541) 获得了 1300 分。
 
-* “.*” 通过 [使用单独的日志文件存储 TiKV 慢查询日志](https://github.com/tikv/tikv/issues/6735) 获得了 950 分
+* “.*” 通过 [使用单独的日志文件存储 TiKV 慢查询日志](https://github.com/tikv/tikv/issues/6735) 获得了 950 分。
 
 为了帮助大家更快的上手得分，这里我们简单总结一些捞分指南，希望能够帮助大家快速上手，快速追上这些排名靠前的参赛选手们。
 
-## 捞分指南：用户投票结果中排名前三的需求有高额加分！
+## 捞分技巧 1：用户投票结果中排名前三的需求有高额加分！
 
 ![](media/tidb-usability-challenge-program-guide/2-demand-ranking.png)
 
 为鼓励大家优先选择用户投票结果中排名前三的需求，本次挑战赛中，这三个需求对应的任务各自分别在原有积分的基础上额外增加 10000、8000、6000 分。比如这个排名第三的需求：[record access statistics of databases, tables and indices](https://github.com/pingcap/tidb/issues/14998)，该需求原本的积分是 1294（积分低意味着难度低哟），再加上额外的 6000，这意味着完成这个低难度的任务总共能够获得 1294 + 6000 = 7294 分，性价比非常高！
 
-## 捞分指南：Chaos Mesh Contributing Tutorial 可以帮助大家快速上手拿分
+## 捞分技巧 2：Chaos Mesh Contributing Tutorial 可以帮助大家快速上手拿分
 
-[Chaos Mesh](https://github.com/pingcap/chaos-mesh) 是一款云原生的混沌测试平台，大家经常听说的 TiDB 混沌测试工具就是它。对了，Chaos Mesh 目前正处于加入 CNCF Sandbox 的孵化流程中，也就是说，以后大家也可以通过为 Chaos Mesh 做贡献的方式成为 CNCF 项目的贡献者了！
+[Chaos Mesh](https://github.com/pingcap/chaos-mesh) 是一款云原生的混沌测试平台，大家经常听说的 TiDB 混沌测试工具就是它。对了，Chaos Mesh 目前正处于加入 CNCF Sandbox 的孵化流程中，也就是说，以后大家也可以通过为 Chaos Mesh 做贡献的方式成为 CNCF 项目的贡献者了！对了，Chaos Mesh 项目后续会有大惊喜哦，真 · 潜力股（只能剧透到此了，你懂的）。
 
 这份小小的 [Chaos Mesh Contributing Tutorial](https://yisaer.gitbook.io/chaos-mesh-contributing-tutorials/) 包含了 GitHub 协作基础、搭建 Chaos Mesh 开发环境和如何在 Chaos Mesh 中开发一个非常简单的新功能。内容不多，很快能看完。如果你之前没有参与过开源项目，可以看它；如果你有开源协作经验，但是没有参加过 Chaos Mesh 开发，也可以看它！
 
-看完小册子后，如果感兴趣的话就来 [Chaos Mesh 挑战赛题目合集](https://github.com/pingcap/chaos-mesh/projects/14) 找任务做呀。
+看完小册子之后，如果你产生了强烈的兴趣，就可以在 [Chaos Mesh 挑战赛题目合集](https://github.com/pingcap/chaos-mesh/projects/14) 轻松做任务、拿积分了！
 
-## 捞分指南：如果 Medium 题目太难，那就在多个 repo 同时刷 Easy 题目
+## 捞分技巧 3：如果 Medium 题目太难，那就在多个 repo 同时刷 Easy 题目
 
-和上一期不一样，这次我们除了 TiDB、TiKV、PD 这三个代码仓库外，其他代码仓库也在同时参与挑战赛，他们分别是：
+相比第一季，这次易用性挑战赛除了 TiDB、TiKV、PD 之外，有更多代码仓库释放了任务：
 
 1.  [chaos-mesh](https://github.com/pingcap/chaos-mesh/projects/14)
 
@@ -55,9 +55,9 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 
 8.  [TiUP](https://github.com/pingcap-incubator/tiup)
 
-算上 TiDB、TiKV、PD 等总共有 10 个代码仓库参赛。按照这次挑战赛的比赛规则，每个仓库可以通过刷 easy 难度的任务获得最多 200 积分，那么 10 个代码仓库就是 2000 分，积少成多的效应很可观啊！
+算上 TiDB、TiKV、PD 等总共有 10 个代码仓库参赛。按照这次挑战赛的比赛规则，每个仓库可以通过刷 Easy 难度的任务获得最多 200 积分，那么 10 个代码仓库就是 2000 分，积少成多，收获非常客观哦！多多练手之后再挑战 Medium 难度的任务，也会更加轻松。
 
-## 捞分指南：一些比较简单的 Medium 题目
+## 捞分技巧 4：一些比较简单的 Medium 题目
 
 TiDB：
 
@@ -119,4 +119,4 @@ Client-rust:
 
 * [支持清理特定 key 的锁](https://github.com/tikv/client-rust/issues/111)：在事务冲突严重时，针对小事务只清理特定 key 的锁能大大减轻 TiKV 服务器的负担。
 
-* [为 PD 客户端添加 region 缓存](https://github.com/tikv/client-rust/issues/114)：使用本地缓存的 region 信息对于提升性能和降低 PD 服务器负担有很大的帮助。TiDB 中已经有比较成熟的实现，这里只需要将 TiDB 的实现迁移到 Rust 中。
+* [为 PD 客户端添加 Region 缓存](https://github.com/tikv/client-rust/issues/114)：使用本地缓存的 Region 信息对于提升性能和降低 PD 服务器负担有很大的帮助。TiDB 中已经有比较成熟的实现，这里只需要将 TiDB 的实现迁移到 Rust 中。
