@@ -55,7 +55,7 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 8.  [TiUP](https://github.com/pingcap-incubator/tiup)
 
-算上 TiDB、TiKV、PD 等总共有十多个代码仓库参赛。按照本次比赛规则，选手在每个仓库可以通过刷 Easy 难度的任务，获得最高 200 积分。那么 10 个代码仓库就是 2000 分，积少成多，收获非常客观哦！多多练手之后再挑战 Medium 难度的任务，也会更加轻松。
+算上 TiDB、TiKV、PD 等总共有十多个代码仓库参赛。按照本次比赛规则，选手在每个仓库可以通过刷 Easy 难度的任务，获得最高 200 积分。那么 10 个代码仓库就是 2000 分，积少成多，收获非常可观哦！多多练手之后再挑战 Medium 难度的任务，也会更加轻松。
 
 ## 捞分技巧 4：从一些比较简单的 Medium 任务突破
 
@@ -71,19 +71,19 @@ TiKV：
 
 PD:
 
-* [PD API Swagger 支持](https://github.com/pingcap/pd/issues/2169)：让 API 符合 Swagger 标准且能生成在线 API 文档，实现简单，主要工作在于梳理  API，预期 3 天左右完成。
+* [PD API Swagger 支持](https://github.com/pingcap/pd/issues/2169)：让 API 符合 Swagger 标准且能生成在线 API 文档，实现简单，主要工作在于梳理  API，预期 3 天左右就可以完成。
 
 * [限制指定小表不被合并](https://github.com/pingcap/pd/issues/2171)：这是一个来自社区的需求，需要让某些 Region 能够不被合并。选手们完成这个功能后就能知道完整的 Region Merge 调度流程了，是一个非常有意义的功能。
 
 TiDB Operator：
 
-* [支持 Operator CRD Java SDK](https://github.com/pingcap/tidb-operator/issues/1575)：由于 TiDB-Operator 是由 Golang 编写的，目前其 CRD 文件只有  Golang 客户端，这个任务将给 Operator CRD 创建 Java 客户端，对于扩展产品生态非常有意义。
+* [支持 Operator CRD Java SDK](https://github.com/pingcap/tidb-operator/issues/1575)：由于 TiDB Operator 是由 Golang 编写的，目前其 CRD 文件只有  Golang 客户端，这个任务将给 Operator CRD 创建 Java 客户端，对于扩展产品生态非常有意义。
 
 * [优化 Operator Controller 报错信息](https://github.com/pingcap/tidb-operator/issues/1936)：目前 Operator Controller 的报错信息不能帮助我们准确定位到具体的错误发生地点，这个任务将帮助我们优化 Operator Controller 的报错信息内容，提升用户体验。
 
 Chaos Mesh：
 
-* [支持暂停混沌实验](https://github.com/pingcap/chaos-mesh/issues/294)：给每一个 Chaos 对象的定义中添加一个 Pause 的字段，如果被设置成 True 后，Controllers 在每次调用到对应 Reconcile 逻辑时会取消掉已经注入的错误并且跳过正常的执行逻辑。
+* [支持暂停混沌实验](https://github.com/pingcap/chaos-mesh/issues/294)：给每一个 Chaos 对象的定义中添加一个 Pause 的字段，如果被设置成 True，那么 Controllers 在每次调用到对应 Reconcile 逻辑时会取消掉已经注入的错误并且跳过正常的执行逻辑。
 
 * [拓展 NetworkChaos 支持限制网络带宽](https://github.com/pingcap/chaos-mesh/issues/303)：这个任务是对已有的 NetworkChaos 进行拓展，支持限制具体 Pods 的网络带宽，并且使用 [netlink](https://github.com/vishvananda/netlink) 工具包支持，这样可以很好的解决限制网络带宽的具体实现问题。
 
