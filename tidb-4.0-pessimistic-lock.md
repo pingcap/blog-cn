@@ -1,6 +1,6 @@
 ---
 title: TiDB 4.0 新特性前瞻（二）白话“悲观锁”
-author: ['shirly']
+author: ['Shirly']
 date: 2020-03-19
 summary: 如果说在 TiDB 3.0 中，悲观锁是 “千呼万唤始出来，犹抱琵琶半遮面”。那么在 TiDB 4.0 中，悲观锁在经历了市场与时光的考验后，无论是性能还是稳定性都能够 “轻拢慢撚抹复挑，初为《霓裳》后《六幺》”。
 tags: ['TiDB 4.0 新特性','社区','悲观锁']
@@ -67,7 +67,7 @@ TiDB 支持多种方式打开悲观锁，具体信息见官方文档， 本文�
 
 可以看到悲观锁的行为如下：
 
-* 在 session B  执行 DML 时，发现同一行被 session A 锁住，等待至 session A 提交才执行。
+* 在 session B 执行 DML 时，发现同一行被 session A 锁住，等待至 session A 提交才执行。
 
 * DML 执行成功后，最终 commit 也成功。
 
@@ -79,7 +79,7 @@ TiDB 支持多种方式打开悲观锁，具体信息见官方文档， 本文�
 
 * 纯查询语句的隔离级别为 SI 隔离级别，即读取为事务 begin 时的版本数据。
 
-* SELECT .. FOR UPDATE 的隔离级别为 RC，即读取为当前已提交的版本数据。
+* `SELECT .. FOR UPDATE` 的隔离级别为 RC，即读取为当前已提交的版本数据。
 
 ### DEADLOCK
 
@@ -111,7 +111,7 @@ TiDB 支持多种方式打开悲观锁，具体信息见官方文档， 本文�
 
 ### embedded select 行为不一致
 
-TiDB 中执行 DML  过程中包如果包含 embedded select select，对应的行不会被加锁，MySQL 则会进行加锁。
+TiDB 中执行 DML 过程中包如果包含 embedded select select，对应的行不会被加锁，MySQL 则会进行加锁。
 
 ![](media/tidb-4.0-pessimistic-lock/8-embedded-select.png)
 
@@ -119,4 +119,4 @@ TiDB 中执行 DML  过程中包如果包含 embedded select select，对应的�
 
 事务作为数据库的重中之重，一直是大众关注的焦点。TiDB 自诞生以来便以支持高性能的分布式事务而闻名。本文从使用者的角度，介绍了 TiDB 4.0 中悲观锁的使用与注意事项，欢迎大家尝鲜与反馈。
 
-未来，我们会给出更多 TiDB 悲观锁实现原理与性能优化相关的介绍，欢迎大家持续关注。同时，TiDB 分布式事务未来还有更多激动人心的改进等着大家来一起完成，欢迎大家一起来监督来帮忙来提升，调研与实践国际一流的分布式事务模型。更多反馈欢迎发送至 *transaction-group@pingcap.com*。
+未来，我们会给出更多 TiDB 悲观锁实现原理与性能优化相关的介绍，欢迎大家持续关注。同时，TiDB 分布式事务未来还有更多激动人心的改进等着大家来一起完成，欢迎大家一起来调研与实践这个前沿的分布式事务模型。更多反馈欢迎发送至 *transaction-group@pingcap.com*。
