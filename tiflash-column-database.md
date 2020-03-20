@@ -106,7 +106,7 @@ TiFlash 继承了 TiDB 体系的在线 DDL，尤其是它支持了更改列类�
 
 在 TiDB + TiFlash 体系下，你只需要一条命令：
 
-```
+```SQL
 ALTER TABLE your_table SET TIFLASH REPLICA 1;
 ```
 
