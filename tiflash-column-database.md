@@ -29,7 +29,7 @@ TiFlash 是为实时场景设计，因此我们必须支持实时更新。在这
 
 **「TiFlash 是列存，大家都说列存的实时写入很慢，TiFlash 呢？」**
 
-经过业界验证的实时更新列存方案是 Delta Main 设计。简单说，就是将需要更新数据与整理好的不可变列存块分开存放，读时归并，定期 Compact，而 TiFlash 也采取了类似设计思路。TiFlash 并非是拍脑袋发明了一种可更新列存结构，而是参考了其他成熟系统设计，如 Apache Kudu，CWI 的 Positional Delta Tree 等的设计思路，TiFlash 的设计也兼具了 B+ 树和 LSM 的优势，在读写两端都有优异的性能（但牺牲了对 TiFlash 场景无用的点查性能）。由于无需考虑点查，因此 TiFlash 可以以进行惰性数据整理加速写入；由于引入了读时排序索引回写，因此哪怕 Compact 不那么频繁仍可以保持扫描高效，进一步减小写放大加速写入。
+经过业界验证的实时更新列存方案是 Delta Main 设计。简单说，就是将需要更新数据与整理好的不可变列存块分开存放，读时归并，定期 Compact，而 TiFlash 也采取了类似设计思路。TiFlash 并非是拍脑袋发明了一种可更新列存结构，而是参考了其他成熟系统设计，如 [Apache Kudu](https://kudu.apache.org/kudu.pdf)，CWI 的 [Positional Delta Tree](http://www.odbms.org/wp-content/uploads/2014/07/PositionalDelat-Trees.pdf) 等的设计思路，TiFlash 的设计也兼具了 B+ 树和 LSM 的优势，在读写两端都有优异的性能（但牺牲了对 TiFlash 场景无用的点查性能）。由于无需考虑点查，因此 TiFlash 可以以进行惰性数据整理加速写入；由于引入了读时排序索引回写，因此哪怕 Compact 不那么频繁仍可以保持扫描高效，进一步减小写放大加速写入。
 
 ![](media/tiflash-column-database/1-tiflash-design.png)
 
@@ -56,7 +56,7 @@ TiFlash 是为实时场景设计，因此我们必须支持实时更新。在这
 
 测试结果是：
 
-1. sysbench 运行 QPS 非常平稳，不会因为 AP 查询而抖动。从上图可以看到，黄色线段代表 AP 查询，开启和关闭并不会对查询产生抖动，哪怕 999 分位。
+1. sysbench 运行 QPS 非常平稳，不会因为 AP 查询而抖动。从上图可以看到，黄色线段代表 AP 查询（开启和关闭），开启和关闭并不会对查询产生抖动，哪怕 999 分位。
 
 2. TiFlash 可以很好匹配 TiKV 的实时写入（包含增删改而非仅仅插入）同时提供查询。
 
