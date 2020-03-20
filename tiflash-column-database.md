@@ -17,7 +17,7 @@ tags: ['TiFlash']
 
 **「为何要列和 MySQL 的对比呢？这样是否太无聊？」**
 
-由于 TiFlash 具备实时高频实时更新能力，因此我们在上一篇介绍中单机对单机比较了交易型数据库例如 MySQL，因为这些特点一般是行存引擎具备的优势。TiFlash 与大多数列存不同的是，它支持实时更新，并且与行存数据保持同步。
+由于 TiFlash 具备实时高频实时更新能力，因此我们在 [上一篇](https://pingcap.com/blog-cn/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/) 介绍中单机对单机比较了交易型数据库例如 MySQL，因为这些特点一般是行存引擎具备的优势。TiFlash 与大多数列存不同的是，它支持实时更新，并且与行存数据保持同步。
 
 **「为何说其他列存数据库无法更新？我看到 XX 支持 Update 呀？」**
 
