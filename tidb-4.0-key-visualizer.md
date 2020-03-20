@@ -1,9 +1,9 @@
 ---
-title: TiDB 4.0 新特性前瞻（一）DBA 减负捷径：拍个 CT 诊断集群热点问题
+title: TiDB 4.0 新特性前瞻（一）拍个 CT 诊断集群热点问题
 author: ['郑向升','骆迪安','施闻轩']
 date: 2020-02-19
 summary: 在 4.0 版本中 TiDB 也实现了 Key Visualizer 功能。现在，我们可以很轻松地给集群拍个 “CT”，快速直观地观察集群整体热点及流量分布情况。
-tags: ['TiDB 4.0 新特性','社区','Key Visualizer']
+tags: ['TiDB 4.0 新特性','Key Visualizer']
 ---
 
 ## 前言
