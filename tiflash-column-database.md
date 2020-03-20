@@ -13,7 +13,7 @@ tags: ['TiFlash']
 
 其次，TiFlash 可以实时与行存保持同步。
 
-## T + 1 问题
+### T + 1 问题
 
 **「为何要列和 MySQL 的对比呢？这样是否太无聊？」**
 
@@ -113,3 +113,7 @@ ALTER TABLE your_table SET TIFLASH REPLICA 1;
 **5秒（取决于你的手速） vs 数天**
 
 即便你已经有完整的 Hadoop 数仓建设，TiFlash 配合 TiSpark，也可以轻松衔接两个平台的同时，为离线数仓提供实时能力。
+
+## 欢迎尝鲜
+
+TiFlash 已经在进行第一轮用户测试，并在近期开启第二批用户测试，请关注后续信息，也欢迎联系询问提前体验 maxiaoyu@pingcap.com。来信请注明如下信息：姓名，公司，业务场景，是否已经是 TiDB 用户。
