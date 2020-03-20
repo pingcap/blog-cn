@@ -5,11 +5,7 @@ date: 2020-03-20
 summary: 我们收到了很多伙伴们的反馈，大家有各种各样的疑问，今天我们就来详细回复一下大家的问题，希望能对大家理解和实践 TiFlash 有所帮助。
 tags: ['TiFlash']
 ---
-在 [上篇关于 TiFlash 的文章](https://pingcap.com/blog-cn/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/) 发布后，我们收到了很多伙伴们的反馈，大家有各种各样的疑问。
-
-包括：TiFlash 是不是 T + 1 列存数据库？为啥实时写入也很快？读压力大怎么办？节点挂了怎么办？业务怎么接入？……
-
-今天我们就来详细回复一下大家的问题，希望能对大家理解和实践 TiFlash 有所帮助。
+在 [上篇关于 TiFlash 的文章](https://pingcap.com/blog-cn/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/) 发布后，我们收到了很多伙伴们的反馈，大家有各种各样的疑问。包括：TiFlash 是不是 T + 1 列存数据库？为啥实时写入也很快？读压力大怎么办？节点挂了怎么办？业务怎么接入？……今天我们就来详细回复一下大家的问题，希望能对大家理解和实践 TiFlash 有所帮助。
 
 ## 并非「另一个 T + 1 列存数据库」
 
@@ -39,7 +35,7 @@ TiFlash 是为实时场景设计，因此我们必须支持实时更新。在这
 
 **「TiFlash 进行 OLAP 读取的时候会影响 OLTP 性能吗？」**
 
-上篇文章中已经展示过 TiFlash 的读取性能：
+[上篇文章](https://pingcap.com/blog-cn/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/) 中已经展示过 TiFlash 的读取性能：
 
 ![](media/tiflash-column-database/2-read-performance.png)
 
