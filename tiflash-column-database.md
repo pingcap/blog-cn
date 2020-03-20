@@ -115,7 +115,7 @@ ALTER TABLE your_table SET TIFLASH REPLICA 1;
 
 **5秒（取决于你的手速） vs 数天**
 
-即便你已经有完整的 Hadoop 数仓建设，TiFlash 配合 TiSpark，也可以轻松衔接两个平台的同时，为离线数仓提供实时能力。
+即便你已经有完整的 Hadoop 数仓建设，TiFlash 配合 TiSpark，也可以轻松衔接两个平台的同时，为离线数仓提供实时分析能力。
 
 ## 欢迎尝鲜
 
