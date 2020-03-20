@@ -2,14 +2,16 @@
 title: TiFlash：并非另一个 T + 1 列存数据库
 author: ['马晓宇']
 date: 2020-03-20
-summary: 我们收到了很多伙伴们的反馈，大家有各种各样的疑问，今天我们就来详细回复一下大家的问题，希望能对大家理解和实践 TiFlash 有所帮助。
+summary: TiFlash 是配合 TiDB 体系的列存引擎，它和 TiDB 无缝结合，在线 DDL、无缝扩容、自动容错等等方便运维的特点也在 TiFlash 中得到继承，此外，TiFlash 可以实时与行存保持同步。
 tags: ['TiFlash']
 ---
 在 [上篇关于 TiFlash 的文章](https://pingcap.com/blog-cn/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/) 发布后，我们收到了很多伙伴们的反馈，大家有各种各样的疑问。包括：TiFlash 是不是 T + 1 列存数据库？为啥实时写入也很快？读压力大怎么办？节点挂了怎么办？业务怎么接入？……今天我们就来详细回复一下大家的问题，希望能对大家理解和实践 TiFlash 有所帮助。
 
 ## 并非「另一个 T + 1 列存数据库」
 
-首先，它并不是独立的列存数据库：TiFlash 是配合 TiDB 体系的列存引擎，它和 TiDB 无缝结合，在线 DDL、无缝扩容、自动容错等等方便运维的特点也在 TiFlash 中得到继承，此外，TiFlash 可以实时与行存保持同步。
+首先，它并不是独立的列存数据库：TiFlash 是配合 TiDB 体系的列存引擎，它和 TiDB 无缝结合，在线 DDL、无缝扩容、自动容错等等方便运维的特点也在 TiFlash 中得到继承。
+
+其次，TiFlash 可以实时与行存保持同步。
 
 ### T + 1 问题
 
