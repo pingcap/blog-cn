@@ -63,7 +63,7 @@ Ready 结构包括了一些系列 Raft 状态的更新，在本文中我们需�
 
 ## Proposal 的接收和在 Raft 中的复制
 
-TiKV 3.0 中引入了类似 [Actor](https://en.wikipedia.org/wiki/Actor_model) 的并发模型，Actor 被视为并发运算的基本单元：当一个 Actor 接收到一则消息，它可以做出一些决策、创建更多的 Actor、发送更多的消息、决定要如何回答接下来的消息。每个 TiKV 上的 Raft Peer 都对应两个 Actor，我们把它们分别称为 `PeerFsm` 和 `ApplyFsm`。PeerFsm 用于接收和处理其他 Raft Peer 发送过来的 Raft 消息，而 `ApplyFsm` 用于将已提交日志应用到状态机。
+TiKV 3.0 中引入了类似 [Actor](https://en.wikipedia.org/wiki/Actor_model) 的并发模型，Actor 被视为并发运算的基本单元：当一个 Actor 接收到一则消息，它可以做出一些决策、创建更多的 Actor、发送更多的消息、决定要如何回答接下来的消息。每个 TiKV 上的 Raft Peer 都对应两个 Actor，我们把它们分别称为 `PeerFsm` 和 `ApplyFsm`。`PeerFsm` 用于接收和处理其他 Raft Peer 发送过来的 Raft 消息，而 `ApplyFsm` 用于将已提交日志应用到状态机。
 
 TiKV 中实现的 Actor System 被称为 BatchSystem，它使用几个 Poll 线程从多个 Mailbox 上拉取一个 Batch 的消息，再分别交由各个 Actor 来执行。为了保证 [线性一致性](https://pingcap.com/blog-cn/linearizability-and-raft/) ，一个 Actor 同时只会在一个 Poll 线程上接收消息并顺序执行。由于篇幅所限，这一部分的实现在这里不做详述，感兴趣的同学可以在 `raftstore/fsm/batch.rs` 查看详细代码。
 
@@ -135,7 +135,7 @@ let res = match policy {
 
 3. 这里的状态更新分为持久化状态和内存状态，持久化状态的更新被写入到一个 `WriteBatch` 中，内存状态的更新则会构造一个 `InvokeContext`，这些更新都会被一个 `PollContext` 暂存起来。
 
-于是我们得到了 Batch 内所有 Peer 的状态更新，以及最近提出的 `proposal`，随后 Poll 线程会做以下几件事情：
+于是我们得到了 Batch 内所有 Peer 的状态更新，以及最近提出的 proposal，随后 Poll 线程会做以下几件事情：
 
 1. 将 Proposal 发送给 `ApplyFsm` 暂存，以便在 Proposal 写入成功之后调用 Callback 返回响应。
 
@@ -165,7 +165,7 @@ let res = match policy {
 
 2. 调用 Proposal 对应的 Callback 返回响应。
 
-3. 向 PeerFsm 发送 `ApplyRes`，其中包含了 `applied_term`、`applied_index` 等状态（用于更新 `PeerFsm` 中的内存状态）。
+3. 向 `PeerFsm` 发送 `ApplyRes`，其中包含了 `applied_term`、`applied_index` 等状态（用于更新 `PeerFsm` 中的内存状态）。
 
 这里存在一个特殊情况，就是所谓的“空日志”。在 **raft-rs** 的实现中，当选举出新的 Leader 时，新 Leader 会广播一条“空日志”，以提交前面 term 中的日志（详情请见 Raft 论文）。此时，可能还有一些在前面 term 中提出的 proposal 仍然处于 pending 阶段，而因为有新 Leader 产生，这些 proposal 永远不可能被确认了，因此我们需要对它们进行清理，以免关联的 `callback` 无法调用导致一些资源无法释放。清理的逻辑参照 `ApplyFsm::handle_entries_normal` 函数。
 
