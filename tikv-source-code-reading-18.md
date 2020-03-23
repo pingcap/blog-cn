@@ -173,7 +173,7 @@ let res = match policy {
 
 这里用一个流程图总结一下 TiKV 处理 Proposal 的大致流程，如下：
 
-![](media/raft-propose-commit-and-apple/proposal-process.png)
+![](media/tikv-source-code-reading-18/proposal-process.jpeg)
 
 简言之，TiKV 使用了两个线程池来处理 Proposal，并且将一个 Raft Peer 分成了两部分：`PeerFsm` 和 `ApplyFsm`。在处理 Proposal 的过程中，首先由 `PeerFsm` 获取日志并驱动 Raft 内部的状态机，由 `ApplyFsm` 根据已提交日志修改对应数据的状态机（region 信息和用户数据）。
 
