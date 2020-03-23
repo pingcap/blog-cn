@@ -110,7 +110,7 @@ impl PeerFsmDelegate {
 
 * **RaftMessage**: 其他 Peer 发送过来 Raft 消息，包括心跳、日志、投票消息等。
 
-* **RaftCommand**: 上层提出的 proposal，其中包含了需要通过 Raft 同步的操作，以及操作成功之后需要调用的 `Callback` 函数。
+* **RaftCommand**: 上层提出的 proposal，其中包含了需要通过 Raft 同步的操作，以及操作成功之后需要调用的 `callback` 函数。
 
 * **ApplyRes**: ApplyFsm 在将日志应用到状态机之后发送给 `PeerFsm` 的消息，用于在进行操作之后更新某些内存状态。
 
@@ -151,7 +151,7 @@ let res = match policy {
 
 上面我们阐述了 Region 的 Leader 在收到 proposal 之后，是调用了哪些接口将 proposal 放到 Raft 状态机中的。在这之后，这个 proposal 虽然被发往了 `ApplyFsm` 中暂存，但是 `ApplyFsm` 目前还不能 apply 它并调用关联的 `callback` 函数，因为这个 proposal 还没被 Raft 中的过半节点确认。那么，Leader 节点上的 raftstore 模块是如何处理收到的其他副本的 Raft 消息，并完成日志的确认的呢？
 
-答案就在 `PeerFsmDelegate::on_raft_message` 函数中。在一个 Peer 收到 Raft 消息之后，会进入这个函数中进行处理，内部调用 `Raft::step` 函数更新 Raft 状态机的内存状态。之后，调用 `RawNode::ready` 函数获取 `committed_entries`，最终作为 `ApplyMsg::Apply` 任务发送给 `ApplyFsm`，由 `ApplyFsm` 执行指令，如果 proposal 是由本节点发出，还会调用 `callback 函数`（之前通过 `ApplyMsg::Proposal` 任务暂存在 `ApplyFsm` 中）以向客户端返回响应。
+答案就在 `PeerFsmDelegate::on_raft_message` 函数中。在一个 Peer 收到 Raft 消息之后，会进入这个函数中进行处理，内部调用 `Raft::step` 函数更新 Raft 状态机的内存状态。之后，调用 `RawNode::ready` 函数获取 `committed_entries`，最终作为 `ApplyMsg::Apply` 任务发送给 `ApplyFsm`，由 `ApplyFsm` 执行指令，如果 proposal 是由本节点发出，还会调用 `callback` 函数（之前通过 `ApplyMsg::Proposal` 任务暂存在 `ApplyFsm` 中）以向客户端返回响应。
 
 ## Proposal 的应用
 
