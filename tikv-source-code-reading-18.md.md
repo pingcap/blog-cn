@@ -129,7 +129,7 @@ let res = match policy {
 
 在一个 Batch 的消息都经 `PeerDelegate::handle_msgs` 处理完毕之后，Poll 对 Batch 内的每一个 Peer 调用 `Peer::handle_raft_ready_append`： 
 
-1. 用记录的 `last_applied_index` 获取一个 **Ready**。
+1. 用记录的 `last_applied_index` 获取一个 Ready。
 
 2. 在得到一个 Ready 之后，`PeerFsm` 就会像我们前面所描述的那样，调用 `PeerStorage::handle_raft_ready` 更新状态（term，last log index 等）和日志。
 
