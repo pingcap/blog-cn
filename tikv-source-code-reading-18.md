@@ -11,7 +11,7 @@ tags: ['TiKV 源码解析','社区']
 
 在开始正题之前，我们先简单回顾一下 **raft-rs** 与外部代码的交互接口: Ready。 Ready 结构的 [定义](https://github.com/tikv/raft-rs/blob/afabefa23196a4a23832add0087f5a522d8ccc3b/src/raw_node.rs#L86-L110) 如下：
 
-```
+```rust
 pub struct Ready {
     /// The current volatile state of a Node.
     /// SoftState will be nil if there is no update.
@@ -69,7 +69,7 @@ TiKV 中实现的 Actor System 被称为 BatchSystem，它使用几个 Poll 线�
 
 上面谈到，`PeerFsm` 用于接收和处理 Raft 消息。它接收的消息为 `PeerMsg`，根据消息类型的不同会有不同的处理：
 
-```
+```rust
 /// Message that can be sent to a peer.
 pub enum PeerMsg {
     /// Raft message is the message sent between raft nodes in the same
@@ -116,7 +116,7 @@ impl PeerFsmDelegate {
 
 我们主要关注的是 `PeerFsm` 如何处理 Proposal，也就是 `RaftCommand` 的处理过程。在进入到 `PeerFsmDelegate::propose_raft_command` 后，首先会调用 `PeerFsmDelegate::pre_propose_raft_command` 对 peer ID, peer term, region epoch (region 的版本，region split、merge 和 add / delete peer 等操作会改变 region epoch) 是否匹配、 peer 是否 leader 等条件进行一系列检查，并根据请求的类型（是读请求还是写请求），选择不同的 Propose 策略见（ `Peer::inspect`）：
 
-```
+```rust
 let policy = self.inspect(&req);
 let res = match policy {
     Ok(RequestPolicy::ReadIndex) => return self.read_index(ctx, req, err_resp, cb),
