@@ -1,6 +1,7 @@
 ---
 title: TiKV 源码解析系列文章（十八）Raft Propose 的 Commit 和 Apply 情景分析
 author: ['唐明华']
+second_author: ['杨哲轩']
 date: 2020-03-23
 summary: raft-rs 实现了 Raft Leader election 和 Log replication 等核心功能，而消息的发送、接收、应用到状态机等操作则需要使用者自行实现，本文将要介绍的就是 TiKV 中这些部分的处理过程。
 tags: ['TiKV 源码解析','社区']
