@@ -56,3 +56,13 @@ SELECT * FROM t USE INDEX(性别) WHERE 姓名='小明' and 性别='男'
 但我们回头看一下，上面列出的问题 3 似乎没解决，如果 SQL 优化器发现了更好的执行计划，例如上面的例子，后来发现数据分布又变化了，选择「姓名」又是一个更好的方案了，且这个执行计划并没有在绑定列表中怎么办？这个问题在 TiDB 4.0 的 SPM 里面，我们通过一个叫「计划演进」的机制，很好的解决了这个问题。
 
 顾名思义，「演进」指的就是自主的发展、进化。TiDB 4.0 的 SPM 会在设置的业务低峰时间段里抽取一小部分资源，在后台尝试其他的执行计划，如果探测出更好的执行计划，那么，SPM 会将这个新的计划加入绑定列表，下次正常的查询，TiDB 也会将这个新计划考虑在内。
+
+![](media/tidb-4.0-sql-plan-management/3-new-sql.png)
+
+计划演进功能，目前需要通过执行下面的 SQL语句，设置一个全局开关开启：
+
+```sql
+SQL> SET GLOBAL  tidb_evolve_plan_baselines = on;
+```
+
+总的来说，SPM 功能使得用户可以对 SQL 执行计划有比较大的控制，同时又提供了灵活演进的方法，对线上执行计划的稳定性有很大帮助，相信能让 DBA 在使用 TiDB 的过程中更加安心。大家目前可以在 4.0.0 beta 中体验该功能，如果需要了解更多，请查看 [相关的文档](https://pingcap.com/docs-cn/dev/reference/performance/execution-plan-bind/#%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92%E7%BB%91%E5%AE%9A)。在 TiDB 社区伙伴们合写的开源电子书《TiDB in Action》中也有 [相关章节](https://book.tidb.io/session3/chapter1/sql-plan-management.html) 介绍。欢迎大家试用并提出宝贵意见 info@pingcap.com。
