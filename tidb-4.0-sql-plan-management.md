@@ -13,7 +13,7 @@ tags: ['TiDB 4.0 新特性','SQL Plan Management']
 
 其中，姓名和性别这两列有索引。我们设想一下，在这张表上，我们进行下面一条查询：
 
-```
+```sql
 SELECT * FROM t WHERE 姓名='小明' and 性别='男'
 ```
 
