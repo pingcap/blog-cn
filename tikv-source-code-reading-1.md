@@ -78,7 +78,7 @@ TiKV 是一个非常复杂的系统，这块我们会重点介绍，主要包括
 3. Server，该模块我们会介绍 TiKV 的 gRPC API，以及不同函数执行流程。
 4. Coprocessor，该模块我们会详细介绍 TiKV 是如何处理 TiDB 的下推请求的，如何通过不同的表达式进行数据读取以及计算的。
 5. PD，该模块我们会介绍 TiKV 是如何跟 PD 进行交互的。
-6. Import，该模块我们会介绍 TiKV 如何处理大量数据的导入，以及如何跟 TiDB 数据导入工具 [TiDB Lightning](https://pingcap.comp.com/docs/tools/lightning/overview-architecture/) 交互的。
+6. Import，该模块我们会介绍 TiKV 如何处理大量数据的导入，以及如何跟 TiDB 数据导入工具 [TiDB Lightning](https://pingcap.com/docs-cn/stable/reference/tools/tidb-lightning/overview/) 交互的。
 7. Util，该模块我们会介绍一些 TiKV 使用的基本功能库。
 
 ### PD
