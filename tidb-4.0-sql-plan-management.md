@@ -1,6 +1,6 @@
 ---
 title: TiDB 4.0 新特性前瞻（三）再也不用担心我的 SQL 突然变慢了
-author: ['yaokenan']
+author: ['黄东旭']
 date: 2020-03-26
 summary: SQL 越来越慢，TiDB 4.0 新特性 SQL Plan Management 为你解决。
 tags: ['TiDB 4.0 新特性','SQL Plan Management']
