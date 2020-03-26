@@ -2,7 +2,7 @@
 title: TiDB 4.0 新特性前瞻（三）再也不用担心我的 SQL 突然变慢了
 author: ['黄东旭']
 date: 2020-03-26
-summary: SQL 越来越慢，TiDB 4.0 新特性 SQL Plan Management 为你解决。
+summary: 一条本来跑得好好的 SQL 突然变成了慢查询，怎么办？
 tags: ['TiDB 4.0 新特性','SQL Plan Management']
 ---
 关系型数据库的 DBA 日常肯定遇到过这样的一种场景：SQL 执行计划选择错误，这类问题的危害是很大的，常常导致业务突然卡顿，数据库过载等不良后果。
