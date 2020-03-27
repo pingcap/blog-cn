@@ -1,7 +1,3 @@
----
-draft: true
----
-
 # blog-cn
 
 ## 文档规范
