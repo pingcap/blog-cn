@@ -10,7 +10,7 @@ tags: ['TiKV 源码解析','社区']
 
 ## 数据格式
 
-首先回忆一下事务写入完成后，[在 RocksDB 层面存储的具体是什么样的数据](https://tikv.org/docs/deep-dive/distributed-transaction/percolator/#percolator-in-tikv)：
+首先回忆一下事务写入完成后，[在 RocksDB 层面存储的具体是什么样的数据](https://tikv.org/deep-dive/distributed-transaction/percolator/#percolator-in-tikv)：
 
 | CF | RocksDB Key | RocksDB Value |
 |:----|:-------------|:---------------|

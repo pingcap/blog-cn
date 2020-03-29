@@ -10,7 +10,7 @@ tags: ['TiKV 源码解析','社区']
 
 ## 概述
  
-TiKV 采用了 [Google Percolator](https://ai.google/research/pubs/pub36726) 这篇论文中所述的事务模型，我们在 [《TiKV 事务模型概览》](https://pingcap.com/blog-cn/tidb-transaction-model/) 和 [《Deep Dive TiKV - Percolator》](https://tikv.org/docs/deep-dive/distributed-transaction/percolator/) 中都对该事务模型进行了讲解。为了更好的理解接下来的内容，建议大家先阅读以上资料。
+TiKV 采用了 [Google Percolator](https://ai.google/research/pubs/pub36726) 这篇论文中所述的事务模型，我们在 [《TiKV 事务模型概览》](https://pingcap.com/blog-cn/tidb-transaction-model/) 和 [《Deep Dive TiKV - Percolator》](https://tikv.org/deep-dive/distributed-transaction/percolator/) 中都对该事务模型进行了讲解。为了更好的理解接下来的内容，建议大家先阅读以上资料。
  
 在 Percolator 的设计中，分布式事务的算法都在客户端的代码中，这些客户端代码直接访问 BigTable。TiKV 的设计与 Percolator 在这一方面也有些类似。TiKV 以 Region 为单位来接受读写请求，需要跨 Region 的逻辑都在 TiKV 的客户端中，如 TiDB。客户端的代码会将请求切分并发送到对应的 Region。也就是说，正确地进行事务需要客户端和 TiKV 的紧密配合。本篇文章为了讲解完整的事务流程，也会提及 TiDB 的 tikv client 部分的代码（位于 TiDB 代码的 `store/tikv` 目录），大家也可以参考《TiDB 源码阅读系列文章》的 [《TiDB 源码阅读系列文章（十八）tikv-client（上）》](https://pingcap.com/blog-cn/tidb-source-code-reading-18/) 和 [《TiDB 源码阅读系列文章（十九）tikv-client（下）》](https://pingcap.com/blog-cn/tidb-source-code-reading-19/) 中关于 tikv client 的介绍。我们也有多种语言的单独的 client 库，它们都仍在开发中。
  
