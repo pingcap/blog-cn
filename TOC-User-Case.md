@@ -4,15 +4,16 @@
 
 - 互联网
   - [知乎](user-case-zhihu.md)
+  - [360 cloud](user-case-360-cloud.md)
   - [美团点评](user-case-meituandianping.md)
   - [网易互娱](user-case-wangyihuyu.md)
-  - [360 智能商业](user-case-360-business.md)
   - [京东云](user-case-jingdongyun.md)
   - [小红书](user-case-xiaohongshu.md)
   - [小米](user-case-xiaomi.md)
   - [丰巢](user-case-fengchao.md)
   - [易果集团](user-case-yiguo.md)
   - [58 集团](user-case-58.md)
+  - [360 智能商业](user-case-360-business.md)
   - [爱奇艺](user-case-iqiyi.md)
   - [Shopee](user-case-shopee.md)
   - [转转（一）](user-case-zhuanzhuan.md)
