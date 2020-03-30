@@ -6,7 +6,7 @@ summary: “我截止目前，360 云平台这边有三套 TiDB 集群，总节�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-360-cloud/
-weight: 4
+weight: 2
 logo: /images/blog-cn/customers/mobike-logo.png
 ---
 
