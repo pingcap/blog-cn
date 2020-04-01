@@ -20,7 +20,7 @@ tags: ['TiKV 源码解析','社区']
 
 在 Raft leader 上，应用程序通过 RawNode::propose 发起的写入会被处理成一条 MsgPropose 类型的消息，然后调用 Raft::append_entry 和 Raft::bcast_append 将消息中的数据追加到 Raft 日志中并广播到其他副本上。整体流程如伪代码所示：
 
-```
+```rust
 fn Raft::step_leader(&mut self, mut m: Message) -> Result<()> {
     if m.get_msg_type() == MessageType::MsgPropose {
         // Propose with an empty entry list is not allowed.
@@ -35,7 +35,7 @@ fn Raft::step_leader(&mut self, mut m: Message) -> Result<()> {
 
 在 Leader 将新的写入追加到自己的 Raft log 中之后，便可以调用 `bcast_append` 将它们广播到其他副本了。注意这个函数并没有任何参数，那么 Leader 如何知道应该给每一个副本从哪一个位置开始广播呢？原来在 Leader 上对每一个副本，都关联维护了一个 Progress，该结构体定义如下：
 
-```
+```rust
 pub struct Progress {
     pub matched: u64,
     // 该副本期望接收的下一个 Entry 的 index
@@ -62,7 +62,7 @@ pub struct Progress {
 
 第二个问题的答案在 `Raft::handle_append_response` 函数中。我们继续考察上面的情景，Leader 的其他副本在收到 Leader 广播的最新的日志之后，可能会采取两种动作：
 
-```
+```rust
 fn Raft::handle_append_entries(&mut self, m: &Message) {
     let mut to_send = Message::new_message_append_response();
     match self.raft_log.maybe_append(...) {
@@ -81,7 +81,7 @@ self.send(to_send);
 
 其他副本调用 `maybe_append` 失败的原因可能是比 Leader 的日志更少，但是 Leader 在刚选举出来的时候将所有副本的 `next_idx` 设置为与自己相同的值了。这个时候这些副本就会在 MsgAppendResponse 中设置拒绝的标志。在 Leader 接收到这样的反馈之后，就可以将对应副本的 `next_idx` 设置为正确的值了。这个逻辑在 `Raft::handle_append_response` 中：
 
-```
+```rust
 fn Raft::handle_append_response(&mut self, m: &Message, …) {
     if m.get_reject() {
         let pr: &mut Progress = self.get_progress(m.get_from());
@@ -103,7 +103,7 @@ fn Raft::handle_append_response(&mut self, m: &Message, …) {
 
 Pipeline 在 `Raft::prepare_send_entries` 函数中被引入。这个函数在 `Raft::send_append` 中被调用，内部会直接修改对目标副本的 `next_idex` 值，这样，后续的 MsgAppend 便可以在此基础上继续发送了。而一旦之前的 MsgAppend 被该目标副本拒绝掉了，也可以通过上一节中介绍的 `maybe_decr_to` 机制将 `next_idx` 重置为正确的值。我们来看一下这段代码：
 
-```
+```rust
 // 这个函数在 `Raft::prepare_send_entries` 中被调用
 fn Progress::update_state(&mut self, last: u64) {
     match self.state {
@@ -127,7 +127,7 @@ Progress 有 3 种不同的状态，如这个结构体的定义的代码片段�
 
 从 Progress 结构体的字段注释中，我们知道当某个副本处于 Probe 状态时，Leader 只能给它发送 1 条 MsgAppend 消息。这是因为，在这个状态下的 Progress 的 `next_idx` 是 Leader 猜出来的，而不是由这个副本明确的上报信息推算出来的。它有很大的概率是错误的，亦即 Leader 很可能会回退到某个地方重新发送；甚至有可能这个副本是不活跃的，那么 Leader 发送的整个滑动窗口的消息都可能浪费掉。因此，我们引入 Probe 状态，当 Leader 给处于这一状态的副本发送了 MsgAppend 时，这个 Progress 会被暂停掉（源码片段见上一节），这样在下一次尝试给这个副本发送 MsgAppend 时，会在 `Raft::send_append` 中跳过。而当 Leader 收到了这个副本上报的正确的 last index 之后，Leader 便知道下一次应该从什么位置给这个副本发送日志了，这一过程在 `Progress::maybe_update` 函数中：
 
-```
+```rust
 fn Progress::maybe_update(&mut self, n: u64) {
     if self.matched < n {
         self.matched = n;
@@ -143,7 +143,7 @@ ProgressState::Snapshot 状态与 Progress 中的 pause 标志十分相似，一
 
 我们把篇幅留给在 Follower 上收到 Snapshot 之后的处理逻辑，主要是 `Raft::restore_raft` 和 `RaftLog::restore` 两个函数。前者中主要包含了对 Progress 的处理，因为 Snapshot 包含了 Leader 上最新的信息，而 Leader 上的 Configuration 是可能跟 Follower 不同的。后者的主要逻辑伪代码如下所示：
 
-```
+```rust
 fn RaftLog::restore(&mut self, snapshot: Snapshot) {
     self.committed = snapshot.get_metadata().get_index();
     self.unstable.restore(snapshot);
