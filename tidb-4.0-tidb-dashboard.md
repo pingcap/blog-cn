@@ -37,7 +37,7 @@ TiDB 4.0 新提供 TiDB Dashboard 图形化界面，内置各种有力工具方�
 
 ![diagnose](media/tidb-4.0-tidb-dashboard/5-tidb-dashboard-diagnose.gif)
 
-集群诊断报告是基于一系列预设规则进行的，会以配置、SQL 执行时间、各种监控、硬件情况等作为依据。该功能目前尚处于非常早期的阶段，涵盖的规则还在不断持续完善中。我们希望它能成长为一个 DBA 得力的助手，让没有经验的 DBA 同学也能拥有我们的知识，快速地发现常见问题缘由。
+集群诊断报告是基于一系列预设规则进行的，会以配置、SQL 执行时间、各种监控、硬件情况等作为依据。该功能目前尚处于非常早期的阶段，涵盖的规则还在不断持续完善中。我们希望它能成长为一个 DBA 得力的助手，让没有经验的 DBA 同学也能拥有相关知识，快速地发现常见问题缘由。
 
 在本文开头的案例中，小王同学可以使用此工具，生成缓慢时候与正常时候的对比报告。报告中直接涵盖之前正常运行、现在则显著变慢了的 SQL，帮助小王同学快速抓到真凶。
 
@@ -49,7 +49,7 @@ TiDB 4.0 新提供 TiDB Dashboard 图形化界面，内置各种有力工具方�
 
 ![sql-statements](media/tidb-4.0-tidb-dashboard/7-sql-statements.gif)
 
-小王同学使用 Statement，选择时间段后，可以直接按总执行时间或平均执行时间找到“肇事” SQL。
+如果小王同学使用 Statements 功能，选择时间段后，就可以直接按总执行时间或平均执行时间找到“肇事” SQL。
 
 ### 日志搜索和导出
 
@@ -81,7 +81,7 @@ $ tiup playground nightly --monitor
 http://127.0.0.1:2379/dashboard
 ```
 
-对于极端关注集群稳定性的用户，也可以选择独立部署 TiDB Dashboard，本文限于篇幅就不进行详细介绍，可以阅读 TiDB 电子书《TiDB in Action》的 [TiDB Dashboard 章节](https://book.tidb.io/session3/chapter2/key-vis.html) 了解详情（后续会持续更新），也欢迎大家反馈意见，扫描下方二维码，添加 TiDB Robot 并回复“新特性”即可入群交流：
+对于极端关注集群稳定性的用户，也可以选择独立部署 TiDB Dashboard，本文限于篇幅就不进行详细介绍，可以阅读 TiDB 电子书《TiDB in Action》的 [TiDB Dashboard 章节](https://book.tidb.io/session3/chapter2/key-vis.html) 了解详情（后续会持续更新），**也欢迎大家反馈意见，扫描下方二维码，添加 TiDB Robot 为好友并回复“新特性”即可入群交流：**
 
 ![qr-code](media/tidb-4.0-tidb-dashboard/10-tidb-robot-qr-code.jpg)
 
