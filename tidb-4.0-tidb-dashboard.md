@@ -67,22 +67,19 @@ TiDB 4.0 新提供 TiDB Dashboard 图形化界面，内置各种有力工具方�
 
 ## 使用 TiDB Dashboard
 
-TiDB Dashboard 将嵌入 PD 组件直接内置。想尝鲜的用户可以启动 [PD master](https://github.com/pingcap/pd) 版本，然后浏览器打开以下地址就可以体验 TiDB Dashboard 了。
+TiDB Dashboard 在 TiDB 4.0 集群的 PD 组件中直接内置，无需额外部署。目前 4.0 版本还未正式发布，想要在本地快速体验新版 TiDB 的同学可以使用我们新推出的 TiDB 快速部署工具 TiUP（可在官方网站 [https://tiup.io](https://tiup.io) 进一步了解详情）。
+
+使用 TiUP 可以一键在本地启动 nightly 版本的测试集群，支持 Mac 和 Linux：
 
 ```
-http://PD_ADDRESS:2379/dashboard
+$ tiup playground nightly --monitor
 ```
 
-注意：若修改过 PD 默认端口，需要自行修改上述地址中的端口为自己设置的端口。
-
-想要在本地快速体验最新版 TiDB 的朋友可以使用 TiDB 最新的快速安装工具：tiup
-根据 [https://tiup.io](https://tiup.io) 的指导，一键安装，完成后在本地运行：
+启动测试集群后，访问以下地址即可体验 TiDB Dashboard：
 
 ```
-$ tiup playground
+http://127.0.0.1:2379/dashboard
 ```
-
-就可以在本地拉起一个最新版的 TiDB 集群，然后即可根据提示返回的 Dashboard 地址访问体验。
 
 对于极端关注集群稳定性的用户，也可以选择独立部署 TiDB Dashboard，本文限于篇幅就不进行详细介绍，可以阅读 TiDB 电子书《TiDB in Action》的 [TiDB Dashboard 章节](https://book.tidb.io/session3/chapter2/key-vis.html) 了解详情（后续会持续更新），也欢迎大家反馈意见，扫描下方二维码，添加 TiDB Robot 并回复“新特性”即可入群交流：
 
