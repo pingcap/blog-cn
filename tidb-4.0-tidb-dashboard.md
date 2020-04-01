@@ -1,9 +1,9 @@
 ---
 title: TiDB 4.0 新特性前瞻（四）图形化诊断界面
-author: ['wenxuan']
+author: ['Breezewish']
 date: 2020-04-01
 summary: TiDB 4.0 新提供 TiDB Dashboard 图形化界面，内置各种有力工具方便 DBA 同学诊断、监视和管理集群。
-tags: ['TiDB 4.0 新特性','社区','TiDB Dashboard']
+tags: ['TiDB 4.0 新特性','TiDB Dashboard']
 ---
 某天，PongHat 公司 DBA 小王同学收到了业务侧的反馈：”小王啊，我们数据库查询现在突然变得很慢，业务已经紧急停了，能不能看下是什么情况？“
 
