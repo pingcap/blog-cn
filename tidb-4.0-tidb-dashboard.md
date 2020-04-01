@@ -15,7 +15,7 @@ tags: ['TiDB 4.0 新特性','社区','TiDB Dashboard']
 
 ![tikv-coprocessor](media/tidb-4.0-tidb-dashboard/2-tikv-coprocessor.png)
 
-小王知识水平很高，立刻意识到，可能是因为有大查询！于是他 ssh 到各个 TiDB 机器上，进入日志目录查看 slow log，确实看到了一波可疑的 SQL，它们都执行了很长的时间。
+小王知识水平很高，立刻意识到，可能是因为有大查询！于是他 SSH 到各个 TiDB 机器上，进入日志目录查看 slow log，确实看到了一波可疑的 SQL，它们都执行了很长的时间。
 
 ![slow-log](media/tidb-4.0-tidb-dashboard/3-slow-log.png)
 
