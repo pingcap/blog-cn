@@ -1,7 +1,7 @@
 ---
 title: The Overview of TiDB 4.0
 author: ['唐刘']
-date: 2020-04-09
+date: 2020-04-08
 summary: 4 月 8 日是 PingCAP 成立五周年的日子，我们也在这一天发布了具有里程碑意义的 TiDB 4.0 首个 RC 版本。
 tags: ['TiDB','社区动态']
 ---
@@ -11,7 +11,7 @@ tags: ['TiDB','社区动态']
 
 ## 一分钟部署 TiDB 集群
 
-「在单机部署一个 TiDB 集群要多久？」
+**「在单机部署一个 TiDB 集群要多久？」**
 
 之前，我们其实很难回答这个问题，但现在可以很自豪的说「**一分钟」**。为什么会这么快？因为我们专门为 TiDB 4.0 做了一个全新的组件管理工具—— [TiUP](https://tiup.io) 。
 
@@ -43,7 +43,7 @@ tiup cluster deploy test v4.0.0-rc topology.yaml  -i ~/.ssh/id_rsa
 
 这个需求看似简单，要满足却是非常的困难，但是在 TiDB 4.0，我们终于可以很自豪的说，离彻底搞定这个需求更接近了一步，因为我们提供一套完备的 Hybrid transaction/analytical processing (HTAP) 解决方案，那就是 [TiDB + TiFlash](https://pingcap.com/blog-cn/10x-improving-analytical-processing-ability-of-tidb-with-tiflash/) 。
 
-![1-tidb-tispark](media/the-overview-of-tidb-4.0/1-tidb-tispark.png)
+![1-tidb-tiflash](media/the-overview-of-tidb-4.0/1-tidb-tiflash.png)
 
 简单来说，我们会在 TiDB 里面处理 OLTP 类型业务，在 TiFlash 里面处理 OLAP 类型业务，相比于传统的 ETL 方案，或者其他的 HTAP 解决方案，我们做了更多：
 
@@ -108,6 +108,8 @@ tiup cluster deploy test v4.0.0-rc topology.yaml  -i ~/.ssh/id_rsa
 ![4-tpc-h-100g](media/the-overview-of-tidb-4.0/4-tpc-h-100g.png)
 
 **Sysbench 16 table, 10000000 table size** *（注：测试使用 3 台 16 核 62G 虚拟机部署  3 * TiKV，1 台 40 核 189G 服务器部署 1 * TiDB）*
+
+![5-read-write-threads](media/the-overview-of-tidb-4.0/5-read-write-threads.png)
 
 我们相信，TiDB 4.0 是一个会让大家非常兴奋的版本，也是 TiDB 走在「[未来的数据库](https://pingcap.com/blog-cn/talk-about-the-future-of-databese-on-5th-anniversary-of-pingcap/)」道路上面一个坚固的里程碑。当然，这个幸福的时刻里面一定少不了支持我们的用户，因为有大家，我们才能走到现在。我们也相信，未来 TiDB 会变得越来越好，能给用户带来更多的价值。
 
