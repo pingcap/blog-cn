@@ -111,3 +111,4 @@ tiup cluster deploy test v4.0.0-rc topology.yaml  -i ~/.ssh/id_rsa
 
 我们相信，TiDB 4.0 是一个会让大家非常兴奋的版本，也是 TiDB 走在「[未来的数据库](https://pingcap.com/blog-cn/talk-about-the-future-of-databese-on-5th-anniversary-of-pingcap/)」道路上面一个坚固的里程碑。当然，这个幸福的时刻里面一定少不了支持我们的用户，因为有大家，我们才能走到现在。我们也相信，未来 TiDB 会变得越来越好，能给用户带来更多的价值。
 
+最后欢迎感兴趣的伙伴尝鲜并反馈建议，点击【[这里](http://t.cn/A6hw9daf)】添加 TiDB Robot(wechat: tidbai) 为好友并回复“新特性”即可进入**「TiDB 4.0 尝鲜群」**交流～ 
