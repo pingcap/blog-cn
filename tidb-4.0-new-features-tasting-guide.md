@@ -1,3 +1,10 @@
+---
+title: TiDB 4.0 新特性尝鲜指南
+author: ['PingCAP']
+date: 2020-04-10
+summary: 在 TiDB 4.0 中我们实现了 很多具有里程碑意义的功能，这里为大家列一份「新特性尝鲜指南」。
+tags: ['TiDB 4.0 新特性','社区动态','TiDB']
+---
 >在 TiDB 4.0 中我们实现了 [很多具有里程碑意义的功能](https://pingcap.com/blog-cn/the-overview-of-tidb-4.0/)，这里为大家列一份「新特性尝鲜指南」。
 
 ## TiUP：一键安装工具
