@@ -78,7 +78,7 @@ TiDB 支持视图，视图是一张虚拟表，该虚拟表的结构由创建视
 
 1. [大事务支持](https://pingcap.com/docs-cn/stable/reference/configuration/tidb-server/configuration-file/#txn-total-size-limit)
 
-2. [支持  utf8_general_ci 和 utf8mb4_general_ci collation](https://pingcap.com/docs-cn/stable/reference/sql/character-set/)
+2. [支持  utf8\_general\_ci 和 utf8mb4\_general\_ci collation](https://pingcap.com/docs-cn/stable/reference/sql/character-set/)
 
 3. [AutoRandom Key](https://pingcap.com/docs-cn/stable/reference/sql/attributes/auto-random/)
 
