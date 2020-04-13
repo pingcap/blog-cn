@@ -76,28 +76,17 @@ TiDB 支持视图，视图是一张虚拟表，该虚拟表的结构由创建视
 
 ## 更多新特性等你探索！
 
-1. 大事务支持
+1. [大事务支持](https://pingcap.com/docs-cn/stable/reference/configuration/tidb-server/configuration-file/#txn-total-size-limit)
 
-	点击查看 [官方操作文档](https://pingcap.com/docs-cn/stable/reference/configuration/tidb-server/configuration-file/#txn-total-size-limit)。
+2. [支持  utf8_general_ci 和 utf8mb4_general_ci collation](https://pingcap.com/docs-cn/stable/reference/sql/character-set/)
 
-2. 支持  utf8_general_ci 和 utf8mb4_general_ci collation
+3. [AutoRandom Key](https://pingcap.com/docs-cn/stable/reference/sql/attributes/auto-random/)
 
-	点击查看 [官方操作文档](https://pingcap.com/docs-cn/stable/reference/sql/character-set/)。
+4. [LOAD DATA 功能完善与优化](https://pingcap.com/docs-cn/stable/reference/sql/statements/load-data/)
 
-3. AutoRandom Key
+5. [基于角色的访问控制（role-based-access-control）](https://pingcap.com/docs-cn/stable/reference/security/role-based-access-control/)
 
-	点击查看 [官方操作文档](https://pingcap.com/docs-cn/stable/reference/sql/attributes/auto-random/)。
-
-4. LOAD DATA 功能完善与优化
-	
-	点击查看 [官方操作文档](https://pingcap.com/docs-cn/stable/reference/sql/statements/load-data/)。
-5. 基于角色的访问控制（role-based-access-control）
-
-	点击查看 [官方操作文档](https://pingcap.com/docs-cn/stable/reference/security/role-based-access-control/)。
-
-6. ADMIN DDL 支持 [like_or_where]
-
-	点击查看 [官方操作文档](https://pingcap.com/docs-cn/stable/reference/sql/statements/admin/)。
+6. [ADMIN DDL 支持 [like_or_where]](https://pingcap.com/docs-cn/stable/reference/sql/statements/admin/)
 
 7. ……
 
@@ -107,6 +96,6 @@ TiDB 支持视图，视图是一张虚拟表，该虚拟表的结构由创建视
 
 投稿渠道：
 
-* 方式一：点击【阅读原文】进入 https://asktug.com  发帖，标题格式：【TiDB 4.0 试玩体验】……，即可与广大 TiDB 用户们一起交流讨论！
+* 方式一：进入 [AskTUG](https://asktug.com)  发帖，标题格式：【TiDB 4.0 试玩体验】……，即可与广大 TiDB 用户们一起交流讨论！
 
 * 方式二：加入「TiDB 4.0 尝鲜群」，在群内分享你的博客链接并 @TiDB Robot，可以实时与大家分享试玩心得、反馈建议。加群方式：点击【[这里](http://t.cn/A6h5LjZR)】添加 TiDB Robot 为好友，回复“新特性”即可入群！
