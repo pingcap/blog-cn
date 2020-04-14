@@ -23,6 +23,8 @@ TUG 卫衣、蓝宝书、PCTA 考试券等。
 	
 ![](media/tidb-bug-hunting-guide/2-list-of-prizes.jpeg)
 
+![](media/tidb-bug-hunting-guide/3-list-of-prizes.png)
+
 **3.TiDB 挑战赛的彩蛋**
 
 现在 [TiDB 挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/) 的参赛选手现在也可以来 4.0 捉“虫”竞赛挖矿啦～挑战赛选手可以认领 4.0 捉“虫”竞赛 issue 中任何一个已经被标记为“challenge-program-2”的 issue，并按照挑战赛流程 pick up 即可认领任务。点击查看 [详细规则](https://github.com/pingcap/community/blob/master/bug-hunting-programs/bug-hunting-program-cn.md#彩蛋挑战赛挖矿)。
@@ -31,7 +33,7 @@ TUG 卫衣、蓝宝书、PCTA 考试券等。
 
 **报名方式：**
 
-* 在 [仓库](https://github.com/tidb-challenge-program/bug-hunting-register) 创建一个报名 Issue。
+* 在 [bug-hunting-register 仓库](https://github.com/tidb-challenge-program/bug-hunting-register) 创建一个报名 Issue。
 
 * 报名 Issue 的标题统一为："bug hunting/sign up"，内容需包括团队名称、队长的邮箱和团队成员的邮箱。注意个人参赛者也需要以团队的方式进行报名，个人参赛者只需要填写团队名和队长邮箱（即参赛者本人邮箱）即可。
 
