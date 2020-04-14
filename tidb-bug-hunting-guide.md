@@ -31,7 +31,7 @@ TUG 卫衣、蓝宝书、PCTA 考试券等。
 
 **报名方式：**
 
-* 在 [仓库](github.com/tidb-challenge-program/bug-hunting-register) 创建一个报名 Issue。
+* 在 [仓库](https://github.com/tidb-challenge-program/bug-hunting-register) 创建一个报名 Issue。
 
 * 报名 Issue 的标题统一为："bug hunting/sign up"，内容需包括团队名称、队长的邮箱和团队成员的邮箱。注意个人参赛者也需要以团队的方式进行报名，个人参赛者只需要填写团队名和队长邮箱（即参赛者本人邮箱）即可。
 
