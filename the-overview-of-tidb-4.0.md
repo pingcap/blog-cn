@@ -3,7 +3,7 @@ title: The Overview of TiDB 4.0
 author: ['唐刘']
 date: 2020-04-08
 summary: 4 月 8 日是 PingCAP 成立五周年的日子，我们也在这一天发布了具有里程碑意义的 TiDB 4.0 首个 RC 版本。
-tags: ['TiDB','社区动态']
+tags: ['TiDB 4.0 新特性','TiDB','社区动态']
 ---
 在上篇文章中，我司 CTO 黄东旭分享了 [我们对“未来数据库”的展望](https://pingcap.com/blog-cn/talk-about-the-future-of-databese-on-5th-anniversary-of-pingcap/)，很高兴我们一直走在「写一个更好的数据库」的初心之路上。**4 月 8 日是 PingCAP 成立五周年的日子，我们也在这一天发布了具有里程碑意义的 TiDB 4.0 首个 RC 版本。**
 
@@ -73,9 +73,9 @@ tiup cluster deploy test v4.0.0-rc topology.yaml  -i ~/.ssh/id_rsa
 
 在 TiDB 4.0 里面，我们提供了一个**分布式备份工具 [BR](https://github.com/pingcap/br)（Backup&Restore）**，它直接对 TiDB 进行分布式备份，并将数据存放到用户的共享存储，或者云上 S3 等地方。可以这么说，**集群规模越大，分布式效果越好，BR 备份就越快。在我们内部的测试中**，[BR 能提供 1GB/s 的备份和恢复速度](https://pingcap.com/blog-cn/cluster-data-security-backup/) 。
 
-我们不光提供了集群全量备份工具 BR，也同时提供了**增量数据变更同步工具  [CDC](https://github.com/pingcap/ticdc/)（Change Data Capture）**，CDC 也是直接对 TiDB 的数据变更进行订阅，可以**提供秒级别、最快毫秒级别**的增量数据变更交付能力。
+我们不光提供了集群全量备份工具 BR，也同时提供了**增量数据变更同步工具  [TiCDC](https://github.com/pingcap/ticdc/)（TiDB Change Data Capture）**，TiCDC 也是直接对 TiDB 的数据变更进行订阅，可以**提供秒级别、最快毫秒级别**的增量数据变更交付能力。
 
-当然，不光只有 BR 和 CDC，TiDB 4.0 给用户提供了完整的一套生态工具，无论是上面提到的部署运维工具 TiUP，还有**数据迁移工具 [DM](https://github.com/pingcap/dm)（Data Migration）**，数据导入工具 [TiDB Lightning](https://github.com/pingcap/tidb-lightning) 等。通过这些工具，我们能方便地将 TiDB 与用户的其他生态系统整合到一起，给用户提供更多高价值服务。
+当然，不光只有 BR 和 TiCDC，TiDB 4.0 给用户提供了完整的一套生态工具，无论是上面提到的部署运维工具 TiUP，还有**数据迁移工具 [DM](https://github.com/pingcap/dm)（Data Migration）**，数据导入工具 [TiDB Lightning](https://github.com/pingcap/tidb-lightning) 等。通过这些工具，我们能方便地将 TiDB 与用户的其他生态系统整合到一起，给用户提供更多高价值服务。
 
 ## 你好！Serverless TiDB
 
