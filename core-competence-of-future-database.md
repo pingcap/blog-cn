@@ -5,7 +5,7 @@ date: 2020-04-15
 summary: 上周六，我们开启了 The Future of Database 系列 的第一期直播，我司 CTO 黄东旭及 Engineering VP 申砾畅聊了“未来的数据库会是什么样？”这个颇具想象力的话题。这是第一期直播的部分文字&视频回顾。
 tags: ['The Future of Database','TiDB']
 ---
->上周六，我们开启了 The Future of Database 系列 的第一期直播，我司 CTO 黄东旭及 Engineering VP 申砾畅聊了“未来的数据库会是什么样？”这个颇具想象力的话题。
+>上周六，我们开启了 [The Future of Database 系列](https://mp.weixin.qq.com/s/SiAO0_RcKw2edJj-B8Yu6A) 的第一期直播，我司 CTO 黄东旭及 Engineering VP 申砾畅聊了“未来的数据库会是什么样？”这个颇具想象力的话题。
 >
 >以下是第一期直播的部分文字&视频回顾 Enjoy ~
 
