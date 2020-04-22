@@ -18,7 +18,7 @@ SELECT COUNT(*) FROM LINEORDER;
 
 ![](media/tiflash-is-getting-faster/1-count-order-lineorder.png)
 
-看这样一个简单的 `count` 计算的执行计划，其中 operator info 栏目中 `count(1)` 的被标记为 cop[tiflash]，这表示 TiFlash 将会执行 Hash 聚合计算 `count(1)`，而实际需要返回给 TiDB 的数据，仅仅是聚合完之后的结果，在大多数场景下，返回的数据将会非常少。这种协处理器机制，将会由各个 TiFlash 按照 Region（数据分片）为单位分布式执行。由于 TiFlash 配备了优异的计算模块，因此这部分下推优化是 TiFlash 加速的关键因素之一。
+看这样一个简单的 `count` 计算的执行计划，其中 operator info 栏目中 `count(1)` 的被标记为 `cop[tiflash]`，这表示 TiFlash 将会执行 Hash 聚合计算 `count(1)`，而实际需要返回给 TiDB 的数据，仅仅是聚合完之后的结果，在大多数场景下，返回的数据将会非常少。这种协处理器机制，将会由各个 TiFlash 按照 Region（数据分片）为单位分布式执行。由于 TiFlash 配备了优异的计算模块，因此这部分下推优化是 TiFlash 加速的关键因素之一。
 
 **这里就有一个关键因素：并不是所有计算都可以完全下推到 TiFlash 进行加速。**
 
@@ -36,7 +36,7 @@ SELECT COUNT(*) FROM LINEORDER WHERE DATE_FORMAT(LO_ORDERDATE, “%Y”) >= ‘1
 
 ![](media/tiflash-is-getting-faster/3-order-result.png)
 
-上面的执行计划中，TiFlash 只承担 TableFullScan 也就是扫表部分，而 `count(1)` 却并没有在 TiFlash 中执行。这是为何？其实原因也很简单：因为暂时 `date_format` 函数在 TiFlash 中并没有实现，因此从谓词过滤以及所有之后的计算都将无法加速。这也许会带来几倍甚至十几倍的速度差距。
+上面的执行计划中，TiFlash 只承担 `TableFullScan` 也就是扫表部分，而 `count(1)` 却并没有在 TiFlash 中执行。这是为何？其实原因也很简单：因为暂时 `date_format` 函数在 TiFlash 中并没有实现，因此从谓词过滤以及所有之后的计算都将无法加速。这也许会带来几倍甚至十几倍的速度差距。
 所以遇到这样的情况该怎么办？你可以很简单改写为：
 
 ```sql
