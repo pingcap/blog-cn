@@ -41,7 +41,7 @@
   - [盖娅互娱](user-case-gaea-ad.md)
   - [株式会社 FUNYOURS JAPAN](user-case-funyours-japan.md)
 - 金融
-  - [北京银行](user-case-beijing-bank.md)
+  - [北银科技](user-case-bob-fintech.md)
   - [平安科技](user-case-pingankeji.md)
   - [微众银行](user-case-webank.md)
   - [华泰证券](user-case-huataizhengquan.md)
@@ -49,6 +49,7 @@
   - [贝壳金服](user-case-beikejinfu.md)
   - [Ping++](user-case-ping++.md)
   - [360 金融](user-case-360.md)
+  - [北京银行](user-case-beijing-bank.md)
 - 大型企业
   - [OPPO](user-case-oppo.md)
   - [海航易建](user-case-ekingtech.md)
