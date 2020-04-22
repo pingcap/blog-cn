@@ -6,7 +6,7 @@ summary: 北京银行的架构采用两地三中心五副本的模式部署。�
 tags: ['金融']
 category: case
 url: /cases-cn/user-case-beijing-bank/
-weight: 1
+weight: 9
 logo: /images/blog-cn/customers/beijing-bank-logo.png
 ---
 
