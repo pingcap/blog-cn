@@ -2,11 +2,11 @@
 title: 为啥 TiFlash 又变快了？
 author: ['马晓宇']
 date: 2020-04-22
-summary: 近期每次 TiFlash 的版本更新都会带来新的性能的改进，速度越来越快，有人会好奇 TiFlash 越来越快的原理，所以就有了这篇深度解析文章。
+summary: 短短几周时间，每次 TiFlash 的版本更新都会带来新的性能的改进，速度越来越快
 tags: ['TiFlash']
 ---
 
-和 TiDB 一样持续听取用户反馈，持续改进，持续优化，高速迭代是这个项目的核心思路。最近几周陆续有数十家用户已经率先体验了 TiFlash，测试的过程中很多同学注意到一个现象，短短几周时间，**每次 TiFlash 的版本更新都会带来新的性能的改进，速度越来越快**，也会问到 TiFlash 越来越快的原理，所以就有了这篇深度解析。
+与 TiDB 一样持续听取用户反馈，持续改进，持续优化，高速迭代是 TiFlash 这个项目的核心思路。最近几周陆续有数十家用户已经率先体验了 TiFlash，测试的过程中很多同学注意到一个现象，**短短几周时间，每次 TiFlash 的版本更新都会带来新的性能的改进，速度越来越快**，也会问到 TiFlash 越来越快的原理，所以就有了这篇深度解析。
 
 ## TiFlash 加速之谜
 
@@ -55,7 +55,7 @@ SELECT COUNT(*) FROM LINEORDER WHERE LO_ORDERDATE >= ‘1998-01-01’;
 
 **对于这样的问题，近期我们推出了 Super Batch 优化，当开启优化时，TiDB 将会把所有需要发送到同一个 TiFlash 的请求合并，而 TiFlash 则会在内部自行进行 Raft 相关的读取容错。**
 
-通过这样的方式，TiFlash 不在对 Region 大小敏感。如下是 ontime 数据集的测试对比。
+通过这样的方式，TiFlash 不再对 Region 大小敏感。如下是 ontime 数据集的测试对比。
 
 ![](media/tiflash-is-getting-faster/5-cop-super-batch.png)
 
@@ -71,7 +71,8 @@ SELECT COUNT(*) FROM LINEORDER WHERE LO_ORDERDATE >= ‘1998-01-01’;
 
 只要有足够多的的用户呼声，我们就会开动脑筋 :)
 
-经过一番努力，现在 TiFlash 实现了针对星型模型 JOIN 的优化方案：类 Broadcast Join。
+**经过一番努力，现在 TiFlash 实现了针对星型模型 JOIN 的优化方案：类 Broadcast Join。**
+
 通过将小表 Build Hash 动作在 TiFlash 中实现，我们得以将整个 Join 操作下推并分布式化，这个优化不止让 Join 本身得以在 TiFlash 中分布式计算，而且也让后续操作例如聚合等，都可以完整下推到 TiFlash。
 
 ![](media/tiflash-is-getting-faster/7-broadcast-join.png)
