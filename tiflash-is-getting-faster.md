@@ -27,7 +27,7 @@ SELECT COUNT(*) FROM LINEORDER;
 如果有函数在 TiFlash 没有实现，那么它将阻碍计算加速。
 让我们看下这样一个查询
 
-```
+```sql
 SELECT COUNT(*) FROM LINEORDER WHERE DATE_FORMAT(LO_ORDERDATE, “%Y”) >= ‘1998’;
 ```
 
@@ -38,7 +38,7 @@ SELECT COUNT(*) FROM LINEORDER WHERE DATE_FORMAT(LO_ORDERDATE, “%Y”) >= ‘1
 上面的执行计划中，TiFlash 只承担 TableFullScan 也就是扫表部分，而 count(1) 却并没有在 TiFlash 中执行。这是为何？其实原因也很简单：因为暂时 date_format 函数在 TiFlash 中并没有实现，因此从谓词过滤以及所有之后的计算都将无法加速。这也许会带来几倍甚至十几倍的速度差距。
 所以遇到这样的情况该怎么办？你可以很简单改写为：
 
-```
+```sql
 SELECT COUNT(*) FROM LINEORDER WHERE LO_ORDERDATE >= ‘1998-01-01’;
 ```
 
