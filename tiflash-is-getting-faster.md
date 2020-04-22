@@ -61,7 +61,7 @@ SELECT COUNT(*) FROM LINEORDER WHERE LO_ORDERDATE >= ‘1998-01-01’;
 
 **如上测试结果可以看出，多数查询有接近一倍的提速，而这只是在较小数据量下（10 亿规模以内）的结果，如果数据量进一步增加，加速效果将更为显著。**
 
-## Join 加速
+## JOIN 加速
 
 有一些测试的朋友告诉我们，他的分析计算是星型模型，有不少 JOIN，执行起来似乎没有变多快。是的，以协处理器的模型，对 JOIN 类计算并不能很好加速，因为 JOIN 无法在这个框架下分担计算，进而都必须由 TiDB Server 独立承担。由于 TiDB Server 计算单元目前并不是分布式设计，因此只能由单机慢慢算了。
 
@@ -71,9 +71,9 @@ SELECT COUNT(*) FROM LINEORDER WHERE LO_ORDERDATE >= ‘1998-01-01’;
 
 只要有足够多的的用户呼声，我们就会开动脑筋 :)
 
-**经过一番努力，现在 TiFlash 实现了针对星型模型 JOIN 的优化方案：类 Broadcast Join。**
+**经过一番努力，现在 TiFlash 实现了针对星型模型 JOIN 的优化方案：类 Broadcast JOIN。**
 
-通过将小表 Build Hash 动作在 TiFlash 中实现，我们得以将整个 Join 操作下推并分布式化，这个优化不止让 Join 本身得以在 TiFlash 中分布式计算，而且也让后续操作例如聚合等，都可以完整下推到 TiFlash。
+通过将小表 Build Hash 动作在 TiFlash 中实现，我们得以将整个 JOIN 操作下推并分布式化，这个优化不止让 JOIN 本身得以在 TiFlash 中分布式计算，而且也让后续操作例如聚合等，都可以完整下推到 TiFlash。
 
 ![](media/tiflash-is-getting-faster/7-broadcast-join.png)
 
@@ -83,7 +83,7 @@ SELECT COUNT(*) FROM LINEORDER WHERE LO_ORDERDATE >= ‘1998-01-01’;
 
 总共 13 条 SQL，大家可以在 [这里](https://github.com/pingcap/tidb-bench/tree/master/ssb) 找到。**大部分查询都有明显加速，其中 6 个甚至有数量级（最多 44 倍）的加速**。
 
-相信在完整的 MPP 实现之前，这样的设计也可以满足很多用户的需求。而有些场景用不上这个优化，比如大量的大表 Join，则可以直接用 TiSpark。
+相信在完整的 MPP 实现之前，这样的设计也可以满足很多用户的需求。而有些场景用不上这个优化，比如大量的大表 JOIN，则可以直接用 TiSpark。
 
 ## 更多沟通，更多加速
 
