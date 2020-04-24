@@ -37,7 +37,7 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 
 * 分数：2996
 
-* 团队：**gauss1314**（个人参赛者）
+* 团队：[gauss1314](https://github.com/gauss1314)（个人参赛者）
 
 * 仓库：TiDB
 
@@ -47,7 +47,15 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 
 * 分数：2530
 
-* 团队：**SSebo**（个人参赛者）
+* 团队：[SSebo](https://github.com/SSebo)（个人参赛者）
+
+* 仓库：TiKV
+
+[UCP: Support auto flush metrics](https://github.com/tikv/tikv/issues/7062)
+
+* 分数：2530
+
+* 团队：[BABAIsWatchingYou](https://github.com/tidb-challenge-program/register/issues/15)
 
 * 仓库：TiKV
 
@@ -55,7 +63,7 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 
 * 分数：1300
 
-* 团队：**hawking&chacha**
+* 团队：[hawking&chacha](https://github.com/tidb-challenge-program/register/issues/31)
 
 * 仓库：TiKV
 
@@ -63,7 +71,7 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 
 * 分数：950
 
-* 团队：**.\***
+* 团队：[.*](https://github.com/tidb-challenge-program/register/issues/7)
 
 * 仓库：TiKV
 
@@ -71,7 +79,7 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 
 * 分数：605
 
-* 团队：**.\***
+* 团队：[.*](https://github.com/tidb-challenge-program/register/issues/7)
 
 * 仓库：TiKV
 
@@ -79,7 +87,7 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 
 * 分数：300
 
-* 团队：**blueshit**
+* 团队：[blueshit](https://github.com/tidb-challenge-program/register/issues/45)
 
 * 仓库：TiDB
 
@@ -87,7 +95,7 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 
 * 分数：300
 
-* 团队：**Yisaer（个人参赛者）**
+* 团队：[Yisaer](https://github.com/Yisaer)（个人参赛者）
 
 * 仓库：TiDB
 
