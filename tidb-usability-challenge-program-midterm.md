@@ -5,17 +5,17 @@ date: 2020-04-23
 summary: 三月初，围绕着这 20 个呼声最高的需求，我们在社区启动了 TiDB 易用性挑战赛。赛事开启后，大家可是百花齐放，百家争鸣。目前赛程已经过半，我们先来看看战绩吧！
 tags: ['社区','社区动态','TiDB 易用性挑战赛']
 ---
->随着越来越多的同学选择使用 TiDB， TiDB 的易用性收到越来越多用户的关注，让 TiDB 变得更好用就显得越来越重要。为了能够打造一个大家心中的真正好用易用的 TiDB，我们启动了 “[我的 TiDB 听我的](https://asktug.com/t/topic/2156)” 活动，并特意征求了 TiDB User Group(TUG) 专家组的意见，选择出了 20 个最重要、最迫切的易用性需求。
->
->三月初，围绕着这 20 个呼声最高的需求，我们在社区启动了 [TiDB 易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)。赛事开启后，大家可是百花齐放，百家争鸣。目前赛程已经过半，我们先来看看战绩吧！
+随着越来越多的同学选择使用 TiDB， TiDB 的易用性收到越来越多用户的关注，让 TiDB 变得更好用就显得越来越重要。为了能够打造一个大家心中的真正好用易用的 TiDB，我们启动了 “[我的 TiDB 听我的](https://asktug.com/t/topic/2156)” 活动，并特意征求了 TiDB User Group(TUG) 专家组的意见，选择出了 20 个最重要、最迫切的易用性需求。
+
+三月初，围绕着这 20 个呼声最高的需求，我们在社区启动了 [TiDB 易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)。赛事开启后，大家可是百花齐放，百家争鸣。目前赛程已经过半，我们先来看看战绩吧！
 
 首先，我们看一下本次赛季参与的团队情况：
 
-![](media/tidb-usability-challenge-program-midterm/1-registers.png)
+![1-registers](media/tidb-usability-challenge-program-midterm/1-registers.png)
 
 截止今日，我们一共收到 **93 支队伍**报名（包括个人参赛队员和多人组建团队），共计 **136 位选手参赛**。目前的积分排行榜上已有 5 支队伍积分超过 2000：
 
-![](media/tidb-usability-challenge-program-midterm/2-积分排行榜.png)
+![2-积分排行榜](media/tidb-usability-challenge-program-midterm/2-积分排行榜.png)
 
 **目前个人参赛者成绩比较突出**，其中：
 
@@ -27,7 +27,7 @@ tags: ['社区','社区动态','TiDB 易用性挑战赛']
 
 最后，我们来看看本赛季整体任务完成情况：
 
-![](media/tidb-usability-challenge-program-midterm/3-整体任务情况.jpeg)
+![3-整体任务情况](media/tidb-usability-challenge-program-midterm/3-整体任务情况.jpeg)
 
 如上图所示，蓝色表示被认领的任务数，红色的表示已经完成的任务数，也就是说，截止发稿时，**共有 215 个任务被认领，其中 93 个任务已经完成**。
 
