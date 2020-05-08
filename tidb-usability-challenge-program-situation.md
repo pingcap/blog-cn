@@ -6,7 +6,7 @@ summary: 赛程即将进入下半场，战况愈发激烈，我们总结了上�
 tags: ['社区动态']
 ---
 
-自 4.0  RC 版本发布以来，大家已经迫不及待开始尝鲜。TiDB 4.0 包含了很多重要的、有潜力的特性：
+自 4.0  RC（Release Candidate）版本发布以来，大家已经迫不及待开始抢先体验。TiDB 4.0 包含了很多重要的、有潜力的特性：
 
 * TiUP 帮你更快的部署集群。
 
@@ -18,15 +18,13 @@ tags: ['社区动态']
 
 * ……
 
-为了鼓励大家尝鲜体验 TiDB 4.0，捉虫竞赛应运而生。如今赛程过半，我们一起来回顾下当前赛况。
+为了鼓励大家抢先体验 TiDB 4.0，加速 TiDB 4.0 正式版发版，捉虫竞赛应运而生。如今赛程过半，我们一起来回顾下当前赛况。
 
 ## 国际友人开挂一支独秀
 
-捉虫大赛刚一公布，来自瑞士的 Mrigger 就火线加入，提交了多个 bug。强调下 Mrigger 肯定不是“托儿”。在 Mrigger 一波提交之后，有开发同学向 TiDB Robot 诉苦，「来者何人啊？周边礼品有点兜不住了！」。不查不知道，一查吓一跳，Mrigger 就是一位专业“碰瓷”选手。他已经为 SQLite 提交了超过 170+ bug，为 CockRoachDB 提交了 50+ bug。这位苏黎世理工大学的博士后研究方向是 RDBMS 的自动化测试，这次携测试机器人出征也是势在必得。真可谓「天不怕地不怕，就怕测试开外挂」。
+捉虫大赛刚一公布，来自瑞士的 Mrigger 就火线加入，提交了多个 bug。强调下 Mrigger 肯定不是“托儿”。在 Mrigger 一波提交之后，有开发同学向 TiDB Robot 诉苦，「来者何人啊？周边礼品有点兜不住了！」。不查不知道，一查吓一跳，Mrigger 就是一位专业“碰瓷”选手。他已经为 SQLite 提交了超过 170+ bug，为 CockRoachDB 提交了 50+ bug。这位苏黎世理工大学的博士后研究方向是 RDBMS 的自动化测试，找 Bug 也是事半功倍。真可谓「天不怕地不怕，就怕测试开外挂」。
 
 **截止到发稿日，Mrigger 已经提交了 21 个 P1 bug，7 个 P2 bug，稳坐第一名的宝座。**
-
-**值得一提的是，参考 Mrigger 发表的文章，PingCAPer 已经实现了这个测试机器人，目前正在内测中。**
 
 ## 开发者社区 护场子奋起直追
 
@@ -38,7 +36,7 @@ tags: ['社区动态']
 
 ## 用户社区开辟第二战场
 
-AskTUG（asktug.com） 是 TiDB User Group 成员学习、分享的“聚集地”。自捉虫大赛正面战场 GitHub 开赛以来，已经有超过 50+ 的 bug report 在 AskTUG 上出现，涵盖 TiUP、TiFlash、Dashboard 等众多组件。
+AskTUG（asktug.com） 是 TiDB User Group 成员学习、分享的“聚集地”。自捉虫大赛正面战场 GitHub 开赛以来，已经有超过 50+ 的 bug report 在 AskTUG 上出现，涵盖 TiUP、TiFlash、Dashboard 等众多产品。
 
 ![asktug](media/tidb-usability-challenge-program-situation/1-asktug.png)
 
