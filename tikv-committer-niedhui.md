@@ -83,7 +83,3 @@ Firefox 还是 Chrome？**Chrome，就是太吃内存了**
 **最后回答一下庄天翼在 [上一个采访](https://pingcap.com/blog-cn/tikv-committer-zhuangtianyi/) 中的提问：你最喜欢吃什么菜，平时做菜吗？**
 
 我不喜欢吃肉，从记事开始就不太吃荤菜了，对吃的没啥欲望，平时也不做菜。老婆是个荒废厨艺的厨师，之前喜欢做菜，但在遇到我之后觉得做菜没有成就感了。（🤦‍♀🤦‍♂️）
-
->点击【[这里](http://h.qr61.cn/ozn4Ej/qSFBOOI)】添加 TiDB Robot 为好友，加群交流 TiDB 最新资讯。
->
->若对 TiDB 的使用有所疑问，也可以登录 Asktug.com 搜索或发帖交流～
