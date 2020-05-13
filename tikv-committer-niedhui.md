@@ -1,7 +1,7 @@
 ---
 title: TiKV Committer 聂殿辉：开源不仅仅是开放源代码，更是一种态度和沟通方式
 author: ['PingCAP']
-date: 2020-05-13
+date: 2020-05-12
 summary: “我对 TiDB 社区的整体印象用一句话概括就是：很专业，又很有人情味。”
 tags: ['社区','社区动态']
 ---
@@ -24,7 +24,7 @@ tags: ['社区','社区动态']
 
 ## 玩转 TiDB 开源社区
 
-![](media/tikv-committer-niedhui/1-github主页.png)
+![1-github主页](media/tikv-committer-niedhui/1-github主页.png)
 
 ### 对开源的理解
 
@@ -60,7 +60,7 @@ TiKV 是一个很复杂的系统，涉及的东西很多，所以当时想找到
 
 于是我们约在 PingCAP 上海办公室楼下的咖啡馆，Breezewish 给我很详细的讲了 TiKV 的模块，让我对 TiKV 了解又更多了些。再后来我一点一点写的函数被 Siddon Tang（PingCAP 首席架构师）发现，他说不要老写简单的啦，来写写难一些的呗。受此激励，慢慢开始上手做了一些阶梯的任务，比如 Row Format。后来也参与社区 [性能挑战赛](https://pingcap.com/blog-cn/pcp-report-202002/) 和 [易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)。
 
-![](media/tikv-committer-niedhui/2-证书.jpg)
+![2-证书](media/tikv-committer-niedhui/2-证书.jpg)
 
 从 Contributor 到 Reviewer 的进阶还是蛮轻松的，做的东西有认同感，到了 Committer 之后我会有一些压力，因为这个角色对项目的理解需要更深入，我也希望自己之后可以花更多时间去了解 TiKV。参与的越多，越觉得代码方面不是问题，对项目的整体把握才是最考验人的。
 
