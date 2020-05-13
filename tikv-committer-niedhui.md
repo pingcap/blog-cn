@@ -2,7 +2,7 @@
 title: TiKV Committer 聂殿辉：开源不仅仅是开放源代码，更是一种态度和沟通方式
 author: ['PingCAP']
 date: 2020-05-13
-summary:“我对 TiDB 社区的整体印象用一句话概括就是：很专业，又很有人情味。”
+summary: “我对 TiDB 社区的整体印象用一句话概括就是：很专业，又很有人情味。”
 tags: ['社区','社区动态']
 ---
 
