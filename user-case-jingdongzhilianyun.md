@@ -6,7 +6,7 @@ summary: 目前 TiKV 在京东智联云对象存储业务上是 Primary 数据�
 tags: ['互联网']
 category: case
 url: /cases-cn/user-case-jingdongzhilianyun/
-aliases: ['/blog-cn/user-case-jingdongyun/']
+aliases: ['/cases-cn/user-case-jingdongyun/']
 weight: 3
 logo: /images/blog-cn/customers/jingdongzhilianyun-logo.png
 ---
