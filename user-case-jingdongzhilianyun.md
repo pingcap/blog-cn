@@ -1,24 +1,25 @@
 ---
-title: TiKV 在京东云对象存储元数据管理的实践
+title: TiKV 在京东智联云对象存储元数据管理的实践
 author: ['崔灿']
 date: 2019-09-23
-summary: 目前 TiKV 在京东云对象存储业务上是 Primary 数据库，总集群数量为 10+，生产环境单集群 QPS 峰值 4 万（读写 1:1），最大的单集群数据量 200+亿，共有 50 余万个 Region，Latency 能保证在 10ms 左右。
+summary: 目前 TiKV 在京东智联云对象存储业务上是 Primary 数据库，总集群数量为 10+，生产环境单集群 QPS 峰值 4 万（读写 1:1），最大的单集群数据量 200+亿，共有 50 余万个 Region，Latency 能保证在 10ms 左右。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-jingdongyun/
+url: /cases-cn/user-case-jingdongzhilianyun/
+aliases: ['/blog-cn/user-case-jingdongyun/']
 weight: 3
-logo: /images/blog-cn/customers/jingdongyun-logo.png
+logo: /images/blog-cn/customers/jingdongzhilianyun-logo.png
 ---
 
->作者介绍：崔灿，京东云产品研发部专家架构师，目前主要负责京东云对象存储产品的工作。
+>作者介绍：崔灿，京东智联云产品研发部专家架构师，目前主要负责京东智联云对象存储产品的工作。
 
-京东云对象存储是在 2016 年作为公有云对外公开的，主要特点是可靠、安全、海量、低成本，应用于包括一些常用的业务场景，比如面向京东云公有云外部的开发者的服务，和面向政府、企业的私有云服务，甚至混合云服务。
+京东智联云对象存储是在 2016 年作为公有云对外公开的，主要特点是可靠、安全、海量、低成本，应用于包括一些常用的业务场景，比如面向京东智联云公有云外部的开发者的服务，和面向政府、企业的私有云服务，甚至混合云服务。
 
-本文将介绍京东云对象存储服务的架构演进，以及迁移到 TiKV 的经验。
+本文将介绍京东智联云对象存储服务的架构演进，以及迁移到 TiKV 的经验。
 
 ## 一、对象存储简介
 
-![图 1 什么是“对象”](media/user-case-jingdongyun/1.png)
+![图 1 什么是“对象”](media/user-case-jingdongzhilianyun/1.png)
 
 <div class="caption-center">图 1 什么是“对象”</div>
 
@@ -26,7 +27,7 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 
 如果是数量比较少的图片存储，我们可能会用类似 LVM 之类的东西，把一个节点上的多个磁盘使用起来，这种方法一般适用于数量级在 1M ~ 10M 的图片。随着业务的增长，图片会越来越多甚至有视频存储，因此我们采用分布式文件系统来存储，这种方法是基于 DFS 的架构（如下图所示）。 
 
-![图 2 如何存储对象（数据量 1B）](media/user-case-jingdongyun/2.png)
+![图 2 如何存储对象（数据量 1B）](media/user-case-jingdongzhilianyun/2.png)
 
 <div class="caption-center">图 2 如何存储对象（数据量 1B）</div>
 
@@ -37,7 +38,7 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 * 元数据管理是树状结构，它本身并不适合做分布式存储，并且目录结构需要多次访问，不适合把它放到 SSD 上，而更适合放在内存里，然后一般授权一个 master 节点 list。HDFS 基本也是这样。
 
 
-![图 3 如何存储对象（数据量 100B）](media/user-case-jingdongyun/3.png)
+![图 3 如何存储对象（数据量 100B）](media/user-case-jingdongzhilianyun/3.png)
 
 <div class="caption-center">图 3 如何存储对象（数据量 100B）</div>
 
@@ -50,34 +51,34 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 ### 1. 元数据管理系统 v1.0
 
 
-![图 4 元数据管理系统 v1.0（1/4）](media/user-case-jingdongyun/4.png)
+![图 4 元数据管理系统 v1.0（1/4）](media/user-case-jingdongzhilianyun/4.png)
 
 <div class="caption-center">图 4 元数据管理系统 v1.0（1/4）</div>
 
 上面是一个最简单、原始的方案，这里 Bucket 相当于名字空间（Namespace）。很多人最开始设计的结构也就是这样的，但后期数据量增长很快的时候会遇到一些问题，如下图。
 
 
-![图 5 元数据管理系统 v1.0（2/4）](media/user-case-jingdongyun/5.png)
+![图 5 元数据管理系统 v1.0（2/4）](media/user-case-jingdongzhilianyun/5.png)
 
 <div class="caption-center">图 5 元数据管理系统 v1.0（2/4）</div>
 
 第一个问题是，在初期数据量比较小的时候，可能只分了 4 个 Bucket 存储，随着业务增长，需要重新拆分到 400 个 Bucket 中，数据迁移是一个 Rehash 过程，这是一件非常复杂且麻烦的事情。所以，我们在思考对象存储连续的、跨数量级的无限扩展要怎么做呢？下图是一个相对复杂的解决方案，核心思想是把绝大部分数据做静态处理，因为静态的存储，无论是做迁移还是做拆分，都比较简单。比如每天都把前一天写入的数据静态化，合到历史数据中去。
 
 
-![图 6 元数据管理系统 v1.0（3/4）](media/user-case-jingdongyun/6.png)
+![图 6 元数据管理系统 v1.0（3/4）](media/user-case-jingdongzhilianyun/6.png)
 
 <div class="caption-center">图 6 元数据管理系统 v1.0（3/4）</div>
 
 
 针对第二个问题，如果单个 Bucket 数据量很大，那么在往 Stable Meta（上图中黄色部分）做静态化迁移时需要做深度拆分，单个 Bucket 的对象的数量非常多，在一个数据库里面存储不下来，需要存储在多个数据库里面，再建立一层索引，存储每个数据库里面存储那个区间的数据。同时，我们在运行的时候其实也会出现一个 Bucket 数量变多的情况，这种是属于非预期的变多，这种情况下我们的做法是弄了一大堆外部的监控程序，监控 Bucket 的量，在 Bucket 量过大的时候，会主动去触发表分裂、迁移等一系列流程。
 
-![图 7 元数据管理系统 v1.0（4/4）](media/user-case-jingdongyun/7.png)
+![图 7 元数据管理系统 v1.0（4/4）](media/user-case-jingdongzhilianyun/7.png)
 
 <div class="caption-center">图 7 元数据管理系统 v1.0（4/4）</div>
 
 **这个解决方案有两个明显的问题，第一数据分布复杂，管理困难；第二，调度不灵活，给后期维护带来很大的困难。**
 
-![图 8 元数据管理系统改进步目标](media/user-case-jingdongyun/8.png)
+![图 8 元数据管理系统改进步目标](media/user-case-jingdongzhilianyun/8.png)
 
 <div class="caption-center">图 8 元数据管理系统改进目标</div>
 
@@ -108,7 +109,7 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 
 通过上面的测试我们认为 TiKV 无论是从性能还是系统安全性的角度，都能很好的满足要求，于是我们在 TiKV 基础之上，实现了对象元数据管理系统 v2.0，如下图所示。
 
-![图 9 元数据管理系统 v2.0](media/user-case-jingdongyun/9.png)
+![图 9 元数据管理系统 v2.0](media/user-case-jingdongzhilianyun/9.png)
 
 <div class="caption-center">图 9 元数据管理系统 v2.0</div>
 
@@ -120,7 +121,7 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 
 ### 1. 迁移方案
 
-![图 10 迁移方案](media/user-case-jingdongyun/10.png)
+![图 10 迁移方案](media/user-case-jingdongzhilianyun/10.png)
 
 <div class="caption-center">图 10 迁移方案</div>
 
@@ -144,7 +145,7 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 
 数据验证过程最大的困难在于增量数据的验证，因为增量数据是每天变化的，所以我们双写了 MySQL 和 TiKV，并且每天将增量数据进行静态化处理，用 MySQL 中的记录来验证 TiKV 的数据是否可靠（没有出现数据丢失和错误），如下图所示。
 
-![图 11 双写验证](media/user-case-jingdongyun/11.png)
+![图 11 双写验证](media/user-case-jingdongzhilianyun/11.png)
 
 <div class="caption-center">图 11 双写验证</div>
 
@@ -152,7 +153,7 @@ logo: /images/blog-cn/customers/jingdongyun-logo.png
 
 ## 四、业务现状及后续优化工作
 
-**目前 TiKV 在京东云对象存储业务上是 Primary 数据库，计划 2019 年年底会把原数据库下线。总共部署的集群数量为 10+，生产环境单集群 QPS 峰值 4 万（读写 1:1），最大的单集群数据量 200+亿，共有 50 余万个 Region，我们元数据管理业务对 Latency 要求比较高，目前 Latency 能保证在 10ms 左右。另外，我们正在测试 TiKV 3.0，预计 2019 年第四季度能够上线。**
+**目前 TiKV 在京东智联云对象存储业务上是 Primary 数据库，计划 2019 年年底会把原数据库下线。总共部署的集群数量为 10+，生产环境单集群 QPS 峰值 4 万（读写 1:1），最大的单集群数据量 200+亿，共有 50 余万个 Region，我们元数据管理业务对 Latency 要求比较高，目前 Latency 能保证在 10ms 左右。另外，我们正在测试 TiKV 3.0，预计 2019 年第四季度能够上线。**
 
 针对目前的业务运行情况，我们后续还将做一些优化工作。
 
