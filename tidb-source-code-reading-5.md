@@ -18,7 +18,7 @@ PingCAP 发布了 TiDB 的[源码阅读系列文章](https://pingcap.com/blog-cn
 
 TiDB 是使用 [goyacc](https://github.com/cznic/goyacc) 根据预定义的 SQL 语法规则文件 [parser.y](https://github.com/pingcap/tidb/blob/source-code/parser/parser.y) 生成 SQL 语法解析器。我们可以在 TiDB 的 [Makefile](https://github.com/pingcap/tidb/blob/50e98f427e7943396dbe38d23178b9f9dc5398b7/Makefile#L50) 文件中看到这个过程，先 build `goyacc` 工具，然后使用 `goyacc` 根据 `parser.y` 生成解析器 `parser.go`：
 
-```
+```makefile
 goyacc:
 	$(GOBUILD) -o bin/goyacc parser/goyacc/main.go
 
@@ -186,7 +186,7 @@ nodeType *opr(int oper, int nops, ...) {
 
 上面是一个语法规则定义的片段，我们可以看到，每个规则关联的动作不再是求值，而是调用相应的函数，该函数会返回抽象语法树的节点类型 `nodeType`，然后将这个节点压回堆栈，解析完成时，我们就得到了一颗由 `nodeType` 构成的抽象语法树。对这个语法树进行遍历访问，可以生成机器代码，也可以解释执行。
 
-至此，我们大致了解了 `Lex & Yacc `的原理。其实还有非常多的细节，例如如何消除语法的歧义，但我们的目的是读懂 TiDB 的代码，掌握这些概念已经够用了。
+至此，我们大致了解了 `Lex & Yacc` 的原理。其实还有非常多的细节，例如如何消除语法的歧义，但我们的目的是读懂 TiDB 的代码，掌握这些概念已经够用了。
 
 ## goyacc 简介
 
@@ -500,15 +500,15 @@ func (parser *Parser) Parse(sql, charset, collation string) ([]ast.StmtNode, err
 
 最后，我写了一个简单的例子，使用 TiDB 的 `SQL Parser` 进行 SQL 语法解析，构建出 `AST`，然后利用 `visitor` 遍历 `AST` ：
 
-```
+```golang
 package main
 
 import (
 	"fmt"
-	"github.com/pingcap/tidb/parser"
-	"github.com/pingcap/tidb/ast"
+	"github.com/pingcap/parser"
+	"github.com/pingcap/parser/ast"
+	_ "github.com/pingcap/tidb/types/parser_driver"
 )
-
 type visitor struct{}
 
 func (v *visitor) Enter(in ast.Node) (out ast.Node, skipChildren bool) {
@@ -521,13 +521,13 @@ func (v *visitor) Leave(in ast.Node) (out ast.Node, ok bool) {
 }
 
 func main() {
+	p := parser.New()
 
 	sql := "SELECT /*+ TIDB_SMJ(employees) */ emp_no, first_name, last_name " +
 		"FROM employees USE INDEX (last_name) " +
 		"where last_name='Aamodt' and gender='F' and birth_date > '1960-01-01'"
+	stmtNodes, _, err := p.Parse(sql, "", "")
 
-	sqlParser := parser.New()
-	stmtNodes, err := sqlParser.Parse(sql, "", "")
 	if err != nil {
 		fmt.Printf("parse error:\n%v\n%s", err, sql)
 		return
@@ -541,7 +541,7 @@ func main() {
 
 我实现的 `visitor` 什么也没干，只是输出了节点的类型。 这段代码的运行结果如下，依次输出遍历过程中遇到的节点类型：
 
-```
+```golang
 *ast.SelectStmt
 *ast.TableOptimizerHint
 *ast.TableRefsClause
@@ -575,6 +575,5 @@ func main() {
 ```
 
 了解了 TiDB `SQL Parser` 的实现，我们就有可能实现 TiDB 当前不支持的语法，例如添加内置函数，也为我们学习查询计划以及优化打下了基础。希望这篇文章对你能有所帮助。
-
 
 > 作者介绍：马震，金蝶天燕架构师，曾负责中间件、大数据平台的研发，今年转向了 NewSQL 领域，关注 OLTP/AP 融合，目前在推动金蝶下一代 ERP 引入 TiDB 作为数据库存储服务。
