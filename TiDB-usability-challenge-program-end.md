@@ -13,7 +13,7 @@ tags: ['TiDB 易用性挑战赛','TiDB 捉虫竞赛','社区动态','社区']
 
 * 社区小伙伴们热情似火。
 
-大家都迫切地想要为 TiDB 作出更多的贡献，让他跑得更远更稳。于是乎在大家的强烈要求下，今年三月我们又紧锣密鼓地开启了 [挑战赛第二季易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/) 和 [TiDB 4.0 捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/)，为 TiDB 全球社区建设添砖加瓦。
+大家都迫切地想要为 TiDB 作出更多的贡献，让它跑得更远更稳。于是乎在大家的强烈要求下，今年三月我们又紧锣密鼓地开启了 [挑战赛第二季易用性挑战赛](https://pingcap.com/community-cn/tidb-usability-challenge/) 和 [TiDB 4.0 捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/)，为 TiDB 全球社区建设添砖加瓦。
 
 而今随着疫情好转，天气变暖，大家纷纷摘下口罩出去玩耍的同时，我们也迎来了本次赛季的累累硕果，下面我们一起来围观一下我们的选手是在漫漫疫情期间中，是如何边找 bug，边把 TiDB 做得更好玩更好用的。
 
@@ -131,7 +131,7 @@ tags: ['TiDB 易用性挑战赛','TiDB 捉虫竞赛','社区动态','社区']
 
 ### 捉“虫”竞赛
 
-[捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 也在同一天圆满结束。本次 TiDB 捉虫竞赛，共有 40 位社区小伙伴组成 23 支队伍进行参赛。通过大家共同不懈的努力，一共为 4.0 GA 找出 51 个 P1 级别的 bug 和 8 个 P0 级别 bug。下面就来揭晓最终排名。
+本次 [捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 也在同一天圆满结束。此次竞赛，共有 40 位社区小伙伴组成 23 支队伍进行参赛。通过大家共同不懈的努力，一共为 TiDB 4.0 GA 找出 51 个 P1 级别的 bug 和 8 个 P0 级别 bug。下面就来揭晓最终排名。
 
 ![2-捉虫排行榜](media/TiDB-usability-challenge-program-end/2-捉虫排行榜.png)
 
@@ -177,7 +177,7 @@ Dashboard 是 TiDB 在 4.0 中推出的提升易用性的功能，目前还处�
 
 感谢以上三位同学对 TiDB 4.0 做出的巨大贡献！
 
-虽然本赛季易用性挑战赛和捉“虫”竞赛已经结束，但 TiDB 追求一个完美数据库的脚步永不停歇，下一季赛季已经在路上了，敬请期待！
+虽然本赛季 [易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/) 和 [捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 已经结束，但 TiDB 追求一个完美数据库的脚步永不停歇，下一季赛季已经在路上了，敬请期待！
 
 恭喜以下同学可以获取到 Ping CAP 定制的双肩包：
 
