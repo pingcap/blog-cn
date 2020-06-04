@@ -3,7 +3,7 @@ title: 从来没有这么好用过！TiDB 易用性挑战赛完结撒花
 author: ['TiDB 挑战赛']
 date: 2020-06-04
 summary: 随着疫情好转，天气变暖，大家纷纷摘下口罩出去玩耍的同时，我们也迎来了本次赛季的累累硕果，下面我们一起来围观一下我们的选手是在漫漫疫情期间中，是如何边找 bug，边把 TiDB 做得更好玩更好用的。
-tags: ['TiDB 易用性挑战赛','TiDB 捉虫竞赛','社区动态','社区']
+tags: ['TiDB 易用性挑战赛','TiDB 4.0 捉虫竞赛','社区动态','社区']
 ---
 从 2019 年 11 月开始，我们开启了 TiDB 挑战赛系列，在经历了 [第一季性能挑战赛](https://pingcap.com/blog-cn/pcp-report-202002/) 后，
 
@@ -13,7 +13,7 @@ tags: ['TiDB 易用性挑战赛','TiDB 捉虫竞赛','社区动态','社区']
 
 * 社区小伙伴们热情似火。
 
-大家都迫切地想要为 TiDB 作出更多的贡献，让它跑得更远更稳。于是乎在大家的强烈要求下，今年三月我们又紧锣密鼓地开启了 [挑战赛第二季易用性挑战赛](https://pingcap.com/community-cn/tidb-usability-challenge/) 和 [TiDB 4.0 捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/)，为 TiDB 全球社区建设添砖加瓦。
+大家都迫切地想要为 TiDB 作出更多的贡献，让它跑得更远更稳。于是乎在大家的强烈要求下，今年三月我们又紧锣密鼓地开启了 [挑战赛第二季之易用性挑战赛](https://pingcap.com/community-cn/tidb-usability-challenge/) 和 [TiDB 4.0 捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/)，为 TiDB 全球社区建设添砖加瓦。
 
 而今随着疫情好转，天气变暖，大家纷纷摘下口罩出去玩耍的同时，我们也迎来了本次赛季的累累硕果，下面我们一起来围观一下我们的选手是在漫漫疫情期间中，是如何边找 bug，边把 TiDB 做得更好玩更好用的。
 
@@ -25,9 +25,9 @@ tags: ['TiDB 易用性挑战赛','TiDB 捉虫竞赛','社区动态','社区']
 
 ![1-易用性挑战赛排行榜](media/TiDB-usability-challenge-program-end/1-易用性挑战赛排行榜.png)
 
-本次比赛完整积分榜见 [赛事活动页](https://pingcap.com/community-cn/tidb-usability-challenge/)。
+完整积分榜见 [大赛官网](https://pingcap.com/community-cn/tidb-usability-challenge/)。
 
-本次活动计入排名的参赛队伍基本信息如下（按照比赛规则，有 PingCAP 人员参与的小组不计入挑战赛最终排名，即上图中有 TiDB Logo 标识的选手）：
+本次大赛计入排名的参赛队伍基本信息如下（按照比赛规则，有 PingCAP 人员参与的小组不计入挑战赛最终排名，即上图中有 TiDB Logo 标识的选手）：
 
 *   总参赛人员：141
 
@@ -35,7 +35,7 @@ tags: ['TiDB 易用性挑战赛','TiDB 捉虫竞赛','社区动态','社区']
 
 *   个人参赛者：87
 
-本次比赛奖项设置为：
+本次大赛奖项设置为：
 
 *   第一名（状元）：[.*](https://github.com/tidb-challenge-program/register/issues/7) (14499 积分)
 
@@ -51,7 +51,7 @@ tags: ['TiDB 易用性挑战赛','TiDB 捉虫竞赛','社区动态','社区']
 
 *   [niedhui](https://github.com/tidb-challenge-program/register/issues/61) (4041 积分)
 
-除此以外也感谢以下同学的参与，可使用积分参与兑换奖品。
+除此以外也感谢以下同学的参与，参赛选手们可使用积分参与兑换奖品。
 
 *   Yisaer(TiDB) (4038 积分)
 
@@ -129,7 +129,7 @@ tags: ['TiDB 易用性挑战赛','TiDB 捉虫竞赛','社区动态','社区']
 
 *   [Hidehalo](https://github.com/tidb-challenge-program/register/issues/127) (50 积分)
 
-### 捉“虫”竞赛
+### TiDB 4.0 捉“虫”竞赛
 
 本次 [捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 也在同一天圆满结束。此次竞赛，共有 40 位社区小伙伴组成 23 支队伍进行参赛。通过大家共同不懈的努力，一共为 TiDB 4.0 GA 找出 51 个 P1 级别的 bug 和 8 个 P0 级别 bug。下面就来揭晓最终排名。
 
@@ -143,7 +143,7 @@ tags: ['TiDB 易用性挑战赛','TiDB 捉虫竞赛','社区动态','社区']
 
 *   第三名：章鱼烧，总分 5850。
 
-值得一提的是，本次 [捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 第一名的获奖者 Manuel Rigger 是一位专攻数据库测试方向的博士后，来自苏黎世联邦理工学院，他的测试框架也帮助 MySQL，PostgreSQL，MariaDB 等找到 400 多个 bug。想更加了解他的框架是如何应用在 TiDB 的，欢迎关注即将到来的 [TiDB DevCon 2020](https://pingcap.com/community-cn/devcon2020/)，在大会上他也将给出精彩的分享。
+值得一提的是，本次 [捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 第一名的获奖者 Manuel Rigger 是一位专攻数据库测试方向的博士后，来自苏黎世联邦理工学院，他的测试框架也帮助 MySQL，PostgreSQL，MariaDB 等找到 400 多个 bug。想更加了解他的框架是如何应用在 TiDB 的，欢迎关注即将到来的 [TiDB DevCon 2020](https://pingcap.com/community-cn/devcon2020/)，在大会上他也将带来精彩的分享。
 
 除此之外也非常感谢以下几支队伍的参与：
 
@@ -163,11 +163,11 @@ tags: ['TiDB 易用性挑战赛','TiDB 捉虫竞赛','社区动态','社区']
 
 *   xiaodong-ji，50 分
 
-本次 [易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)，[捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 均设置了杰出贡献奖。在两个竞赛获得前三名的同学都将获得这个奖项。欢迎大家在 [TiDB DevCon 2020](https://pingcap.com/community-cn/devcon2020/) 与我们一起见证这个荣誉时刻！
+本次 [TiDB 易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)，[TiDB 4.0 捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 均设置了杰出贡献奖。在两个竞赛获得前三名的同学都将获得这个奖项。欢迎大家在 [TiDB DevCon 2020](https://pingcap.com/community-cn/devcon2020/) 与我们一起见证这个荣誉时刻！
 
 #### 成果展示：
 
-在这次捉“虫”竞赛中，有几个 bug 引起了我们的注意：
+在这次 [捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 中，有几个 bug 引起了我们的注意：
 
 [Server Panics when using partitions](https://github.com/tidb-challenge-program/bug-hunting-issue/issues/9)  这是 bug hunter Rigger 大神发现的 bug，查询导致 TiDB server 退出。
 
@@ -179,7 +179,7 @@ Dashboard 是 TiDB 在 4.0 中推出的提升易用性的功能，目前还处�
 
 虽然本赛季 [易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/) 和 [捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 已经结束，但 TiDB 追求一个完美数据库的脚步永不停歇，下一季赛季已经在路上了，敬请期待！
 
-恭喜以下同学可以获取到 Ping CAP 定制的双肩包：
+恭喜以下同学可以获取到 PingCAP 定制的双肩包：
 
 *   [AngleNet](https://github.com/tidb-challenge-program/register/issues/13) (3409 积分)
 
@@ -197,7 +197,7 @@ Dashboard 是 TiDB 在 4.0 中推出的提升易用性的功能，目前还处�
 
 * [□□□□□](https://github.com/tidb-challenge-program/register/issues/109) (1550 积分)
 
-恭喜以下同学可获取 Ping CAP 办公室五件套：
+恭喜以下同学可获取 PingCAP 办公室五件套：
 
 *   [unsafe](https://github.com/tidb-challenge-program/register/issues/8) (1336 积分)
 
@@ -209,7 +209,7 @@ Dashboard 是 TiDB 在 4.0 中推出的提升易用性的功能，目前还处�
 
 * [hsqlu](https://github.com/tidb-challenge-program/register/issues/47) (550
 
-恭喜以下同学获得 Ping CAP 套帽衫：
+恭喜以下同学获得 PingCAP 套帽衫：
 
 *   [blueshit](https://github.com/tidb-challenge-program/register/issues/45) (450 积分)
 
@@ -277,4 +277,4 @@ Dashboard 是 TiDB 在 4.0 中推出的提升易用性的功能，目前还处�
 
 ## 总结
 
-从 2 月 3 日开始，经过三个月的竞赛，TiDB 易用性挑战赛已经正式结束了。相信经过这三个月的不断比拼，每个参赛选手都有不同的收获。不管易用性挑战赛还是捉“虫”大赛的参赛选手都正在让 TiDB 更加完美，TiDB 4.0 GA 即将发布，所有努力的结果都将会呈现在 4.0 版本上，让我们一起见证更加易用的 TiDB。
+​随着 TiDB 的用户不断增多，TiDB 的易用性变得越来越重要。在不久前，我们陆续开展了 TiDB 易用性挑战赛和 TiDB 4.0 捉“虫”竞赛两项大赛，得到了广泛关注。并且大家都积极参与，选手们通过不断地完成一系列难度不同的任务来获得相应的积分，在不断的比拼过程中，选手们都​有不同的收获。恭喜各位获奖​的同学，是你们让 TiDB 更加易用。TiDB 4.0 GA 也即将发布，所有参赛选手的努力都会在 4.0 版本上有所展现，让我们一起见证更加易用~​
