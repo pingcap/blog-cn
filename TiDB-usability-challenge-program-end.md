@@ -27,7 +27,7 @@ tags: ['TiDB 易用性挑战赛','社区动态','社区']
 
 本次比赛完整积分榜见 [赛事活动页](https://pingcap.com/community-cn/tidb-usability-challenge/)。
 
-本次活动计入排名的参赛队伍基本信息如下（按照比赛规则，有 PingCAP 人员参与的小组不计入挑战赛最终排名，即上图中有 TiDB Logo 标示的选手）：
+本次活动计入排名的参赛队伍基本信息如下（按照比赛规则，有 PingCAP 人员参与的小组不计入挑战赛最终排名，即上图中有 TiDB Logo 标识的选手）：
 
 *   总参赛人员：141
 
@@ -207,7 +207,7 @@ Dashboard 是 TiDB 在 4.0 中推出的提升易用性的功能，目前还处�
 
 *   [ziyi-yan](https://github.com/tidb-challenge-program/register/issues/12) (550 积分)
 
-[hsqlu](https://github.com/tidb-challenge-program/register/issues/47) (550
+* [hsqlu](https://github.com/tidb-challenge-program/register/issues/47) (550
 
 恭喜以下同学获得 Ping CAP 套帽衫：
 
@@ -235,7 +235,7 @@ Dashboard 是 TiDB 在 4.0 中推出的提升易用性的功能，目前还处�
 
 *   [TiCloud](https://github.com/tidb-challenge-program/register/issues/83) (150 积分)
 
-[JmPotato](https://github.com/tidb-challenge-program/register/issues/131) (150 积分)
+* [JmPotato](https://github.com/tidb-challenge-program/register/issues/131) (150 积分)
 
 恭喜以下团队可获取 TiDB 黑色或白色 T 恤：
 
