@@ -13,7 +13,7 @@ tags: ['TiDB 易用性挑战赛','TiDB 4.0 捉虫竞赛','社区动态','社区'
 
 让我们先来揭晓易用性挑战赛的排行榜：
 
-![1-易用性挑战赛排行榜](media/TiDB-usability-challenge-program-end/1-易用性挑战赛排行榜.png)
+![1-易用性挑战赛排行榜](media/tidb-usability-challenge-program-and-bug-hunting-program-final-report/1-易用性挑战赛排行榜.png)
 
 >完整积分榜见 [大赛官网](https://pingcap.com/community-cn/tidb-usability-challenge/)。
 
@@ -123,7 +123,7 @@ tags: ['TiDB 易用性挑战赛','TiDB 4.0 捉虫竞赛','社区动态','社区'
 
 此次 [4.0 捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 共有共有 40 位社区小伙伴组成 23 支队伍进行参赛。通过大家共同不懈的努力，一共为 TiDB 4.0 GA 找出 51 个 P1 级别的 bug 和 8 个 P0 级别 bug。下面先来看看大家的最终排名。
 
-![2-捉虫排行榜](media/TiDB-usability-challenge-program-end/2-捉虫排行榜.png)
+![2-捉虫排行榜](media/tidb-usability-challenge-program-and-bug-hunting-program-final-report/2-捉虫排行榜.png)
 
 获得前三名的参赛队伍依次为：
 
