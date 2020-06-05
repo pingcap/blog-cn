@@ -1,12 +1,12 @@
 ---
-title: TiDB 4.0：the leading real-time HTAP database is ready for cloud
+title: TiDB 4.0：the Leading Real-Time HTAP Database is Ready for Cloud
 author: ['唐刘']
 date: 2020-06-05
 summary: 经过一年多的开发， TiDB 4.0 终于迎来 GA 版本，作为 TiDB『面向未来的数据库』道路上面的一个重要的里程碑，TiDB 4.0 不光在稳定性，易用性，性能，云原生等各个方面都有了巨大的进步，新增的特性也让 TiDB 产品能够支持更多元的业务类型。
 tags: ['TiDB','版本','社区动态']
 ---
 
-经过一年多的开发，TiDB 4.0 终于迎来 GA 版本，作为 TiDB『面向未来的数据库』道路上面的一个重要的里程碑，TiDB 4.0 不光在稳定性，易用性，性能，云原生等各个方面都有了巨大的进步，新增的特性也让 TiDB 产品能够支持更多元的业务类型。
+经过一年多的开发，TiDB 4.0 终于迎来 GA 版本，作为 TiDB「面向未来的数据库」道路上面的一个重要的里程碑，TiDB 4.0 不光在稳定性、易用性、性能、云原生等各个方面都有了巨大的进步，新增的特性也让 TiDB 产品能够支持更多元的业务类型。
 
 架构师面对业务，经常需要回答以下问题：
 
@@ -18,9 +18,9 @@ tags: ['TiDB','版本','社区动态']
 
 **如果让我们回答上述问题，我们的回答只有一个：TiDB 4.0！**
 
-## Realtime HTAP
+## Real-Time HTAP
 
-我们一直有一个愿望，当用户在使用 TiDB 的时候，并不需要太关注自己的业务到底是 OLTP 类型的，还是 OLAP 类型的（因为很多时候，用户自己其实也并不能很好的对业务进行区分），无论怎样的 SQL，都能在 TiDB 上面高效率的执行。**这个愿望，在 TiDB 4.0 终于得到了实现，我们提供了一套 Real-Time 的 Hybrid transaction/analytical processing (HTAP) 架构解决方案：**
+我们一直有一个愿望，当用户在使用 TiDB 的时候，并不需要太关注自己的业务到底是 OLTP 类型的，还是 OLAP 类型的（因为很多时候，用户自己其实也并不能很好的对业务进行区分），无论怎样的 SQL，都能在 TiDB 上面高效率的执行。**这个愿望，在 TiDB 4.0 终于得到了实现，我们提供了一套 Real-Time 的 Hybrid Transaction/Analytical Processing (HTAP) 架构解决方案：**
 
 ![1-htap-架构解决方案](media/tidb-4.0-the-leading-real-time-htap-database-is-ready-for-cloud/1-htap-架构解决方案.png)
 
@@ -76,9 +76,9 @@ tags: ['TiDB','版本','社区动态']
 
 <div class="caption-center">纵轴越低代表性能越好</div>
 
-## Other Major Features and improvements
+## Other Major Features and Improvements
 
-TiDB 4.0 还新增了非常多的特性和改进，无论从安全，生态，以及功能增强上面都有了很大的提升。
+TiDB 4.0 还新增了非常多的特性和改进，无论从安全、生态，以及功能增强上面都有了很大的提升。
 
 在安全上面：
 
@@ -108,7 +108,7 @@ TiDB 4.0 还新增了非常多的特性和改进，无论从安全，生态，�
 
 作为一款里程碑产品，我们有理由相信，TiDB 4.0 会给大家带来更多的惊喜，也欢迎大家开始使用 TiDB 4.0，多给我们反馈，共同完善 TiDB，一起打造面向未来的数据库产品。
 
-在此，特别感谢 TiDB 开发者社区所有小伙伴的贡献！TiDB 开发者社区以 SIG（Special Interest Groups） 为单位管理组织开发者。每个模块都有其固定的 SIG 负责新功能开发，性能优化，稳定性保障等。如果您想要成为 TiDB 的开发者，加入感兴趣的 SIG，与一线工程师面对面讨论，无疑是最好的方式。以下是截止 TiDB 4.0 GA 发布时 ，为 TiDB 4.0 作出贡献的 TiDB 社区开发者名单及其对应的 SIG &角色。
+在此，还要特别感谢 TiDB 开发者社区所有小伙伴的贡献！TiDB 开发者社区以 SIG（Special Interest Groups） 为单位管理组织开发者。每个模块都有其固定的 SIG 负责新功能开发，性能优化，稳定性保障等。如果您想要成为 TiDB 的开发者，加入感兴趣的 SIG，与一线工程师面对面讨论，无疑是最好的方式。以下是截至 TiDB 4.0 GA 发布时 ，为 TiDB 4.0 作出贡献的 TiDB 社区开发者名单及其对应的 SIG 名称。
 
 感谢以下组织的社区贡献者：
 
@@ -130,7 +130,7 @@ TiDB 4.0 还新增了非常多的特性和改进，无论从安全，生态，�
 | [engine](https://github.com/tikv/community/tree/master/sig/engine)| [fredchenbj](https://github.com/fredchenbj)| Yidian|
 | [execution](https://github.com/pingcap/community/tree/master/special-interest-groups/sig-exec)| [shihongzhi](https://github.com/shihongzhi)| Youdao|
 
-全员贡献者名单：
+全部贡献者名单：
 
 | SIG name| GitHub ID|
 |---|---|
