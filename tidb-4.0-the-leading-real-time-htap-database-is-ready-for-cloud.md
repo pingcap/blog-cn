@@ -1,9 +1,9 @@
 ---
-title: TiDB 4.0：the Leading Real-Time HTAP Database is Ready for Cloud
+title: TiDB 4.0：The Leading Real-Time HTAP Database is Ready for Cloud
 author: ['唐刘']
 date: 2020-06-05
-summary: 经过一年多的开发， TiDB 4.0 终于迎来 GA 版本，作为 TiDB『面向未来的数据库』道路上面的一个重要的里程碑，TiDB 4.0 不光在稳定性，易用性，性能，云原生等各个方面都有了巨大的进步，新增的特性也让 TiDB 产品能够支持更多元的业务类型。
-tags: ['TiDB','版本','社区动态']
+summary: TiDB 4.0 终于迎来 GA 版本，这是 TiDB「面向未来的数据库」道路上面的一个重要的里程碑。
+tags: ['TiDB 4.0','版本','社区动态']
 ---
 
 经过一年多的开发，TiDB 4.0 终于迎来 GA 版本，作为 TiDB「面向未来的数据库」道路上面的一个重要的里程碑，TiDB 4.0 不光在稳定性、易用性、性能、云原生等各个方面都有了巨大的进步，新增的特性也让 TiDB 产品能够支持更多元的业务类型。
@@ -100,7 +100,7 @@ TiDB 4.0 还新增了非常多的特性和改进，无论从安全、生态，�
 
 *   TiDB 4.0 去掉了之前 100MB 的事务大小限制，现在能支持最多 10GB 的事务，有了这个特性，用户可以方便的一个事务里面处理大量的数据，而不用考虑分批处理问题。具体可以参考 [Large Transactions in TiDB](https://pingcap.com/blog/large-transactions-in-tidb/)。另外，TiDB 4.0 也正式将悲观锁模式作为自己的默认事务模型，使用悲观锁，TiDB 4.0 能更好的去兼容 MySQL，也能方便用户更方便的将自己的业务从 MySQL 迁移到 TiDB 中，详见 [Pessimistic Locking: Better MySQL Compatibility, Fewer Rollbacks Under High Load](https://pingcap.com/blog/pessimistic-locking-better-mysql-compatibility-fewer-rollbacks-under-high-load/)。
 
-*   在 TiDB 长时间运行过程中，随着数据的变更，优化器可能会选错索引，出现慢查询，影响业务。为了解决这个问题，在 TiDB 4.0，我们引入了 SQL Plan Management(SPM)，通过 SPM，TiDB 能很好的控制查询优化器尽量选择最优的执行计划，用户也不需要修改代码去显示的添加 force index 来控制优化器，详见 [SQL Plan Management: Never Worry About Slow Queries Again](https://pingcap.com/blog/sql-plan-management-never-worry-about-slow-queries-again/)。
+*   在 TiDB 长时间运行过程中，随着数据的变更，优化器可能会选错索引，出现慢查询，影响业务。为了解决这个问题，在 TiDB 4.0，我们引入了 SQL Plan Management(SPM)，通过 SPM，TiDB 能很好的控制查询优化器尽量选择最优的执行计划，用户也不需要修改代码去显示的添加 force index 来控制优化器，详见： [SQL Plan Management: Never Worry About Slow Queries Again](https://pingcap.com/blog/sql-plan-management-never-worry-about-slow-queries-again/)。
 
 除了上面提到的特性，TiDB 4.0 还新增了 Sequence，Flashback，Case-Insensitive Collation，Add/Drop primary key 等特性，大家可以在使用 TiDB 4.0 的时候体验。
 
