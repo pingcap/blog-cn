@@ -163,6 +163,6 @@ tags: ['TiDB 易用性挑战赛','TiDB 4.0 捉虫竞赛','社区动态','社区'
 
 * [Dashboard](https://pingcap.com/blog-cn/tidb-4.0-tidb-dashboard/) 是 TiDB 在 4.0 中推出的提升易用性的功能，目前还处于内测阶段。**YKG** 在这次的大赛中，深度试用了 Dashboard 功能，提交了 5+ 的 bug。完善这些功能和解决这些易用性问题为我们继续提升 Dashboard 提供了有效的指引和巨大的帮助。
 
-**感谢所有参赛选手，你们的点滴成果都已经汇聚到了 [TiDB 4.0](https://pingcap.com/blog-cn/the-overview-of-tidb-4.0/) 的产品中，TiDB 因你们的贡献而变得更好、更强大！另外，所有的参赛选手们都可使用自己的积分兑换奖品哦，奖品设置详见活动官网（[TiDB 易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/) 和 [4.0 捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/)）~**
+**感谢所有参赛选手，你们的点滴成果都已经汇聚到了 [TiDB 4.0](https://pingcap.com/blog-cn/the-overview-of-tidb-4.0/) 的产品中，TiDB 因你们的贡献而变得更好、更强大！另外，所有的参赛选手们都可使用自己的积分兑换奖品哦，奖品设置详见活动官网（[易用性挑战赛官网](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/) 和 [4.0 捉“虫”竞赛官网](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/)）~**
 
 >本次 [TiDB 易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/) 和 [4.0 捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 已经结束，但 TiDB 追求一个完美数据库的脚步永不停歇，下一季赛季规划已经在路上哦，敬请期待！
