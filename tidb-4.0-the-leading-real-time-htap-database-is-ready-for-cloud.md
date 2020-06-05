@@ -1,7 +1,7 @@
 ---
 title: TiDB 4.0：The Leading Real-Time HTAP Database is Ready for Cloud
 author: ['唐刘']
-date: 2020-06-05
+date: 2020-06-06
 summary: TiDB 4.0 终于迎来 GA 版本，这是 TiDB「面向未来的数据库」道路上面的一个重要的里程碑。
 tags: ['TiDB 4.0','版本','社区动态']
 ---
