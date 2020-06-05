@@ -155,8 +155,6 @@ tags: ['TiDB 易用性挑战赛','TiDB 4.0 捉虫竞赛','社区动态','社区'
 
 **本次 [TiDB 易用性挑战赛](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/) 和 [4.0 捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 均设置了杰出贡献奖。在两个竞赛获得前三名的同学都将获得这个奖项。欢迎大家在 [TiDB DevCon 2020](https://pingcap.com/community-cn/devcon2020/) 与我们一起见证这个荣誉时刻！**
 
-在这次中，有几个 bug 引起了我们的注意：
-
 在这次 [捉“虫”竞赛](https://pingcap.com/blog-cn/tidb-bug-hunting-guide/) 中，有几个 bug 引起了我们的注意：
 
 * [Server Panics when using partitions](https://github.com/tidb-challenge-program/bug-hunting-issue/issues/9)  这是 bug hunter **Rigger** 大神发现的 bug，查询导致 TiDB server 退出。
