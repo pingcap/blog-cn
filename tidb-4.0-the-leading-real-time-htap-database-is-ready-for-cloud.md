@@ -6,7 +6,7 @@ summary: 经过一年多的开发， TiDB 4.0 终于迎来 GA 版本，作为 Ti
 tags: ['TiDB','版本','社区动态']
 ---
 
-经过一年多的开发， TiDB 4.0 终于迎来 GA 版本，作为 TiDB『面向未来的数据库』道路上面的一个重要的里程碑，TiDB 4.0 不光在稳定性，易用性，性能，云原生等各个方面都有了巨大的进步，新增的特性也让 TiDB 产品能够支持更多元的业务类型。
+经过一年多的开发，TiDB 4.0 终于迎来 GA 版本，作为 TiDB『面向未来的数据库』道路上面的一个重要的里程碑，TiDB 4.0 不光在稳定性，易用性，性能，云原生等各个方面都有了巨大的进步，新增的特性也让 TiDB 产品能够支持更多元的业务类型。
 
 架构师面对业务，经常需要回答以下问题：
 
@@ -16,11 +16,11 @@ tags: ['TiDB','版本','社区动态']
 
 * 业务数据需要做数据分析，需要关联多表，执行聚合等操作？用分析型数据库！
 
-如果让我们回答上述问题，我们的回答只有一个：TiDB 4.0！
+**如果让我们回答上述问题，我们的回答只有一个：TiDB 4.0！**
 
 ## Realtime HTAP
 
-我们一直有一个愿望，当用户在使用 TiDB 的时候，并不需要太关注自己的业务到底是 OLTP 类型的，还是 OLAP 类型的（因为很多时候，用户自己其实也并不能很好的对业务进行区分），无论怎样的 SQL，都能在 TiDB 上面高效率的执行。这个愿望，在 TiDB 4.0 终于得到了实现，我们提供了一套 Real-Time 的 Hybrid transaction/analytical processing (HTAP) 架构解决方案：
+我们一直有一个愿望，当用户在使用 TiDB 的时候，并不需要太关注自己的业务到底是 OLTP 类型的，还是 OLAP 类型的（因为很多时候，用户自己其实也并不能很好的对业务进行区分），无论怎样的 SQL，都能在 TiDB 上面高效率的执行。**这个愿望，在 TiDB 4.0 终于得到了实现，我们提供了一套 Real-Time 的 Hybrid transaction/analytical processing (HTAP) 架构解决方案：**
 
 ![1-htap-架构解决方案](media/tidb-4.0-the-leading-real-time-htap-database-is-ready-for-cloud/1-htap-架构解决方案.png)
 
@@ -30,7 +30,7 @@ tags: ['TiDB','版本','社区动态']
 
 ## Serverless
 
-在 TiDB 4.0，我们不光在 Cloud 上面支持了 Real-Time HTAP，也引入了弹性调度系统，真正的让 TiDB 在 Cloud 上面变成了一个 Serverless 数据库。
+**在 TiDB 4.0，我们不光在 Cloud 上面支持了 Real-Time HTAP，也引入了弹性调度系统，真正的让 TiDB 在 Cloud 上面变成了一个 Serverless 数据库。**
 
 现在，用户只需要在云上（或者自己的 K8s 集群）使用最小规模集群部署 TiDB 集群，配置好规则（譬如当 TiDB 的 CPU 超过 50%，自动扩容一台 TiDB 节点），TiDB 就会根据用户自身的业务负载，自动做一些事情，包括：
 
