@@ -128,6 +128,8 @@ tags: ['TiDB','Chaos Mesh','HTAP']
 
 ![15-contributor-gif](media/tidb-devcon2020-liuqi/15-contributor-gif.gif)
 
+<div class="caption-center">https://rustin-liu.github.io/Ti2020/</div>
+
 **这位小伙伴也在本届 TiDB DevCon 的开发者社区专题论坛中分享了参与社区的心路历程，我们也希望更多人能够像这位小伙伴一样，在 TiDB 社区中有所收获，更在贡献中感受到乐趣&归属感。**
 
 另外，不管你是谁，只要你想参与 TiDB 的打造或者想使用 TiDB，我们都为你准备好了：
