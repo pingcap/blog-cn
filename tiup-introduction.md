@@ -2,13 +2,13 @@
 title: 从马车到电动车，TiDB 部署工具变形记
 author: ['Heng Long']
 date: 2020-06-12
-summary: 在部署易用性方面，PingCAPer 经过诸多探索和尝试，经过了命令行时代、Ansible 时代，终于在 TiDB 4.0 发布了新一代具有里程碑意义的解决方案——TiUP。
+summary: 在部署易用性方面，TiDB 开发者经过诸多探索和尝试，经过了命令行时代、Ansible 时代，终于在 TiDB 4.0 发布了新一代具有里程碑意义的解决方案——TiUP。
 tags: ['TiUP','安装部署','TiDB 4.0 新特性']
 ---
 
-打造优秀产品的信念渗透在每一个 PingCAPer 血液中，衡量产品的优秀有多个维度：易用性、稳定性、性能、安全性、开放性、拓展性等等。**在部署易用性方面，PingCAPer 经过诸多探索和尝试，经过了命令行时代、Ansible 时代，终于在 TiDB 4.0 发布了新一代具有里程碑意义的解决方案——TiUP。**
+打造优秀产品的信念渗透在每一个 TiDB 开发者的血液中，衡量产品的优秀有多个维度：易用性、稳定性、性能、安全性、开放性、拓展性等等。**在部署易用性方面，TiDB 开发者们经过诸多探索和尝试，经过了命令行时代、Ansible 时代，终于在 TiDB 4.0 发布了新一代具有里程碑意义的解决方案——TiUP。**
 
-TiUP 的意义不仅仅在于提供了里程碑式的解决方案，更是对开源活力的有力证明。TiUP 从 3 月立项进入 [PingCAP Incubator](https://github.com/pingcap-incubator) 进行孵化，从零开发到最终于 TiUP 1.0 GA 仅仅只花了两个月。两个月内 42 位 Contributor 新增了 690+ 次提交，最终沉淀接近 40k 行代码。
+TiUP 的意义不仅仅在于提供了里程碑式的解决方案，更是对 TiDB 开源社区活力的有力证明。TiUP 从 3 月立项进入 [PingCAP Incubator](https://github.com/pingcap-incubator) 进行孵化，从零开发到最终于 TiUP 1.0 GA 仅仅只花了两个月。两个月内 42 位 Contributor 新增了 690+ 次提交，最终沉淀接近 40k 行代码。
 
 本文会描述整个演进过程，并介绍 TiUP 设计过程中的一些理念和实现细节。
 
@@ -18,7 +18,7 @@ TiUP 的诞生并非一蹴而就，而是有一个演变过程。简要描述这
 
 ### 纯命令行
 
-在没有 TiDB-Ansible 的时代，要运行一个 TiDB 集群只能通过命令行的方式。TiDB 集群包含 TiDB/TiKV/PD 三个核心组件， 和 Promethues/Grafana/Node Exporter 监控组件。手动构建一个集群运行需要的所有命令行参数和配置文件比较复杂的。比如，我们想要搭建一个集群，其中启动三个 PD 的命令行参数就有下面这么复杂（可以忽略命令行，仅演示复杂性）：
+在没有 TiDB Ansible 的时代，要运行一个 TiDB 集群只能通过命令行的方式。TiDB 集群包含 TiDB/TiKV/PD 三个核心组件， 和 Promethues/Grafana/Node Exporter 监控组件。手动构建一个集群运行需要的所有命令行参数和配置文件比较复杂的。比如，我们想要搭建一个集群，其中启动三个 PD 的命令行参数就有下面这么复杂（可以忽略命令行，仅演示复杂性）：
 
 ```
 $ bin/pd-server --name=pd-0
@@ -36,13 +36,13 @@ $ bin/pd-server --name=pd-2
 ```
 >注：以 $ 开头的表示在命令行执行的命令
 
-以上仅仅是启动 PD 就可以发现这种方式显然太复杂、使用门槛太高。尽管我们可以通过把这些东西脚本化，在脚本构建好这些内容，每次执行对应脚本来简化这个过程。但是对于第一次构建脚本的用户来说，也是不小的挑战。
+以上仅仅是启动 PD 就可以发现这种方式显然太复杂、使用门槛太高。尽管我们可以通过把这些东西脚本化，在脚本构建好这些内容，每次执行对应脚本来简化这个过程，但是对于第一次构建脚本的用户来说，也是不小的挑战。
 
 另外在生产环境部署时还需要在多个主机上分发下载对应组件，以及初始化环境，对于扩容又需要各种初始化，相当繁琐。
 
 ### TiDB Ansible
 
-第二代方案 [TiDB Ansible](https://github.com/pingcap/tidb-ansible) 基于 [Ansible](https://www.ansible.com/) playbook 功能编写的集群部署工具，简化之后，只需要用户提供拓扑文件，即可提供集群部署和运维功能（启动、关闭、升级、重启、扩容、缩容）。但是 TiDB-Ansible 的使用依然非常繁琐，同时提供的错误消息也不友好，同时只能串行处理，对于大集群的运维和管理尤其不方便。
+第二代方案 [TiDB Ansible](https://github.com/pingcap/tidb-ansible) 基于 [Ansible](https://www.ansible.com/) playbook 功能编写的集群部署工具，简化之后，只需要用户提供拓扑文件，即可提供集群部署和运维功能（启动、关闭、升级、重启、扩容、缩容）。但是 TiDB Ansible 的使用依然非常繁琐，同时提供的错误消息也不友好，同时只能串行处理，对于大集群的运维和管理尤其不方便。
 
 ```
 $ vim hosts.ini                                                
@@ -60,7 +60,7 @@ $ ansible-playbook start.yml
 
 TiUP 在 TiDB Ansible 的基础上进一步对整个集群的部署和运维操作进行了简化。由于 TiUP 从零开发，可以掌控所有实现细节，针对部署 TiDB 集群的需要定制、避免非必需的动作，内部做到最大程度的并行化，同时提供更加友好错误提示。
 
-利用 TiUP, 部署集群通过简单的命令即可完成，且执行速度较 TiDB Ansible 大幅提高：
+利用 TiUP 部署集群通过简单的命令即可完成，且执行速度较 TiDB Ansible 大幅提高：
 
 ```
 $ tiup cluster deploy <cluster-name> <version> <topology.yaml> [flags]   # 部署集群
@@ -83,13 +83,13 @@ $ tiup cluster upgrade tidb-test v4.0.0-rc                               # 升�
 $ curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
 ```
 
-**使用 tiup help 命令发现其实我们并没有 tiup cluster 这个子命令，这是怎么回事儿呢？**
+**你就会发现，使用 tiup help 命令发现其实我们并没有 tiup cluster 这个子命令，这是怎么回事儿呢？**
 
 ### TiUP 理念
 
 以上虽然演示了通过 TiUP 快速部署运维集群，但是 TiUP 的定位从来就不是一个运维工具，而是 TiDB 组件管理器。TiUP 之于 TiDB，类似 yum 之于 CentOS，Homebrew 之于 MacOS。
 
-TiUP 的理念为：简单易用、可扩展、开放、安全。
+**TiUP 的理念为：简单易用、可扩展、开放、安全。**
 
 ### 简单易用
 
@@ -181,9 +181,9 @@ Global Flags:
 
 4.  所有的元信息文件都包含该被签名内容和签名信息。
 
-5.  根证书使用 5 个密钥签名，5 个密钥分别由 5 位不同的 PingCAPer 离线保存。
+5.  根证书使用 5 个密钥签名，5 个密钥分别由 5 位不同的 TiDB 开发者离线保存。
 
-6.  初始分发的 TiUP 中包含一份由 5 位 PingCAPer 签名的 `root.json`，后续信息校验会保证 root.json 中至少有三个签名是正确的。
+6.  初始分发的 TiUP 中包含一份由 5 位 TiDB 开发者签名的 `root.json`，后续信息校验会保证 root.json 中至少有三个签名是正确的。
 
 7.  `index/snashot/timestamp` 的不可篡改性由 `root.json` 中的对应的密钥信息保证。
 
@@ -193,7 +193,7 @@ Global Flags:
 
 通过上面的机制，我们能保证用户下载的组件不会经过任何中间环节篡改，从而提供安全的组件分发机制。
 
-希望上面的介绍能让大家对 TiUP 的演进和理念有初步的认识，同时 [TiUP](https://github.com/pingcap/tiup) 开源在 Github 并且随这 TiDB 4.0 GA，对于 TiUP 有兴趣的小伙伴可以阅读源码，有任何问题都可以通过 Issue 提问或直接在 Slack 的 [#sig-tiup](https://join.slack.com/share/zt-exzk2vc5-72UhEIRqu7Uj_5N5JYb8TQ) 中提问。
+希望上面的介绍能让大家对 TiUP 的演进和理念有初步的认识，同时 [TiUP](https://github.com/pingcap/tiup) 开源在 Github 并且随着 TiDB 4.0 GA 版本一起发布，对于 TiUP 有兴趣的小伙伴可以阅读源码，有任何问题都可以通过 Issue 提问或直接在 Slack 的 [#sig-tiup](https://join.slack.com/share/zt-exzk2vc5-72UhEIRqu7Uj_5N5JYb8TQ) 中提问。
 
 ### 附：TiUP 贡献者名单
 
