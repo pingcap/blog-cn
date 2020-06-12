@@ -8,7 +8,7 @@ tags: ['TiUP','安装部署','TiDB 4.0 新特性']
 
 打造优秀产品的信念渗透在每一个 TiDB 开发者的血液中，衡量产品的优秀有多个维度：易用性、稳定性、性能、安全性、开放性、拓展性等等。**在部署易用性方面，TiDB 开发者们经过诸多探索和尝试，经过了命令行时代、Ansible 时代，终于在 TiDB 4.0 发布了新一代具有里程碑意义的解决方案——TiUP。**
 
-TiUP 的意义不仅仅在于提供了里程碑式的解决方案，更是对 TiDB 开源社区活力的有力证明。TiUP 从 3 月立项进入 [PingCAP Incubator](https://github.com/pingcap-incubator) 进行孵化，从零开发到最终于 TiUP 1.0 GA 仅仅只花了两个月。两个月内 42 位 Contributor 新增了 690+ 次提交，最终沉淀接近 40k 行代码。
+TiUP 的意义不仅仅在于提供了里程碑式的解决方案，更是对 TiDB 开源社区活力的有力证明。TiUP 从 3 月立项进入 [PingCAP Incubator](https://github.com/pingcap-incubator) 进行孵化，从零开发到最终发布 TiUP 1.0 GA 仅仅只花了两个月。两个月内 40+ 位 Contributor 新增了 690+ 次提交，最终沉淀接近 40k 行代码。
 
 本文会描述整个演进过程，并介绍 TiUP 设计过程中的一些理念和实现细节。
 
@@ -42,7 +42,7 @@ $ bin/pd-server --name=pd-2
 
 ### TiDB Ansible
 
-第二代方案 [TiDB Ansible](https://github.com/pingcap/tidb-ansible) 基于 [Ansible](https://www.ansible.com/) playbook 功能编写的集群部署工具，简化之后，只需要用户提供拓扑文件，即可提供集群部署和运维功能（启动、关闭、升级、重启、扩容、缩容）。但是 TiDB Ansible 的使用依然非常繁琐，同时提供的错误消息也不友好，同时只能串行处理，对于大集群的运维和管理尤其不方便。
+第二代方案 [TiDB Ansible](https://github.com/pingcap/tidb-ansible) 基于 [Ansible](https://www.ansible.com/) playbook 功能编写的集群部署工具，简化之后，只需要用户提供拓扑文件，即可提供集群部署和运维功能（启动、关闭、升级、重启、扩容、缩容）。但是 TiDB Ansible 的使用依然非常繁琐，提供的错误消息也不友好，同时只能串行处理，对于大集群的运维和管理尤其不方便。
 
 ```
 $ vim hosts.ini                                                
@@ -77,13 +77,13 @@ $ tiup cluster upgrade tidb-test v4.0.0-rc                               # 升�
 
 ## 深入 TiUP
 
-如果你使用下面这行脚本安装 TiUP：
+首先使用下面这行脚本安装 TiUP：
 
 ```
 $ curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
 ```
 
-**你就会发现，使用 tiup help 命令发现其实我们并没有 tiup cluster 这个子命令，这是怎么回事儿呢？**
+**你会发现，使用 tiup help 命令时，我们并没有 tiup cluster 这个子命令，这是怎么回事儿呢？这就要从 TiUP 的设计理念聊起。**
 
 ### TiUP 理念
 
