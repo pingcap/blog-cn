@@ -96,7 +96,7 @@ CSV 就是一种典型的接口文件，但是我们这里说的并不是数据�
 
 ### 3. CDC 工具
 
-接下来再看看第三种方式，**也是我们比较推荐的方式，就是 CDC 工具**，它的全称是增量数据捕获工具，比如 Oracle  OGG，IBM Inforsphere CDC，还有 [TiDB  DM](http://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247489650&idx=1&sn=e0e0633035d85acd33f89d0b9ba9f82c&chksm=eb163f18dc61b60edf5d22c9aa4ca891adb102d04bfe50fcce11487ad9be833e9b3db2338e44&scene=21#wechat_redirect) 都是这类产品。
+接下来再看看第三种方式，**也是我们比较推荐的方式，就是 CDC 工具**，它的全称是增量数据捕获工具，比如 Oracle  OGG，IBM Inforsphere CDC，还有 [TiDB DM](https://pingcap.com/blog-cn/dm-1.0-ga/) 都是这类产品。
 
 ![5-复制方式-3](media/best-practices-for-heterogeneous-database-replication/5-复制方式-3.png)
 
