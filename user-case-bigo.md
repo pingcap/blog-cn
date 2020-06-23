@@ -1,7 +1,7 @@
 ---
 title: 海外直播软件 Bigo 的 TiDB 4.0 线上实践
 author: ['徐嘉埥']
-date: 2017-09-15
+date: 2020-06-23
 summary: 通过 TiDB 4.0 中的 TiFlash，我们拥有了非常实时的线上分析能力。
 tags: ['互联网']
 category: case
