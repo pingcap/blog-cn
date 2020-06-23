@@ -7,6 +7,7 @@
   - [360 cloud](user-case-360-cloud.md)
   - [美团点评](user-case-meituandianping.md)
   - [网易互娱](user-case-wangyihuyu.md)
+  - [Bigo](user-case-bigo.md)
   - [京东智联云](user-case-jingdongzhilianyun.md)
   - [小红书](user-case-xiaohongshu.md)
   - [小米](user-case-xiaomi.md)
