@@ -1,7 +1,7 @@
 ---
 title: TiDB 在马上消费金融核心账务系统归档及跑批业务下的实践
 author: ['康文权 李银龙']
-date: 2020-2-11
+date: 2020-02-11
 summary: 我们积累了账务归档、总账跑批等大数据量、高并发量的 TiDB 实践经验，还将所有 TiDB 运行到了 Kubernetes 容器云平台之上，使数据库真正获得了 Cloud-native 能力。
 tags: ['金融']
 category: case

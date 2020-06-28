@@ -1,4 +1,3 @@
-
 ---
 title: TiDB 2.0 GA Release
 author: ['PingCAP']
