@@ -1,12 +1,12 @@
----  
+---   
 title: 基于 Chaos Mesh® 和 Argo 打造分布式测试平台
 author: ['叶奔','殷成文'']
-date: 2020-02-05
-summary:  TiDB 3.1 推出的 TiFlash 产品，可以让你的 AP 查询提升数倍，不需要复杂的操作，无需多少节点，轻轻松松。
+date: 2020-06-29
+summary:  本文介绍我们是如何在 Chaos Mesh 和 Argo 的基础上打造自己的自动化测试平台 TiPocket]，实现完全自动化的混沌测试，构成混沌测试完整闭环。
 tags: ['Chaos Mesh','TiPocket']
 ---  
 
-不久前我们开源了基于 Kubernetes 的混沌测试工具 [Chaos Mesh®](https://chaos-mesh.org)，Chaos Mesh 提供了模拟系统异常状况的能力，但这只是混沌工程中的一环，完整混沌工程核心原则包含了系统稳定状态的定义，提出假设，运行实验，以及验证和改进。本篇文章主要介绍我们是如何在 Chaos Mesh 和 [Argo](https://argoproj.github.io/) 的基础上打造自己的自动化测试平台 [TiPocket](https://github.com/pingcap/tipocket)，实现完全自动化的混沌测试，构成到混沌测试完整闭环。
+不久前我们开源了基于 Kubernetes 的混沌测试工具 [Chaos Mesh®](https://chaos-mesh.org)，Chaos Mesh 提供了模拟系统异常状况的能力，但这只是混沌工程中的一环，完整混沌工程核心原则包含了系统稳定状态的定义，提出假设，运行实验，以及验证和改进。本篇文章主要介绍我们是如何在 Chaos Mesh 和 [Argo](https://argoproj.github.io/) 的基础上打造自己的自动化测试平台 [TiPocket](https://github.com/pingcap/tipocket)，实现完全自动化的混沌测试，构成混沌测试完整闭环。
 
 ## 为什么需要 TiPocket? 
 
