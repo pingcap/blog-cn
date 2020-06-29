@@ -104,7 +104,7 @@ spec:
 
 ## Loki 提高实验的可观测性
 
-可观察性，在云原生中系统中是非常重要的一环。通常来说可观察性主要包含 Metrics（指标），Logging（日志）和 Tracing（追踪）。由于 TiPocket 中主要运行的 test case，都是针对于测试 TiDB 集群，常依靠 metrics 和日志就能够定位问题。
+可观测性，在云原生中系统中是非常重要的一环。通常来说可观测性主要包含 Metrics（指标），Logging（日志）和 Tracing（追踪）。由于 TiPocket 中主要运行的 test case，都是针对于测试 TiDB 集群，常依靠 metrics 和日志就能够定位问题。
 
 ![3-Loki](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/3-loki.png)
 
