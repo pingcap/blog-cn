@@ -6,17 +6,19 @@ summary:  本文介绍我们是如何在 Chaos Mesh 和 Argo 的基础上打造�
 tags: ['Chaos Mesh','TiPocket']
 ---  
 
-不久前我们开源了基于 Kubernetes 的混沌测试工具 [Chaos Mesh®](https://chaos-mesh.org)，Chaos Mesh 提供了模拟系统异常状况的能力，但这只是混沌工程中的一环，完整混沌工程核心原则包含了系统稳定状态的定义，提出假设，运行实验，以及验证和改进。本篇文章主要介绍我们是如何在 Chaos Mesh 和 [Argo](https://argoproj.github.io/) 的基础上打造自己的自动化测试平台 [TiPocket](https://github.com/pingcap/tipocket)，实现完全自动化的混沌测试，构成混沌测试完整闭环。
+不久前我们开源了基于 Kubernetes 的混沌测试工具 [Chaos Mesh®](https://chaos-mesh.org)，Chaos Mesh 提供了模拟系统异常状况的能力，但这只是混沌工程中的一环，完整混沌工程核心原则包含了系统稳定状态的定义、提出假设、运行实验以及验证和改进。
+
+本篇文章主要介绍我们是如何在 Chaos Mesh 和 [Argo](https://argoproj.github.io/) 的基础上打造自己的自动化测试平台 [TiPocket](https://github.com/pingcap/tipocket)，实现完全自动化的混沌测试，构成混沌测试完整闭环。
 
 ## 为什么需要 TiPocket? 
 
 为了确保用户的数据安全，我们需要确保给用户提供的每一个 TiDB 版本都已经经过了严格的测试，所以我们为 TiDB 设计了各种异常场景，并实现了数十个测试 Case， 所以在我们的 Kubernetes 集群中，可能同时运行着十几个甚至几十个混沌实验，即使我们拥有了 Chaos Mesh 来帮助我们管理错误注入，但这还远不够，我们还需要去管理 TiDB 集群，需要去收集指标，需要去分析结果，同时进行如此多的混沌实验，另一方面，我们还需要对 TiDB 生态中的其他工具进行混沌测试，这是无法想象的，因此，我们开发了 TiPocket 来解放自己。
 
-**TiPocket 是一个基于 Kubernetes 和 Chaos Mesh 的完全自动化测试框架，目前我们主要使用它用来测试 TiDB 集群，不过由于它 All-in-k8s 的特性以及可扩展的接口，它目前也支持测试 TiDB 生态中的其他组件，只要简单的添加应用在 Kubernetes 中 Create/Delete 的逻辑，就可以很轻松的添加对各种应用的支持。**
+**TiPocket 是一个基于 Kubernetes 和 Chaos Mesh 的完全自动化测试框架，目前我们主要使用它用来测试 TiDB 集群，不过由于它 All-in-K8s 的特性以及可扩展的接口，它目前也支持测试 TiDB 生态中的其他组件，只要简单的添加应用在 Kubernetes 中 Create/Delete 的逻辑，就可以很轻松的添加对各种应用的支持。**
 
 ## Chaos Mesh 提供故障模拟的能力 
 
-故障注入可以说是混沌测试中重要的一环，并且对于分布式数据库 TiDB 来说，可能遇到的故障又非常的多，不仅仅是节点故障，各种网络故障，文件系统故障，更甚至可能遇到内核故障，如果 TiDB 不能正确的处理这些异常，那么后果是无法想象的，这也是最开始我们开发 Chaos Mesh 的主要原因之一。TiPocket 中很好的结合了 Chaos Mesh，将 Chaos Mesh 作为最基本的依赖之一，以达到混沌测试中故障注入的目的。 
+故障注入可以说是混沌测试中重要的一环，并且在分布式数据库领域，可能遇到的故障又非常的多，不仅仅是节点故障、各种网络故障、文件系统故障，更甚至可能遇到内核故障。如果 TiDB 不能正确的处理这些异常，那么后果是无法想象的，这也是最开始我们开发 Chaos Mesh 的主要原因之一。而 TiPocket 中很好的结合了 Chaos Mesh，将 Chaos Mesh 作为最基本的依赖之一，以达到混沌测试中故障注入的目的。 
 
 ![1-chaos-mesh](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/1-chaos-mesh.png)
 
@@ -52,7 +54,7 @@ Porcupine 一个用 Go 实现的线性一致性验证工具。是基于 [P-compo
 
 ### 事务隔离级别测试：[Elle](https://github.com/jepsen-io/elle)
 
-Elle 是用来验证数据库事务隔离级别的检查工具。Elle 是一个纯黑盒的测试工具，巧妙的构造了一个测试场景，通过客户端生成的历史构造出依赖关系图，通过判断依赖图中是否有环以及分析环来确定事务的出现的异常类型，来确定事务的隔离级别。在 TiPocket 中，我们参考 Elle 项目，实现了 Go 版本的 Elle 检查工具 [go-elle](https://github.com/pingcap/tipocket/tree/master/pkg/elle), 并结合 go-elle 工具来验证 TiDB 的隔离级别。
+Elle 是用来验证数据库事务隔离级别的检查工具。Elle 是一个纯黑盒的测试工具，巧妙的构造了一个测试场景，通过客户端生成的历史构造出依赖关系图，通过判断依赖图中是否有环以及分析环来确定事务的出现的异常类型，来确定事务的隔离级别。在 TiPocket 中，我们参考 Elle 项目，实现了 Go 版本的 Elle 检查工具 [go-elle](https://github.com/pingcap/tipocket/tree/master/pkg/elle)，并结合 go-elle 工具来验证 TiDB 的隔离级别。
 
 这些只是 TiPocket  中用来验证 TiDB 正确性的一小部分，如果读者有兴趣可以自行阅读相关 [源码](https://github.com/pingcap/tipocket)，查看更多的验证方法。现在我们有了故障注入，有了待测的 TiDB 集群，有了检验 TiDB 的方式，那么我们该如让这些混沌实验自动化的运行起来呢？如何最大化的利用资源呢？在下一小节我们会介绍 TiPocket 中是如何解决这个问题的。
 
@@ -60,7 +62,7 @@ Elle 是用来验证数据库事务隔离级别的检查工具。Elle 是一个�
 
 和大多数的工程师一样，我们第一个想法是自己开发，造轮子，让 TiPocket 具备调度的功能和管理的功能，但是考虑到我们目前的人力和时间，并且我们知道目前已经有很多开源的工具可以提供类似的功能，所以最后我们选择让 TiPocket  更加纯粹，将调度和管理交给更加合适的工具去负责。在考虑到我们  All-in-K8s 的特性，[Argo](https://github.com/argoproj/argo) 就成为我们不二的选择。
 
-![2-argo](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/2-argo.png)
+![2-argo](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/2-argo.png) 
 
 Argo 是一个为 Kubernetes 而设计的工作流引擎，很早就在社区中开源，并且马上得到了广泛的关注和应用。像在知名的 [kubeflow](https://www.kubeflow.org/) 项目中，就大量使用了 Argo。下面我们首先来介绍下 Argo 的基本概念，再来讲讲如何结合 TiPocket 和 Argo。
 
@@ -102,11 +104,11 @@ spec:
 
 ## Loki 提高实验的可观测性  
 
-可观察性，在云原生中系统中是非常重要的一环。通常来说可观察性主要包含 Metrics （指标）， Logging（日志） 和 Tracing（追踪）。由于 TiPocket 中主要运行的 test case，都是针对于测试 tidb 集群，常依靠metrics 和日志就能够定位问题。
+可观察性，在云原生中系统中是非常重要的一环。通常来说可观察性主要包含 Metrics（指标），Logging（日志）和 Tracing（追踪）。由于 TiPocket 中主要运行的 test case，都是针对于测试 TiDB 集群，常依靠 metrics 和日志就能够定位问题。
 
 ![3-创建任务](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/3-创建任务.png)
 
-Metrics 不用多说，Prometheus 已经成为了在 Kubernetes 监控的事实标准。然而对于日志，却没有一个统一的答案。比如 elasticsearch, fluent-bit 以及 Kibana 的解决方案，尽管这一套系统运行良好，但是却会消耗比较多的资源，并且维护成本太高。最终我们放弃了 EFK 的方案，而是采用了 [Grafana](https://grafana.com/) 开源的 [Loki](https://github.com/grafana/loki) 项目来作为日志的解决方案。
+Metrics 不用多说，Prometheus 已经成为了在 Kubernetes 监控的事实标准。然而对于日志，却没有一个统一的答案。比如 elasticsearch，fluent-bit 以及 Kibana 的解决方案，尽管这一套系统运行良好，但是却会消耗比较多的资源，并且维护成本太高。最终我们放弃了 EFK 的方案，而是采用了 [Grafana](https://grafana.com/) 开源的 [Loki](https://github.com/grafana/loki) 项目来作为日志的解决方案。
 
 Loki 采用了跟 Prometheus 一样的 label 系统，我们可以很轻松的将 Prometheus 的监控指标与对应 pod 的日志结合起来，并且使用类似的查询语言去查询。另外 Grafana 目前也已经支持了 Loki dashboard，所以只需要使用 Grafana 就同时展示监控指标和日志了，非常方便。另一方面，TiDB 自带的监控系统中也含有 Grafana 组件，这样我就可以直接复用此 Grafana。
 
@@ -114,7 +116,7 @@ Loki 采用了跟 Prometheus 一样的 label 系统，我们可以很轻松的�
 
 上面介绍了这么多，最后让我们看一下在 TiPocket 中一个完整的混沌实验到底是什么样子的呢？
 
-1.  创建 Argo Cron Workflow 任务，在这个 Cron Workflow 中定义待测试的集群，注入的故障，用来检查 TiDB 集群正确性的测试 Case，以及任务的执行时间等。在 Cron Workflow 在运行过程中有需要的话还支持实时查看 case 的日志。
+1.  创建 Argo Cron Workflow 任务，在这个 Cron Workflow 中定义待测试的集群，注入的故障，用来检查 TiDB 集群正确性的测试 Case，以及任务的执行时间等。在 Cron Workflow 在运行过程中有需要的话还支持实时查看 Case 的日志。
 
 	![4-loki](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/4-loki.png)
 
@@ -126,10 +128,8 @@ Loki 采用了跟 Prometheus 一样的 label 系统，我们可以很轻松的�
 
 	![6-监控日志](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/6-监控日志.png)
 
-
-	不过这个时候也由不太方便的地方。目前在 Grafana logs dashboard 中，没有办法设置日志查询的 step 参数。这个参数用来控制日志查询时的采样，并且为了控制查询的数量，它会随着你查询的总时间而自动调整。比如查询 1 分钟的日志，step 会自动配置成 1s；查询1天的日志，step 可能变成了 30s, 在这个时候就会有部分日志展示不出来。所以一般推荐尽量加入多的过滤条件进行搜索，或者使用 Loki 的命令行工具 logcli 将所有日志下载下来再查询。
+	不过这个时候也由不太方便的地方。目前在 Grafana logs dashboard 中，没有办法设置日志查询的 step 参数。这个参数用来控制日志查询时的采样，并且为了控制查询的数量，它会随着你查询的总时间而自动调整。比如查询 1 分钟的日志，step 会自动配置成 1s；查询1天的日志，step 可能变成了 30s，在这个时候就会有部分日志展示不出来。所以一般推荐尽量加入多的过滤条件进行搜索，或者使用 Loki 的命令行工具 logcli 将所有日志下载下来再查询。
 
 4.  如果测试 Case 正常结束，那么集群会正常清理，等待 Argo 调度下一次测试的执行。
-
 
 **以上就是我们如何利用 Chaos Mesh 和一些开源项目打造自动化混沌测试平台的完整流程。如果你也对混沌工程感兴趣的话，欢迎一起参与 [TiPocket](https://github.com/pingcap/tipocket) 和 [Chaos Mesh](https://github.com/pingcap/chaos-mesh) !**
