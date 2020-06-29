@@ -12,7 +12,7 @@ tags: ['Chaos Mesh','TiPocket']
 
 ## 为什么需要 TiPocket? 
 
-为了确保用户的数据安全，我们需要确保给用户提供的每一个 TiDB 版本都已经经过了严格的测试，所以我们为 TiDB 设计了各种异常场景，并实现了数十个测试 Case， 所以在我们的 Kubernetes 集群中，可能同时运行着十几个甚至几十个混沌实验，即使我们拥有了 Chaos Mesh 来帮助我们管理错误注入，但这还远不够，我们还需要去管理 TiDB 集群，需要去收集指标，需要去分析结果，同时进行如此多的混沌实验，另一方面，我们还需要对 TiDB 生态中的其他工具进行混沌测试，这是无法想象的，因此，我们开发了 TiPocket 来解放自己。
+为了确保用户的数据安全，我们需要确保给用户提供的每一个 TiDB 版本都已经经过了严格的测试，所以我们为 TiDB 设计了各种异常场景，并实现了数十个测试 Case，所以在我们的 Kubernetes 集群中，可能同时运行着十几个甚至几十个混沌实验，即使我们拥有了 Chaos Mesh 来帮助我们管理错误注入，但这还远不够，我们还需要去管理 TiDB 集群，需要去收集指标，需要去分析结果，同时进行如此多的混沌实验，另一方面，我们还需要对 TiDB 生态中的其他工具进行混沌测试，这是无法想象的，因此，我们开发了 TiPocket 来解放自己。
 
 **TiPocket 是一个基于 Kubernetes 和 Chaos Mesh 的完全自动化测试框架，目前我们主要使用它用来测试 TiDB 集群，不过由于它 All-in-K8s 的特性以及可扩展的接口，它目前也支持测试 TiDB 生态中的其他组件，只要简单的添加应用在 Kubernetes 中 Create/Delete 的逻辑，就可以很轻松的添加对各种应用的支持。**
 
@@ -24,11 +24,11 @@ tags: ['Chaos Mesh','TiPocket']
 
 目前我们已经在 TiPocket 提供了多种类型的故障注入： 
 
-*   Network：基于 Chaos Mesh 的 NetworkChaos，提供模拟的网络分区，或者链路随机的丢包，乱序，重复，时延等。
+*   Network：基于 Chaos Mesh 的 NetworkChaos，提供模拟的网络分区，或者链路随机的丢包、乱序、重复、时延等。
 
-*   Time Skew：基于 TimeChaos，模拟待测试容器发生时间偏移。Time Chaos的实现也是非常有趣，感兴趣的话可以参考我们以前的 [文章](https://pingcap.com/blog/simulating-clock-skew-in-k8s-without-affecting-other-containers-on-node/)。
+*   Time Skew：基于 TimeChaos，模拟待测试容器发生时间偏移。TimeChaos 的实现也是非常有趣，感兴趣的话可以参考我们以前的 [文章](https://pingcap.com/blog/simulating-clock-skew-in-k8s-without-affecting-other-containers-on-node/)。
 
-*   Kill：通过 PodChaos 来 kill 对应的 pod。细分下来我们也实现了多种kill类型，最简单的就是随机删除集群内的任意pod；如果针对各个组件，也有专门的 Chaos 随机 kill 一个或两个 TiKV 节点，或者是专门 kill PD 的leader 节点。
+*   Kill：通过 PodChaos 来 kill 对应的 pod。细分下来我们也实现了多种 kill 类型，最简单的就是随机删除集群内的任意pod；如果针对各个组件，也有专门的 Chaos 随机 kill 一个或两个 TiKV 节点，或者是专门 kill PD 的 leader 节点。
 
 *   IO：基于 IOChaos，我们用的比较多的是给 TiKV 注入 IO Delay，再去看写入的情况。
 
@@ -50,7 +50,7 @@ SQLsmith 是一个生成随机 SQL 的工具，TiPocket 分别创建一个 TiDB 
 
 #### 2. [Porcupine](https://github.com/anishathalye/porcupine) 
 
-Porcupine 一个用 Go 实现的线性一致性验证工具。是基于 [P-compositionality](http://www.kroening.com/papers/forte2015-li.pdf) 算法，P-compositionality 算法利用了线性一致性的 Locality 原理，即如果一个调用历史的所有子历史都满足线性一致性，那么这个历史本身也满足线性一致性。因此，可以将一些不相关的历史划分开来，形成多个规模更小的子历史，转而验证这些子历史的线性一致性。在 TiPocket  有许多 Case 中使用了 [Pocupine 检查器](https://github.com/pingcap/tipocket/tree/master/pkg/check/porcupine)去检查生成的历史，从而判断 TiDB 是否满足线性一致性的约束。 
+Porcupine 一个用 Go 实现的线性一致性验证工具。是基于 [P-compositionality](http://www.kroening.com/papers/forte2015-li.pdf) 算法，P-compositionality 算法利用了线性一致性的 Locality 原理，即如果一个调用历史的所有子历史都满足线性一致性，那么这个历史本身也满足线性一致性。因此，可以将一些不相关的历史划分开来，形成多个规模更小的子历史，转而验证这些子历史的线性一致性。在 TiPocket  有许多 Case 中使用了 [Pocupine 检查器](https://github.com/pingcap/tipocket/tree/master/pkg/check/porcupine) 去检查生成的历史，从而判断 TiDB 是否满足线性一致性的约束。 
 
 ### 事务隔离级别测试：[Elle](https://github.com/jepsen-io/elle)
 
@@ -60,7 +60,7 @@ Elle 是用来验证数据库事务隔离级别的检查工具。Elle 是一个�
 
 ## Argo 让流程自动化起来  
 
-和大多数的工程师一样，我们第一个想法是自己开发，造轮子，让 TiPocket 具备调度的功能和管理的功能，但是考虑到我们目前的人力和时间，并且我们知道目前已经有很多开源的工具可以提供类似的功能，所以最后我们选择让 TiPocket  更加纯粹，将调度和管理交给更加合适的工具去负责。在考虑到我们  All-in-K8s 的特性，[Argo](https://github.com/argoproj/argo) 就成为我们不二的选择。
+和大多数的工程师一样，我们第一个想法是自己开发，造轮子，让 TiPocket 具备调度的功能和管理的功能，但是考虑到我们目前的人力和时间，并且我们知道目前已经有很多开源的工具可以提供类似的功能，所以最后我们选择让 TiPocket 更加纯粹，将调度和管理交给更加合适的工具去负责。在考虑到我们 All-in-K8s 的特性，[Argo](https://github.com/argoproj/argo) 就成为我们不二的选择。
 
 ![2-argo](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/2-argo.png) 
 
@@ -98,11 +98,11 @@ spec:
               template: tipocket-bank
 ```
 
-上面的示例中是我们定义的 Bank 测试的 Workflow。示例中我们用到了 Workflow template 以及使用参数定义我们需要的故障注入，这样我们就可以重复使用模版，根据不同的测试场景来同时运行多个 Workflow。在 TiPocket 中我们的故障注入是使用 nemesis 参数定义，也就是说我们提供了大量的故障注入，当用户想要使用的时候，只需要设置对应的参数即可，当然用户可以可以自己拓展 TiPocket  去增加更多的故障注入。更多的 Workflow 以及模版的示例，可以在 [TiPocket](https://github.com/pingcap/tipocket/tree/master/argo/workflow) 的仓库中找到。使用 Argo 可以很好的处理各种复杂的逻辑，可以做到以写代码的方式去定义我们 Workflow，这对于开发者来说十分友好, 这也是我们选择 Argo 的重要原因之一。
+上面的示例中是我们定义的 Bank 测试的 Workflow。示例中我们用到了 Workflow template 以及使用参数定义我们需要的故障注入，这样我们就可以重复使用模版，根据不同的测试场景来同时运行多个 Workflow。在 TiPocket 中我们的故障注入是使用 nemesis 参数定义，也就是说我们提供了大量的故障注入，当用户想要使用的时候，只需要设置对应的参数即可，当然用户可以自己拓展 TiPocket 去增加更多的故障注入。更多的 Workflow 以及模版的示例，可以在 [TiPocket](https://github.com/pingcap/tipocket/tree/master/argo/workflow) 的仓库中找到。使用 Argo 可以很好的处理各种复杂的逻辑，可以做到以写代码的方式去定义我们 Workflow，这对于开发者来说十分友好, 这也是我们选择 Argo 的重要原因之一。
 
-现在我们的混沌实验自动化跑起来了，这时候如果我们的的结果不符合预期，我们该如何去定位我们的问题呢？幸运的是 TiDB 中会保存丰富的监控信息，但是 Log 也是必不可少的。因此我们需要一个更好的日志收集手段，让我们的系统具有更好的可观测性。
+现在我们的混沌实验自动化跑起来了，这时候如果我们的结果不符合预期，我们该如何去定位我们的问题呢？幸运的是 TiDB 中会保存丰富的监控信息，但是 Log 也是必不可少的。因此我们需要一个更好的日志收集手段，让我们的系统具有更好的可观测性。
 
-## Loki 提高实验的可观测性  
+## Loki 提高实验的可观测性
 
 可观察性，在云原生中系统中是非常重要的一环。通常来说可观察性主要包含 Metrics（指标），Logging（日志）和 Tracing（追踪）。由于 TiPocket 中主要运行的 test case，都是针对于测试 TiDB 集群，常依靠 metrics 和日志就能够定位问题。
 
@@ -112,7 +112,7 @@ Metrics 不用多说，Prometheus 已经成为了在 Kubernetes 监控的事实�
 
 Loki 采用了跟 Prometheus 一样的 label 系统，我们可以很轻松的将 Prometheus 的监控指标与对应 pod 的日志结合起来，并且使用类似的查询语言去查询。另外 Grafana 目前也已经支持了 Loki dashboard，所以只需要使用 Grafana 就同时展示监控指标和日志了，非常方便。另一方面，TiDB 自带的监控系统中也含有 Grafana 组件，这样我就可以直接复用此 Grafana。
 
-## 看一下效果 
+## 看一下效果
 
 上面介绍了这么多，最后让我们看一下在 TiPocket 中一个完整的混沌实验到底是什么样子的呢？
 
