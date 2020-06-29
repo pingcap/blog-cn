@@ -1,6 +1,6 @@
 ---   
 title: 基于 Chaos Mesh® 和 Argo 打造分布式测试平台
-author: ['叶奔','殷成文'']
+author: ['叶奔','殷成文']
 date: 2020-06-29
 summary:  本文介绍我们是如何在 Chaos Mesh 和 Argo 的基础上打造自己的自动化测试平台 TiPocket]，实现完全自动化的混沌测试，构成混沌测试完整闭环。
 tags: ['Chaos Mesh','TiPocket']
@@ -12,7 +12,7 @@ tags: ['Chaos Mesh','TiPocket']
 
 为了确保用户的数据安全，我们需要确保给用户提供的每一个 TiDB 版本都已经经过了严格的测试，所以我们为 TiDB 设计了各种异常场景，并实现了数十个测试 Case， 所以在我们的 Kubernetes 集群中，可能同时运行着十几个甚至几十个混沌实验，即使我们拥有了 Chaos Mesh 来帮助我们管理错误注入，但这还远不够，我们还需要去管理 TiDB 集群，需要去收集指标，需要去分析结果，同时进行如此多的混沌实验，另一方面，我们还需要对 TiDB 生态中的其他工具进行混沌测试，这是无法想象的，因此，我们开发了 TiPocket 来解放自己。
 
-TiPocket 是一个基于 Kubernetes 和 Chaos Mesh 的完全自动化测试框架，目前我们主要使用它用来测试 TiDB 集群，不过由于它 All-in-k8s 的特性以及可扩展的接口，它目前也支持测试 TiDB 生态中的其他组件，只要简单的添加应用在 Kubernetes 中 Create/Delete 的逻辑，就可以很轻松的添加对各种应用的支持。
+**TiPocket 是一个基于 Kubernetes 和 Chaos Mesh 的完全自动化测试框架，目前我们主要使用它用来测试 TiDB 集群，不过由于它 All-in-k8s 的特性以及可扩展的接口，它目前也支持测试 TiDB 生态中的其他组件，只要简单的添加应用在 Kubernetes 中 Create/Delete 的逻辑，就可以很轻松的添加对各种应用的支持。**
 
 ## Chaos Mesh 提供故障模拟的能力 
 
