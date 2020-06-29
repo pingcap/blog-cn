@@ -106,7 +106,7 @@ spec:
 
 可观察性，在云原生中系统中是非常重要的一环。通常来说可观察性主要包含 Metrics（指标），Logging（日志）和 Tracing（追踪）。由于 TiPocket 中主要运行的 test case，都是针对于测试 TiDB 集群，常依靠 metrics 和日志就能够定位问题。
 
-![3-创建任务](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/3-创建任务.png)
+![3-Loki](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/3-loki.png)
 
 Metrics 不用多说，Prometheus 已经成为了在 Kubernetes 监控的事实标准。然而对于日志，却没有一个统一的答案。比如 elasticsearch，fluent-bit 以及 Kibana 的解决方案，尽管这一套系统运行良好，但是却会消耗比较多的资源，并且维护成本太高。最终我们放弃了 EFK 的方案，而是采用了 [Grafana](https://grafana.com/) 开源的 [Loki](https://github.com/grafana/loki) 项目来作为日志的解决方案。
 
@@ -118,7 +118,7 @@ Loki 采用了跟 Prometheus 一样的 label 系统，我们可以很轻松的�
 
 1.  创建 Argo Cron Workflow 任务，在这个 Cron Workflow 中定义待测试的集群，注入的故障，用来检查 TiDB 集群正确性的测试 Case，以及任务的执行时间等。在 Cron Workflow 在运行过程中有需要的话还支持实时查看 Case 的日志。
 
-	![4-loki](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/4-loki.png)
+	![4-创建任务](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/4-创建任务.png)
 
 2.  集群内部通过 Prometheus-operator 运行了 Prometheus。在 Prometheus 中配置了针对 Argo workflow 的告警规则。如果任务失败，则会发送到 Alertmanager，再由 Alertmanager 发送到 Slack channel 通知结果。
 
