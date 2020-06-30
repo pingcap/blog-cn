@@ -10,7 +10,6 @@ weight: 2
 logo: /images/blog-cn/customers/bank-of-china-logo.png
 ---
 
-
 >作者介绍：韩宇，中国银行信息科技运营中心工程师。
 
 本文的内容可能和之前的金融企业将 TiDB 应用在业务上的实践不同，下面主要介绍我们如何把 TiDB 应用在金融行业的后台运维监控上。Zabbix 作为一个老牌的开源监控方案，长期被用于生产实践。但是原生方案一般会采用 MySQL 作为后端存储，无法应对更大规模的监控。**TiDB 兼容 MySQL 协议，可以替换 MySQL 从而增强 Zabbix 的大规模监控能力，实现新的监控方案 TiZabbix。TiZabbix 通过优化监控实施逻辑，弥补因 TiDB 和 MySQL 差异造成的诸多问题，成功完成了 10000+ 监控对象和 16T 数据存储查询的实践。**
