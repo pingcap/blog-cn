@@ -110,7 +110,7 @@ select * from foo where c in (
 + [sticnarf](https://github.com/sticnarf) （[@Coprocessor SIG](https://github.com/tikv/community/tree/master/sig/coprocessor)）
 + [yiwu-arbug](https://github.com/yiwu-arbug) （[@Storage Engine SIG](https://github.com/tikv/community/tree/master/sig/engine)）
 + [zhangjinpeng1987](https://github.com/zhangjinpeng1987)（[@Storage Engine SIG](https://github.com/tikv/community/tree/master/sig/engine)）
-+ [SunRunAway](https://github.com/SunRunAway)（[@Expression SIG](https://github.com/pingcap/community/blob/master/special-interest-groups/sig-expr)）
-+ [qw4990](https://github.com/qw4990)（[@Expression SIG](https://github.com/pingcap/community/blob/master/special-interest-groups/sig-expr)）
++ [SunRunAway](https://github.com/SunRunAway)（@Expression SIG）
++ [qw4990](https://github.com/qw4990)（@Expression SIG]）
 
 >[TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/) 由 PingCAP 发起，旨在激发社区创造性，参赛选手可以通过完成一系列的任务提升 TiDB 产品的性能。赛事于 2019 年 11 月 4 日正式开启，将持续 3 个月，比赛任务分为三个难度：Easy、Medium、Hard，不同难度对应不同积分，参赛选手获得的积分可以兑换 TiDB 限量周边礼品等丰富的奖励。

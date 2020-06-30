@@ -202,4 +202,4 @@ TiKV 在对一行数据执行具体的 expression 时，会调用 `eval` 函数�
 
 运行 make expression，确保所有的 test case 都能跑过。
 
-完成以上几个步骤之后，就可以给 TiKV 项目提 PR 啦。想要了解提 PR 的基础知识，尝试移步 [此文](https://pingcap.com/blog-how-to-contribute-zh)，看看是否有帮助。
+完成以上几个步骤之后，就可以给 TiKV 项目提 PR 啦。想要了解提 PR 的基础知识，尝试移步 [此文](https://pingcap.com/blog-cn/how-to-contribute/)，看看是否有帮助。
