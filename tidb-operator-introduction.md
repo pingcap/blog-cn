@@ -78,7 +78,7 @@ Operator 本质上是 Kubernetes 的控制器（Controller），其核心思想�
 
 TiDB Operator 需要运行在 Kubernetes v1.10 及以上版本。TiDB Operator 和 TiDB 集群的部署和管理是通过 Kubernetes 平台上的包管理工具 Helm 实现的。运行 TiDB Operator 前请确保 Helm 已经正确安装在 Kubernetes 集群里。 
 
-如果没有 Kubernetes 集群，可以通过 TiDB Operator 提供的[脚本和文档](https://pingcap.com/docs-cn/stable/tidb-in-kubernetes/get-started/deploy-tidb-from-kubernetes-kind/)快速在本地启动一个多节点的 Kubernetes 集群并在上面部署 TiDB Operator 和 TiDB 集群。
+如果没有 Kubernetes 集群，可以通过 TiDB Operator 提供的[脚本和文档](https://docs.pingcap.com/zh/tidb-in-kubernetes/v1.1/deploy-tidb-from-kubernetes-kind)快速在本地启动一个多节点的 Kubernetes 集群并在上面部署 TiDB Operator 和 TiDB 集群。
 
 ## 参与 TiDB Operator
 
