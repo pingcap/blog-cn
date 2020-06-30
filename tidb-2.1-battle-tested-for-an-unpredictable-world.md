@@ -81,7 +81,7 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 
 ### OLTP
 
-我们针对 OLTP 场景中，点查占多数的特点进行了针对性的优化。当通过 Unique Key 或者 Primary Key 进行数据访问时，在优化器和执行引擎中都做了改进，使得语句的执行效率更高，通过 [2.1 和 2.0 版本的 Sysbench 对比](https://github.com/pingcap/docs/blob/master/v2.1/benchmark/sysbench-v3.md) 可以看到，点查性能提升 50%。
+我们针对 OLTP 场景中，点查占多数的特点进行了针对性的优化。当通过 Unique Key 或者 Primary Key 进行数据访问时，在优化器和执行引擎中都做了改进，使得语句的执行效率更高，通过 [2.1 和 2.0 版本的 Sysbench 对比](https://docs.pingcap.com/zh/tidb/v2.1/v2.1-performance-benchmarking-with-sysbench#%E6%B5%8B%E8%AF%95%E7%9B%AE%E7%9A%84) 可以看到，点查性能提升 50%。
 
 ![OLTP](media/tidb-21-battle-tested-for-an-unpredictable-world/1.png)
 
@@ -100,7 +100,7 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 
 * [TiDB Lightning](https://pingcap.com/docs-cn/stable/reference/tools/tidb-lightning/overview/) 用于将全量数据导入到 TiDB 中，这个工具可以提升全量数据导入速度，目前内部测试场景中，一小时可以导入 100GB 数据。
 * [TiDB Binlog](https://pingcap.com/docs-cn/stable/reference/tidb-binlog/overview/) 用于将 TiDB 中的数据更新实时同步到下游系统中，可以用于做主从集群同步或者是将 TiDB 中的数据同步回 MySQL。
-* [TiDB Data Migration](https://pingcap.com/docs-cn/stable/reference/tools/data-migration/overview/) 用于将 MySQL/MariaDB 中的数据通过 Binlog 实时同步到 TiDB 集群中，并且提供 Binlog 数据转换功能，可以将 Binlog 中的表/库名称进行修改，或者是对数据内容本身做修改和裁剪。
+* [TiDB Data Migration](https://docs.pingcap.com/zh/tidb-data-migration/v1.0) 用于将 MySQL/MariaDB 中的数据通过 Binlog 实时同步到 TiDB 集群中，并且提供 Binlog 数据转换功能，可以将 Binlog 中的表/库名称进行修改，或者是对数据内容本身做修改和裁剪。
 
 上述三个工具可以将 TiDB 和周边的系统打通，既能将数据同步进 TiDB，又可以将数据同步出来。所以无论是迁移、回退还是做数据热备，都有完整的解决方案。
 

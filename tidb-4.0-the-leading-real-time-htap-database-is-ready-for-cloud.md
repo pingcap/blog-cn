@@ -146,7 +146,7 @@ TiDB 4.0 还新增了非常多的特性和改进，无论从安全、生态，�
 | [ddl](https://github.com/pingcap/community/tree/master/special-interest-groups/sig-ddl) | [lysu](https://github.com/lysu) |
 | [ddl](https://github.com/pingcap/community/tree/master/special-interest-groups/sig-ddl) | [Deardrops](https://github.com/Deardrops) |
 | [docs](https://github.com/pingcap/community/tree/master/special-interest-groups/sig-docs) | [YiniXu9506](https://github.com/YiniXu9506) |
-| [docs](https://github.com/pingcap/community/tree/master/special-interest-groups/sig-docs) | [juliezhang1112](https://github.com/juliezhang1112) |
+| [docs](https://github.com/pingcap/community/tree/master/special-interest-groups/sig-docs) | juliezhang1112 |
 | [docs](https://github.com/pingcap/community/tree/master/special-interest-groups/sig-docs) | [ericsyh](https://github.com/ericsyh) |
 |[docs](https://github.com/pingcap/community/tree/master/special-interest-groups/sig-docs) | [aylei](https://github.com/aylei) |
 | [docs](https://github.com/pingcap/community/tree/master/special-interest-groups/sig-docs) | [weekface](https://github.com/weekface) |

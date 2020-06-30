@@ -4,6 +4,7 @@ author: ['PingCAP']
 date: 2018-11-30
 summary: 2018 年 11 月 30 日，TiDB 发布 2.1 GA 版。相比 2.0 版本，该版本对系统稳定性、性能、兼容性、易用性做了大量改进。
 tags: ['TiDB']
+aliases: ['/blog-cn/tidb-21-ga-release-note/']
 ---
 
 
@@ -176,7 +177,7 @@ tags: ['TiDB']
 
 ## Tools
 
-* 全量数据快速导入工具 [TiDB Lightning](https://pingcap.com/docs-cn/tools/lightning/overview-architecture/)
+* 全量数据快速导入工具 [TiDB Lightning](https://docs.pingcap.com/zh/tidb/v4.0/tidb-lightning-overview)
 * 支持新版本 [TiDB Binlog](https://pingcap.com/docs-cn/v2.1/reference/tidb-binlog-overview/)
 
 ## 升级兼容性说明

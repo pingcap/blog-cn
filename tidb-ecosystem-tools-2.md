@@ -14,7 +14,7 @@ TiDB-Lightning Toolset 是一套快速全量导入 SQL dump 文件到 TiDB 集�
 
 ## 设计
 
-TiDB 从 2017 年开始提供全量导入工具 [Loader](https://pingcap.com/docs-cn/tools/loader/)，它以多线程操作、错误重试、断点续传以及修改一些 TiDB 专属配置来提升数据导入速度。
+TiDB 从 2017 年开始提供全量导入工具 [Loader](https://docs.pingcap.com/zh/tidb/v4.0/loader-overview#loader-%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3)，它以多线程操作、错误重试、断点续传以及修改一些 TiDB 专属配置来提升数据导入速度。
 
 ![Loader](media/tidb-ecosystem-tools-2/1.png)
 

@@ -22,7 +22,7 @@ tags: ['DM 源码阅读','社区']
 
 *   基本的后端服务知识，比如后台服务进程管理、RPC 工作原理等。
 
-总体而言，读者需要有一定 MySQL/TiDB 的使用经验，了解 MySQL 数据备份和主从同步的原理，以及可以读懂 Go 语言程序。在阅读 DM 源码之前，可以先从阅读[《TiDB Data Migration 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)入手，并且参考 [使用文档](https://pingcap.com/docs-cn/tools/dm/overview/) 在本地搭建一个 DM 的测试环境，从基础原理和使用对 DM 有一个初步的认识，然后再进一步分析源码，深入理解代码的设计和实现。
+总体而言，读者需要有一定 MySQL/TiDB 的使用经验，了解 MySQL 数据备份和主从同步的原理，以及可以读懂 Go 语言程序。在阅读 DM 源码之前，可以先从阅读[《TiDB Data Migration 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)入手，并且参考 [使用文档](https://docs.pingcap.com/zh/tidb-data-migration/v1.0) 在本地搭建一个 DM 的测试环境，从基础原理和使用对 DM 有一个初步的认识，然后再进一步分析源码，深入理解代码的设计和实现。
 
 ## 内容概要
 
@@ -88,7 +88,7 @@ DM 源代码完全托管在 GitHub 上，从 [项目主页](https://github.com/p
 
 *   [gogoprotobuf](https://github.com/gogo/protobuf/)：用于从 proto 描述文件生成 protobuf 代码，DM 代码仓库的 [generate-dm.sh](https://github.com/pingcap/dm/blob/master/generate-dm.sh) 文件封装了自动生成 DM 内部 protobuf 代码的脚本。
 
-*   [Ansible](https://docs.ansible.com/)：DM 封装了 [DM-Ansible](https://github.com/pingcap/dm/tree/master/dm/dm-ansible) 脚本用于 DM 集群的自动化部署，部署流程可以参考 [使用 ansible 部署 DM](https://pingcap.com/docs/tools/dm/deployment/)。
+*   [Ansible](https://docs.ansible.com/)：DM 封装了 [DM-Ansible](https://docs.pingcap.com/zh/tidb-data-migration/v1.0/deploy-a-dm-cluster-using-ansible) 脚本用于 DM 集群的自动化部署，部署流程可以参考 [使用 ansible 部署 DM](https://pingcap.com/docs/tools/dm/deployment/)。
 
 *   [pt-osc](https://www.percona.com/doc/percona-toolkit/LATEST/pt-online-schema-change.html), [gh-ost](https://github.com/github/gh-ost)：用于上游 MySQL 进行 online-ddl 的同步场景。
 
