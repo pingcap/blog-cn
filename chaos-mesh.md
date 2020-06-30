@@ -211,7 +211,7 @@ spec:
 
 Chaos Mesh 使用 CRD 来定义 chaos 对象，因此我们可以直接通过 Kubernetes API 操作我们的 CRD 对象。通过这种方式，可以非常方便将我们的 Chaos Mesh 应用到我们自己的程序中，去定制各类测试场景，让混沌实验自动化并持续运行。
 
-例如在 [test-infra](https://github.com/pingcap/tipocket/tree/master/test-infra) 项目中我们使用 Chaos Mesh 来模拟 [ETCD](https://github.com/pingcap/tipocket/blob/master/test-infra/tests/etcd/nemesis_test.go) 集群在 Kubernetes 环境中可能出现的异常情况，比如模拟节点重启、模拟网络故障、模拟文件系统故障等等。
+例如在 [test-infra](https://github.com/pingcap/tipocket/tree/86e1cf580d30667f6db1265c6681c930cbfde746/test-infra) 项目中我们使用 Chaos Mesh 来模拟 [ETCD](https://github.com/pingcap/tipocket/blob/86e1cf580d30667f6db1265c6681c930cbfde746/test-infra/tests/etcd/nemesis_test.goo) 集群在 Kubernetes 环境中可能出现的异常情况，比如模拟节点重启、模拟网络故障、模拟文件系统故障等等。
 
 Kubernetes API 使用示例： 
 
