@@ -1,5 +1,5 @@
 ---
-title: TiDB 在银行核心金融领域的研究与两地三中心实践
+title: 使用 TiDB 作为 ZaloPay 商户平台核心数据库
 author: ['Tan To Nguyen Duy']
 date: 2020-07-02
 summary: 未来我们可能会扩大 TiDB 在分析服务以及非交易业务中的使用。我们产品里还有许多数据挖掘系统、推荐系统等。
