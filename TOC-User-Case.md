@@ -48,6 +48,7 @@
   - [微众银行](user-case-webank.md)
   - [华泰证券](user-case-huataizhengquan.md)
   - [PayPay](user-case-paypay.md)
+  - [ZaloPay](user-case-zalopay.md)
   - [马上消费](user-case-mashangxiaofei.md)
   - [贝壳金服](user-case-beikejinfu.md)
   - [Ping++](user-case-ping++.md)
