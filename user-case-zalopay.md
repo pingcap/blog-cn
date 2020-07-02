@@ -6,7 +6,7 @@ summary: 未来我们可能会扩大 TiDB 在分析服务以及非交易业务�
 tags: ['金融']
 category: case
 url: /cases-cn/user-case-zalopay/
-weight: 9
+weight: 5
 logo: /images/blog-cn/customers/zalopay-logo.png
 ---
 
