@@ -89,7 +89,7 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 
 发布 2.0 的时候，我们同时发布了在 TPC-H Scale 50 的场景中 [2.0 和 1.0 的对比结果](https://github.com/pingcap/docs/blob/b7c76f7c2b3d55f2a07e18c5d90550284a57c145/v2.0/benchmark/tpch.md)。其中大多数 Query 都有数量级的提升，部分 Query 在 1.0 中跑不出结果，在 2.0 中可以顺利运行。不过对于 Query17 和 Query18，运行时间依然很长。
 
-我们在相同的场景下，对 2.1 和 2.0 进行了 [对比测试](https://github.com/pingcap/docs-cn/blob/master/v2.1/benchmark/tpch-v2.md)。从下图可以看到（纵坐标是 Query 的响应时间，越低越好），之前的两个慢 Query 的运行时间大幅缩短，其他的 Query 也有一定程度的提升。这些提升一方面得益于查询优化器以及执行引擎的改进，另一方面 得益于 TiKV 对连续数据扫描的性能优化。
+我们在相同的场景下，对 2.1 和 2.0 进行了 [对比测试](https://pingcap.com/docs-cn/v2.1/benchmark/v2.1-performance-benchmarking-with-tpch/)。从下图可以看到（纵坐标是 Query 的响应时间，越低越好），之前的两个慢 Query 的运行时间大幅缩短，其他的 Query 也有一定程度的提升。这些提升一方面得益于查询优化器以及执行引擎的改进，另一方面 得益于 TiKV 对连续数据扫描的性能优化。
 
 ![OLAP](media/tidb-21-battle-tested-for-an-unpredictable-world/2.png)
 
