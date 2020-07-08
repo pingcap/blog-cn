@@ -1,7 +1,7 @@
 ---
 title: 亿联银行核心银行系统 TiDB 数据库实践之路
 author: ['卢秀红']
-date: 2020-07-08
+date: 2020-07-07
 summary: TiDB 数据库在亿联银行生产环境落地的应用，以及亿联银行核心系统 TiDB 建设历程。
 tags: ['金融']
 category: case
