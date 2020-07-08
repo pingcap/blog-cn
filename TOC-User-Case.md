@@ -43,7 +43,6 @@
   - [株式会社 FUNYOURS JAPAN](user-case-funyours-japan.md)
 - 金融
   - [中国银行](user-case-bank-of-china.md)
-  - [亿联银行](user-case-yillion-bank.md)
   - [北银科技](user-case-bob-fintech.md)
   - [平安科技](user-case-pingankeji.md)
   - [微众银行](user-case-webank.md)
