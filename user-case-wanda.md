@@ -9,6 +9,7 @@ url: /cases-cn/user-case-wanda/
 aliases: ['/blog-cn/user-case-wanda/']
 weight: 3
 logo: /images/blog-cn/customers/wanda-logo.png
+customer: 万达网络科技集团
 ---
 
 > 作者：陈新江，万达网络科技集团大数据中心

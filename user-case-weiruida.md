@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-weiruida/
 weight: 2
 logo: /images/blog-cn/customers/weiruida-logo.png
+customer: 锐益达
 ---
 
 

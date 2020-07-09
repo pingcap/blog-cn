@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-zhuanzhuan-2/
 weight: 19
 logo: /images/blog-cn/customers/zhuanzhuan-logo.png
+customer: 转转
 ---
 
 >作者：陈维，转转优品技术部 RD。

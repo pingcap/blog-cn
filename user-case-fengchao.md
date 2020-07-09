@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-fengchao/
 weight: 6
 logo: /images/blog-cn/customers/fengchao-logo.png
+customer: 丰巢
 ---
 
 

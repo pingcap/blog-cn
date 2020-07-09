@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-qichezhijia/
 weight: 6
 logo: /images/blog-cn/customers/qichezhijia-logo.png
+customer: 汽车之家
 ---
 
 SQL Server + .Net 是很多早期互联网企业的标配技术栈，虽然 TiDB 是兼容 MySQL 协议和生态的数据库，但是 TiDB 适用的业务场景是通用的。在开源新技术大行其道的今天，如何从 SQL Server 无缝迁移至 TiDB，汽车之家做了一个创新的示范。

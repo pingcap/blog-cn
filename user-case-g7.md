@@ -9,6 +9,7 @@ url: /cases-cn/user-case-g7/
 aliases: ['/blog-cn/user-case-g7/']
 weight: 30
 logo: /images/blog-cn/customers/g7-logo.png
+customer: G7
 ---
 
 

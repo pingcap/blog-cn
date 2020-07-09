@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-mashangxiaofei/
 logo: /images/blog-cn/customers/mashangxiaofei-logo.png
 weight: 5
+customer: 马上消费
 ---
 
 > **作者介绍：**

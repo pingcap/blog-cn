@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-360-cloud/
 weight: 2
 logo: /images/blog-cn/customers/360-cloud-logo.png
+customer: 360
 ---
 
 >**作者介绍**：贺磊，360 数据库运维资深工程师，《MongoDB 运维实战作者》，知名论坛 MySQL 版主，51CTO 博客之星，闲暇之余，喜欢将部分案例写成博客，累计访问量过百万。
