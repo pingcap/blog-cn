@@ -4,6 +4,7 @@
 
 - 互联网
   - [知乎](user-case-zhihu.md)
+  - [VIPKID](user-case-vipkid.md)
   - [360 cloud](user-case-360-cloud.md)
   - [美团点评](user-case-meituandianping.md)
   - [网易互娱](user-case-wangyihuyu.md)
