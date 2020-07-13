@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-yuanfudao/
 weight: 20
 logo: /images/blog-cn/customers/yuanfudao-logo.png
+customer: 猿辅导
 ---
 
 

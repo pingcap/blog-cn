@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-xishanju/
 weight: 1
 logo: /images/blog-cn/customers/xishanju-logo.png
+customer: 西山居
 ---
 
 

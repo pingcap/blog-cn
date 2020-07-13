@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-zalopay/
 weight: 5
 logo: /images/blog-cn/customers/zalopay-logo.png
+customer: ZaloPay
 ---
 
 >作者介绍：Tan To Nguyen Duy，VNG DevOps 工程师，参与电子钱包 ZaloPay 基础架构的开发。

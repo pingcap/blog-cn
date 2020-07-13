@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-tongcheng/
 weight: 18
 logo: /images/blog-cn/customers/tongcheng-logo.png
+customer: 同程网
 ---
 
 >作者：瞿锴，同程网资深 DBA。

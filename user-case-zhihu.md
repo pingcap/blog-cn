@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-zhihu/
 weight: 1
 logo: /images/blog-cn/customers/zhihu-logo.png
+customer: 知乎
 ---
 
 

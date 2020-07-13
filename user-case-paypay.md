@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-paypay/
 weight: 3
 logo: /images/blog-cn/customers/paypay-logo.png
+customer: PayPay
 ---
 
 >作者简介：Munenori Hirakawa，PayPay Senior Manager at Product Tech Division。

@@ -9,6 +9,7 @@ url: /cases-cn/user-case-ping++/
 aliases: ['/blog-cn/user-case-ping++/','/blog-cn/tidb-ping++/']
 weight: 5
 logo: /images/blog-cn/customers/ping++-logo.png
+customer: Ping++
 ---
 
 >作者：宋涛，Ping++ DBA

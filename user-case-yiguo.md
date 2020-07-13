@@ -9,6 +9,7 @@ url: /cases-cn/user-case-yiguo/
 aliases: ['/blog-cn/user-case-yiguo/']
 weight: 7
 logo: /images/blog-cn/customers/yiguo-logo.png
+customer: 易果集团
 ---
 
 

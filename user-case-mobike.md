@@ -9,6 +9,7 @@ url: /cases-cn/user-case-mobike/
 aliases: ['/blog-cn/user-case-mobike/']
 weight: 13
 logo: /images/blog-cn/customers/mobike-logo.png
+customer: 摩拜单车
 ---
 
 > 作者：丁宬杰 / 胡明，Mobike 技术研发部基础平台中心 

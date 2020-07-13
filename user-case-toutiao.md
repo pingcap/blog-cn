@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-toutiao/
 weight: 17
 logo: /images/blog-cn/customers/toutiao-logo.png
+customer: 今日头条
 ---
 
 ![](media/user-case-toutiao/1.jpeg)

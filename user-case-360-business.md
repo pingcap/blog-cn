@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-360-business/
 logo: /images/blog-cn/customers/360-business-logo.jpg
 weight: 10
+customer: 360智慧商业
 ---
 
 >**作者介绍**：代晓磊，现 360 商业化数据库运维专家，TiDB User Group Ambassador，负责整个智能商业业务线数据库运维，解决各种数据库疑难问题，推广 TiDB 等新开源数据库应用。

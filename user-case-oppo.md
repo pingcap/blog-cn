@@ -7,8 +7,8 @@ tags: ['大型企业']
 category: case
 url: /cases-cn/user-case-oppo/
 weight: 2
-
 logo: /images/blog-cn/customers/oppo-logo.png
+customer: OPPO
 ---
 
 >本文转载自微信公众号“[OPPO大数据](https://mp.weixin.qq.com/s/BYsUOCCU6W9bIQ-fK8ESDw?scene=25#wechat_redirect)”。

@@ -8,6 +8,7 @@ category: case
 url: /cases-cn/user-case-mobikok/
 weight: 26
 logo: /images/blog-cn/customers/mobikok-logo.png
+customer: Mobikok
 ---
 
  

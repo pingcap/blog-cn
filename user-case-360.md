@@ -9,6 +9,7 @@ url: /cases-cn/user-case-360/
 aliases: ['/blog-cn/user-case-360/']
 weight: 6
 logo: /images/blog-cn/customers/360-logo.png
+customer: 360金融
 ---
 
 
