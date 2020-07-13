@@ -2,7 +2,7 @@
 title: 为什么你需要混沌工程以及 Chaos Mesh
 author: ['唐刘']
 date: 2020-07-13
-summary:  分布式系统真的是一个非常复杂的系统，故障无处不在，那么我们如何在这么复杂的分布式系统的世界里面生存下去呢？现在，一个很好的答案就是 - Chaos Engineering，中文里面叫做混沌工程。
+summary:  本文介绍了帮助我们在复杂的分布式系统环境下保证系统正常稳定运行的办法 —— Chaos Engineering，以及基于 Kubernetes 的云原生混沌工程平台 Chaos Mesh。
 tags: ['Chaos Mesh']
 --- 
 
