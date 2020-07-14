@@ -9,6 +9,7 @@ url: /cases-cn/user-case-vipkid/
 weight: 2
 logo: /images/blog-cn/customers/vipkid-logo.png
 customer: VIPKID
+CustomerCategory: 教育
 ---
 
 >作者介绍：许超，VIPKID 资深 DBA 工程师。
