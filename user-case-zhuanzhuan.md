@@ -9,6 +9,7 @@ url: /cases-cn/user-case-zhuanzhuan/
 weight: 11
 logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 customer: 转转
+CustomerCategory: 电商
 ---
 
 
