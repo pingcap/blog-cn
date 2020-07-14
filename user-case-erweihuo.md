@@ -10,7 +10,7 @@ aliases: ['/blog-cn/user-case-erweihuo/']
 weight: 15
 logo: /images/blog-cn/customers/erweihuo-logo.png
 customer: 二维火
-customerCategory: 'Other'
+customerCategory: Other
 ---
 
 > 作者介绍：火烧（花名），二维火架构运维负责人 

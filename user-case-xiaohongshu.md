@@ -9,7 +9,7 @@ url: /cases-cn/user-case-xiaohongshu/
 weight: 4
 logo: /images/blog-cn/customers/xiaohongshu-logo.png
 customer: 小红书
-customerCategory: '电商'
+customerCategory: 电商
 ---
 
 > 作者介绍：**张俊骏**，小红书数据库与中间件团队负责人

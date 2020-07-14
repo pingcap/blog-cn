@@ -9,7 +9,7 @@ url: /cases-cn/user-case-china-everbright-bank/
 weight: 1
 logo: /images/blog-cn/customers/china-everbright-bank-logo.png
 customer: 光大银行
-customerCategory: '金融'
+customerCategory: 金融
 ---
 
 >作者介绍：王志刚，光大银行数据库运维主管。
