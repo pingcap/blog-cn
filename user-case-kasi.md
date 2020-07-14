@@ -9,6 +9,7 @@ url: /cases-cn/user-case-kasi/
 weight: 28
 logo: /images/blog-cn/customers/kasi-logo.png
 customer: 卡思数据
+CustomerCategory: 高科技
 ---
 
 >作者：刘广信，火星文化技术经理
