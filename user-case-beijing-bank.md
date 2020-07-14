@@ -9,6 +9,7 @@ url: /cases-cn/user-case-beijing-bank/
 weight: 9
 logo: /images/blog-cn/customers/beijing-bank-logo.png
 customer: 北京银行
+customerCategory: ['金融']
 ---
 
 >作者介绍：于振华，北京银行软件开发部资深架构师，长期从事银行核心系统研发、规划，参与过多个核心信息系统建设工作，包括一、二代支付系统、第四代银行核心系统建设、分布式核心系统建设等企业级项目工作。当前主要研发方向集中在构建先进、高效、面向 OLTP 的银行交易系统，提升银行信息系统服务能力。
