@@ -9,6 +9,7 @@ url: /cases-cn/user-case-shopee/
 weight: 10
 logo: /images/blog-cn/customers/shopee-logo.png
 customer: Shopee
+customerCategory: 电商
 ---
 
 

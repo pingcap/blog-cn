@@ -9,6 +9,7 @@ url: /cases-cn/user-case-bigo/
 weight: 3
 logo: /images/blog-cn/customers/bigo-logo.png
 customer: Bigo
+customerCategory: 视频
 ---
 
 >作者介绍：徐嘉埥，Bigo DBA，TUG 华南区大使。

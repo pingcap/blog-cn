@@ -9,6 +9,7 @@ url: /cases-cn/user-case-beikejinfu/
 weight: 2
 logo: /images/blog-cn/customers/beikejinfu-logo.png
 customer: 贝壳金服
+customerCategory: 金融
 ---
 
 >作者介绍：**李振环**，贝壳金服数据基础架构负责人，目前负责数据平台和企业级数据仓库开发。
