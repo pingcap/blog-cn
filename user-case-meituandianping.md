@@ -10,6 +10,7 @@ weight: 2
 logo: /images/blog-cn/customers/meituandianping-logo.png
 aliases: ['/cases-cn/user-case-meituan/']
 customer: 美团点评
+CustomerCategory: 电商
 ---
 
 >**作者介绍**：**赵应钢**，美团点评研究员；**李坤**，美团点评数据库专家；**朴昌俊**，美团点评数据库专家。
