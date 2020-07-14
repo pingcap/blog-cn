@@ -9,7 +9,7 @@ url: /cases-cn/user-case-bank-of-china/
 weight: 2
 logo: /images/blog-cn/customers/bank-of-china-logo.png
 customer: 中国银行
-customerCategory: ['金融']
+customerCategory: '金融'
 ---
 
 >作者介绍：韩宇，中国银行信息科技运营中心工程师。

@@ -9,7 +9,7 @@ url: /cases-cn/user-case-iqiyi/
 weight: 9
 logo: /images/blog-cn/customers/iqiyi-logo.png
 customer: 爱奇艺
-customerCategory: ['视频']
+customerCategory: '视频'
 ---
 
 >作者：朱博帅，爱奇艺资深数据库架构师
