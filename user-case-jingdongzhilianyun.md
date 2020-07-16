@@ -10,6 +10,7 @@ aliases: ['/cases-cn/user-case-jingdongyun/']
 weight: 3
 logo: /images/blog-cn/customers/jingdongzhilianyun-logo.png
 customer: 京东
+CustomerCategory: 高科技
 ---
 
 >作者介绍：崔灿，京东智联云产品研发部专家架构师，目前主要负责京东智联云对象存储产品的工作。

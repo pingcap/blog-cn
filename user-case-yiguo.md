@@ -10,6 +10,7 @@ aliases: ['/blog-cn/user-case-yiguo/']
 weight: 7
 logo: /images/blog-cn/customers/yiguo-logo.png
 customer: 易果集团
+CustomerCategory: 电商
 ---
 
 

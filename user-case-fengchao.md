@@ -9,6 +9,7 @@ url: /cases-cn/user-case-fengchao/
 weight: 6
 logo: /images/blog-cn/customers/fengchao-logo.png
 customer: 丰巢
+CustomerCategory: 电商
 ---
 
 

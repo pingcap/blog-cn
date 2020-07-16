@@ -8,8 +8,8 @@ category: case
 url: /cases-cn/user-case-58/
 weight: 8
 logo: /images/blog-cn/customers/58.png
-customer: 58集团
-customerCategory: 互联网
+customers: 58集团
+customerCategory: 电商
 ---
 
 

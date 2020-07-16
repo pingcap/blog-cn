@@ -9,6 +9,7 @@ url: /cases-cn/user-case-gaea-ad/
 weight: 3
 logo: /images/blog-cn/customers/gaea-ad-logo.png
 customer: 盖娅互娱
+CustomerCategory: 游戏
 ---
 
 

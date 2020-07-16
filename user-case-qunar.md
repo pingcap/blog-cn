@@ -9,6 +9,7 @@ url: /cases-cn/user-case-qunar/
 weight: 19
 logo: /images/blog-cn/customers/qunar-logo.png
 customer: 去哪儿
+CustomerCategory: 电商
 ---
 
 >作者：蒲聪，去哪儿平台事业部 DBA，拥有近 6 年的  MySQL 和 HBase 数据库运维管理经验，2014 年 6 月加入去哪儿网，工作期间负责支付平台事业部的 MySQL 和 HBase 整体运维工作，从无到有建立去哪儿网 HBase 运维体系，在 MySQL 和 Hbase 数据库上有丰富的架构、调优和故障处理等经验。目前专注于分布式数据库领域的研究和实践工作。

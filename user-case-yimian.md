@@ -9,6 +9,7 @@ url: /cases-cn/user-case-yimian/
 weight: 25
 logo: /images/blog-cn/customers/yimian-logo.png
 customer: 一面数据
+CustomerCategory: 高科技
 ---
 
 >作者：刘畅，一面数据高级 AI 工程师。

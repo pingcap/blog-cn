@@ -9,6 +9,7 @@ url: /cases-cn/user-case-lianghuapai/
 weight: 29
 logo: /images/blog-cn/customers/lianghuapai-logo.png
 customer: 量化派
+CustomerCategory：高科技
 ---
 
 >作者：朱劲松，量化派研发中心系统架构师，主要参与了基础组件开发、API Gateway 等项目，现在致力于公司风控系统相关业务的架构设计和研发。

@@ -10,6 +10,7 @@ aliases: ['/blog-cn/user-case-ifeng/']
 weight: 23
 logo: /images/blog-cn/customers/ifeng-logo.png
 customer: 凤凰网
+CustomerCategory: 资讯
 ---
 
 
