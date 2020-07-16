@@ -8,6 +8,8 @@ category: case
 url: /cases-cn/user-case-bob-fintech/
 weight: 1
 logo: /images/blog-cn/customers/bob-fintech-logo.png
+customer: 北京银行
+customerCategory: 金融
 ---
 >今年春天突如其来的新冠病毒疫情，在一定程度上改变了人们的生活、工作习惯，给各行各业带来了巨大影响。银行也难逃“池鱼之殃”：传统商业银行的盈利能力、资产和信贷规模都受到了一定程度的影响。疫情期间，人们对线上银行服务的需求激增，原本深受诟病传统银行的技术架构，又一次被推上了风口浪尖。有”危“就有“机”，疫情期间，北银金科云计算应用部副总经理 & 金融业务及解决方案专家于振华老师做客 TiDB 直播间，分享了 TiDB 在金融场景的应用，以下为直播文字回顾。
 
