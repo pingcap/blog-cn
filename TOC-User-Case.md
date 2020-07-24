@@ -7,6 +7,7 @@
   - [VIPKID](user-case-vipkid.md)
   - [360 cloud](user-case-360-cloud.md)
   - [小红书（二）](user-case-xiaohongshu-2.md)
+  - [中通快递](user-case-zto-express.md)
   - [美团点评](user-case-meituandianping.md)
   - [网易互娱](user-case-wangyihuyu.md)
   - [Bigo](user-case-bigo.md)
