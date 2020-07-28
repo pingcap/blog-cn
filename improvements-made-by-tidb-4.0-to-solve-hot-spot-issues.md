@@ -132,4 +132,4 @@ AutoRandom 成为了 Primary Key，与使用 SHARD_ROW_ID_BITS + auto_increment 
 
 - 小表热点方面，5.0 版本将通过 readonly table（常量表）功能，会得到进一步优化；
 
-- 目前 KeyViz 虽然可以在 Region 的粒度上定位热点的范围，但还可以更加一步到位，比如直接告诉业务是否有读写热点，直接展示哪类 SQL 造成的热点，一键 Split 热点 Region，自动分析潜在热点根因。
+- 目前 KeyViz 虽然可以在 Region 的粒度上定位热点的范围，但还可以更加一步到位，比如直接告诉业务是否有读写热点，直接展示哪类 SQL 造成的热点，一键 Split 热点 Region，自动分析潜在热点根因。 
