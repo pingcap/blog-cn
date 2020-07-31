@@ -9,6 +9,7 @@
   - [小红书（二）](user-case-xiaohongshu-2.md)
   - [中通快递](user-case-zto-express.md)
   - [美团点评](user-case-meituandianping.md)
+  - [伴鱼](user-case-banyu.md)
   - [网易互娱](user-case-wangyihuyu.md)
   - [Bigo](user-case-bigo.md)
   - [京东智联云](user-case-jingdongzhilianyun.md)
