@@ -1,12 +1,12 @@
 ---
-title: Why TiDB Matters
+title: Why HTAP Matters
 author: ['马晓宇']
 date: 2020-07-31
-summary: 说到 Why TiDB Matters，其实包含两部分，一部分是说为什么我们叫 HTAP，另外一部分是说 TiDB 怎样在 HTAP 架构下发挥它的优势。
+summary: 说到 Why HTAP Matters，其实包含两部分，一部分是说为什么我们叫 HTAP，另外一部分是说 TiDB 怎样在 HTAP 架构下发挥它的优势。
 tags: ['TiDB-4.0','HTAP']
 ---
 
-说到 Why TiDB Matters，其实包含两部分，一部分是说为什么我们叫 HTAP，另外一部分是说 TiDB 怎样在 HTAP 架构下发挥它的优势。
+说到 Why HTAP Matters，其实包含两部分，一部分是说为什么我们叫 HTAP，另外一部分是说 TiDB 怎样在 HTAP 架构下发挥它的优势。
 
 ## 什么是 HTAP？
 
