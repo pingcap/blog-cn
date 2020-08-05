@@ -134,10 +134,10 @@ Usage : haproxy [-f <cfgfile|cfgdir>]* [ -vdVD ] [ -n <maxconn> ] [ -N <maxpconn
 |-vv|显示详细的版本信息。|
 |-d|debug 模式开启。|
 | -db|仅禁止后台模式|
-|-dM [\<byte>]|执行分配内存。|
+|-dM [&lt;byte&gt;]|执行分配内存。|
 |-V|启动过程显示配置和轮询信息。|
 |-D|开启守护进程模式。|
-|-C \<dir>|在加载配置文件之前更改目录位置。|
+|-C &lt;dir&gt;|在加载配置文件之前更改目录位置。|
 |-W|主从模式。|
 |-q|静默模式，不输出信息。|
 |-c|只检查配置文件并在尝试绑定之前退出。|
@@ -152,9 +152,9 @@ Usage : haproxy [-f <cfgfile|cfgdir>]* [ -vdVD ] [ -n <maxconn> ] [ -N <maxpconn
 |-dR|禁止使用 SO_REUSEPORT。|
 |-dr|忽略服务器地址解析失败。|
 |-dV|禁止在服务器端使用 SSL。|
-|-sf/-st \<unix_socket> |在启动后，在 pidlist 中发送 FINISH 信号给 PID。收到此信号的进程将等待所有会话在退出之前完成，即优雅停止服务。此选项必须最后指定，后跟任意数量的 PID，SIGTTOU 和 SIGUSR1 都被发送。|
-|-x \<unix_socket>,[\<bind options>...]|获取 socket 信息。|
-|-S \<unix_socket>,[\<bind options>...]|分配新的 socket。|
+|-sf/-st &lt;unix_socket&gt; |在启动后，在 pidlist 中发送 FINISH 信号给 PID。收到此信号的进程将等待所有会话在退出之前完成，即优雅停止服务。此选项必须最后指定，后跟任意数量的 PID，SIGTTOU 和 SIGUSR1 都被发送。|
+|-x &lt;unix_socket&gt;,[&lt;bind options&gt;...]|获取 socket 信息。|
+|-S &lt;unix_socket&gt;,[&lt;bind options&gt;...]|分配新的 socket。|
 
 
 ## HAProxy 最佳实践

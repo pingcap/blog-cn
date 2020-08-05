@@ -36,7 +36,7 @@ TiDB 经过这几年的发展，也积累下来了大量的 Blog，文档以及�
 
 #### 活动内容
 
-参与者在 48 小时内共同完成 [<TiDB in Action>开源电子书](https://github.com/pingcap-incubator/tidb-in-action) 创作，预计全篇长度约 5-6 万字。
+参与者在 48 小时内共同完成 [《TiDB in Action》开源电子书](https://github.com/pingcap-incubator/tidb-in-action) 创作，预计全篇长度约 5-6 万字。
 
 内容全部基于 TiDB 4.0 版本创作，但不预设本书的读者有 4.0 之前版本的使用经验，手把手教大家用好 4.0。具体内容包括但不限于：
 
