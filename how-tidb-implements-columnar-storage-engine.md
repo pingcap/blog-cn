@@ -6,6 +6,8 @@ summary: 本文将为大家详细解释 Delta Tree 的设计思路。
 tags: ['TiDB','TiFlash']
 ---
 
+作者：韦万
+
 [TiDB](https://docs.pingcap.com/zh/tidb/stable) 是一款分布式 HTAP 数据库，它目前有两种存储节点，分别是 TiKV 和 TiFlash。TiKV 采用了行式存储，更适合 TP 类型的业务；而 TiFlash 采用列式存储，擅长 AP 类型的业务。TiFlash 通过 raft 协议从 TiKV 节点实时同步数据，拥有毫秒级别的延迟，以及非常优秀的数据分析性能。它支持实时同步 TiKV 的数据更新，以及支持在线 DDL。我们把 TiFlash 作为 Raft Learner 融合进 TiDB 的 raft 体系，将两种节点整合在一个数据库集群中，上层统一通过 TiDB 节点查询，使得 TiDB 成为一款真正的 HTAP 数据库。
 
 ![1-HTAP](media/how-tidb-implements-columnar-storage-engine/1-HTAP.png)
