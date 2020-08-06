@@ -9,7 +9,7 @@ url: /cases-cn/user-case-funyours-japan/
 weight: 4
 logo: /images/blog-cn/customers/funyours-japan-logo.png
 customer: FUNYOURS JAPAN
-CutmoerCategory: 游戏
+customerCategory: 游戏
 ---
 
 >作者：张明塘，FUNYOURS JAPAN 运营系统工程師 

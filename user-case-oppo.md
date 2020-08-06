@@ -9,6 +9,7 @@ url: /cases-cn/user-case-oppo/
 weight: 2
 logo: /images/blog-cn/customers/oppo-logo.png
 customer: OPPO
+customerCategory: 高科技
 ---
 
 >本文转载自微信公众号“[OPPO大数据](https://mp.weixin.qq.com/s/BYsUOCCU6W9bIQ-fK8ESDw?scene=25#wechat_redirect)”。
