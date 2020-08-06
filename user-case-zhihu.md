@@ -10,6 +10,7 @@ weight: 1
 logo: /images/blog-cn/customers/zhihu-logo.png
 customer: 知乎
 CustomerCategory: 资讯
+showOnSwiper: 4
 ---
 
 

@@ -9,6 +9,7 @@ url: /cases-cn/user-case-pingankeji/
 weight: 2
 logo: /images/blog-cn/customers/pingankeji-logo.png
 customer: 平安科技
+showOnSwiper: 2
 ---
 
 
