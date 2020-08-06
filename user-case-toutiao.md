@@ -9,7 +9,7 @@ url: /cases-cn/user-case-toutiao/
 weight: 17
 logo: /images/blog-cn/customers/toutiao-logo.png
 customer: 今日头条
-CustomerCategory: 资讯
+customerCategory: 资讯
 ---
 
 ![](media/user-case-toutiao/1.jpeg)

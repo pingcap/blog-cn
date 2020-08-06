@@ -9,7 +9,7 @@ url: /cases-cn/user-case-linkdoc/
 weight: 24
 logo: /images/blog-cn/customers/linkdoc-logo.png
 customer: 零氪科技
-CustomerCategory: 高科技
+customerCategory: 高科技
 ---
 
 > 作者介绍：杨浩，现任零氪科技运维&安全负责人，曾就职于阿里巴巴-技术保障部-CDN。专注 CDN、安全、自动化运维、大数据等领域。

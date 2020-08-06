@@ -9,7 +9,7 @@ url: /cases-cn/user-case-wangyihuyu/
 weight: 2
 logo: /images/blog-cn/customers/wangyihuyu-logo.png
 customer: 网易互娱
-CustomerCategory: 游戏
+customerCategory: 游戏
 ---
 
 

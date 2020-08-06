@@ -10,7 +10,7 @@ weight: 2
 logo: /images/blog-cn/customers/meituandianping-logo.png
 aliases: ['/cases-cn/user-case-meituan/']
 customer: 美团点评
-CustomerCategory: 电商
+customerCategory: 电商
 showOnSwiper: 3
 ---
 

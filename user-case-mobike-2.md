@@ -9,7 +9,7 @@ url: /cases-cn/user-case-mobike-2/
 weight: 7
 logo: /images/blog-cn/customers/mobike-logo.png
 customer: 摩拜单车
-CustomerCategory: 出行
+customerCategory: 出行
 ---
 
 > 作者介绍：**吕磊**，摩拜单车高级 DBA。
