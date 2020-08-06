@@ -9,6 +9,7 @@ url: /cases-cn/user-case-huataizhengquan/
 weight: 4
 logo: /images/blog-cn/customers/huataizhengquan-logo.png
 customer: 华泰证券
+customerCategory: 金融
 ---
 
 >本文转载自微信公众号“[华泰证券数字科技](https://mp.weixin.qq.com/s/Hp-ZJLdvd3z2w9IJ_32NRw?scene=25#wechat_redirect)”。

@@ -9,6 +9,7 @@ url: /cases-cn/user-case-ekingtech/
 weight: 1
 logo: /images/blog-cn/customers/ekingtech-logo.png
 customer: 易建科技
+customerCategory: Other
 ---
 
 

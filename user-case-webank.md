@@ -9,6 +9,7 @@ url: /cases-cn/user-case-webank/
 weight: 3
 logo: /images/blog-cn/customers/webank-logo.png
 customer: 微众银行
+customerCategory: 金融
 ---
 
 >作者介绍：
