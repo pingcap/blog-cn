@@ -20,7 +20,7 @@ BPF 最初代表 Berkeley Packet Filter，但在 Linux 中已扩展为通用内�
 
 6. … …
 
-这些功能都非常酷，其中上述一些应用的背后有着一个重要的基础功能 BPF CO-RE （Compile Once – Run Everywhere） 做支撑，我们来看下如何基于 BPF CO-RE 替代 BCC 工具来获得更好的体验。
+这些功能都非常酷，其中上述一些应用的背后有着一个重要的基础功能 BTF 做支撑， BTF 的一个用途是实现 BPF CO-RE （Compile Once – Run Everywhere）重定向，我们来看下如何基于 BPF CO-RE 替代 BCC 工具来获得更好的体验。
 
 ## Libbpf-tools vs BCC
 
