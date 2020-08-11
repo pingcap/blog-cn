@@ -38,13 +38,13 @@ BCC 是 BPF 的编译工具集合，前端提供 Python/Lua API，本身通过 C
 
 性能优化大师 Brendan Gregg 在用 libbpf + BPF CO-RE 转换一个 BCC 工具后给出了性能对比数据：
 
-As my colleague Jason pointed out, the memory footprint of opensnoop as CO-RE is much lower than opensnoop.py. 9 Mbytes for CO-RE vs 80 Mbytes for Python.
+>As my colleague Jason pointed out, the memory footprint of opensnoop as CO-RE is much lower than opensnoop.py. 9 Mbytes for CO-RE vs 80 Mbytes for Python.
 
 我们可以看到在运行时相比 BCC 版本，libbpf + BPF CO-RE 版本节约了近 9 倍的内存开销，这对于物理内存资源已经紧张的服务器来说会更友好。
 
 ## Libbpf-tools 在 PingCAP 的应用
 
-在 PingCAP 内部，我们很早就开始关注 BPF 和其社区发展，以前每添加一台新机器，就得在上面安装一套 BCC 依赖，比较麻烦，自从 Libbpf-tools 示例程序添加到 BCC 项目后，我们就开始转换体验，在此过程中有幸得到了 Andrii Nakryiko （libpf + BPF CO-RE 的主导者），和 Brendan Gregg，Yonghong Song 的指导。当前已完成 10 个 BCC/bpftrace 工具到 [libbpf + BPF CO-RE](https://github.com/iovisor/bcc/tree/master/libbpf-tools) 的转换 & 改进，并在内部使用。比如当需要弄清特定 workload 下 IO 特征时，就可以使用 block 层的多个性能分析工具来分析：
+在 PingCAP 内部，我们很早就开始关注 BPF 和其社区发展，以前每添加一台新机器，就得在上面安装一套 BCC 依赖，比较麻烦，自从 libbpf-tools 示例程序添加到 BCC 项目后，我们就开始转换体验，在此过程中有幸得到了 Andrii Nakryiko （libbpf + BPF CO-RE 的主导者），和 Brendan Gregg，Yonghong Song 的指导。当前已完成 10 个 BCC/bpftrace 工具到 [libbpf + BPF CO-RE](https://github.com/iovisor/bcc/tree/master/libbpf-tools) 的转换 & 改进，并在内部使用。比如当需要弄清特定 workload 下 IO 特征时，就可以使用 block 层的多个性能分析工具来分析：
 
 1. 使用 [./biolatency -d nvme0n1](https://github.com/iovisor/bcc/blob/master/libbpf-tools/biolatency.bpf.c) 确认 IO 请求的延迟分布情况：
 
@@ -62,6 +62,6 @@ As my colleague Jason pointed out, the memory footprint of opensnoop as CO-RE is
 
 	![4-分析结果](media/libbpf-tools/4-分析结果.png)
 	
-这些分析结果为后续的 IO 优化提供指导建议。除此之外，我们也在探索调度器相关的 Libbpf-tools 对 TiDB 数据库的调优是否有帮助。这些工具属于通用型工具，欢迎大家来使用！
+这些分析结果为后续的 IO 优化提供指导建议。除此之外，我们也在探索调度器相关的 libbpf-tools 对 TiDB 数据库的调优是否有帮助。这些工具属于通用型工具，欢迎大家来使用！
 
-后续会将更多的工具基于 Libbpf-tools 的方式来实现。期待大家的使用反馈！
+后续会将更多的工具基于 libbpf-tools 的方式来实现。期待大家的使用反馈！
