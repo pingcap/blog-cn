@@ -2,7 +2,7 @@
 title: Libbpf-tools —— 让 Tracing 工具身轻如燕
 author: ['张文博']
 date: 2020-08-11
-summary: 本篇文章概述了 BPF 的主要应用，重点描述了 Libbpf-tools  解决了哪些 BCC 痛点以及在 PingCAP 内部的相关实践。
+summary: 本篇文章概述了 BPF 的主要应用，重点描述了 libbpf-tools  解决了哪些 BCC 痛点以及在 PingCAP 内部的相关实践。
 tags: ['Libbpf-tools']
 ---
 
