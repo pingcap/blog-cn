@@ -20,8 +20,7 @@ tags: ['Horoscope','TiDB']
 
 ## 为什么我们要开发 Horoscope?
 
-为了测量优化器和执行器，从去年开始我们构建了daily benchmark 平台 perf.pingcap.com，覆盖常见的几种复杂查询的测试场景，包含 TPC-H、TPC-DS
-Star Schema Benchmark 等，跟踪每天开发分支上这些查询的执行速度情况。
+为了测量优化器和执行器，从去年开始我们构建了daily benchmark 平台 perf.pingcap.com，覆盖常见的几种复杂查询的测试场景，包含 TPC-H、TPC-DS、Star Schema Benchmark 等，跟踪每天开发分支上这些查询的执行速度情况。
 
 ![1-TPC-H(SF=50)90天曲线图](media/use-horoscope-to-test-tidb-optimizer/1-TPC-H(SF=50)90天曲线图.png)
 
