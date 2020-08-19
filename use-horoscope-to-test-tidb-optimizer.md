@@ -168,7 +168,21 @@ $ ./bin/horo --round 4 -d root:@tcp(localhost:4000)/imdb?charset=utf8 bench -p -
 另外从散点图上看会发现打开 feedback 也有可能会让优化器选择到更差的执行计划。例如下面的这条 SQL，feedback 机制反而使优化器选择到了更差的执行计划，这些可以作为 bad case 来具体分析。
 
 ```SQL
-SELECT * FROM title WHERE (title.id IS NOT NULL AND title.title!="(#1.69)" AND title.imdb_index IS NULL AND title.kind_id<8 AND title.production_year!=1974 AND title.imdb_id IS NULL AND title.phonetic_code IS NULL AND title.episode_of_id>184590 AND title.season_nr IS NULL AND title.episode_nr IS NULL AND title.series_years IS NULL AND title.md5sum<="7cf95ddbd379fdb3e530e0721ff61494") LIMIT 100
+SELECT *
+FROM title
+WHERE (title.id IS NOT NULL
+       AND title.title!="(#1.69)"
+       AND title.imdb_index IS NULL
+       AND title.kind_id<8
+       AND title.production_year!=1974
+       AND title.imdb_id IS NULL
+       AND title.phonetic_code IS NULL
+       AND title.episode_of_id>184590
+       AND title.season_nr IS NULL
+       AND title.episode_nr IS NULL
+       AND title.series_years IS NULL
+       AND title.md5sum<="7cf95ddbd379fdb3e530e0721ff61494")
+LIMIT 100
 ```
 
 ![7-关闭feedback查询有效性的散点图](media/use-horoscope-to-test-tidb-optimizer/7-关闭feedback查询有效性的散点图.png)
@@ -189,18 +203,3 @@ Horoscope 还可以做更多的事情，例如当版本升级时，可以用 Hor
 此外，Horoscope 也提供了一种测试优化器正确性的途径。我们正在计划让 Horoscope 生成更复杂的查询，通过比对每个物理执行计划的结果来验证优化器实现的正确性。
 
 优化器的工作是个长期且难度非常大的事情，优化器的测试也是如此，如果您有更多更好的关于优化器或者其他组件的优化以及测试的方法或者思路，欢迎在 TiDB 社区中和我们进行交流。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
