@@ -50,6 +50,7 @@
   - [中国银行](user-case-bank-of-china.md)
   - [北银科技](user-case-bob-fintech.md)
   - [北京银行（二）](user-case-beijing-bank-2.md)
+  - [翼支付](user-case-bestpay.md)
   - [平安科技](user-case-pingankeji.md)
   - [微众银行](user-case-webank.md)
   - [华泰证券](user-case-huataizhengquan.md)
