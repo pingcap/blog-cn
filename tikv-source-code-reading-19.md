@@ -267,7 +267,7 @@ pub fn execute_raft_command(&self, cmd: RaftCommand<E>) {
 
 *   redirect()：如果 Localreader 不确定如何处理，那它就用该方法将请求重新转发到 raftstore 中，一切以 raftstore 为准。
 
-Localreader 中对 lease 的处理和 raftstore 略有不同，关键代码在[这里](https://github.com/tikv/tikv/blob/v4.0.0-rc.1/components/raftstore/src/store/worker/read.rs#L429-L439)和[这里](https://github.com/tikv/tikv/blob/v4.0.0-rc.1/components/raftstore/src/store/worker/read.rs#L92-L106)，至于可以这么写，在这就不说了，作为课后作业留给读者自己想 :-p
+Localreader 中对 lease 的处理和 raftstore 略有不同，关键代码在[这里](https://github.com/tikv/tikv/blob/v4.0.0-rc.1/components/raftstore/src/store/worker/read.rs#L429-L439)和[这里](https://github.com/tikv/tikv/blob/v4.0.0-rc.1/components/raftstore/src/store/worker/read.rs#L92-L106)，至于为什么可以这么写，在这就不说了，作为课后作业留给读者思考 :-p
 
 ## 最后
 
