@@ -271,4 +271,4 @@ Localreader 中对 lease 的处理和 raftstore 略有不同，关键代码在[�
 
 ## 最后
 
-好了，read index 和 local read 的源码阅读就到这结束了，希望读者看完后能了解并掌握 TiKV 处理读请求的逻辑。
+read index 和 local read 的源码阅读就到这结束了，希望读者看完后能了解并掌握 TiKV 处理读请求的逻辑。
