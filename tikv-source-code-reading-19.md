@@ -6,7 +6,7 @@ summary: 这篇文章尝试向大家较为完整的介绍下 TiKV 中的 Raft �
 tags: ['TiKV 源码解析','社区']
 ---
 
-在上篇文章中，我们讲解了 [Raft Propose 的 Commit 和 Apply 情景分析](https://pingcap.com/blog-cn/tikv-source-code-reading-18/)，相信大家对 TiKV 的 Raft 写流程有了个大概了解。这篇文章尝试向大家较为完整的介绍下 TiKV 中的 Raft 读流程的实现，特别是 read index 和 lease read（或称 local read）。关于 read index 和 lease read 的介绍和理论基础，请大家参阅 [TiKV 功能介绍 - Lease Read](https://pingcap.com/blog-cn/lease-read/) 或者 Raft 论文第 6.4 节，不在这赘述。
+在上篇文章中，我们讲解了 [Raft Propose 的 Commit 和 Apply 情景分析](https://pingcap.com/blog-cn/tikv-source-code-reading-18/)，相信大家对 TiKV 的 Raft 写流程有了大概了解。这篇文章将尝试向大家较为完整的介绍下 TiKV 中的 Raft 读流程的实现，特别是 read index 和 lease read（或称 local read）。关于 read index 和 lease read 的介绍和理论基础，请大家参阅 [TiKV 功能介绍 - Lease Read](https://pingcap.com/blog-cn/lease-read/) 或者 Raft 论文第 6.4 节，不在这里赘述。
 
 ## 如何发起 Raft 读请求？
 
