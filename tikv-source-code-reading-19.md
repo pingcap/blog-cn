@@ -261,7 +261,7 @@ pub fn execute_raft_command(&self, cmd: RaftCommand<E>) {
 }
 ```
 
-上述代码就是 Localreader 中处理请求的关键逻辑。注意为了突出重点，我们对该函数做了适当精简，完整代码请参考链接。
+上述代码就是 Localreader 中处理请求的关键逻辑。注意为了突出重点，我们对该函数做了适当精简，完整代码请参考[链接](https://github.com/tikv/tikv/blob/v4.0.0-rc.1/components/raftstore/src/store/worker/read.rs#L298-L357)。
 
 *   pre_propose_raft_command(): 这个函数和 PeerFsm 中的同名函数做的事情是类似的，对 lease 的检查也在这里发生，如果所有检查通过，就会返回 Ok(Some(delegate))，用来执行读请求。
 
