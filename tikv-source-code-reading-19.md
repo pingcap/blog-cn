@@ -99,7 +99,7 @@ PeerFsm 在会将该请求传入 `PeerFsm::propose_raft_command` 做进一步处
 
     c. 检查 leadership，确认当前 Peer 是否为 leader；
 
-    d. 检查 Raft 任期，确认当前 leader 的任务是否符合请求中的要求；
+    d. 检查 Raft 任期，确认当前 leader 的任期是否符合请求中的要求；
 
     e. 检查 peer 初始化状态，确认当前 Peer 已经初始化，有完整数据；
 
