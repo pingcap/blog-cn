@@ -1,15 +1,15 @@
 ---
-title: DM 源码阅读系列文章（八）Online Schema Change 同步支持
+title: DM 源码阅读系列文章（八）Online Schema Change 迁移支持
 author: ['Ian']
 date: 2019-06-19
-summary: 本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些 MySQL 上的第三方 online schema change 方案同步，内容包括 online schema change 方案的简单介绍，online schema change 同步方案，以及同步实现细节。
+summary: 本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些 MySQL 上的第三方 online schema change 方案迁移，内容包括 online schema change 方案的简单介绍，online schema change 迁移方案，以及迁移实现细节。
 tags: ['DM 源码阅读','社区']
 ---
 
 
-本文为 TiDB Data Migration 源码阅读系列文章的第八篇，[《DM 源码阅读系列文章（七）定制化数据同步功能的实现》](https://pingcap.com/blog-cn/dm-source-code-reading-7/) 对 DM 中的定制化数据同步功能进行详细的讲解，包括库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。
+本文为 TiDB Data Migration 源码阅读系列文章的第八篇，[《DM 源码阅读系列文章（七）定制化数据迁移功能的实现》](https://pingcap.com/blog-cn/dm-source-code-reading-7/) 对 DM 中的定制化数据迁移功能进行详细的讲解，包括库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。
 
-本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些 MySQL 上的第三方 online schema change 方案同步，内容包括 online schema change 方案的简单介绍，online schema change 同步方案，以及同步实现细节。
+本篇文章将会以 gh-ost 为例，详细地介绍 DM 是如何支持一些 MySQL 上的第三方 online schema change 方案迁移，内容包括 online schema change 方案的简单介绍，online schema change 迁移方案，以及迁移实现细节。
 
 ## MySQL 的 Online Schema Change 方案
 
@@ -25,33 +25,33 @@ tags: ['DM 源码阅读','社区']
 
 1. 在操作目标数据库上使用 `create table ghost table like origin table` 来创建 ghost 表；
 2. 按照需求变更表结构，比如 `add column/index`；
-3. gh-ost 自身变为 MySQL replica slave，将原表的全量数据和 binlog 增量变更数据同步到 ghost 表；
-4. 数据同步完成之后执行 `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换 
+3. gh-ost 自身变为 MySQL replica slave，将原表的全量数据和 binlog 增量变更数据迁移到 ghost 表；
+4. 数据迁移完成之后执行 `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换 
 
-pt-online-schema-change 通过 trigger 的方式来实现数据同步，剩余流程类似。
+pt-online-schema-change 通过 trigger 的方式来实现数据迁移，剩余流程类似。
 
 在 DM 的 task 配置中可以通过设置 [`online-ddl-scheme`](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/dm/config/task.go#L244) 来配置的 online schema change 方案，目前仅支持 [gh-ost/pt](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/dm/config/task.go#L32) 两个配置选项。
 
-## DM Online Schema Change 同步方案
+## DM Online Schema Change 迁移方案
 
-根据上个章节介绍的流程，pt 和 gh-ost 除了 replicate 数据的方式不一样之外，其他流程都类似，并且这种 native 的模式可以使得 binlog replication 几乎不需要修改就可以同步数据。但是 DM 为了减少同步的数据量，简化一些场景（如 shard tables merge）下的处理流程，并做了额外的优化，即，不同步 ghost 表的数据。
+根据上个章节介绍的流程，pt 和 gh-ost 除了 replicate 数据的方式不一样之外，其他流程都类似，并且这种 native 的模式可以使得 binlog replication 几乎不需要修改就可以迁移数据。但是 DM 为了减少迁移的数据量，简化一些场景（如 shard tables merge）下的处理流程，并做了额外的优化，即，不迁移 ghost 表的数据。
 
-继续分析 online schema change 的流程，从数据同步的角度看有下面这些需要关注的点：
+继续分析 online schema change 的流程，从数据迁移的角度看有下面这些需要关注的点：
 
-* 原始表的增量数据同步模式有没有变化
+* 原始表的增量数据迁移模式有没有变化
 * ghost 表会产生跟原始表几乎一样的冗余 binlog events
 * 通过  `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换
 
-如果使用 ghost 表的 `alter DDL` 替换掉  `rename origin table to table_del, table_gho to origin table` ，那么就可以实现我们的不同步 ghost 表数据的目的。
+如果使用 ghost 表的 `alter DDL` 替换掉  `rename origin table to table_del, table_gho to origin table` ，那么就可以实现我们的不迁移 ghost 表数据的目的。
 
-## DM Online Schema Change 同步实现细节
+## DM Online Schema Change 迁移实现细节
 
 Online schema change 模块代码实现如下：
 
-* [gh-ost 同步代码实现](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go)
-* [pt-online-schema-change 同步代码实现](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/pt_osc.go)
+* [gh-ost 迁移代码实现](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go)
+* [pt-online-schema-change 迁移代码实现](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/pt_osc.go)
 
-DM 将 [同步的表分为三类](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/online_ddl.go#L62)：
+DM 将 [迁移的表分为三类](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/online_ddl.go#L62)：
 
 * real table - 原始表
 * trash table - online schema change 过程中产生的非关键数据表，比如以 `_ghc`, `_del` 为后缀的表
@@ -60,9 +60,9 @@ DM 将 [同步的表分为三类](https://github.com/pingcap/dm/blob/25f95ee08d0
 当 DM 遇到 DDL 的时候，都会 [调用 online schema change 模块的代码进行处理](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ddl.go#L210)，首先判断表的类型，接着针对不同类型作出不同的处理：
 
 * real table - [对 rename table statement 进行模式检查，直接返回执行](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L55)
-* trash table - [对 rename table statement 做一些模式检查，直接忽略同步](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L70)
+* trash table - [对 rename table statement 做一些模式检查，直接忽略迁移](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L70)
 * ghost table
-    * 如果 DDL 是 [create/drop table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L86) ，则 [清空内存中的残余信息后忽略这个 DDL 继续同步](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L87)
+    * 如果 DDL 是 [create/drop table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L86) ，则 [清空内存中的残余信息后忽略这个 DDL 继续迁移](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L87)
     * 如果 DDL 是 [rename table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L96) ，则 [返回内存中保存的 ghost table 的 DDLs](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L103)
     * 如果是其他类型 DDL，[则把这些 DDL 保存在内存中](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L119)
 
@@ -75,8 +75,8 @@ DM 将 [同步的表分为三类](https://github.com/pingcap/dm/blob/25f95ee08d0
 3. Section 3：trash table 的 DDLs 会被忽略
 4. Section 4：遇到 ghost table 的 rename table statement 会替换成 Section 2 的 DDL, 并且将该 DDL 的 table name 更换成对应 real table name 去执行
 
-注意： rename table statement 模式检查主要是为了确保在 online schema change 变更过程中除了  `rename origin table to table_del, table_gho to origin table` 之外没有其他 rename table statement，避免同步状态的复杂化。
+注意： rename table statement 模式检查主要是为了确保在 online schema change 变更过程中除了  `rename origin table to table_del, table_gho to origin table` 之外没有其他 rename table statement，避免迁移状态的复杂化。
 
 ## 小结
 
-本篇文章详细地介绍 DM 对 online schema change 方案的同步支持，内容包含 online schema change 方案的简单介绍， online schema change 同步方案，以及同步实现细节。下一章会对 DM 的 shard DDL merge 方案进行详细的讲解，敬请期待。
+本篇文章详细地介绍 DM 对 online schema change 方案的迁移支持，内容包含 online schema change 方案的简单介绍， online schema change 迁移方案，以及迁移实现细节。下一章会对 DM 的 shard DDL merge 方案进行详细的讲解，敬请期待。
