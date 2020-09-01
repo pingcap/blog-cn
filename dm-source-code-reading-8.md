@@ -38,7 +38,7 @@ pt-online-schema-change 通过 trigger 的方式来实现数据迁移，剩余�
 
 继续分析 online schema change 的流程，从数据迁移的角度看有下面这些需要关注的点：
 
-* 原始表的增量数据迁移模式有没有变化
+* 原始表的增量数据复制模式有没有变化
 * ghost 表会产生跟原始表几乎一样的冗余 binlog events
 * 通过  `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换
 
