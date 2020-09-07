@@ -1,7 +1,7 @@
 ---
 title: TiDB 在 U-Next ARM 平台上的应用与实践
 author: ['黄必荣']
-date: 2020-09-02
+date: 2020-09-07
 summary: 本文介绍了 TiDB 在 U-Next ARM 平台上的应用与实践。
 tags: ['互联网']
 category: case
