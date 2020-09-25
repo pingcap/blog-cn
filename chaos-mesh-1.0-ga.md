@@ -66,7 +66,7 @@ Chaos Mesh 为了进一步提高混沌实验的可观测性，单独开发了 [G
 
 大家通过 install.sh 安装脚本或者是使用 Helm 工具就可以在自己的 Kubernetes 环境下快速的部署 Chaos Mesh，具体安装步骤可以参考 [Chaos Mesh 部署文档](https://chaos-mesh.org/docs/installation/installation)。此外社区的小伙伴也贡献了在线 Chaos Mesh 简单教程，想要快速尝试的小伙伴也可以直接按照课程，在线试用，课程地址：[https://chaos-mesh.org/interactiveTutorial](https://chaos-mesh.org/interactiveTutorial)。
 
-对于 1.0 GA 之前版本的用户，请参考 [1.0 Release Note](https://github.com/chaos-mesh/chaos-mesh/releases/tag/v1.0) 了解 1.0 的变更内容和升级指南。
+对于 1.0 GA 之前版本的用户，请参考 [1.0 Release Note](https://github.com/chaos-mesh/chaos-mesh/releases/tag/v1.0.0) 了解 1.0 的变更内容和升级指南。
 
 ## 致谢
 
