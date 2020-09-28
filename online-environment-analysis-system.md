@@ -12,7 +12,7 @@ tags: ['Linux','TiDB']
 
 ## Perf
 
-众所周知，perf 是 Linux 系统下非常强大的性能工具，由 Linux 内核开发人员在不断演进和优化。除了可以分析  PMU (Performance Monitoring Unit) 硬件事件，内核事件等通用功能外，perf 还提供了其他“子模块”，比如 sched 分析调度器，timechart 根据负载特征可视化系统行为，c2c 分析可能存在的 false sharing （RedHat 在大量 Linux 的应用上，测试过这套 c2c 的开发原型，成功地发现了很多热点的伪共享缓存行问题。）等, 而 trace 则可用于分析系统调用，其功能非常强大，并保证了可以接受的开销—— 运行速度仅放慢 1.36 倍(dd 作为测试负载) 。我们一起看下几个常用的场景：
+众所周知，perf 是 Linux 系统下非常强大的性能工具，由 Linux 内核开发人员在不断演进和优化。除了可以分析  PMU (Performance Monitoring Unit) 硬件事件，内核事件等通用功能外，perf 还提供了其他“子模块”，比如 sched 分析调度器，timechart 根据负载特征可视化系统行为，c2c 分析可能存在的 false sharing （RedHat 在大量 Linux 的应用上，测试过这套 c2c 的开发原型，成功地发现了很多热点的伪共享缓存行问题。）等，而 trace 则可用于分析系统调用，其功能非常强大，并保证了可以接受的开销 —— 运行速度仅放慢 1.36 倍(dd 作为测试负载) 。我们一起看下几个常用的场景：
 
 1. 调用 syscall 数量的 top 排行榜 
 
