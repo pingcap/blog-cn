@@ -94,7 +94,7 @@ TiSpark 利用了 Spark 的 Extensions Point。我们之所以选择 Spark Exten
 
 所以说，通过我们的接口写入的多表的写入，也是符合 ACID 特性的。
 
-另外一个大家可能会比较好奇的就是我有一个任务提交到了 TiSpark 里面，我有没有办法去看的到它这个任务的进度？答案是可以的。下图是我在提交了一个 4 万行的数据写入的一个截图。
+另外一个大家可能会比较好奇的就是我有一个任务提交到了 TiSpark 里面，我有没有办法去看的到它这个任务的进度？答案是可以的。下图是我在提交了一个 4 百万行的数据写入的一个截图。
 
 ![5-数据](media/mass-data-batch-processing-technology-based-on-tispark/5-数据.png)
 
