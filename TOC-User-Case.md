@@ -64,6 +64,7 @@
   - [北京银行（一）](user-case-beijing-bank.md)
 - 大型企业
   - [OPPO](user-case-oppo.md)
+  - [中移物联网](user-case-china-mobile-lot.md)
   - [海航易建](user-case-ekingtech.md)
   - [威锐达测控](user-case-weiruida.md)
   - [万达网络科技集团](user-case-wanda.md)
