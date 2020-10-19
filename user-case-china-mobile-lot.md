@@ -7,7 +7,7 @@ tags: ['大型企业']
 category: case
 url: /cases-cn/user-case-china-mobile-lot/
 weight: 2
-logo: /images/blog-cn/customers/china-mobile-lot-logo.jpg
+logo: /images/blog-cn/customers/china-mobile-lot-logo.jpeg
 customer: China Mobile LoT
 customerCategory: 制造业
 ---
