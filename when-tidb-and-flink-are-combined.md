@@ -176,7 +176,7 @@ PatSnap（智慧芽）是一款全球专利检索数据库，整合了 1790 年�
 
 为了方便读者更好的理解，我们在 [https://github.com/LittleFall/flink-tidb-rdw](https://github.com/LittleFall/flink-tidb-rdw) 中提供了一个基于 docker-compose 的 MySQL-Flink-TiDB 测试环境，供大家测试使用。
 
-[Flink TiDB 实时数仓 Slides](https://docs.google.com/presentation/d/1H3D_D6MKS3vT2-WMhpclG3xzIMA1_jR_fqwJ3KSzxrw/edit#slide=id.g446c4deb4d_0_341) 中提供了该场景下一个简单的教程，包括概念解释、代码示例、简单原理以及一些注意事项，其中示例包括：
+[Flink TiDB 实时数仓 Slides](https://www.slidestalk.com/TiDB/FlinkTidbRdw) 中提供了该场景下一个简单的教程，包括概念解释、代码示例、简单原理以及一些注意事项，其中示例包括：
 
 1. Flink SQL 简单尝试
 
