@@ -8,7 +8,7 @@ category: case
 url: /cases-cn/user-case-360-2/
 weight: 3
 logo: /images/blog-cn/customers/360-logo-2.png
-customer: 360
+customer: '360'
 customerCategory: 互联网
 ---
 
