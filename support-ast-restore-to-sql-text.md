@@ -24,7 +24,7 @@ SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST�
 // 靠前的 flag 拥有更高的优先级。
 const (
 	RestoreStringSingleQuotes RestoreFlags = 1 << iota
-	
+
 	...
 )
 
@@ -72,7 +72,7 @@ type Node interface {
     // Restore AST to SQL text and append them to `ctx`.
     // return error when the AST is invalid.
 	Restore(ctx *RestoreCtx) error
-    
+
     ...
 }
 ```
@@ -93,9 +93,9 @@ type Node interface {
 2. 在 [Issue](https://github.com/pingcap/tidb/issues/8532) 中找到未实现的函数
 
     1. 在 [Issue-pingcap/tidb#8532](https://github.com/pingcap/tidb/issues/8532) 中找到一个没有被其他贡献者认领的任务，例如 `ast/expressions.go: BetweenExpr`。
-    
+
     2. 在 [pingcap/parser](https://github.com/pingcap/parser) 中找到任务对应文件 `ast/expressions.go`。
-    
+
     3. 在文件中找到 `BetweenExpr` 结构的 `Restore` 函数：
 
     ```
@@ -108,8 +108,8 @@ type Node interface {
 3. 实现 `Restore()` 函数
 
     根据 Node 节点结构和 SQL 语法实现函数功能。
-    
-     > 参考 [MySQL 5.7 SQL Statement Syntax](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax.html)
+
+     > 参考 [MySQL 5.7 SQL Statement Syntax](https://dev.mysql.com/doc/refman/5.7/en/sql-statements.html)
 
 4. 写单元测试
 
@@ -119,7 +119,7 @@ type Node interface {
 
 6. 提交 PR
 
-     PR 标题统一为：`parser: implement Restore for XXX`  
+     PR 标题统一为：`parser: implement Restore for XXX`
      请在 PR 中关联 Issue: `pingcap/tidb#8532`
 
 ## **示例**
@@ -129,9 +129,9 @@ type Node interface {
 1. 首先看 `ast/expressions.go`：
 
     1. 我们要实现一个 `ast.Node` 结构的 `Restore` 函数，首先清楚该结构代表什么短语，例如 `BetweenExpr` 代表 `expr [NOT] BETWEEN expr AND expr` （参见：[MySQL 语法 - 比较函数和运算符](https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_between)）。
-    
+
     2. 观察 `BetweenExpr` 结构：
-    
+
     ```
     // BetweenExpr is for "between and" or "not between and" expression.
     type BetweenExpr struct {
@@ -146,9 +146,9 @@ type Node interface {
         Not bool
     }
     ```
-    
+
     3. 实现 `BetweenExpr` 的 `Restore` 函数：
-    
+
     ```
     // Restore implements Node interface.
     func (n *BetweenExpr) Restore(ctx *RestoreCtx) error {
@@ -197,9 +197,9 @@ type Node interface {
         RunNodeRestoreTest(c, testCases, "select %s", extractNodeFunc)
     }
     ```
-    
+
     **至此 `BetweenExpr` 的 `Restore` 函数实现完成，可以提交 PR 了。为了更好的理解测试逻辑，下面我们看 `RunNodeRestoreTest`：**
-    
+
     ```
     // 下面是测试逻辑，已经实现好了，不需要 contributor 实现
     func RunNodeRestoreTest(c *C, nodeTestCases []NodeRestoreTestCase, template string, extractNodeFunc func(node Node) Node) {
@@ -229,7 +229,7 @@ type Node interface {
         }
     }
     ```
-    
+
 **不过对于 `ast.StmtNode`（例如：`ast.SelectStmt`）测试方法有些不一样，
 由于这类节点可以还原为一个完整的 SQL，因此直接在 `parser_test.go` 中测试。**
 
@@ -238,18 +238,18 @@ type Node interface {
 1. `Restore` 函数实现过程略。
 
 2. 给函数实现添加单元测试，参见 `parser_test.go`：
-    
+
     在这个示例中，只添加了几行测试数据就完成了测试：
-    
+
     ```
     // 添加 testCase 结构的测试数据
     {"use `select`", true, "USE `select`"},
     {"use `sel``ect`", true, "USE `sel``ect`"},
     {"use select", false, "USE `select`"},
     ```
-    
+
     我们看 `testCase` 结构声明：
-    
+
     ```
     type testCase struct {
         // 原 SQL
@@ -260,7 +260,7 @@ type Node interface {
         restore string
     }
     ```
-    
+
     测试代码会判断原 SQL parse 出 AST 后再还原的 SQL 是否与预期的 restore SQL 相等，具体的测试逻辑在 `parser_test.go` 中 `RunTest()`、`RunRestoreTest()` 函数，逻辑与前例类似，此处不再赘述。
 
 ---
