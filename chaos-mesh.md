@@ -44,7 +44,7 @@ tags: ['Kubernetes','Chaos Mesh']
 
 *   I/O errno：模拟文件系统 I/O 错误 。
 
-## 背后的思考 
+## 背后的思考
 
 从上面的介绍我们了解到，Chaos Mesh 的目标是要做一个通用的混沌测试工具，所以最开始我们就定下了几个原则。
 
@@ -126,7 +126,7 @@ PodChaos 可以很好模拟这样的行为，通过 `selector` 选项划定想�
 *   Sidecar  
 
     Sidecar contianer 是一类特殊的容器，由 admission-webhooks  动态的注入到目标 Pod 中，目前在 Chaos Mesh 中实现了 chaosfs sidecar  容器，chaosfs 容器内会运行 fuse-daemon，用来劫持应用容器的 I/O 操作。 
-    
+
 整体工作流如下： 
 
 1.  用户通过 YAML 文件或是 Kubernetes 客户端往 Kubernetes API Server 创建或更新 Chaos 对象。 
@@ -144,10 +144,10 @@ Chaos-mesh 需要运行在 Kubernetes v1.12 及以上版本。Chaos Mesh 的部�
 如果没有 Kubernetes 集群，可以通过 Chaos Mesh 提供的脚本快速在本地启动一个多节点的 Kubernetes 集群：
 
 ```
-// 安装 kind 
+// 安装 kind
 curl -Lo ./kind https://github.com/kubernetes-sigs/kind/releases/download/v0.6.1/kind-$(uname)-amd64
 chmod +x ./kind
-mv ./kind /some-dir-in-your-PATH/kind 
+mv ./kind /some-dir-in-your-PATH/kind
 
 // 获取脚本
 git clone https://github.com/pingcap/chaos-mesh
@@ -156,7 +156,7 @@ cd chaos-mesh
 hack/kind-cluster-build.sh
 ```
 
-> 本地启动的 Kubernetes 集群，网络相关的错误注入的功能会受到影响  
+> 本地启动的 Kubernetes 集群，网络相关的错误注入的功能会受到影响
 
 等 Kubernetes 集群准备好，就可以通过 [Helm](https://helm.sh/) 和 [Kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) 安装部署 Chaos Mesh 了。
 
@@ -197,9 +197,9 @@ spec:
       "app.kubernetes.io/component": "tikv"
   scheduler:
     cron: "@every 1m"
-``` 
+```
 
-创建包含上述内容的 YAML 文件 `kill-tikv.yaml` 后，执行 `kubectl apply -f kill-tikv.yaml` ， 对应的错误就会被注入到  chaos-demo-1 集群中。   
+创建包含上述内容的 YAML 文件 `kill-tikv.yaml` 后，执行 `kubectl apply -f kill-tikv.yaml` ， 对应的错误就会被注入到  chaos-demo-1 集群中。
 
 ![图 5 chaos-demo-1](media/chaos-mesh/5.gif)
 
@@ -207,18 +207,18 @@ spec:
 
 > 更多的 YAML 文件示例参考：https://github.com/pingcap/chaos-mesh/tree/master/examples。
 
-### 使用 Kubernetes API 
+### 使用 Kubernetes API
 
 Chaos Mesh 使用 CRD 来定义 chaos 对象，因此我们可以直接通过 Kubernetes API 操作我们的 CRD 对象。通过这种方式，可以非常方便将我们的 Chaos Mesh 应用到我们自己的程序中，去定制各类测试场景，让混沌实验自动化并持续运行。
 
-例如在 [test-infra](https://github.com/pingcap/tipocket/tree/86e1cf580d30667f6db1265c6681c930cbfde746/test-infra) 项目中我们使用 Chaos Mesh 来模拟 [ETCD](https://github.com/pingcap/tipocket/blob/86e1cf580d30667f6db1265c6681c930cbfde746/test-infra/tests/etcd/nemesis_test.goo) 集群在 Kubernetes 环境中可能出现的异常情况，比如模拟节点重启、模拟网络故障、模拟文件系统故障等等。
+例如在 [test-infra](https://github.com/pingcap/tipocket/tree/86e1cf580d30667f6db1265c6681c930cbfde746/test-infra) 项目中我们使用 Chaos Mesh 来模拟 [ETCD](https://github.com/pingcap/tipocket/tree/86e1cf580d30667f6db1265c6681c930cbfde746/test-infra/tests/etcd) 集群在 Kubernetes 环境中可能出现的异常情况，比如模拟节点重启、模拟网络故障、模拟文件系统故障等等。
 
 Kubernetes API 使用示例： 
 
 ```
 import (
 	"context"
-	
+
 	"github.com/pingcap/chaos-mesh/api/v1alpha1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )

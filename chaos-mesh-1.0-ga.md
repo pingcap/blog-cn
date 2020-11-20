@@ -6,7 +6,7 @@ summary: 从开源到现在近一年的时间里，Chaos Mesh 在所有贡献者
 tags: ['Chaos Mesh']
 ---
 
-Chaos Mesh 是一个云原生的混沌测试平台，在去年的最后一天，我们开源了这个项目，以帮助大家更好的进行混沌实验。从开源到现在近一年的时间里，Chaos Mesh 在所有贡献者的共同努力下，在不断完善新功能的同时，也在易用性和稳定性上取得了阶段性的成果。今天，我们自豪的宣布 Chaos Mesh 1.0 正式发布！ 
+Chaos Mesh 是一个云原生的混沌测试平台，在去年的最后一天，我们开源了这个项目，以帮助大家更好的进行混沌实验。从开源到现在近一年的时间里，Chaos Mesh 在所有贡献者的共同努力下，在不断完善新功能的同时，也在易用性和稳定性上取得了阶段性的成果。今天，我们自豪的宣布 Chaos Mesh 1.0 正式发布！
 
 Chaos Mesh 1.0 是一个里程碑，不仅支持更多混沌注入的类型，提高了框架组件的稳定性，并且增加了 Chaos Dashboard 组件用来改善 Chaos Mesh 的易用性。下面请跟随我们的脚步梳理 Chaos Mesh 1.0 有什么样的惊喜。
 
@@ -64,7 +64,7 @@ Chaos Mesh 为了进一步提高混沌实验的可观测性，单独开发了 [G
 
 ## 快速体验
 
-大家通过 install.sh 安装脚本或者是使用 Helm 工具就可以在自己的 Kubernetes 环境下快速的部署 Chaos Mesh，具体安装步骤可以参考 [Chaos Mesh 部署文档](https://chaos-mesh.org/docs/installation/installation)。此外社区的小伙伴也贡献了在线 Chaos Mesh 简单教程，想要快速尝试的小伙伴也可以直接按照课程，在线试用，课程地址：[https://chaos-mesh.org/interactiveTutorial](https://chaos-mesh.org/interactiveTutorial)。
+大家通过 install.sh 安装脚本或者是使用 Helm 工具就可以在自己的 Kubernetes 环境下快速的部署 Chaos Mesh，具体安装步骤可以参考 [Chaos Mesh 部署文档](https://chaos-mesh.org/docs/user_guides/installation)。此外社区的小伙伴也贡献了在线 Chaos Mesh 简单教程，想要快速尝试的小伙伴也可以直接按照课程，在线试用，课程地址：[https://chaos-mesh.org/interactiveTutorial](https://chaos-mesh.org/interactiveTutorial)。
 
 对于 1.0 GA 之前版本的用户，请参考 [1.0 Release Note](https://github.com/chaos-mesh/chaos-mesh/releases/tag/v1.0.0) 了解 1.0 的变更内容和升级指南。
 

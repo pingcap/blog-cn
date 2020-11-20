@@ -10,7 +10,7 @@ tags: ['TiDB 源码阅读','社区']
 
 ## Prepare/Execute Statement 简介
 
-首先我们先简单回顾下客户端使用 Prepare 请求过程：	
+首先我们先简单回顾下客户端使用 Prepare 请求过程：
 
 1. 客户端发起 Prepare 命令将带 “?” 参数占位符的 SQL 语句发送到数据库，成功后返回 `stmtID`。
 
@@ -30,7 +30,7 @@ tags: ['TiDB 源码阅读','社区']
 
 * 某些特性比如 serverSideCursor 需要是通过 Prepare statement 才能使用。
 
-TiDB 和 [MySQL 协议](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-prepared-statements.html) 一样，对于发起 Prepare/Execute 这种使用访问模式提供两种方式：
+TiDB 和 [MySQL 协议](https://dev.mysql.com/doc/refman/5.7/en/sql-prepared-statements.html) 一样，对于发起 Prepare/Execute 这种使用访问模式提供两种方式：
 
 * Binary 协议：即上述的使用 `COM_STMT_PREPARE`，`COM_STMT_EXECUTE`，`COM_STMT_CLOSE` 命令并且通过 Binary 协议获取返回结果，这是目前各种应用开发常使用的方式。
 

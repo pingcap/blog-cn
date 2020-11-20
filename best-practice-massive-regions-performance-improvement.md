@@ -43,9 +43,9 @@ tags: ['性能调优','最佳实践']
 * Raft Propose 下的 `Propose wait duration`
 
   `Propose wait duration` 是发送请求给 Raftstore、到 Raftstore 真正处理请求之间的延迟。如果该延迟比较长，说明 Raftstore 比较繁忙或者 append log 比较耗时导致 Raftstore 不能及时处理请求。
-  
+
   参考值：最好低于 50-100ms。
-  
+
   ![图 3 查看 Propose wait duration](media/best-practice-massive-regions-performance-improvement/3.png)
 
   <div class="caption-center">图 3 查看 Propose wait duration</div>
@@ -75,7 +75,7 @@ tags: ['性能调优','最佳实践']
 >> pd-ctl config set merge-schedule-limit 8
 ```
 
-关于更多详情请参考这两个文档 [如何配置 Region Merge](https://github.com/tikv/tikv/blob/master/docs/how-to/configure/region-merge.md) 和 [PD 配置文件描述](https://pingcap.com/docs-cn/dev/reference/configuration/pd-server/configuration-file/#schedule)，在此不再展开。
+关于更多详情请参考文档 [PD 配置文件描述](https://pingcap.com/docs-cn/dev/reference/configuration/pd-server/configuration-file/#schedule)，在此不再展开。
 
 同时，默认配置的 Region Merge 默认参数设置相对保守，可以根据需求参考 [《TiDB 最佳实践系列（二）PD 调度策略》](https://pingcap.com/blog-cn/best-practice-pd/#5-region-merge-%E9%80%9F%E5%BA%A6%E6%85%A2) 中提及的具体方法加快 Region Merge 速度。
 
@@ -113,7 +113,7 @@ follower 在 `raft-election-timeout` 间隔内未收到来自 leader 的心跳�
 
 在实际情况下，读写请求并不会均匀的打在每个 Region 上，而是主要集中在少数的 Region 上，那么对于暂时空闲的 Region 我们是不是可以尽量减少它们的消息数量。这也就是 Hibernate Region 的主要思想，在无必要的时候不进行 `raft-base-tick`，也就是不去驱动那些空闲 Region 的 Raft 状态机，那么就不会触发这些 Region 的 Raft 心跳信息的产生，极大得减小了 Raftstore 的工作负担。
 
-截止发稿时 Hibernate Region 还是一个实验 feature，在 master 上已经默认开启。如有需要，可酌情开启，相关配置说明请参考  [配置 Hibernate Region](https://github.com/tikv/tikv/blob/master/docs/reference/configuration/raftstore-config.md#hibernate-region)。
+截止发稿时 Hibernate Region 还是一个实验 feature，在 master 上已经默认开启。如有需要，可酌情开启，相关配置说明请参考  [配置 Hibernate Region](https://docs.pingcap.com/zh/tidb/stable/tikv-configuration-file#raftstorehibernate-regions-%E5%AE%9E%E9%AA%8C%E7%89%B9%E6%80%A7)。
 
 ## 其他可能出现的问题
 
