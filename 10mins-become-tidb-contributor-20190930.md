@@ -75,7 +75,7 @@ for rowID := range rows {
 
 在 TiDB 的 Expression Package 上，下面几位同学的 PR 贡献数已经超过了 8 个（包括向量化相关的 PR），达到了 Active Contributor 的要求，他们分别是：[jacklightChen](https://github.com/jacklightChen)，[tsthght](https://github.com/tsthght)，[tangwz](https://github.com/tangwz) 和 [b41sh](https://github.com/b41sh)，也恭喜他们！
 
-成为 Active Contributor 之后，如果继续为 Expression Package 贡献 PR，且合并的 PR 数量超过 20 个，就有机会获得提名成为 Expression Package [Reviewer](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#reviewer)。Expression Package 的 Reviewer 在技术上受到社区认可，其对 PR 的 review comments 具有技术公信力，可以和 TiDB 工程师一起 Review Expression 包的 PR，并拥有点赞的权限，当然还拥有持续发展成 TiDB Committer 的机会！
+成为 Active Contributor 之后，如果继续为 Expression Package 贡献 PR，且合并的 PR 数量超过 20 个，就有机会获得提名成为 Expression Package [Reviewer](https://github.com/pingcap/community/blob/master/special-interest-groups/sig-exec/roles-and-organization-management.md#from-active-contributor-to-reviewer)。Expression Package 的 Reviewer 在技术上受到社区认可，其对 PR 的 review comments 具有技术公信力，可以和 TiDB 工程师一起 Review Expression 包的 PR，并拥有点赞的权限，当然还拥有持续发展成 TiDB Committer 的机会！
 
 ## 未来工作
 
