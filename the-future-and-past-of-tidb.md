@@ -65,7 +65,7 @@ tags: ['TiDB']
 
 我们回到智能手机的那个例子，首先智能手机一定是一个 100% 的手机，肯定能打电话，在打电话的基础上再加上很多其他的常用功能，比如相机、GPS、MP3等在一个系统里面搞定。我想强调的是 TiDB 的定位就是 Real-Time HTAP 系统，首先是一个 100% 的 OLTP 系统，同时还能支持一些 Real-Time OLAP Query。
 
-![9-tidb100%](media/the-future-and-past-of-tidb/9-tidb100%.png)
+![9-tidb100](media/the-future-and-past-of-tidb/9-tidb100.png)
 
 讲到 TiDB，我其实很感慨，我一直看着这个产品一步步成长起来，最近这一年成长速度尤其快，现在我很高兴地看到 TiDB 4.0 已经成为社区的一个主流版本。
 
