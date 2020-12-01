@@ -2,7 +2,7 @@
 title: 感受开源的魅力，TiDB Committer 白珅的数据库探索之路
 author: ['PingCAP']
 date: 2020-11-30
-summary: 本篇文章将介绍 拥有多个身份的他成为了 TiDB 新晋 Committer:mmyj。
+summary: 今天我们就来看看 TiDB Committer 白珅的贡献历程吧~
 tags: ['TiDB', 'Committer']
 ---
 
