@@ -124,7 +124,7 @@ ChaosFS 以本来的目标文件系统作为后端，接受来自操作系统的
 
 dup2 的函数签名是 `int dup2(int oldfd, int newfd);`，它的作用是创建一份 oldfd 的拷贝，并且这个拷贝的 fd 号是 newfd。如果 newfd 原本就有打开着的 fd ，它会被自动地 close。
 
-\假定现在进程正打开着 `/var/run/__chaosfs__test__/a` ，fd 为 1 ，希望替换成 `/var/run/test/a`，那么它需要做的事情有：
+假定现在进程正打开着 `/var/run/__chaosfs__test__/a` ，fd 为 1 ，希望替换成 `/var/run/test/a`，那么它需要做的事情有：
 
 1. 使用通过 fcntl 系统调用获取 `/var/run/__chaosfs__test__/a` 的 OFlags（即 open 调用时的参数，比如 O_WRONLY ）；
 
