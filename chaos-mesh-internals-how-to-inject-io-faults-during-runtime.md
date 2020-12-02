@@ -64,7 +64,7 @@ ChaosFS 以本来的目标文件系统作为后端，接受来自操作系统的
 
 1. 只能对某个 volume 的子目录注入，而无法对整个 volume 注入。
 
-2. 要求 Pod 中明文写有 command，而不能是隐含使用镜像的 command 。因为如果使用镜像隐含的 command 的话，/waitfs.sh` 就不知道在挂载成功之后应该如何启动应用了。
+2. 要求 Pod 中明文写有 command，而不能是隐含使用镜像的 command 。因为如果使用镜像隐含的 command 的话，`/waitfs.sh` 就不知道在挂载成功之后应该如何启动应用了。
 
 3. 要求对应容器有足够的 mount propagation 的配置。当然我们可以在 Mutating Webhook 里偷偷摸摸加上，但动用户的容器总是不太妙的（甚至可能引发安全问题）。
 
@@ -154,7 +154,7 @@ dup2 的函数签名是 `int dup2(int oldfd, int newfd);`，它的作用是创�
 
 在了解了这一切技术之后，实现运行时文件系统的思路应当已经逐渐清晰了起来。在这一节我将直接展示出整个注入实现的流程图：
 
-![1-frame](media/ture-technology-in-chaos-mesh/1-frame.png)
+![1-frame](media/chaos-mesh-internals-how-to-inject-io-faults-during-runtime/1-frame.png)
 
 平行的数条线表示不同的线程，从左至右依照时间先后顺序。可以看到对 “挂载/卸载文件系统 ”和 “进行 fd 等资源的替换” 这两个任务进行了较为精细的时间顺序的安排，这是有必要的。为什么呢？如果读者对整个过程的了解已经足够清晰，不妨试着自己思考它的答案。
 
