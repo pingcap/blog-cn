@@ -1,5 +1,5 @@
 ---
-title: Chaos Mesh 技术内幕 | 如何注入 I/O 故障？
+title: Chaos Mesh® 技术内幕 | 如何注入 I/O 故障？
 author: ['杨可奥']
 date: 2020-12-02
 summary: 随着 Chaos Mesh 1.0 的发布，提供了运行时注入文件系统错误的功能，使得 IOChaos 的使用和其他所有类型的 Chaos 一样简单方便。这篇文章将会介绍它的实现方式。
