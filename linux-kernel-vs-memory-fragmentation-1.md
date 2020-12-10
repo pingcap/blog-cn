@@ -76,7 +76,8 @@ MIGRATE_MOVABLE:             MIGRATE_RECLAIMABLE, MIGRATE_UNMOVABLE
 
 内核引入迁移类型进行分组的目的是反碎片化，因此当出现频繁盗用时，说明存在外部内存碎片事件，这些外部碎片事件为未来埋下了隐患。我在上一篇文章 [我们为什么要禁用 THP](https://pingcap.com/blog-cn/why-should-we-disable-thp/) 有提到可以用内核提供了 ftrace 事件来分析外部内存碎片事件，具体的步骤如下：
 
-```echo 1 > /sys/kernel/debug/tracing/events/kmem/mm_page_alloc_extfrag/enable                cat /sys/kernel/debug/tracing/trace_pipe > ~/extfrag.log```
+```echo 1 > /sys/kernel/debug/tracing/events/kmem/mm_page_alloc_extfrag/enable     ```           
+```cat /sys/kernel/debug/tracing/trace_pipe > ~/extfrag.log```
 
 执行一段事件后执行Ctrl-c，并执行
 
