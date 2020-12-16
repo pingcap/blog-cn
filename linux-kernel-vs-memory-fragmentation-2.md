@@ -34,13 +34,13 @@ tags: ['Linux']
 
 对于 3.10 版本内核，内存规整的时机如下：
 
-在分配高阶内存失败后 kswapd 线程平衡 zone；
+1. 在分配高阶内存失败后 kswapd 线程平衡 zone；
 
-直接内存回收来满足高阶内存需求，包括 THP 缺页异常处理路径；
+2. 直接内存回收来满足高阶内存需求，包括 THP 缺页异常处理路径；
 
-khugepaged 内核线程尝试 collapse 一个大页；
+3. khugepaged 内核线程尝试 collapse 一个大页；
 
-通过 /proc 接口手动触发内存规整；
+4. 通过 /proc 接口手动触发内存规整；
 
 其中和 THP 有关的路径，我在上一篇文章  [我们为什么要禁用 THP](https://pingcap.com/blog-cn/why-should-we-disable-thp/) 有提到其危害并建议大家关闭了，所以在这里不对 THP 路径做分析，主要关注内存分配路径：
 
@@ -55,7 +55,6 @@ khugepaged 内核线程尝试 collapse 一个大页；
 1. 判断内存 zone 是否适合进行内存规整；
 
 2. 设置扫描的起始页帧号；
-
 
 3. 隔离  MIGRATE_MOVABLE 属性页面；
 
