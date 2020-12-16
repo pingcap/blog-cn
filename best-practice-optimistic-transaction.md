@@ -2,14 +2,14 @@
 title: TiDB 最佳实践系列（三）乐观锁事务
 author: ['Shirly']
 date: 2019-10-18
-summary: 本文我们将深入浅出介绍 TiDB 乐观事务原理，并给出多种场景下的最佳实践，希望大家能够从中收益。同时，也欢迎大家给我们提供相关的优化建议，参与到我们的优化工作中来。
+summary: 本文我们将深入浅出介绍 TiDB 乐观事务原理，并给出多种场景下的最佳实践，希望大家能够从中受益。同时，也欢迎大家给我们提供相关的优化建议，参与到我们的优化工作中来。
 tags: ['事务','最佳实践']
 ---
 
 
 >TiDB 最佳实践系列是面向广大 TiDB 用户的系列教程，旨在深入浅出介绍 TiDB 的架构与原理，帮助用户在生产环境中最大限度发挥 TiDB 的优势。我们将分享一系列典型场景下的最佳实践路径，便于大家快速上手，迅速定位并解决问题。
 
-在前两篇的文章中，我们分别介绍了 [TiDB 高并发写入常见热点问题及规避方法](https://pingcap.com/blog-cn/tidb-in-high-concurrency-scenarios/) 和 [PD 调度策略最佳实践](https://pingcap.com/blog-cn/best-practice-pd/)，本文我们将深入浅出介绍 TiDB 乐观事务原理，并给出多种场景下的最佳实践，希望大家能够从中收益。同时，也欢迎大家给我们提供相关的优化建议，参与到我们的优化工作中来。
+在前两篇的文章中，我们分别介绍了 [TiDB 高并发写入常见热点问题及规避方法](https://pingcap.com/blog-cn/tidb-in-high-concurrency-scenarios/) 和 [PD 调度策略最佳实践](https://pingcap.com/blog-cn/best-practice-pd/)，本文我们将深入浅出介绍 TiDB 乐观事务原理，并给出多种场景下的最佳实践，希望大家能够从中受益。同时，也欢迎大家给我们提供相关的优化建议，参与到我们的优化工作中来。
 
 建议大家在阅读之前先了解 [TiDB 的整体架构](https://pingcap.com/docs-cn/v3.0/architecture/#tidb-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84) 和 [Percolator](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 事务模型。另外，本文重点关注原理及最佳实践路径，具体的 TiDB 事务语句大家可以在 [官方文档](https://pingcap.com/docs-cn/v3.0/reference/transactions/overview/) 中查阅。
 
@@ -284,4 +284,4 @@ TiDB 作为一个分布式系统，我们在内存中的冲突检测主要在两
 
 综上所述，Percolator 乐观事务实现原理简单，但是缺点诸多，为了优化这些缺陷带来的性能上和功能上的开销，我们做了诸多努力。但是谁也不敢自信满满地说：这一块的性能已经达到了极致。
 
-时至今日，我们还在持续努力将这一块做得更好更远，希望能让更多使用 TiDB 的小伙伴能从中受益。与此同时，我们也非常期待大家在使用过程中的反馈，如果大家对 TiDB 事务有更多优化建议，欢迎联系我 [wuxuelian@pingcap.com](mailto:wuxuelian@pingcap.com) 。您看似不经意的一个举动，都有可能使更多饱受折磨的互联网同学们从中享受到分布式事务的乐趣。
+时至今日，我们还在持续努力将这一块做得更好更远，希望能让更多使用 TiDB 的小伙伴能从中受益。与此同时，我们也非常期待大家在使用过程中的反馈，如果大家对 TiDB 事务有更多优化建议，欢迎加入 [分布式事务 slack channel](https://slack.tidb.io/invite?team=tikv-wg&channel=sig-transaction&ref=community-sig) 与我们的一线工程师们进行探讨。您看似不经意的一个举动，都有可能使更多饱受折磨的互联网同学们从中享受到分布式事务的乐趣。
