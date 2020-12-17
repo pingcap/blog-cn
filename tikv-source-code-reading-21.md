@@ -24,7 +24,7 @@ Region Merge 是 Range 相邻的两个的 Region 合并的过程，我们把一�
 
 3. 只要参与 Merge 的 TiKV 中 Majority 存活且能互相通信，Merge 可以继续或者回滚，不会被阻塞住（跟 Raft 保证可用性的要求一致）
 
-4. （出于性能考虑），不对 Split/Conf Change 加额外条件限制
+4. 出于性能考虑，不对 Split/Conf Change 加额外条件限制
 
 5. 尽量减少搬迁数据的开销
 
@@ -260,7 +260,7 @@ Region C 进行了 2 次 Merge 以及 Split 之后，再次进行 Conf Change，
 
     - 满足
 
-4. （出于性能考虑），不对 Split/Conf Change 加额外条件限制
+4. 出于性能考虑，不对 Split/Conf Change 加额外条件限制
 
     - 满足
 
