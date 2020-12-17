@@ -108,11 +108,11 @@ message RegionLocalState {
 
     a. 若本地没有 Target Peer 或者前者大，这里存在两种可能性
 
-       - PD 在期间对 Target Region 发起了调度请求（Split，Merge，Conf Change）。
+     * PD 在期间对 Target Region 发起了调度请求（Split，Merge，Conf Change）。
 
-       - Merge 成功了，但是本地的 Target Peer 在某些情况下不需要本地的 Source Peer 去 Apply `CommitMerge`。比如 Target Region 在 Merge 之后又进行了 Split，而本地的 Target Peer 又通过 Snapshot 恢复（与 Source Peer 的 Range 没有重叠），这种情况下 Source Peer 与 Target Peer 就会同时存在，又比如本地的 Target Peer 在随后通过 Conf Change 被移除了，但是因为被隔离了，被移除的时候没有 Apply 完所有日志（也就没有 Apply `CommitMerge`）。
+     * Merge 成功了，但是本地的 Target Peer 在某些情况下不需要本地的 Source Peer 去 Apply `CommitMerge`。比如 Target Region 在 Merge 之后又进行了 Split，而本地的 Target Peer 又通过 Snapshot 恢复（与 Source Peer 的 Range 没有重叠），这种情况下 Source Peer 与 Target Peer 就会同时存在，又比如本地的 Target Peer 在随后通过 Conf Change 被移除了，但是因为被隔离了，被移除的时候没有 Apply 完所有日志（也就没有 Apply `CommitMerge`）。
 
-    为了区分这两种情况，这里使用了一个巧妙的解法：如果有 Quorum 的 Source Peer 都发现了本地没有 Target Peer 或者 Epoch 更大，但是自己还仍然存在，则说明一定是情况 1 了（反之则继续等待），此时必须得 Rollback，代码见 PeerFsmDelegate `on_check_merge`。Rollback 的过程比较简单，只需 Propose 一条 `RollbackMerge`，等待 Apply 之后，Source Region 即可重新恢复服务。
+     为了区分这两种情况，这里使用了一个巧妙的解法：如果有 Quorum 的 Source Peer 都发现了本地没有 Target Peer 或者 Epoch 更大，但是自己还仍然存在，则说明一定是情况 1 了（反之则继续等待），此时必须得 Rollback，代码见 PeerFsmDelegate `on_check_merge`。Rollback 的过程比较简单，只需 Propose 一条 `RollbackMerge`，等待 Apply 之后，Source Region 即可重新恢复服务。
 
     b. 若前者小，说明本地还未追上，继续等待。
 
