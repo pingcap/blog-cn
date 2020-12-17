@@ -3,7 +3,7 @@ title: TiKV 源码解析系列文章（二十一）
 author: ['耿立琪']
 date: 2020-12-17
 summary: 本文接下来将会解开 Region Merge 的神秘面纱。
-tags: ['Merge']
+tags: ['TiKV']
 ---
 
 Region Merge 是 Range 相邻的两个的 Region 合并的过程，我们把一个 Region 称为 Source Region，另一个称为 Target Region，在 Merge 过程结束后，Target Region 管理的 Range 会扩大到 Source Region 的部分，Source Region 则被删除。 
@@ -112,19 +112,19 @@ message RegionLocalState {
 
        - Merge 成功了，但是本地的 Target Peer 在某些情况下不需要本地的 Source Peer 去 Apply `CommitMerge`。比如 Target Region 在 Merge 之后又进行了 Split，而本地的 Target Peer 又通过 Snapshot 恢复（与 Source Peer 的 Range 没有重叠），这种情况下 Source Peer 与 Target Peer 就会同时存在，又比如本地的 Target Peer 在随后通过 Conf Change 被移除了，但是因为被隔离了，被移除的时候没有 Apply 完所有日志（也就没有 Apply `CommitMerge`）。
 
-  为了区分这两种情况，这里使用了一个巧妙的解法：如果有 Quorum 的 Source Peer 都发现了本地没有 Target Peer 或者 Epoch 更大，但是自己还仍然存在，则说明一定是情况 1 了（反之则继续等待），此时必须得 Rollback，代码见 PeerFsmDelegate `on_check_merge`。Rollback 的过程比较简单，只需 Propose 一条 `RollbackMerge`，等待 Apply 之后，Source Region 即可重新恢复服务。
+     为了区分这两种情况，这里使用了一个巧妙的解法：如果有 Quorum 的 Source Peer 都发现了本地没有 Target Peer 或者 Epoch 更大，但是自己还仍然存在，则说明一定是情况 1 了（反之则继续等待），此时必须得 Rollback，代码见 PeerFsmDelegate `on_check_merge`。Rollback 的过程比较简单，只需 Propose 一条 `RollbackMerge`，等待 Apply 之后，Source Region 即可重新恢复服务。
 
-      b. 若前者小，说明本地还未追上，继续等待。
+    b. 若前者小，说明本地还未追上，继续等待。
 
-      c. 若相等则下一步。
+    c. 若相等则下一步。
 
 2. 给本地的 Target Peer Propose 一条 `CommitMerge`。
 
    ```
 message CommitMergeRequest {
-    metapb.Region source = 1;
-    uint64 commit = 2;
-    repeated eraftpb.Entry entries = 3;
+metapb.Region source = 1;
+uint64 commit = 2;
+repeated eraftpb.Entry entries = 3;
 }
    ```
 
