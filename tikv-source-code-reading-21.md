@@ -58,9 +58,9 @@ PD 发送给 Source Region Leader 的请求中会带上 Target Region 的 Region
 
 3. 从所有 Follower 上最小的 commit index 对应的日志到当前最后一条日志之间没有如下的 cmd（Leader 会维护所有 Follower 已知的 commit index）
 
-  a. CompactLog，为了保证后面取日志的时候，日志还存在。
+    a. CompactLog，为了保证后面取日志的时候，日志还存在。
 
-  b. Split/Merge/Conf Change，为了减少网络隔离时候的复杂情况，在后文讲解网络隔离的时候会具体说明。
+    b. Split/Merge/Conf Change，为了减少网络隔离时候的复杂情况，在后文讲解网络隔离的时候会具体说明。
 
 2，3 代码见 Peer `pre_propose_prepare_merge`。
 
@@ -106,13 +106,13 @@ message RegionLocalState {
 
 1. 比较本地 Target Peer 与 MergeState 中的 target 的 Epoch
 
-      a. 若本地没有 Target Peer 或者前者大，这里存在两种可能性
+    a. 若本地没有 Target Peer 或者前者大，这里存在两种可能性
 
        - PD 在期间对 Target Region 发起了调度请求（Split，Merge，Conf Change）。
 
        - Merge 成功了，但是本地的 Target Peer 在某些情况下不需要本地的 Source Peer 去 Apply `CommitMerge`。比如 Target Region 在 Merge 之后又进行了 Split，而本地的 Target Peer 又通过 Snapshot 恢复（与 Source Peer 的 Range 没有重叠），这种情况下 Source Peer 与 Target Peer 就会同时存在，又比如本地的 Target Peer 在随后通过 Conf Change 被移除了，但是因为被隔离了，被移除的时候没有 Apply 完所有日志（也就没有 Apply `CommitMerge`）。
 
-     为了区分这两种情况，这里使用了一个巧妙的解法：如果有 Quorum 的 Source Peer 都发现了本地没有 Target Peer 或者 Epoch 更大，但是自己还仍然存在，则说明一定是情况 1 了（反之则继续等待），此时必须得 Rollback，代码见 PeerFsmDelegate `on_check_merge`。Rollback 的过程比较简单，只需 Propose 一条 `RollbackMerge`，等待 Apply 之后，Source Region 即可重新恢复服务。
+    为了区分这两种情况，这里使用了一个巧妙的解法：如果有 Quorum 的 Source Peer 都发现了本地没有 Target Peer 或者 Epoch 更大，但是自己还仍然存在，则说明一定是情况 1 了（反之则继续等待），此时必须得 Rollback，代码见 PeerFsmDelegate `on_check_merge`。Rollback 的过程比较简单，只需 Propose 一条 `RollbackMerge`，等待 Apply 之后，Source Region 即可重新恢复服务。
 
     b. 若前者小，说明本地还未追上，继续等待。
 
@@ -120,15 +120,15 @@ message RegionLocalState {
 
 2. 给本地的 Target Peer Propose 一条 `CommitMerge`。
 
-   ```
-message CommitMergeRequest {
-metapb.Region source = 1;
-uint64 commit = 2;
-repeated eraftpb.Entry entries = 3;
-}
-   ```
+    ```
+    message CommitMergeRequest {
+        metapb.Region source = 1;
+        uint64 commit = 2;
+        repeated eraftpb.Entry entries = 3;
+    }
+    ```
 
-   其中 source 是 Source Region 的信息，commit 是 MergeState 中的 commit，entries 是 index 从 MergeState 中的 min_index + 1 到 commit 的 Raft Log。
+    其中 source 是 Source Region 的信息，commit 是 MergeState 中的 commit，entries 是 index 从 MergeState 中的 min_index + 1 到 commit 的 Raft Log。
 
 小伙伴们肯定会好奇为什么 `CommitMerge` 不只发给 Target Region 的 Leader？这其实是为了简化实现，因为定时给本地的发就不需要考虑 Target Region 的 Leader 是否切换了以及网络是否隔离的问题了。
 
@@ -140,7 +140,7 @@ repeated eraftpb.Entry entries = 3;
 
 1. 由于 Source Region 的日志可能不够，为了让数据一致，我们先发送 `CommitMerge`中的 entries 给 Source Region，等待它把日志补全并且全部 Apply 完
 
-     - 由于牵扯到并发逻辑处理，具体流程较复杂，感兴趣的小伙伴可参见 `exec_commit_merge` 的函数注释自行阅读源码。
+    - 由于牵扯到并发逻辑处理，具体流程较复杂，感兴趣的小伙伴可参见 `exec_commit_merge` 的函数注释自行阅读源码。
 
 2. 修改 Source Region 的 Peer 状态为 Tombstone。
 
@@ -250,7 +250,7 @@ Region C 进行了 2 次 Merge 以及 Split 之后，再次进行 Conf Change，
 
 1. 不依靠 PD 在 Merge 期间不发起其他的调度满足正确性
 
-   - 满足，如果 PD 在 Merge 期间进行调度，Merge 会 Rollback
+    - 满足，如果 PD 在 Merge 期间进行调度，Merge 会 Rollback
 
 2. 不会因为网络隔离或者宕机引发正确性问题
 
@@ -270,13 +270,13 @@ Region C 进行了 2 次 Merge 以及 Split 之后，再次进行 Conf Change，
 
 6. 尽量减少 Merge 期间服务不可用的时间
 
-      - Target Region 无服务不可用时间
+    - Target Region 无服务不可用时间
 
-      - Source Region 服务不可用时间如下
+    - Source Region 服务不可用时间如下
 
-       ![1-unavailabletime](media/tikv-source-code-reading-21/1-unavailabletime.png)
+      ![1-unavailabletime](media/tikv-source-code-reading-21/1-unavailabletime.png)
 
-      - PD 会选择较冷的 Region 作为 Source Region，所以一般来说这个代价是可忍受的
+    - PD 会选择较冷的 Region 作为 Source Region，所以一般来说这个代价是可忍受的
 
 总的来说，TiKV 的 Region Merge 的设计基本达成了目标。
 
