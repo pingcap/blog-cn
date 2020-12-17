@@ -24,7 +24,7 @@ Region Merge 是 Range 相邻的两个的 Region 合并的过程，我们把一�
 
 3. 只要参与 Merge 的 TiKV 中 Majority 存活且能互相通信，Merge 可以继续或者回滚，不会被阻塞住（跟 Raft 保证可用性的要求一致）
 
-4. 不对 Split/Conf Change 加额外条件限制（出于性能考虑）
+4. （出于性能考虑），不对 Split/Conf Change 加额外条件限制
 
 5. 尽量减少搬迁数据的开销
 
@@ -190,7 +190,7 @@ TiKV 对于保证 Snapshot 的实现比较简单，在生成 snapshot 之后，�
 
 - 如何构造的问题就留给读者解答了。
 
-在 TiKV 的实现中是先检查该 Snapshot 是否在删除 Source Peer 之后范围不冲突（代码见 PeerFsmDelegate `check_snapshot`），然后在暂停 Source Peer 运行之后，对 Source Peer RegionLocalState 中的 PeerState 设置为 Tombstone，Target Peer RegionLocalState 中的 PeerState 设置为 Applying（代码见 PeerStorage `apply_snapshot`），并且使用 WriteBatch 原子的写入来解决该问题。
+在 TiKV 的实现中是先检查该 Snapshot 是否在删除 Source Peer 之后范围不冲突（代码见 PeerFsmDelegate `check_snapshot`），然后在暂停 Source Peer 运行之后，对 Source Peer RegionLocalState 中的 PeerState 设置为 Tombstone，Target Peer RegionLocalState 中的 PeerState 设置为 Applying（代码见 PeerStorage `apply_snapshot`），并且使用 RocksDB WriteBatch 原子的写入来解决该问题。
 
 - 如果在写入之后宕机，重启后，Source Peer 状态是 Tombstone 会清理剩余的数据，Target Peer 状态是 Applying 会继续 Apply Snapshot。
 
@@ -238,7 +238,7 @@ Region C 进行了 2 次 Merge 以及 Split 之后，再次进行 Conf Change，
 |  3  | D E C  |
 |  4  | D E *  |
 
-此时已经打破前提了，在 TiKV 1 上，Region C 已经在 Region A Apply Split 之前出现了。
+此时已经打破前提了，在 TiKV 1 上，Region C 已经在 Region A Apply `BatchSplit` 之前出现了。
 
 可以发现该问题的触发并不容易，这是因为一些实现细节的原因，比如 Split 之后原 Region 的位置以及 Merge 在 Propose `PrepareMerge` 时的检查条件等等。
 
@@ -260,7 +260,7 @@ Region C 进行了 2 次 Merge 以及 Split 之后，再次进行 Conf Change，
 
     - 满足
 
-4. 不对 Split/Conf Change 加额外条件限制（出于性能考虑）
+4. （出于性能考虑），不对 Split/Conf Change 加额外条件限制
 
     - 满足
 
@@ -276,7 +276,7 @@ Region C 进行了 2 次 Merge 以及 Split 之后，再次进行 Conf Change，
 
       ![1-unavailabletime](media/tikv-source-code-reading-21/1-unavailabletime.png)
 
-    - PD 会选择较冷的 Region 作为 Source Region，所以一般来说这个代价是可忍受的
+    - PD 会选择较冷的 Region 作为 Source Region，所以一般来说这个代价是可承受的
 
 总的来说，TiKV 的 Region Merge 的设计基本达成了目标。
 
