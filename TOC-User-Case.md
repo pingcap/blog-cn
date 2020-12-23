@@ -52,6 +52,7 @@
   - [盖娅互娱](user-case-gaea-ad.md)
   - [株式会社 FUNYOURS JAPAN](user-case-funyours-japan.md)
 - 金融
+  - [浙商银行](user-case-zheshang-bank.md)
   - [微众银行（二）](user-case-webank-2.md)
   - [翼支付（二）](user-case-bestpay-2.md)
   - [中国银行](user-case-bank-of-china.md)
