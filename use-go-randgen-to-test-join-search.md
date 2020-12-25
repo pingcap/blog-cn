@@ -43,12 +43,17 @@ summary: 本文将向大家介绍在过去的几个月，使用 go-randgen 框�
 
 1.定义 join.zz.lua。该例中的 zz 文件，可以生成 6 张表，每张表中都有 17  个字段与 fileds.types 中定义的类型对应。这 6 张表分别是:
 
-    - table_400_undef_undef_1（400 行数据）
-    - table_400_undef_4_1（400 行数据且有 4 个分区）
-    - table_300_undef_undef_1（300 行数据）
-    - table_300_undef_4_1（300 行数据且 4 个分区）
-    - table_290_undef_undef_1（290 行数据）
-    - table_290_undef_4_1（290 行数据且 4 个分区）
+   - table_400_undef_undef_1（400 行数据）
+    
+   - table_400_undef_4_1（400 行数据且有 4 个分区）
+    
+   - table_300_undef_undef_1（300 行数据）
+    
+   - table_300_undef_4_1（300 行数据且 4 个分区）
+    
+   - table_290_undef_undef_1（290 行数据）
+    
+   - table_290_undef_4_1（290 行数据且 4 个分区）
 
 ```
 tables = {
@@ -79,7 +84,7 @@ data = {
 
 2.定义 join.yy 文件。该例中的 yy 文件，通过 hint 指定生成 inl_merge_join 和 inl_hash_join 算法查询语句。生成的 sql 语句中除指定字段外，查询条件中的表和字段将随机组合而成。
 
-生成的的 SQL 示例：SELECT /*+ inl_hash_join(t1) */ t1.pk, t2.pk from table_290_undef_undef_1 t1, table_400_undef_undef_1 t2 where t1. `col_enum_key_signed` = t2. `col_int_key_signed` and t1. `col_smallint_key_signed` < -5418830167423061551 order by t1.pk, t2.pk;
+生成的的 SQL 示例：`SELECT /*+ inl_hash_join(t1) */ t1.pk, t2.pk from table_290_undef_undef_1 t1, table_400_undef_undef_1 t2 where t1. `col_enum_key_signed` = t2. `col_int_key_signed` and t1. `col_smallint_key_signed` < -5418830167423061551 order by t1.pk, t2.pk;`
 
 ```
 query:
@@ -116,13 +121,13 @@ hint_begin:
 
 ## go-randgen 在 TiDB 测试中的实践
 
-通过 go-randgen 对 TiDB 的 join 算法进行测试，我们目前已发现10 个正确性相关的问题，例如：
+通过 go-randgen 对 TiDB 的 join 算法进行测试，我们目前已发现 10 个正确性相关的问题，例如：
 
 - 通过对不同类型覆盖，进行列值比较。如：`select * from _table where _field > _field`。发现时间列和 year 列比较错误，记录在 [tidb/issues/20121](https://github.com/pingcap/tidb/issues/20121) 中。
 
 - 对 distinct 语句进行测试。如： `select count(distinct(t1. _field)), count(distinct t1. _field, t1. _field)	from table_400_utf8_undef t1, table_290_utf8_undef t2 where t1. _field = t2. _field and t1. _field = t2. _field and t1. _field_int  != _int`。发现 distinct 计算错误，记录在 [tidb/issues/20237](https://github.com/pingcap/tidb/issues/20237) 中。
 
-- 除了随机类型外，通过扩大单条语句的覆盖范围，随机组合语句，使 SQL 语句上下文具有关联性。如：alter table _table add index {print(string.format("t%d", math.random(10,2000000)))} (_field); SELECT  t1.pk, t2.pk from t t1 left join t t2 on t1. _field = t2. _field  where t1. _field != _int order by t1.pk, t2.pk。发现添加索引后，查询报错，记录在 [tidb/issues/20698](https://github.com/pingcap/tidb/issues/20698) 中。 
+- 除了随机类型外，通过扩大单条语句的覆盖范围，随机组合语句，使 SQL 语句上下文具有关联性。如：`alter table _table add index {print(string.format("t%d", math.random(10,2000000)))} (_field); SELECT  t1.pk, t2.pk from t t1 left join t t2 on t1. _field = t2. _field  where t1. _field != _int order by t1.pk, t2.pk`。发现添加索引后，查询报错，记录在 [tidb/issues/20698](https://github.com/pingcap/tidb/issues/20698) 中。 
 
 发现的这些 issue 提醒我们对 TiDB 质量要有敬畏之心，并且也印证了从过往发现的问题进行分析，归纳场景进而扩大测试点范围的方法是可行的。后续的 join 测试，也将继续覆盖更多的数据类型，尝试更多的语句组合、场景组合，例如在事务中添加数据、删除数据，再与 join 查询随机组合。
 
