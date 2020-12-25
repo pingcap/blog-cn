@@ -2,7 +2,8 @@
 title: 使用 go-randgen 测试 join 查询
 author: ['陈朋']
 date: 2020-12-25
-summary: 本文将向大家介绍在过去的几个月，使用 go-randgen 框架对 TiDB 进行测试。tags: ['TiDB']
+summary: 本文将向大家介绍在过去的几个月，使用 go-randgen 框架对 TiDB 进行测试。
+tags: ['TiDB']
 ---
 
 在数据库的查询中，join 是最常用的查询之一，由于 join 算法实现的复杂性，出现问题的概率较大，我们对 TiDB 中出现过的 join 问题进行分析，将易发生问题的场景归为如下几类 ：
