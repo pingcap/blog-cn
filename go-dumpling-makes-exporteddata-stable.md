@@ -8,7 +8,7 @@ tags: ['Dumpling']
 
 >作    者：李淳竹（lichunzhu），TiDB 研发工程师。
 
->Migrate s SIG Community，主要涵盖 TiDB 数据处理工具，包含 TiDB 数据备份/导入导出，TiDB 数据变更捕获，其他数据库数据迁移至 TiDB 等，
+>Migrate SIG Community，主要涵盖 TiDB 数据处理工具，包含 TiDB 数据备份/导入导出，TiDB 数据变更捕获，其他数据库数据迁移至 TiDB 等，
 
 ## 前言
 
@@ -63,11 +63,11 @@ Dumpling 向云盘服务器发送数据很容易因为网络波动导致传输�
 
 这也会引出一个问题，Dumpling 提供了[不同的一致性选项](https://docs.pingcap.com/zh/tidb/stable/dumpling-overview#%E8%B0%83%E6%95%B4-dumpling-%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E9%80%89%E9%A1%B9)，贸然重建数据库连接将可能破坏导出快照的一致性。因此，Dumpling 针对不同的一致性配置做了不同的处理：
 
-   - onsistency 为 snapshot 或 none：
+   - consistency 为 `snapshot` 或 `none`：
     
    这两种情况中，Dumpling 并没有为数据库上锁，Dumpling 会直接重建数据库连接。
 
-   - consistency 为 lock 或 flush：
+   - consistency 为 `lock` 或 `flush`：
 
    这两种情况中，如果导出数据较大希望 Dumpling 可以重试，用户可以设置 `--transactional-consistency=false` 配置 Dumpling 在整个导出过程中持锁。这时如果发生 Dumpling 数据库连接中断的情况，Dumpling 将会首先检查锁数据库连接是否仍然工作正常，如果仍然正常 Dumpling 将会重建数据库连接使导出继续进行下去。
 
