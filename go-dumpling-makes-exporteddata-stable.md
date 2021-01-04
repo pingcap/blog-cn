@@ -47,7 +47,7 @@ dumpling_dump_finished_size 2.92577519e+08
 
 在导出过程中，Dumpling 所用端口的 /metrics 地址也可以实时查询到 dumpling 目前已导出的行数与数据大小。
 
-Dumpling 将会始终倾听社区声音并持续改进。如果大家有更多改进意见，也欢迎大家到 [Dumpling repo](http://ithub.com/pingcap/dumpling) 提出 issue 与贡献 PR。
+Dumpling 将会始终倾听社区声音并持续改进。如果大家有更多改进意见，也欢迎大家到 [Dumpling repo](http://github.com/pingcap/dumpling) 提出 issue 与贡献 PR。
 
 ## 更完善的重试机制
 
