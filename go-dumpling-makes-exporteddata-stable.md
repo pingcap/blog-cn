@@ -53,41 +53,41 @@ Dumpling 将会始终倾听社区声音并持续改进。如果大家有更多�
 
 在 v4.0.9 中，针对大数据导出的场景，Dumpling 加入了一系列重试机制来保证导出进程能够尽量排除网络波动的影响而顺利进行下去。主要包含了两个方面的重试机制：
 
-1.在上传数据到云盘时进行重试
+1. 在上传数据到云盘时进行重试
 
-Dumpling 向云盘服务器发送数据很容易因为网络波动导致传输失败。Dumpling 通过为传输 client 设置合理的参数来重试传输数据的 HTTP 请求。通常情况下 Dumpling 会对可重试的错误尝试发送数据 3 次，每次重试间会有逐步增加并引入抖动的等待间隔。
+    Dumpling 向云盘服务器发送数据很容易因为网络波动导致传输失败。Dumpling 通过为传输 client 设置合理的参数来重试传输数据的 HTTP 请求。通常情况下 Dumpling 会对可重试的错误尝试发送数据 3 次，每次重试间会有逐步增加并引入抖动的等待间隔。
 
-2.在数据库连接中断时进行重试
+2. 在数据库连接中断时进行重试
 
-在导出数据时数据库连接可能会不可避免地受到波动而中断。这时 Dumpling 会通过重建数据库连接的方式来尽量保证导出过程继续进行下去。
+    在导出数据时数据库连接可能会不可避免地受到波动而中断。这时 Dumpling 会通过重建数据库连接的方式来尽量保证导出过程继续进行下去。
 
-这也会引出一个问题，Dumpling 提供了[不同的一致性选项](https://docs.pingcap.com/zh/tidb/stable/dumpling-overview#%E8%B0%83%E6%95%B4-dumpling-%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E9%80%89%E9%A1%B9)，贸然重建数据库连接将可能破坏导出快照的一致性。因此，Dumpling 针对不同的一致性配置做了不同的处理：
+    这也会引出一个问题，Dumpling 提供了[不同的一致性选项](https://docs.pingcap.com/zh/tidb/stable/dumpling-overview#%E8%B0%83%E6%95%B4-dumpling-%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E9%80%89%E9%A1%B9)，贸然重建数据库连接将可能破坏导出快照的一致性。因此，Dumpling 针对不同的一致性配置做了不同的处理：
 
    - consistency 为 `snapshot` 或 `none`：
-    
-   这两种情况中，Dumpling 并没有为数据库上锁，Dumpling 会直接重建数据库连接。
+
+        这两种情况中，Dumpling 并没有为数据库上锁，Dumpling 会直接重建数据库连接。
 
    - consistency 为 `lock` 或 `flush`：
 
-   这两种情况中，如果导出数据较大希望 Dumpling 可以重试，用户可以设置 `--transactional-consistency=false` 配置 Dumpling 在整个导出过程中持锁。这时如果发生 Dumpling 数据库连接中断的情况，Dumpling 将会首先检查锁数据库连接是否仍然工作正常，如果仍然正常 Dumpling 将会重建数据库连接使导出继续进行下去。
+        这两种情况中，如果导出数据较大希望 Dumpling 可以重试，用户可以设置 `--transactional-consistency=false` 配置 Dumpling 在整个导出过程中持锁。这时如果发生 Dumpling 数据库连接中断的情况，Dumpling 将会首先检查锁数据库连接是否仍然工作正常，如果仍然正常 Dumpling 将会重建数据库连接使导出继续进行下去。
 
 ## 支持控制导出时的系统变量
 
 Dumpling 支持了通过 --params 参数设置导出数据库时 session 变量，配置格式为 "character_set_client=latin1,character_set_connection=latin1"。用户可以通过一系列配置参数来实现不同的导出场景：
 
-1.设置导出字符集
+1. 设置导出字符集
 
-可以配置 --params "character_set_client=latin1,character_set_connection=latin1,character_set_results=latin1” 控制导出字符集为 latin1
+    可以配置 --params "character_set_client=latin1,character_set_connection=latin1,character_set_results=latin1” 控制导出字符集为 latin1
 
-2.数据库导出内存控制
+2. 数据库导出内存控制
 
-配置 --params "tidb_distsql_scan_concurrency=5,tidb_mem_quota_query=8589934592" 减少 TiDB 导出时 scan 数据并发度与语句内存使用，从而减少 TiDB 导出时的内存使用
+    配置 --params "tidb_distsql_scan_concurrency=5,tidb_mem_quota_query=8589934592" 减少 TiDB 导出时 scan 数据并发度与语句内存使用，从而减少 TiDB 导出时的内存使用
 
-3.数据库低速导出
+3. 数据库低速导出
 
-配置 --params "tidb-force-priority=LOW_PRIORITY,tidb_distsql_scan_concurrency=5" 可以调低导出语句执行优先级并减少 TiDB 导出时 scan 数据并发度，从而实现对数据库低影响的低速备份数据。
+    配置 --params "tidb-force-priority=LOW_PRIORITY,tidb_distsql_scan_concurrency=5" 可以调低导出语句执行优先级并减少 TiDB 导出时 scan 数据并发度，从而实现对数据库低影响的低速备份数据。
 
-上面参数列举了一些简单的 `--params` 使用场景。也欢迎大家开发出更多的使用场景，并向其他的社区小伙伴分享 Dumpling 的使用经验。
+    上面参数列举了一些简单的 `--params` 使用场景。也欢迎大家开发出更多的使用场景，并向其他的社区小伙伴分享 Dumpling 的使用经验。
 
 ## Dumpling 后续开发计划
 
