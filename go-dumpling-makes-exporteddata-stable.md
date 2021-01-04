@@ -8,7 +8,7 @@ tags: ['Dumpling']
 
 >作    者：李淳竹（lichunzhu），TiDB 研发工程师。
 >
->Migrate SIG Community，主要涵盖 TiDB 数据处理工具，包含 TiDB 数据备份/导入导出，TiDB 数据变更捕获，其他数据库数据迁移至 TiDB 等，
+>Migrate SIG Community，主要涵盖 TiDB 数据处理工具，包含 TiDB 数据备份/导入导出，TiDB 数据变更捕获，其他数据库数据迁移至 TiDB 等。
 
 ## 前言
 
