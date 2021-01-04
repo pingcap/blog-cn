@@ -65,11 +65,11 @@ Dumpling 向云盘服务器发送数据很容易因为网络波动导致传输�
 
    - consistency 为 `snapshot` 或 `none`：
     
-    这两种情况中，Dumpling 并没有为数据库上锁，Dumpling 会直接重建数据库连接。
+   这两种情况中，Dumpling 并没有为数据库上锁，Dumpling 会直接重建数据库连接。
 
    - consistency 为 `lock` 或 `flush`：
 
-    这两种情况中，如果导出数据较大希望 Dumpling 可以重试，用户可以设置 `--transactional-consistency=false` 配置 Dumpling 在整个导出过程中持锁。这时如果发生 Dumpling 数据库连接中断的情况，Dumpling 将会首先检查锁数据库连接是否仍然工作正常，如果仍然正常 Dumpling 将会重建数据库连接使导出继续进行下去。
+   这两种情况中，如果导出数据较大希望 Dumpling 可以重试，用户可以设置 `--transactional-consistency=false` 配置 Dumpling 在整个导出过程中持锁。这时如果发生 Dumpling 数据库连接中断的情况，Dumpling 将会首先检查锁数据库连接是否仍然工作正常，如果仍然正常 Dumpling 将会重建数据库连接使导出继续进行下去。
 
 ## 支持控制导出时的系统变量
 
