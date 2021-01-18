@@ -3,7 +3,7 @@ title: 「我的工作是制造混沌」，我与 Chaos Mesh® 的故事
 author: ['殷成文']
 date: 2021-01-14
 summary: 本文将向大家介绍自己与 Chaos Mesh 一起成长的点滴。
-tags: ['TiDB']
+tags: ['Chaos Mesh']
 ---
 
 > 作者：殷成文，Maintainer of Chaos Mesh
