@@ -16,7 +16,7 @@ Chaos Mesh 开源刚刚一周年，这一年来，Chaos Mesh 产品不断迭代�
 
 ### 功能方面
 
-刚开源的时候，Chaos Mesh 支持 PodChaos，NetworkChaos 以及 IOChaos, 经过这一年的不断丰富，Chaos Mesh 已经能够全方位的对网路、时间、JVM 应用、文件系统、操作系统等进行故障注入。这一年中 Chaos Mesh 共新增 5 类故障类型：  
+刚开源的时候，Chaos Mesh 支持 PodChaos，NetworkChaos 以及 IOChaos，经过这一年的不断丰富，Chaos Mesh 已经能够全方位的对网路、时间、JVM 应用、文件系统、操作系统等进行故障注入。这一年中 Chaos Mesh 共新增 5 类故障类型：  
 
 - StressChaos: 模拟 CPU，Memory 压力场景
 
@@ -46,7 +46,7 @@ Chaos Mesh 开源刚刚一周年，这一年来，Chaos Mesh 产品不断迭代�
 
 ### 安全性方面
 
-这一年中，Chaos Mesh 在提高安全性方面同样作出了诸多努力。Chaos Mesh 提供更加完善的 Selectors 用来控制实验范围，支持设置设置特定的 Namespaces 来保护重要应用。此外，Chaos Mesh 还支持在 Namespace 权限使用，用户可以把 Chaos Mesh 的权限范围限制在特定某个 Namespace 下，如此一来可以更大程度控制实验的“爆炸半径”，提供更加安全的混沌实验体现。  
+这一年中，Chaos Mesh 在提高安全性方面同样作出了诸多努力。Chaos Mesh 提供更加完善的 Selectors 用来控制实验范围，支持设置特定的 Namespaces 来保护重要应用。此外，Chaos Mesh 还支持在 Namespace 权限使用，用户可以把 Chaos Mesh 的权限范围限制在特定某个 Namespace 下，如此一来可以更大程度控制实验的“爆炸半径”，提供更加安全的混沌实验体现。  
 
 此外，Chaos Mesh 直接复用 Kubernetes 的原生权限机制，在 Chaos Dashboard 组件上支持身份验证，以避免其他用户的误操作造成混沌实验的失败或者不可控。
 
@@ -63,13 +63,13 @@ Chaos Mesh 为了进一步提高混沌实验的可观测性，单独开发了 [G
 为了帮助用户在开发阶段就运行混沌实验，我们开发了 [chaos-mesh-action](https://github.com/chaos-mesh/chaos-mesh-action) 这个项目，让 Chaos Mesh 运行在 GitHub Actions 的 workflow 中，让 Chaos Mesh 可以更方便地集成到系统的日常开发、测试中，为 GitHub 上每一次代码的提交保驾护航。
 ### TiPocket 
 
-TiPocket 是一个同时集成 Chaos Mesh 和 Argo 的自动化测试平台，实现完全自动化的混沌实验。通常我们进行混沌实验的时候，存在很多步骤，比如部署待测试应用，运行 workload，以及注入异常，业务检查等等，为了让这些步骤完全的自动化起来，TiPocket 在 Chaos Mesh 的基础上引入了 Argo 工具，一方面 Chaos Mesh 提供丰富的故障注入能力，另一方 Argo 提供灵活的编排和调度能力。
+TiPocket 是一个同时集成 Chaos Mesh 和 Argo 的自动化测试平台，实现完全自动化的混沌实验。通常我们进行混沌实验的时候，存在很多步骤，比如部署待测试应用，运行 workload，以及注入异常，业务检查等等，为了让这些步骤完全的自动化起来，TiPocket 在 Chaos Mesh 的基础上引入了 Argo 工具，一方面 Chaos Mesh 提供丰富的故障注入能力，另一方面 Argo 提供灵活的编排和调度能力。
 
 ![3](media/chaos-mesh-the-first-year-of-open-source/3.png)
 
 ## 社区：从无到有，共同进步
 
-Chaos Mesh 是社区驱动的项目，项目和生态的迭代和演进离不开一个活跃、友好、开放的社区。开源以来，Chaos Mesh 迅速成为了混沌工程领域最耀眼的开源项目之一，并且在短短的一年中，在 Github 上积累了 3k star，吸引了 70+ 贡献者，以及吸引腾讯、小鹏汽车、Dailymotion、网易伏羲实验室、JuiceFS、APISIX、美团等在内的数十家知名用户。回首这一年，Chaos Mesh 社区从无到有，为创建一个透明、开放、友好，自治的开源社区打下了基础。
+Chaos Mesh 是社区驱动的项目，项目和生态的迭代和演进离不开一个活跃、友好、开放的社区。开源以来，Chaos Mesh 迅速成为了混沌工程领域最耀眼的开源项目之一，并且在短短的一年中，在 GitHub 上积累了 3k star，吸引了 70+ 贡献者，以及吸引腾讯、小鹏汽车、Dailymotion、网易伏羲实验室、JuiceFS、APISIX、美团等在内的数十家知名用户。回首这一年，Chaos Mesh 社区从无到有，为创建一个透明、开放、友好，自治的开源社区打下了基础。
 
 ### 加入 CNCF，借力云原生社区
 
