@@ -1,7 +1,7 @@
 ---
 title: TiDB 5.0 RC Release Notes
 author: ['PingCAP']
-date: 2022-01-21
+date: 2021-01-21
 summary: 本文将介绍 TiDB 5.0.0-rc 版本中的性能提升与新特性。
 tags: ['TiDB']
 ---
@@ -127,11 +127,11 @@ DBA 通过 `ALTER INDEX` 语句来修改某个索引的可见性。修改后优�
 - 扩展统计信息功能，收集多列 NDV、多列顺序依赖性、多列函数依赖性等信息，帮助优化器选择相对较优的索引。
 
 - 重构统计信息模块，帮助优化器选择相对较优的索引。
-    
+
     - 从 `SKetch` 中删除 `TopN` 值。
 
     - 重构 `TopN` 搜索逻辑。
-   
+
     - 从直方图中删除 `TopN` 信息，建立直方图的索引，方便维护 Bucket NDV。
 
 相关 issue：[#18065](https://github.com/pingcap/tidb/issues/18065)
