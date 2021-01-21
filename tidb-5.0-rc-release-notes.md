@@ -2,7 +2,7 @@
 title: TiDB 5.0 RC Release Notes
 author: ['PingCAP']
 date: 20221-01-21
-summary: 本文会对这次大赛进入决赛的项目分成几个模块进行点评。
+summary: 本文将会介绍 TiDB 5.0.0-rc 在 5.0 版本中如何专注于帮助企业快速构建应用程序。
 tags: ['TiDB']
 ---
 
