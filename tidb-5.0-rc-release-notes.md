@@ -2,7 +2,7 @@
 title: TiDB 5.0 RC Release Notes
 author: ['PingCAP']
 date: 2022-01-21
-summary: 本文将会介绍 TiDB 5.0.0-rc 在 5.0 版本中如何专注于帮助企业快速构建应用程序。
+summary: 本文将介绍 TiDB 5.0.0-rc 版本中的性能提升与新特性。
 tags: ['TiDB']
 ---
 
@@ -17,8 +17,10 @@ TiDB 5.0.0-rc 版本是 5.0 版本的前序版本。在 5.0 版本中，我们�
 - 通过提升优化器的稳定性及限制系统任务对 I/O、网络、CPU、内存等资源的占用，降低系统的抖动。例如：长期测试 72 小时，衡量 Sysbench TPS 抖动标准差的值从 11.09% 降低到 3.36%。
 
 - 引入 Raft Joint Consensus 算法，确保 Region 成员变更时系统的可用性。
-优化 `EXPLAIN` 功能、引入不可见索引等功能帮助提升 DBA 调试及 SQL 语句的效率。
-通过备份文件到 AWS S3、Google Cloud GCS 或者从 AWS S3、Google Cloud GCS 恢复到 TiDB，确保企业数据的可靠性。
+
+- 优化 `EXPLAIN` 功能、引入不可见索引等功能帮助提升 DBA 调试及 SQL 语句的效率。
+
+- 通过备份文件到 AWS S3、Google Cloud GCS 或者从 AWS S3、Google Cloud GCS 恢复到 TiDB，确保企业数据的可靠性。
 
 - 提升从 AWS S3 或者 TiDB/MySQL导入导出数据的性能，帮忙企业在云上快速构建应用。例如：导入 1TiB TPC-C 数据性能提升了 40%，由 254 GiB/h 提升到 366 GiB/h。
 
