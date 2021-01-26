@@ -19,7 +19,7 @@ tags: ['TiDB', 'knossos', 'Linearizability']
   + Strict Consistency
   + Linearizability (Atomic Consistency)
   + Sequential Consistency
-  + Casual Consistency
+  + Causal Consistency
   + Serializability
   + ……
 
