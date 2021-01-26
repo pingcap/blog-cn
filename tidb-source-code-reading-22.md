@@ -139,7 +139,7 @@ Hash Aggregation 的执行阶段可分为如下图所示的 5 步：
 
 1. 启动 Data Fetcher，Partial Workers 及 Final Workers。
 
-    这部分工作由 [prepare4Parallel](https://github.com/pingcap/tidb/tree/v2.1.0) 函数完成。该函数会启动一个 Data Fetcher，[多个 Partial Worker](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L589-L591) 以及 [多个 Final Worker](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L596-L598)。Partial Worker 和 Final Worker 的数量可以分别通过 `tidb_hashgg_partial_concurrency` 和 `tidb_hashagg_final_concurrency` 系统变量进行控制，这两个系统变量的默认值都为 4。
+    这部分工作由 [prepare4Parallel](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L579) 函数完成。该函数会启动一个 Data Fetcher，[多个 Partial Worker](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L589-L591) 以及 [多个 Final Worker](https://github.com/pingcap/tidb/tree/v2.1.0/executor/aggregate.go#L596-L598)。Partial Worker 和 Final Worker 的数量可以分别通过 `tidb_hashgg_partial_concurrency` 和 `tidb_hashagg_final_concurrency` 系统变量进行控制，这两个系统变量的默认值都为 4。
 
 2. DataFetcher 读取子节点的数据并分发给 Partial Workers。
 
