@@ -16,12 +16,12 @@ tags: ['TiDB 源码阅读','社区']
 
 ```sql
 
-CREATE TABLE t {
+CREATE TABLE t (
 id      VARCHAR(31),
-name VARCHAR(50),
-age    int,
-key id_idx (id)
-};
+name    VARCHAR(50),
+age     int,
+key     id_idx (id)
+);
 ```
 
 ## Insert 语句
