@@ -1,5 +1,5 @@
 ---
-title:当 TiDB 遇到图数据库 | TiDB Hackathon 2020 优秀项目分享
+title: 当 TiDB 遇到图数据库 | TiDB Hackathon 2020 优秀项目分享
 author: ['PingCAP']
 date: 2021-02-02
 summary: 本篇文章将介绍 TiGraph 团队赛前幕后的精彩故事。
