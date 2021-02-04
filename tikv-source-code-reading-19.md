@@ -58,7 +58,7 @@ message Request {
 
 *   ReadIndexRequest：获取当前时刻能保证线性一致的 Raft log index。
 
-注意：不要把 ReadIndexRequst 和 Read Index 搞混。ReadIndexRequest 是一种读的请求，ReadIndex 是一种处理读请求的方式。
+注意：不要把 ReadIndexRequest 和 Read Index 搞混。ReadIndexRequest 是一种读的请求，ReadIndex 是一种处理读请求的方式。
 
 ## Raft 如何处理读请求？
 
@@ -143,7 +143,7 @@ pub fn propose<T: Transport, C>(
 
 	*   RequestPolicy::ReadIndex，也就是 read index，说明该 Peer 是 leader 但不在 lease 内，或者该请求明确要求使用 read index 处理。
 
-*   self.read_local：以 loca read 方式处理请求，直接读取 RocksDB。
+*   self.read_local：以 local read 方式处理请求，直接读取 RocksDB。
 
 *   self.read_index：以 read index 方式处理请求，询问一遍大多数节点，确保自己是合法 leader，然后到达或超过线性一致性的点（read index）后读取 RocksDB。
 
