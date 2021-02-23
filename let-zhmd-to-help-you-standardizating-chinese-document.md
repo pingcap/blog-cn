@@ -1,10 +1,12 @@
 ---
-title: 中文文档规范化，zh.md 来帮你！ 
+title: 中文文档规范化，zh.md 来帮你！｜TiDB Hackathon 2020 优秀项目分享
 author: ['PingCAP']
 date: 2021-02-23
 summary: 本篇文章将介绍 zh.md 团队赛前幕后的精彩故事。
 tags: ['TiDB Hackathon 2020']
 ---
+
+近日，由 TiDB 社区主办，专属于全球开发者与技术爱好者的顶级挑战赛事——TiDB Hackathon 2020 比赛圆满落幕。今年是 TiDB Hackathon 第四次举办，参赛队伍规模创历届之最，共有 45 支来自全球各地的队伍报名，首次实现全球联动。经过 2 天时间的极限挑战， 大赛涌现出不少令人激动的项目。**为了让更多朋友了解这些参赛团队背后的故事，我们将开启 TiDB Hackathon 2020 优秀项目分享系列，本次访谈我们邀请到了 zh.md 的两位队员：来自 Cisco 的研发工程师王鹏翰、来自 PingCAP I18N 团队的 Coco，以及 Hackathon 特邀评委：来自青云 QingCloud 的张雁飞老师，共同谈谈他们对于 zh.md 的看法。**
 
 这也是一次专业工程师 + Tech Writer + 用户的三方会谈，**希望通过本次访谈和思想碰撞，让大家对于中文技术文档的写作和自动化改进有全新的看法。**
 
