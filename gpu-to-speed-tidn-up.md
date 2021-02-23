@@ -2,7 +2,7 @@
 title: 大力出奇迹，GPU 加速 TiDB ｜ TiDB Hackathon 2020 优秀项目分享
 author: ['PingCAP']
 date: 2021-02-23
-summary: 本篇文章将介绍 Mods 团队赛前幕后的精彩故事。
+summary: 本篇文章将通过 Mods 团队与云启资本合伙人陈昱的对话，揭秘团队赛前幕后的精彩故事。
 tags: ['TiDB Hackathon 2020']
 ---
 
