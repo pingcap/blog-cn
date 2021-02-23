@@ -2,7 +2,7 @@
 title: 基于 AWS 的一站式分布式数据库测试体系，简单易上手｜TiDB Hackathon 2020 优秀项目分享
 author: ['PingCAP']
 date: 2021-02-23
-summary: 本篇文章将介绍 Ti-Improve 团队赛前幕后的精彩故事。
+summary: 本篇文章将通过 Ti-Improve 团队与华创资本企业软件投资负责人谢佳的对话，揭秘团队赛前幕后的精彩故事。
 tags: ['TiDB Hackathon 2020']
 ---
 
