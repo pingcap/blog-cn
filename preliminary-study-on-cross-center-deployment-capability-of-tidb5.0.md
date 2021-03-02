@@ -98,7 +98,7 @@ Global TSO Allocator 是通过收集+写入这一两阶段的同步过程来满�
 
 我们的解决方法也比较“粗暴”，TSO 的逻辑时间有 18 位，假设我们存在一个 3 中心的集群，那么只需要从这逻辑位中拿出低位 2 位，即可用后缀标示的方式独一无二地区分来自 2 个中心的 Local TSO 和 Global TSO 这三种 TSO，保证每一个 TSO 的全局唯一性。
 
-诚然，这不是一个完美的解决方案，考虑到作为 TiDB 爸爸的 Google Spanner 那全球级别部署的数以千计数据中心，一味地让渡逻辑位并不是长久之计，如果开辟太多逻辑位用于后缀，可能会导致 TSO 在高强度的请求中过快的耗尽逻辑位而加快物理时间的推进，与真实时间产生偏差。但在目前，对于实现的复杂度以及必要性上来看，这仍然是一个不错的技术债解决方案。
+诚然，这不是一个完美的解决方案，考虑到作为 TiDB 爸爸的 Google Spanner 那全球级别部署的数以千计数据中心，一味地让渡逻辑位并不是长久之计，如果开辟太多逻辑位用于后缀，可能会导致 TSO 在高强度的请求中过快的耗尽逻辑位而加快物理时间的推进，与真实时间产生偏差。但在目前，对于实现的复杂度以及必要性上来看，这仍然是一个不错的解决方案。
 
 ### 可用性
 
@@ -142,7 +142,7 @@ Local Transaction 特性将作为实验特性在 5.0 版本中提供，届时如
 
 在完成了对实例的划分后，我们还需要对数据进行位置划分，好让 TiDB 正确地检查数据约束，从正确的 PD 获取 Local TSO，保证本地事务在中心内的一致性。这一块我们可以通过 Placement Policy 来进行配置，由于目前 Placement Policy 仅支持 Partition 分区级别的控制，所以会需要数据在建表时对应不同数据中心划分好不同分区。举个例子，假设我们有表 t1 如下：
 
-```
+```sql
 CREATE TABLE t1 (c int)
 PARTITION BY RANGE (c) (
     PARTITION p1 VALUES LESS THAN (100),
@@ -153,7 +153,7 @@ PARTITION BY RANGE (c) (
 
 分区 p1 数据对应 DC-1 内的数据，我们可以使用以下 SQL 对 t1 表的 p1 分区进行约束划分：
 
-```
+```sql
 ALTER TABLE t1 ALTER PARTITION p1 ADD PLACEMENT POLICY CONSTRAINTS='["+zone=dc-1"]' ROLE=leader REPLICAS=1;
 ```
 
