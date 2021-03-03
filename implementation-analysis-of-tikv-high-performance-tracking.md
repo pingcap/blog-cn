@@ -15,15 +15,12 @@ tags: ['TiKV']
 ![1](media/implementation-analysis-of-tikv-high-performance-tracking/1.png)
 
 - 日志：离散的错误信息和状态信息。
-
 - 指标：记录和呈现可聚合的数据。
-
 - 追踪：单个请求的一系列事件。
 
 TiKV 实现了完备的日志和指标系统，但缺失了追踪，导致在诊断 TiKV 和 TiDB 问题时会遇到以下困难：
 
    - **观测数据之间的没有关联**：只有熟悉请求链路上每个操作对应什么监控指标的同学才能完整追溯和诊断问题。
-
    - **请求抖动难以追溯**：TiKV 节点往往同时处理不同模式的业务，零星请求的性能抖动无法体现在 AVG / P99 / MAX 等监控指标中，从而无法诊断抖动原因。
 
 **追踪可以有效解决上述场景中遇到的问题**。以下详细介绍 TiKV 中高性能追踪的实现。追踪功能在 TiKV 中尚为实验性特性，需要特定代码分支开启，感兴趣的同学可以关注 GitHub issue [Introduce tracing framework (#8981)](https://github.com/tikv/tikv/pull/8981)。
@@ -37,15 +34,12 @@ TiKV 实现了完备的日志和指标系统，但缺失了追踪，导致在诊
 从图中可以直观看到 SQL 语句 “INSERT INTO `t` VALUES (1), (2), (3);”  有趣的信息：
 
 - TiDB 处理这个请求时依次进行了 compile、plan、execute 三个步骤
-
 - TiDB 在 execute 阶段调用了 TiKV 的 Prewrite RPC 和 Commit RPC
-
 - 请求共耗时 5ms
 
 图中每个方框代表一个事件，称之为 Span。每个 Span 包含：
 
 - 事件名称
-
 - 事件起始时间戳和结束时间戳
 
 Span 之间有层级，可以构成父子关系或先后关系，如下图所示：
