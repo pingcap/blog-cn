@@ -289,11 +289,11 @@ TiKV 为每个线程维护一个线程本地结构 LocalSpanLine，负责 LocalS
 
 从实现的角度看，NormalSpan 的信息不会记录在线程本地的容器当中，而是由相应的变量自行维护，以便于跨线程的移动。同时，NormalSpan 之间的父子关系不再由线程本地隐式构建，而需由用户手动指定。
 
-但是，NormalSpan 和 LocalSpan 并非完全隔离，TiKV 通过以下的交互方式将这两者联系起来：从 LocalCollector 收集而来的一组 LocalSpan，可以挂载在 NormalSpan 上作为子树，如下图所示。同时，挂载的数量不受限制，通过允许进行多对多的挂载方式，TiKV 在一定程度上支持了对 batch 场景的追踪，这是社区中大部分追踪库没有覆盖到的。
+但是，NormalSpan 和 LocalSpan 并非完全隔离，TiKV 通过以下的交互方式将这两者联系起来：从 LocalCollector 收集而来的一组 LocalSpan，可以**挂载在 NormalSpan 上作为子树**，如下图所示。同时，挂载的数量不受限制。通过允许进行多对多的挂载方式，TiKV 在一定程度上支持了对 batch 场景的追踪，这是社区中大部分追踪库没有覆盖到的。
 
 ![23](media/implementation-analysis-of-tikv-high-performance-tracking/23.png)
 
-上述实现方式形成了 Span 收集的快慢两条路径。它们共同合作，完成对某个请求的执行路径信息的记录：
+上述实现方式**形成了 Span 收集的快慢两条路径**。它们共同合作，完成对某个请求的执行路径信息的记录：
 
 - LocalSpan 不可跨越线程但记录高效，通过批量收集 LocalSpan 然后挂载至普通 Span 的方式，让追踪的开销变得非常低。
 - 普通 Span 的记录相对较慢，不过它可以跨线程传递，使用起来比较灵活。
