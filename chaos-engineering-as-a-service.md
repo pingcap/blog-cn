@@ -1,6 +1,6 @@
 ---
 title: Chaos Mesh® 的 Chaos Engineering as a Service 探索之路
-author: ['于畅,'王相']
+author: ['于畅,王相']
 date: 2021-03-04
 summary: 本篇文章的作者为 CAAS 团队的王相与于畅，他们在本次 Hackathon 比赛中基于 Chaos Engineering as a Service 的理念，对 Chaos Mesh 进行改造，以下就来看看他们的探索历程。
 tags: ['Chaos Mesh']
