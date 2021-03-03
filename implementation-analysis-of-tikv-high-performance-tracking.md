@@ -118,8 +118,8 @@ TSC 递增速率由 CPU 频率决定。**现代化 CPU 可能会动态调节频�
 
 比较现代的 x86 架构 CPU 提供了特性确保 TSC 递增速率的稳定性。在 Linux 下可以通过 `/proc/cpuinfo` 中的 CPU flag 来检查 TSC 速率是否稳定：
 
-- constant_tsc: TSC 将以固定的额定标称频率而非瞬时频率递增
-- nonstop_tsc: TSC 在 CPU 休眠状态下仍持续递增
+- `constant_tsc`: TSC 将以固定的额定标称频率而非瞬时频率递增
+- `nonstop_tsc`: TSC 在 CPU 休眠状态下仍持续递增
 
 以上 TSC 速率的稳定性保证仅对单个 CPU 核心有效，在多核情况下还需处理 TSC 同步问题。
 
