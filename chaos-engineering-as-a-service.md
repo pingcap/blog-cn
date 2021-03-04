@@ -24,7 +24,9 @@ Chaos Mesh 已经开源一周年了，目前是 CNCF 的 sanbox 项目，在国�
 
 文章 [The benefits of chaos engineering-as-a-service](https://jaxenter.com/chaos-engineering-service-144113.html) 是这么定义的：
 
-CAAS（ChaosEngineering-As-a-Service）意味着可以快速的看到直观的图形化界面，开箱即用的集成一切需要进行实验的东西。业界也有基于 CAAS 提供服务的厂商，比如 [Germlin](https://www.gremlin.com/)。
+CAAS（ChaosEngineering-As-a-Service）意味着可以快速的看到直观的图形化界面，开箱即用的集成一切需要进行实验的东西。
+
+业界也有基于 CAAS 提供服务的厂商，比如 [Germlin](https://www.gremlin.com/)。
 
 我的解读，Chaos Engineering as a Service 需要有一个统一的管理入口，可以便捷地通过界面操作，填写配置，创建 Chaos 实验；可以看到实验的状态和一些监控指标数据，对比任务周期的效果；可以做一些暂停、归档等操作管理实验；可以拖拽式编排 Chaos 实验。
 
