@@ -188,4 +188,4 @@ Chaos Mesh 目前对插件支持比较有限，只能通过扩展 CRD 的形式�
 
 *   [Chaos Engineering: System Resiliency in Practice](https://www.oreilly.com/library/view/chaos-engineering/9781492043850/)
 
-*   [Chaos Engineering Observability](https://www.oreilly.com/library/view/chaos-engineering-observability/9781492051046/)**
+*   [Chaos Engineering Observability](https://www.oreilly.com/library/view/chaos-engineering-observability/9781492051046/)
