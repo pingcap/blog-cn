@@ -10,15 +10,15 @@ Chaos Mesh 已经开源一周年了，目前是 CNCF 的 sanbox 项目，在国�
 
 但是目前 Chaos Mesh 仍然存在一些需要继续建设的方面：
 
-1.  不够易用。很多 Chaos 功能较为复杂，用户在创建 Chaos 实验后，往往需要人工确认实验是否生效，缺乏 Metrics 以及与监控系统的联动。
+*   需要继续提高易用性。目前有些 Chaos 的功能较为复杂，用户在创建 Chaos 实验后，可能还需要人工确认实验是否生效，需要改进 Metrics 以及与监控系统的联动。
 
-2.  基本上只支持 K8s 环境。每个 K8s 集群都需要部署一个 Chaos Mesh，无法统一进行管理。支持物理机的 Chaosd 较为简陋，只是一个命令行工具，只支持少量的 Chaos 实验。
+*   主要支持 K8s 环境。目前 Chaos Mesh 主要针对 K8s 环境设计的，而且每个 K8s 集群都需要部署一个 Chaos Mesh，无法统一进行管理。另外，支持物理机的混沌实验工具 Chaosd 支持的功能有限，而且通过命令行注入实验的方式对用户不太友好。
 
-3.  无法插件化。目前添加自定义 Chaos 只能通过修改源码，暂不支持插件以及 Go 以外的语言。
+*   暂不支持插件。目前添加自定义 Chaos 只能通过修改源码，暂不支持插件以及 Go 以外的语言，不利于新 Chaos 功能的扩展。
 
-4.  不支持编排。没有办法对 Chaos 实验进行编排与管理，也无法闭环做一些回调操作。
+*   没有原生支持编排。目前可以[通过 Argo 来做编排](https://pingcap.com/blog-cn/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/)，但是还不够易用。Chaos Mesh 计划是在 V2.0 版本支持原生编排，这样也可以闭环做一些回调操作。
 
-总体来说，Chaos Mesh 更像一个工具，距离 Chaos Engineering as a Service 还需要继续建设，并且还有很大的想象空间。
+总体来说，Chaos Mesh 距离 Chaos Engineering as a Service 还需要继续建设，并且还有很大的想象空间。
 
 ## 混沌工程即服务（Chaos Engineering-As-a-Service）
 
