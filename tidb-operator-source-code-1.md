@@ -1,6 +1,6 @@
 ---
 title: TiDB Operator 源码阅读 (一) 序
-author: ['张海龙']
+author: ['陈逸文']
 date: 2021-03-09
 summary: 本文将通过这一系列文章，我们希望能扫清 TiDB Operator 理解的障碍，让更多的创意在社区中萌发。
 tags: ['TiDB Operator']
@@ -28,9 +28,7 @@ tags: ['TiDB Operator']
 
 - BackupSchedule 用于描述用户期望的 TiDB 集群周期性备份 Job，
 
-- TidbClusterAutoScaler 用于描述用户期望的 TiDB 集群自动伸缩规则，
-
-- DMCluster 用于描述 DM（TiDB Data Migration）相关配置。
+- TidbClusterAutoScaler 用于描述用户期望的 TiDB 集群自动伸缩规则。
 
 TiDB 集群的编排和调度逻辑则由下列组件负责：
 
@@ -44,7 +42,7 @@ TiDB 在 Kubernetes 上运行，借助了 Deployment，Statefulset，Service，P
 
 TiDB Operator 是从什么角度给用户的运维操作带来了简化的呢? 举例来说，用户需要 3 个 PD 实例，但从配置角度，第一个 PD 实例需要初始化，第二个和第三个 PD 实例则需要加入刚初始化的实例，这样启动参数为 --initial-cluster 和 --join，这个配置就可以由 TiDB Operator 自动生成。
 
-同时，运维中需要通过滚动更新实现 PD 在线升级，如果手工操作，既繁琐， 又难以保证升级过程中不影响在线 PD 业务，在 Kubernetes 中需要使用 Statefulsets 的 UpdateStrategy.Partition 选项控制滚动更新的进度，结合对 PD 服务的监控逐个更新 PD 实例。TiDB Operator 则可以通过 PD API 自动迁移 Leader 并监控更新后的 Pod 是否能正常服务，自动化在线滚动更新流程。这些操作如果通过手动完成，既繁琐又极易出错，而我们将这些 TiDB 的运维逻辑编排进 TiDB Operator，帮助用户简化 TiDB 运维流程。
+同时，运维中需要通过滚动更新实现 PD 在线升级，如果手工操作，既繁琐，又难以保证升级过程中不影响在线 PD 业务，在 Kubernetes 中需要使用 Statefulsets 的 UpdateStrategy.Partition 选项控制滚动更新的进度，结合对 PD 服务的监控逐个更新 PD 实例。TiDB Operator 则可以通过 PD API 自动迁移 Leader 并监控更新后的 Pod 是否能正常服务，自动化在线滚动更新流程。这些操作如果通过手动完成，既繁琐又极易出错，而我们将这些 TiDB 的运维逻辑编排进 TiDB Operator，帮助用户简化 TiDB 运维流程。
 
 从实现上看，TiDB Operator 需要具备与两个系统交互的能力：一个是与 Kubernetes 交互，使 Kubernetes 侧的资源配置和操作能够满足 TiDB 正常运行的需求；另一个是 TiDB 组件的 API，即 Operator 需要从 PD 获取到集群内部的状态变化，完成 Kubernetes 这一侧相应的资源管理，也要能够根据用户需求调用 TiDB 集群的 API 来完成运维操作。许多小伙伴在已有的 Kubernetes 运维系统上集成 TiDB 运维能力时，希望获得一种从 TiDB 系统的视角与这两个系统交互的运维能力，TiDB Operator 便很好的完成了这一工作。
 
@@ -59,11 +57,11 @@ TiDB Operator 是从什么角度给用户的运维操作带来了简化的呢? �
 - Operator 模式 - 讨论 TiDB Operator 的代码入口，运行逻辑，Reconcile 循环的触发。
 
 - TiDB Operator 的组件 Reconcile Loop 设计 - 讨论 TiDB 组件的 Reconcile 
-Loop 的通用设计, 并介绍可能的拓展点。
+Loop 的通用设计，并介绍可能的拓展点。
 
-- TiDB Operator 的 Feature 设计 - 讨论备份, Auto-Scaling, Webhook, Advanced Statefulset, TiDB Scheduler, 监控等特性的设计与实现。
+- TiDB Operator 的 Feature 设计 - 讨论备份、Auto-Scaling,、Webhook、Advanced Statefulset、TiDB Scheduler、监控等特性的设计与实现。
 
-- TiDB Operator 的质量管理 - 讨论 TiDB Operator 的质量保证措施， 如单元测试、 E2E测试。
+- TiDB Operator 的质量管理 - 讨论 TiDB Operator 的质量保证措施，如单元测试、E2E测试。
 
 ## 读者可以收获什么
 
