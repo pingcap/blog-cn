@@ -77,5 +77,4 @@ Loop 的通用设计，并介绍可能的拓展点。
 
 ## 小结
 
-这篇文章中， 我们主要讨论了 TiDB Operator 需要解决的问题以及接下来系列文章的规划。 在接下来的系列文章中，我们会深入到 TiDB Operator 代码设计之中，介绍 TiDB Operator 的代码结构、TiDB Operator 的运行逻辑、TiDB Operator 的功能实现细节、TiDB Operator 的质量管理，以及 TiDB Operator 在 Kubernetes 的 Operator 模式下的编写的经验。欢迎你通过 [#sig-k8s](https://slack.tidb.io/invite?team=tidb-community&channel=sig-k8s&ref=pingcap-tidb-operator) 或 [pingcap/tidb-operator](https://github.com/pingcap/tidb-operator) 与 TiDB Operator 社区交流互动。
-
+这篇文章中，我们主要讨论了 TiDB Operator 需要解决的问题以及接下来系列文章的规划。 在接下来的系列文章中，我们会深入到 TiDB Operator 代码设计之中，介绍 TiDB Operator 的代码结构、TiDB Operator 的运行逻辑、TiDB Operator 的功能实现细节、TiDB Operator 的质量管理，以及 TiDB Operator 在 Kubernetes 的 Operator 模式下的编写的经验。欢迎你通过 [#sig-k8s](https://slack.tidb.io/invite?team=tidb-community&channel=sig-k8s&ref=pingcap-tidb-operator) 或 [pingcap/tidb-operator](https://github.com/pingcap/tidb-operator) 与 TiDB Operator 社区交流互动。
