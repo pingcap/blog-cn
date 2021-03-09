@@ -12,7 +12,7 @@ tags: ['TiDB Operator']
 
 了解 TiDB Operator 处理的应用场景和专注的定位，有助于大家了解 TiDB Operator 代码的功能边界。
 
-![1](media/tidb-operator-source-code-1/1.png)
+![tidb-operator-overview](media/tidb-operator-source-code-1/tidb-operator-overview.png)
 
 上图是 TiDB Operator 的架构。其中，TidbCluster、TidbMonitor、TidbInitializer、Backup、Restore、BackupSchedule、TidbClusterAutoScaler 是由 CRD（CustomResourceDefinition）定义的自定义资源。这些 CRD 分别描述以下信息:
 
