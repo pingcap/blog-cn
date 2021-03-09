@@ -2,7 +2,7 @@
 title: TiDB Operator 源码阅读 (一) 序
 author: ['陈逸文']
 date: 2021-03-09
-summary: 本文将通过这一系列文章，我们希望能扫清 TiDB Operator 理解的障碍，让更多的创意在社区中萌发。
+summary: 本文作为 TiDB Operator 源码阅读系列的开篇，介绍了 TiDB Operator 的应用场景和能力定位，并谈到了之后源码阅读系列文章的规划，我们希望能通过这一系列文章扫清 TiDB Operator 理解的障碍，让更多的创意在社区中萌发。
 tags: ['TiDB Operator']
 ---
 
