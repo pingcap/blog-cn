@@ -16,25 +16,25 @@ tags: ['TiDB Operator']
 
 上图是 TiDB Operator 的架构。其中，TidbCluster、TidbMonitor、TidbInitializer、Backup、Restore、BackupSchedule、TidbClusterAutoScaler 是由 CRD（CustomResourceDefinition）定义的自定义资源。这些 CRD 分别描述以下信息:
 
-- TidbCluster 用于描述用户期望的 TiDB 集群，
+- TidbCluster 用于描述用户期望的 TiDB 集群
 
-- TidbMonitor 用于描述用户期望的 TiDB 集群监控组件，
+- TidbMonitor 用于描述用户期望的 TiDB 集群监控组件
 
-- TidbInitializer 用于描述用户期望的 TiDB 集群初始化 Job，
+- TidbInitializer 用于描述用户期望的 TiDB 集群初始化 Job
 
-- Backup 用于描述用户期望的 TiDB 集群备份 Job，
+- Backup 用于描述用户期望的 TiDB 集群备份 Job
 
-- Restore 用于描述用户期望的 TiDB 集群恢复 Job，
+- Restore 用于描述用户期望的 TiDB 集群恢复 Job
 
-- BackupSchedule 用于描述用户期望的 TiDB 集群周期性备份 Job，
+- BackupSchedule 用于描述用户期望的 TiDB 集群周期性备份 Job
 
-- TidbClusterAutoScaler 用于描述用户期望的 TiDB 集群自动伸缩规则。
+- TidbClusterAutoScaler 用于描述用户期望的 TiDB 集群自动伸缩规则
 
 TiDB 集群的编排和调度逻辑则由下列组件负责：
 
-- tidb-controller-manager 是一组 Kubernetes 上的自定义控制器。这些控制器会不断对比 TidbCluster 对象中记录的期望状态与 TiDB 集群的实际状态，并调整 Kubernetes 中的资源以驱动 TiDB 集群满足期望状态，并根据其他 CR 完成相应的控制逻辑，
+- tidb-controller-manager 是一组 Kubernetes 上的自定义控制器。这些控制器会不断对比 TidbCluster 对象中记录的期望状态与 TiDB 集群的实际状态，并调整 Kubernetes 中的资源以驱动 TiDB 集群满足期望状态，并根据其他 CR 完成相应的控制逻辑。
 
-- tidb-scheduler 是一个 Kubernetes 调度器扩展，它为 Kubernetes 调度器注入了 TiDB 集群拓扑特有的调度逻辑，
+- tidb-scheduler 是一个 Kubernetes 调度器扩展，它为 Kubernetes 调度器注入了 TiDB 集群拓扑特有的调度逻辑。
 
 - tidb-admission-webhook 是一个 Kubernetes 动态准入控制器，完成 Pod、StatefulSet 等相关资源的修改、验证与运维。
 
@@ -52,14 +52,14 @@ TiDB Operator 是从什么角度给用户的运维操作带来了简化的呢? �
 
 我们希望在源码阅读系列文章中讨论以下内容:
 
-- TiDB Operator 简介 - 讨论 TiDB Operator 需要解决的问题。
+- TiDB Operator 简介 - 讨论 TiDB Operator 需要解决的问题；
 
-- Operator 模式 - 讨论 TiDB Operator 的代码入口，运行逻辑，Reconcile 循环的触发。
+- Operator 模式 - 讨论 TiDB Operator 的代码入口，运行逻辑，Reconcile 循环的触发；
 
 - TiDB Operator 的组件 Reconcile Loop 设计 - 讨论 TiDB 组件的 Reconcile 
-Loop 的通用设计，并介绍可能的拓展点。
+Loop 的通用设计，并介绍可能的拓展点；
 
-- TiDB Operator 的 Feature 设计 - 讨论备份、Auto-Scaling,、Webhook、Advanced Statefulset、TiDB Scheduler、监控等特性的设计与实现。
+- TiDB Operator 的 Feature 设计 - 讨论备份、Auto-Scaling,、Webhook、Advanced Statefulset、TiDB Scheduler、监控等特性的设计与实现；
 
 - TiDB Operator 的质量管理 - 讨论 TiDB Operator 的质量保证措施，如单元测试、E2E测试。
 
@@ -67,15 +67,15 @@ Loop 的通用设计，并介绍可能的拓展点。
 
 我们希望在以下场景对你提供帮助:
 
-1. 帮助你“知其然，且知其所以然”，了解功能背后的实现，扫清对 TiDB Operator 的认知盲区，增进你的使用体验。
+1. 帮助你“知其然，且知其所以然”，了解功能背后的实现，扫清对 TiDB Operator 的认知盲区，增进你的使用体验；
 
-2. 在你希望为社区贡献新的功能时，我们希望能帮你找到研究相关问题的入口，了解要修改或新增的功能在哪些地方可以着手切入，实现你的需求。
+2. 在你希望为社区贡献新的功能时，我们希望能帮你找到研究相关问题的入口，了解要修改或新增的功能在哪些地方可以着手切入，实现你的需求；
 
-3. 在你希望将 TiDB Operator 集成到自己的以 Kubernetes 为基础的运维系统时，我们希望通过介绍我们怎样管理 Kubernetes 资源，怎样与 TiDB 交互，方便你将 TiDB Operator 接入系统。
+3. 在你希望将 TiDB Operator 集成到自己的以 Kubernetes 为基础的运维系统时，我们希望通过介绍我们怎样管理 Kubernetes 资源，怎样与 TiDB 交互，方便你将 TiDB Operator 接入系统；
 
 4. 学习 Operator 框架时，TiDB Operator 是很好的范本。目前 Kubernetes 社区有 Kubebuilder、Operator framework 等 Operator 框架，也有 controller-runtime 等封装较好的 controller 运行时，这些实现方法本质上都是利用 Kubernetes 已有的模块来封装复杂的运维逻辑。了解 TiDB Operator 的运行逻辑，可以帮你掌握基于 Declaritive API，借助 Kubernetes 的优秀实现设计更强大且更易于实现的资源管理系统。
 
 ## 小结
 
-这篇文章中， 我们主要讨论了 TiDB Operator 需要解决的问题以及接下来系列文章的规划。 在接下来的系列文章中，我们会深入到 TiDB Operator 代码设计之中，介绍 TiDB Operator 的代码结构、TiDB Operator 的运行逻辑、TiDB Operator 的功能实现细节、TiDB Operator 的质量管理，以及 TiDB Operator 在 Kubernetes 的 Operator 模式下的编写的经验。欢迎你通过 [#sig-k8s](https://slack.tidb.io/invite?team=tidb-community&channel=sig-k8s&ref=pingcap-tidb-operator) 或 [pingcap/tidb-operator](https://github.com/pingcap/tidb-operator) 与 TiDB Operator 社区交流互动。
+这篇文章中，我们主要讨论了 TiDB Operator 需要解决的问题以及接下来系列文章的规划。 在接下来的系列文章中，我们会深入到 TiDB Operator 代码设计之中，介绍 TiDB Operator 的代码结构、TiDB Operator 的运行逻辑、TiDB Operator 的功能实现细节、TiDB Operator 的质量管理，以及 TiDB Operator 在 Kubernetes 的 Operator 模式下的编写的经验。欢迎你通过 [#sig-k8s](https://slack.tidb.io/invite?team=tidb-community&channel=sig-k8s&ref=pingcap-tidb-operator) 或 [pingcap/tidb-operator](https://github.com/pingcap/tidb-operator) 与 TiDB Operator 社区交流互动。
 
