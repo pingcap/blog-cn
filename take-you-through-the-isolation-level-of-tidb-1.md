@@ -3,7 +3,7 @@ title: 事务前沿研究 | 隔离级别的追溯与究明，带你读懂 TiDB �
 author: ['童牧']
 date: 2021-03-16
 summary: 本篇文章将介绍在两阶段锁理解下，人们对隔离级别的理解。
-tags: ['TiDB']
+tags: ['TiDB', '事务']
 ---
 
 ## 绪论
@@ -67,6 +67,16 @@ Phantom Read 是 Non-repeatable Read 的 predicate 的版本，这两种异常�
 
 ![例1](media/take-you-through-the-isolation-level-of-tidb-1/例1.png)
 
+|Txn1|Txn2|
+|-|-|
+|`select * from accounts; -- 0 rows`||
+||`insert into accounts values("tidb", 100);`|
+||`commit;`|
+|`insert into accounts values("tidb", 1000); -- duplicate entry "tidb"`||
+|`select * from accounts; -- 0 rows`||
+|`select * from accounts for update; -- 1 rows`||
+|`commit;`||
+
 <div class="caption-center">例1 - 虚假的 Phantom Read</div>
 
 例 1 给出了一种对 MySQL 下 Phantom Read 常见的举例，本文认为这是一种虚假的 Phantom Read，因为其本质原因在于 MySQL 的快照读和当前读的混合使用。在有些地方当前读被描述为“降级到 Read Committed 隔离级别”，这个例子所展示的，是两种隔离级别混合使用所带来的一些不符合直觉的现象，在后文讲述快照读和当前读的时候会更加详细的说明这一点。
@@ -91,7 +101,10 @@ ANSI SQL-92 所给出的隔离级别的定义被广泛使用，但也造成了�
 
 - 如果还写了其他的 key，可能会破坏约束的一致性。
 
-![例2](media/take-you-through-the-isolation-level-of-tidb-1/例2.png)
+|Txn1|Txn2|
+|-|-|
+|`w(x, 1)`||
+||`w(x, 2)`|
 
 <div class="caption-center">例2 - Dirty Write 的扩大解释</div>
 
@@ -99,7 +112,13 @@ ANSI SQL-92 所给出的隔离级别的定义被广泛使用，但也造成了�
 
 写丢失指的是一个事务在尝试根据读到的数据进行写入之前，在其他事务上有另外的写入发生在了读写操作之间，并且成功提交，于是当这个事务继续进行的时候，就会将已经成功提交的写入覆盖掉的现象，造成写入丢失。在例 3 中，T1 和 T2 都需要把 x 的值加一，T1 根据读到的值 10 将 11 写入，写入前，T2 也将 11 写入 x，在 Serializable 的情况下，最后 x 的值是 12，而此时因为丢失了一个事务的写入，x 的最终值是 11。注：根据论文的解释，T2 不一定需要被 commit，此处为了方便理解所以稍微改造了例子。
 
-![例3](media/take-you-through-the-isolation-level-of-tidb-1/例3.png)
+|Txn1|Txn2|
+|-|-|
+|`r(x, 10)`||
+||`w(x, x + 1)`|
+||`commit`|
+|`w(x, x + 1) x = 10`||
+|`commit`||
 
 <div class="caption-center">例3 - Lost Update 的扩大解释</div>
 
@@ -107,7 +126,13 @@ ANSI SQL-92 所给出的隔离级别的定义被广泛使用，但也造成了�
 
 在数据库的实现中，为了保证性能，往往会将读操作分为两类，不加锁读和加锁读，有的数据库可以通过加锁读来防止出现 Lost Update 的现象，对于这种情况，我们就称数据库防止了 P4C 现象的发生，例 4 表示了 P4C 现象。加锁读在关系型数据库里一般实现为 select for update。
 
-![例4](media/take-you-through-the-isolation-level-of-tidb-1/例4.png)
+|Txn1|Txn2|
+|-|-|
+|`rc(x, 10)`||
+||`w(x, x + 1)`|
+||`commit`|
+|`w(x, x + 1) x = 10`||
+|`commit`||
 
 <div class="caption-center">例4 - Cursor 条件下的 Lost Update</div>
 
@@ -115,7 +140,13 @@ ANSI SQL-92 所给出的隔离级别的定义被广泛使用，但也造成了�
 
 Read Skew 的现象是因为读到两个状态的数据，导致观察到了违反约束的结果，例 5 中的 x 和 y 的和应该等于 100，而在 T1 里，却读到了 x + y = 140，需要注意的是因为 Read Skew 现象中没有重复读取同一个 key，所以不属于 Non-repeatable Read。
 
-![例5](media/take-you-through-the-isolation-level-of-tidb-1/例5.png)
+|Txn1|Txn2|
+|-|-|
+|`r(x, 50)`||
+||`w(x, 10)`|
+||`w(y, 90)`|
+||`commit`|
+|`r(y, 90)`||
 
 <div class="caption-center">例5 - Read Skew 的违反约束的现象</div>
 
@@ -123,7 +154,15 @@ Read Skew 的现象是因为读到两个状态的数据，导致观察到了违�
 
 Write Skew 是两个事务在写操作上发生的异常，例 6 表示了 Write Skew 现象，即 T1 尝试把 x 的值赋给 y，T2 尝试把 y 的值赋给 x，如果这两个事务 Serializable 的执行，那么在结束之后 x 和 y 应该拥有一样的值，但是在 Write Skew 中，并发操作使得他们的值互换了。
 
-![例6](media/take-you-through-the-isolation-level-of-tidb-1/例6.png)
+|Txn1|Txn2|
+|-|-|
+|`r(x, 10)`||
+||`r(y, 20)`|
+|`w(y, 10)`||
+||`w(x, 20)`|
+|`commit`|`commit`|
+|`r(x, 20)`||
+|`r(y, 10)`||
 
 <div class="caption-center">例6 - Write Skew 的违反约束的现象</div>
 
@@ -131,11 +170,19 @@ Write Skew 是两个事务在写操作上发生的异常，例 6 表示了 Write
 
 Dirty Read 的严格解释是需要一个成功提交的事务读取到一个不会提交的事务的写入内容，如例 7 所示；但是其扩大解释只需要 T1 读取到还未提交的事务的写入内容就算发生了 Dirty Read，如例 8 所示。图 3 解释了采用扩大解释的原因，在这个例子中，T2 读到了 T1 对 x 的写入之后的值，但是读到了 T1 对 y 写入之前的值，因此造成了读到破坏约束的数据。
 
-![例7](media/take-you-through-the-isolation-level-of-tidb-1/例7.png)
+|Txn1|Txn2|
+|-|-|
+||`w(x, 1)`|
+|`r(x, 1)`||
+|`commit`|`abort`|
 
 <div class="caption-center">例7 - Dirty Read 的严格解释</div>
 
-![例8](media/take-you-through-the-isolation-level-of-tidb-1/例8.png)
+|Txn1|Txn2|
+|-|-|
+||`w(x, 1)`|
+|`r(x, 1)`||
+|`...`|`...`|
 
 <div class="caption-center">例8 - Dirty Read 的扩大解释</div>
 
@@ -147,11 +194,21 @@ Dirty Read 的严格解释是需要一个成功提交的事务读取到一个不
 
 Non-repeatable Read 指的是两次 item 类型的读操作读到了不同的数据。如例 9 所示，在严格解释下需要进行完整的两次读取；但是扩大解释则认为在一个事务读了某个 key 之后，如果读事务还没提交，有事务写这个 key 成功了就可能出现异常，换句话说，读请求应该阻塞写请求。图 4 解释了采用扩大解释的原因，因为 T1 对 x 的读取没能阻塞住 T2 对 x 的写入，导致之后读到了 T2 写入的 y，结果从 T1 观察到的结果来看，x + y = 140 破坏了约束。
 
-![例9](media/take-you-through-the-isolation-level-of-tidb-1/例9.png)
+|Txn1|Txn2|
+|-|-|
+|`r(x, 1)`||
+||`w(x, 2)`|
+||`commit`|
+|`r(x, 2)`||
+|`commimt`||
 
 <div class="caption-center">例9 - Non-repeatable Read 的严格解释</div>
 
-![例10](media/take-you-through-the-isolation-level-of-tidb-1/例10.png)
+|Txn1|Txn2|
+|-|-|
+|`r(x, 1)`||
+||`w(x, 2)`|
+|`...`|`...`|
 
 <div class="caption-center">例10 - Non-repeatable Read 的扩大解释</div>
 
@@ -163,11 +220,21 @@ Non-repeatable Read 指的是两次 item 类型的读操作读到了不同的数
 
 和 ANSI SQL-92 所定义的 Phantom Read 不同，这篇文章把这一异常现象称为 Phantom，例 11 列举了标准的 Phantom Read，其特点是需要两次 predicate 类型的读操作读到了不同的数据。Phantom 现象比 Phantom Read 的定义要更加广一些，如例 12 所示，Phantom 现象的扩大解释只要在一个事务进行了 predicate 类型的读取，而另一个事务对其中的某个 key 进行了写操作，就可能出现异常，换言之，predicate 类型的读请求应该阻塞对它所读取到的数据的写请求。图 5 解释了采用扩大解释的原因，并且指出了以一种一个 predicate 和一个 item 类型的读取到的结果不一致的情况，在 Serializable 的数据库下，通过 predicate 类的查询计算 x 和 y 的和应当获得和通过 item 类的查询直接读取 sum 这个 key 一样的结果。
 
-![例11](media/take-you-through-the-isolation-level-of-tidb-1/例11.png)
+|Txn1|Txn2|
+|-|-|
+|`r(sum(x-y), 11)`||
+||`w(x, 2)`|
+||`commit`|
+|`r(sum(x-y), 12)`|||
+|`commit`||
 
 <div class="caption-center">例11 - Phantom 的严格解释（Phantom Read）</div>
 
-![例12](media/take-you-through-the-isolation-level-of-tidb-1/例12.png)
+|Txn1|Txn2|
+|-|-|
+|`r(sum(x-y), 11)`||
+||`w(x, 2)`|
+|`...`|`...`|
 
 <div class="caption-center">例12 - Phantom 的扩大解释</div>
 
@@ -177,7 +244,7 @@ Non-repeatable Read 指的是两次 item 类型的读操作读到了不同的数
 
 ### Snapshot Isolation
 
-这篇文章还提出了 Snapshot Isolation (SI)，在 SI 的隔离级别下，事务会从它开始时间点的快照进行数据的读取，不同于 2PL，SI 一般利用 MVCC 的无锁特性来提高性能，因为对一个 key 能够保存多个版本的数据，SI 能够做到读不阻塞写，甚至写也不阻塞写。
+这篇文章还提出了 Snapshot Isolation (SI)，在 SI 的隔离级别下，事务会从它开始时间点的快照进行数据的读取，不同于两阶段锁，SI 一般利用 MVCC 的无锁特性来提高性能，因为对一个 key 能够保存多个版本的数据，SI 能够做到读不阻塞写，甚至写也不阻塞写。
 
 熟悉 TiDB 乐观事务的同学可能会发现，如果根据上面给出的 P0 - Dirty Write 的定义，SI 是属于可能发生异常现象的。在乐观事务中，两个事务同时写一个 key 都会成功，但是最后在提交的时候会有一个事务失败，这一机制被称为 “first-committer-wins”。虽然 SI 可能会发生 P0（可能出现异常的现象），但不会发生 Dirty Write 的异常现象（我们可以将其称为 A0）。
 
