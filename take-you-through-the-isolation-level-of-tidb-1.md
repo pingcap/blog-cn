@@ -38,7 +38,7 @@ tags: ['TiDB']
 ANSI SQL-92 提出了最经典的隔离级别定义，包括读未提交（Read Uncommitted）、读提交（Read Committed）、可重复读（Repeatable Read）和可序列化（Serializable）。
 
 
-|    | Dirty Read  | ANon-repeatable Read  | Phantom Read  |
+|    | Dirty Read  | Non-repeatable Read  | Phantom Read  |
 |  ----  | ----  | ----  | ----  |
 |  Read Uncommitted  |  Possible  |  Possible  |  Possible  |
 |  Read Committed  | Not Possible  | Possible  | Possible  |
