@@ -30,7 +30,7 @@ tags: ['TiDB', '事务']
 
 ![1](media/take-you-through-the-isolation-level-of-tidb-1/1.png)
 
-<div class="caption-center">图1 - 可序列化和不可序列化的对比
+<div class="caption-center">图 1 - 可序列化和不可序列化的对比
 </div>
 
 ## ANSI SQL-92
@@ -45,7 +45,7 @@ ANSI SQL-92 提出了最经典的隔离级别定义，包括读未提交（Read 
 |  Repeatable Read  | Not Possible  | Not Possible  | Possible  |
 |  Serializable  | Not Possible  | Not Possible  | Not Possible  |
 
-<div class="caption-center">表1 - ANSI SQL-92 隔离级别</div>
+<div class="caption-center">表 1 - ANSI SQL-92 隔离级别</div>
 
 相比于 Phantom Read，Dirty Read 和 Non-repeatable Read 要好理解很多，但因为大部分网络资料对于 MySQL 的 Phantom Read 的解释是存在误区的（把混淆快照读和当前读出现的现象当作 Phantom Read），本文仅对 Phantom Read 做详细的解释。
 
