@@ -63,9 +63,7 @@ Phantom Read 是 Non-repeatable Read 的 predicate 的版本，这两种异常�
 
 ![2](media/take-you-through-the-isolation-level-of-tidb-1/2.png)
 
-<div class="caption-center">图2 - Non-repeatable Read 与 Phantom Read</div>
-
-![例1](media/take-you-through-the-isolation-level-of-tidb-1/例1.png)
+<div class="caption-center">图 2 - Non-repeatable Read 与 Phantom Read</div>
 
 |Txn1|Txn2|
 |-|-|
@@ -77,7 +75,7 @@ Phantom Read 是 Non-repeatable Read 的 predicate 的版本，这两种异常�
 |`select * from accounts for update; -- 1 rows`||
 |`commit;`||
 
-<div class="caption-center">例1 - 虚假的 Phantom Read</div>
+<div class="caption-center">例 1 - 虚假的 Phantom Read</div>
 
 例 1 给出了一种对 MySQL 下 Phantom Read 常见的举例，本文认为这是一种虚假的 Phantom Read，因为其本质原因在于 MySQL 的快照读和当前读的混合使用。在有些地方当前读被描述为“降级到 Read Committed 隔离级别”，这个例子所展示的，是两种隔离级别混合使用所带来的一些不符合直觉的现象，在后文讲述快照读和当前读的时候会更加详细的说明这一点。
 
@@ -106,7 +104,7 @@ ANSI SQL-92 所给出的隔离级别的定义被广泛使用，但也造成了�
 |`w(x, 1)`||
 ||`w(x, 2)`|
 
-<div class="caption-center">例2 - Dirty Write 的扩大解释</div>
+<div class="caption-center">例 2 - Dirty Write 的扩大解释</div>
 
 #### P4 - Lost Update
 
@@ -120,7 +118,7 @@ ANSI SQL-92 所给出的隔离级别的定义被广泛使用，但也造成了�
 |`w(x, x + 1) x = 10`||
 |`commit`||
 
-<div class="caption-center">例3 - Lost Update 的扩大解释</div>
+<div class="caption-center">例 3 - Lost Update 的扩大解释</div>
 
 #### P4C - Cursor Lost Update
 
@@ -134,7 +132,7 @@ ANSI SQL-92 所给出的隔离级别的定义被广泛使用，但也造成了�
 |`w(x, x + 1) x = 10`||
 |`commit`||
 
-<div class="caption-center">例4 - Cursor 条件下的 Lost Update</div>
+<div class="caption-center">例 4 - Cursor 条件下的 Lost Update</div>
 
 #### A5A - Read Skew
 
@@ -148,7 +146,7 @@ Read Skew 的现象是因为读到两个状态的数据，导致观察到了违�
 ||`commit`|
 |`r(y, 90)`||
 
-<div class="caption-center">例5 - Read Skew 的违反约束的现象</div>
+<div class="caption-center">例 5 - Read Skew 的违反约束的现象</div>
 
 #### A5B - Write Skew
 
@@ -164,7 +162,7 @@ Write Skew 是两个事务在写操作上发生的异常，例 6 表示了 Write
 |`r(x, 20)`||
 |`r(y, 10)`||
 
-<div class="caption-center">例6 - Write Skew 的违反约束的现象</div>
+<div class="caption-center">例 6 - Write Skew 的违反约束的现象</div>
 
 #### P1 - A1 - Dirty Read
 
@@ -176,7 +174,7 @@ Dirty Read 的严格解释是需要一个成功提交的事务读取到一个不
 |`r(x, 1)`||
 |`commit`|`abort`|
 
-<div class="caption-center">例7 - Dirty Read 的严格解释</div>
+<div class="caption-center">例 7 - Dirty Read 的严格解释</div>
 
 |Txn1|Txn2|
 |-|-|
@@ -184,11 +182,11 @@ Dirty Read 的严格解释是需要一个成功提交的事务读取到一个不
 |`r(x, 1)`||
 |`...`|`...`|
 
-<div class="caption-center">例8 - Dirty Read 的扩大解释</div>
+<div class="caption-center">例 8 - Dirty Read 的扩大解释</div>
 
 ![3](media/take-you-through-the-isolation-level-of-tidb-1/3.png)
 
-<div class="caption-center">图3 - Dirty Read 在扩大解释下的异常</div>
+<div class="caption-center">图 3 - Dirty Read 在扩大解释下的异常</div>
 
 #### P2 - A2 - Non-repeatable(Fuzzy) Read
 
@@ -202,7 +200,7 @@ Non-repeatable Read 指的是两次 item 类型的读操作读到了不同的数
 |`r(x, 2)`||
 |`commimt`||
 
-<div class="caption-center">例9 - Non-repeatable Read 的严格解释</div>
+<div class="caption-center">例 9 - Non-repeatable Read 的严格解释</div>
 
 |Txn1|Txn2|
 |-|-|
@@ -210,11 +208,11 @@ Non-repeatable Read 指的是两次 item 类型的读操作读到了不同的数
 ||`w(x, 2)`|
 |`...`|`...`|
 
-<div class="caption-center">例10 - Non-repeatable Read 的扩大解释</div>
+<div class="caption-center">例 10 - Non-repeatable Read 的扩大解释</div>
 
 ![4](media/take-you-through-the-isolation-level-of-tidb-1/4.png)
 
-<div class="caption-center">图4 - Non-repeatable Read 在扩大解释下的异常</div>
+<div class="caption-center">图 4 - Non-repeatable Read 在扩大解释下的异常</div>
 
 #### P3 - A3 - Phantom
 
@@ -228,7 +226,7 @@ Non-repeatable Read 指的是两次 item 类型的读操作读到了不同的数
 |`r(sum(x-y), 12)`|||
 |`commit`||
 
-<div class="caption-center">例11 - Phantom 的严格解释（Phantom Read）</div>
+<div class="caption-center">例 11 - Phantom 的严格解释（Phantom Read）</div>
 
 |Txn1|Txn2|
 |-|-|
@@ -236,11 +234,11 @@ Non-repeatable Read 指的是两次 item 类型的读操作读到了不同的数
 ||`w(x, 2)`|
 |`...`|`...`|
 
-<div class="caption-center">例12 - Phantom 的扩大解释</div>
+<div class="caption-center">例 12 - Phantom 的扩大解释</div>
 
 ![5](media/take-you-through-the-isolation-level-of-tidb-1/5.png)
 
-<div class="caption-center">图5 - Phantom 在扩大解释下的异常</div>
+<div class="caption-center">图 5 - Phantom 在扩大解释下的异常</div>
 
 ### Snapshot Isolation
 
@@ -256,7 +254,7 @@ P1 描述的现象对 SI 来说并没有意义，因为 SI 能够找到它需要
 
 ![6](media/take-you-through-the-isolation-level-of-tidb-1/6.png)
 
-<div class="caption-center">图6 - 隔离级别的定义</div>
+<div class="caption-center">图 6 - 隔离级别的定义</div>
 
 ### 小结
 
