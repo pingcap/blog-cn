@@ -13,7 +13,7 @@ tags: ['TiDB', '事务']
 
 ### 介绍
 
-上文所讲的「A Critique of ANSI SQL Isolation Levels」这篇文章在定义隔离级别的时候，对事务的过程也提出了诸多的要求，然而「Generalized Isolation Level Definitions」仅对成功提交的事务做了约束，即所有异常现象都是由成功提交的事务产生的。在例 1 左中，因为 T1 没有成功提交，所以并没有出现异常，而例 1 右中 T1 读到了 abort 事务 T2 的写入内容，产生了异常现象（G1a - Aborted Read）。
+上文所讲的「A Critique of ANSI SQL Isolation Levels」这篇文章在定义隔离级别的时候，对事务的过程也提出了诸多的要求，然而「Generalized Isolation Level Definitions」仅对成功提交的事务做了约束，即所有异常现象都是由成功提交的事务产生的。在例 1 左中，因为 T1 没有成功提交，所以并没有出现异常，而例 1 右中 T1 读到了 abort 事务 T2 的写入内容并且提交成功了，产生了异常现象（G1a - Aborted Read）。
 
 |Txn1|Txn2||Txn1|Txn2|
 |-|-|-|-|-|
@@ -121,7 +121,7 @@ G0 (Write Cycles) 和类似于脏写定义，但要求 P0 (Dirty Write) 现象�
 ||`w(x, 2)`|||`w(x, 2)`|
 |||||`w(y, 1)`|
 ||||`w(y, 2)`||
-|`commit`|`commit`||`abort`|`commit`|
+|`commit`|`commit`||`commit`|`commit`|
 
 <div class="caption-center">例 7 - P0 (Dirty Write) 与 G0 对比</div>
 
@@ -135,10 +135,10 @@ G1a (Aborted  Reads) 指读到了中断事务的内容，例 8 是 G1a 现象的
 
 |Txn1|Txn2||Txn1|Txn2|
 |-|-|-|-|-|
-|`r(x, 1)`|||`r(x, 1)`|
+|`r(x, 1)`|||`r(x, 1)`||
 |`w(x, 2)`|||`r(sum, 10)`||
 ||`r(x, 2)`||`w(x, 2)`||
-|||||`r(sum, 10)`|
+|||||`r(sum, 11)`|
 |`abort`|`commit`||`abort`|`commit`|
 
 <div class="caption-center">例 8 - G1a 现象</div>
@@ -147,7 +147,7 @@ G1b (Intermediate Reads) 指读到了事务的中间内容，例 9 是 G1b 的�
 
 |Txn1|Txn2||Txn1|Txn2|
 |-|-|-|-|-|
-|`r(x, 1)`|||`r(x, 1)`|
+|`r(x, 1)`|||`r(x, 1)`||
 |`w(x, 2)`|||`r(sum, 10)`||
 |`w(x, 3)`|||`w(x, 2)`||
 ||`r(x, 2)`||`w(x, 3)`||
@@ -167,7 +167,7 @@ G1c (Circular Information Flow) 指 WW 依赖和 WR 依赖组成的 DSG 中存�
 
 #### PL-3 & G2
 
-G2 (Anti-dependency Cycles) 指的是 WW 依赖、WR 依赖和 RW 依赖组成的 DSG 中存在环，图 3 展示了对上文的 Phantom 现象进行分析，在其中发现 G2 现象的例子。在这个例子中，如果 T1 或者 T2 任意一个事务失败，或者 T1 没有读取到 T2 写入的值，那么实际上就不存在 G2 现象也不会发生异常，但是根据 P3 的定义，Phantom 现象已经发生了。本文认为 G2 比 P3 用一种更加合理的方式来约束 Phantom 问题带来的异常，同时也补充了 ANSI SQL-92 的 Phantom Read 必须要两次 predicate 读才能算作异常的不合理之处。
+G2 (Anti-dependency Cycles) 指的是 WW 依赖、WR 依赖和 RW 依赖组成的 DSG 中存在环，图 3 展示了对上篇的 Phantom 现象进行分析，在其中发现 G2 现象的例子。在这个例子中，如果 T1 或者 T2 任意一个事务失败，或者 T1 没有读取到 T2 写入的值，那么实际上就不存在 G2 现象也不会发生异常，但是根据 P3 的定义，Phantom 现象已经发生了。本文认为 G2 比 P3 用一种更加合理的方式来约束 Phantom 问题带来的异常，同时也补充了 ANSI SQL-92 的 Phantom Read 必须要两次 predicate 读才能算作异常的不合理之处。
 
 ![9](media/take-you-through-the-isolation-level-of-tidb-2/9.png)
 
@@ -177,7 +177,7 @@ G2 (Anti-dependency Cycles) 指的是 WW 依赖、WR 依赖和 RW 依赖组成�
 
 #### PL-2.99 & G2-item
 
-PL-3 的要求非常严格，而 PL-2 又相当于 Read Committed 的隔离级别，这就需要在 PL-2 和 PL-3 之间为 Repeatable Read 找到位置。前文提到过 Non-repeatable Read 和 Phantom Read 的区别在于是 item 还是 predicate 类型的读取，理解了这一点之后，G2-item (Item Anti-dependency Cycles) 就呼之欲出了。
+PL-3 的要求非常严格，而 PL-2 又相当于 Read Committed 的隔离级别，这就需要在 PL-2 和 PL-3 之间为 Repeatable Read 找到位置。上篇提到过 Non-repeatable Read 和 Phantom Read 的区别在于是 item 还是 predicate 类型的读取，理解了这一点之后，G2-item (Item Anti-dependency Cycles) 就呼之欲出了。
 
 G2-item 指的是 WW 依赖、WR 依赖和 item 类型的 RW 依赖组成的 DSG 中存在环。图 4 展示了对 Non-repeatable 现象进行分析，在其中发现 G2-item 现象的例子。
 
@@ -231,7 +231,7 @@ G2-item 指的是 WW 依赖、WR 依赖和 item 类型的 RW 依赖组成的 DSG
 
 ### 快照读与当前读
 
-快照读和当前读的概念在 MySQL 和 TiDB 中都存在。快照读会遵循快照隔离级别的字面定义，从事务的快照版本读取数据，一个例外情况是在快照读下会优先读取到自身事务修改的数据（local read）。当前读能够读取到最新的数据，实现方式为获取一个最新的时间戳，将此作为当前读读取的快照版本。Insert/update/delete/select for update 会使用当前读去读取数据，使用当前读也经常被称为“隔离级别降级为 Read Committed”。这两种读取方式的混合使用可能产生非常难以理解的现象。例 10 给出了在混合使用情况下，当前读影响快照读的例子，按照快照读和当前读的行为定义，快照读是不能看到事务开始后新插入的数据的，而当前读可以看到，但是当当前读对这行数据进行修改之后，这行数据就变为了“自身事务修改的数据”，于是快照读优先使用了 local read。
+快照读和当前读的概念在 MySQL 和 TiDB 中都存在。快照读会遵循快照隔离级别的字面定义，从事务的快照版本读取数据，一个例外情况是在快照读下会优先读取到自身事务修改的数据（local read）。当前读能够读取到最新的数据，实现方式为获取一个最新的时间戳，将此作为当前读读取的快照版本。Insert/update/delete/select for update 会使用当前读去读取数据，使用当前读也经常被称为“隔离级别降级为 Read Committed”。这两种读取方式的混合使用可能产生非常难以理解的现象。[例 10](https://bugs.mysql.com/bug.php?id=102752) 给出了在混合使用情况下，当前读影响快照读的例子，按照快照读和当前读的行为定义，快照读是不能看到事务开始后新插入的数据的，而当前读可以看到，但是当当前读对这行数据进行修改之后，这行数据就变为了“自身事务修改的数据”，于是快照读优先使用了 local read。
 
 |Txn1|Txn2|
 |-|-|
