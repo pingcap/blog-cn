@@ -13,16 +13,25 @@ tags: ['TiDB', '事务']
 
 ### 介绍
 
-上文所讲的「A Critique of ANSI SQL Isolation Levels」这篇文章在定义隔离级别的时候，对事务的过程也提出了诸多的要求，然而「Generalized Isolation Level Definitions」仅对成功提交的事务做了约束，即所有异常现象都是由成功提交的事务产生的。在例 1 左中，因为 T1 没有成功提交，所以并没有出现异常，而例 1 右中 T1 读到了 abort 事务 T2 的写入内容并且提交成功了，产生了异常现象（G1a - Aborted Read）。
+上文所讲的「A Critique of ANSI SQL Isolation Levels」这篇文章在定义隔离级别的时候，对事务的过程也提出了诸多的要求，然而「Generalized Isolation Level Definitions」仅对成功提交的事务做了约束，即所有异常现象都是由成功提交的事务产生的。在例 1-a 中，因为 T1 没有成功提交，所以并没有出现异常，而例 1-b 中 T1 读到了 abort 事务 T2 的写入内容并且提交成功了，产生了异常现象（G1a - Aborted Read）。
 
-|Txn1|Txn2||Txn1|Txn2|
-|-|-|-|-|-|
-||`w(x, 1)`|||`w(x, 1)`|
-|`r(x, 1)`|||`r(x, 1)`||
-|`abort`||||`abort`|
-||`abort`||`commit`||
+|Txn1|Txn2|
+|-|-|
+||`w(x, 1)`|
+|`r(x, 1)`||
+|`abort`||
+||`abort`|
 
-<div class="caption-center">例 1 - 提交是出现异常的必要条件</div>
+<div class="caption-center">例 1-a - 提交是出现异常的必要条件</div>
+
+|Txn1|Txn2|
+|-|-|
+||`w(x, 1)`|
+|`r(x, 1)`||
+||`abort`|
+|`commit`||
+
+<div class="caption-center">例 1-b - 提交是出现异常的必要条件</div>
 
 「Generalized Isolation Level Definitions」提出了与实现无关的隔离级别定义，并且更清晰的解释了 predicate 和 item 现象所带来的异常区别，提出了对标 ANSI SQL-92 的隔离级别。
 
@@ -47,17 +56,27 @@ WR 依赖指的是为 T2 读到了 T1 写入的值。
 
 <div class="caption-center">例 2 - Directly item-read-depends</div>
 
-例 3 是 predicate 条件下的 WR 依赖，例 3 左是将一个 key 从不符合 predicate 条件改为了符合条件，而例 3 右是将一个 key 从符合 predicate 条件改为了不符合条件。
+例 3 是 predicate 条件下的 WR 依赖，例 3-a 是将一个 key 从不符合 predicate 条件改为了符合条件，而例 3-b 是将一个 key 从符合 predicate 条件改为了不符合条件。
 
-|Txn1|Txn2||Txn1|Txn2|
-|-|-|-|-|-|
-|`r(x, 1)`|||`r(x, 10)`||
-|`w(x, 10)`|||`w(x, 1)`||
-||`r(sum(x)\|x<10)`|||`r(sum(x)\|x<10)`|
-||`commit`|||`commit`|
-|`commit`|||`commit`||
+|Txn1|Txn2|
+|-|-|
+|`r(x, 1)`||
+|`w(x, 10)`||
+||`r(sum(x)\|x<10)`|
+||`commit`|
+|`commit`||
 
-<div class="caption-center">例 3 - Directly predicate-read-depends</div>
+<div class="caption-center">例 3-a - Directly predicate-read-depends</div>
+
+|Txn1|Txn2|
+|-|-|
+|`r(x, 10)`||
+|`w(x, 1)`||
+||`r(sum(x)\|x<10)`|
+||`commit`|
+|`commit`||
+
+<div class="caption-center">例 3-b - Directly predicate-read-depends</div>
 
 #### Anti-Dependencies(RW)
 
@@ -74,17 +93,27 @@ WR 依赖指的是为 T2 修改了 T1 读到的值。
 
 <div class="caption-center">例 4 - Directly item-anti-depends</div>
 
-例 5 是 predicate 条件下的 WR 依赖，例 5 左是将一个 key 从符合 predicate 条件改为了不符合条件，而例 5 右是将一个 key 从不符合 predicate 条件改为了符合条件。
+例 5 是 predicate 条件下的 WR 依赖，例 5-a 是将一个 key 从符合 predicate 条件改为了不符合条件，而例 5-b 是将一个 key 从不符合 predicate 条件改为了符合条件。
 
-|Txn1|Txn2||Txn1|Txn2|
-|-|-|-|-|-|
-|`r(x, 1)`|||`r(x, 10)`||
-||`r(sum(x)\|x<10)`|||`r(sum(x)\|x<10)`|
-|`w(x, 10)`|||`w(x, 1)`||
-||`commit`|||`commit`|
-|`commit`|||`commit`||
+|Txn1|Txn2|
+|-|-|
+|`r(x, 1)`||
+||`r(sum(x)\|x<10)`|
+|`w(x, 10)`||
+||`commit`|
+|`commit`||
 
-<div class="caption-center">例 5 - Directly predicate-anti-depends</div>
+<div class="caption-center">例 5-a - Directly predicate-anti-depends</div>
+
+|Txn1|Txn2|
+|-|-|
+|`r(x, 10)`||
+||`r(sum(x)\|x<10)`|
+|`w(x, 1)`||
+||`commit`|
+|`commit`||
+
+<div class="caption-center">例 5-b - Directly predicate-anti-depends</div>
 
 #### Write Dependencies(WW)
 
@@ -113,17 +142,25 @@ DSG (Direct Serialization Graph) 可以被称为有向序列化图，是将对�
 
 #### PL-1 & G0
 
-G0 (Write Cycles) 和类似于脏写定义，但要求 P0 (Dirty Write) 现象实际产生异常，如果仅仅是两个事务写同一个 key 并且并行了，他们还是可以被视为 Serializable，只有当两个事务互相出现依赖的时候才属于 G0 现象。例 7 左属于 P0 现象，但只看这个现象本身，是符合 Serializable 的，而例 7 右则同时发生了 P0 和 G0。
+G0 (Write Cycles) 和类似于脏写定义，但要求 P0 (Dirty Write) 现象实际产生异常，如果仅仅是两个事务写同一个 key 并且并行了，他们还是可以被视为 Serializable，只有当两个事务互相出现依赖的时候才属于 G0 现象。例 7-a属于 P0 现象，但只看这个现象本身，是符合 Serializable 的，而例 7-b 同时发生了 P0 和 G0。
 
-|Txn1|Txn2||Txn1|Txn2|
-|-|-|-|-|-|
-|`w(x, 1)`|||`w(x, 1)`||
-||`w(x, 2)`|||`w(x, 2)`|
-|||||`w(y, 1)`|
-||||`w(y, 2)`||
-|`commit`|`commit`||`commit`|`commit`|
+|Txn1|Txn2|
+|-|-|
+|`w(x, 1)`||
+||`w(x, 2)`|
+|`commit`|`commit`|
 
-<div class="caption-center">例 7 - P0 (Dirty Write) 与 G0 对比</div>
+<div class="caption-center">例 7-a - P0 (Dirty Write) 与 G0 对比 - P0</div>
+
+|Txn1|Txn2|
+|-|-|
+|`w(x, 1)`||
+||`w(x, 2)`|
+||`w(y, 1)`|
+|`w(y, 2)`||
+|`commit`|`commit`|
+
+<div class="caption-center">例 7-b - P0 (Dirty Write) 与 G0 对比 - G0</div>
 
 如果不会出现 G0 现象，则达到了 PL-1 的隔离级别。
 
@@ -131,30 +168,50 @@ G0 (Write Cycles) 和类似于脏写定义，但要求 P0 (Dirty Write) 现象�
 
 G1 现象有三条，其中 G1a 和 G1b 与依赖图无关，G1c 是依赖图上的异常。
 
-G1a (Aborted  Reads) 指读到了中断事务的内容，例 8 是 G1a 现象的两种情况，不管是通过 item 类型还是 predicate 类型的查询读到了中断事务的内容，都属于 G1a 现象。
+G1a (Aborted  Reads) 指读到了中断事务的内容，例 8 是 G1a 现象的两种情况，不管是通过 item 类型还是 predicate 类型的查询读到了中断事务的内容，都属于 G1a 现象。例 8-a 中，T1 将 x 写为 2，但是这个事务最后产生了 abort，而 T2 读到了 T1 写入的结果，产生了 G1a 现象；在例 8-b 中 T1 将 x 从 1 改写为 2，此时 sum 的值也会因此从 10 变为 11，但是因为 T1 最后产生了 abort，所以 T2 读取到 sum 为 11 的值也属于 G1a 现象。
 
-|Txn1|Txn2||Txn1|Txn2|
-|-|-|-|-|-|
-|`r(x, 1)`|||`r(x, 1)`||
-|`w(x, 2)`|||`r(sum, 10)`||
-||`r(x, 2)`||`w(x, 2)`||
-|||||`r(sum, 11)`|
-|`abort`|`commit`||`abort`|`commit`|
+|Txn1|Txn2|
+|-|-|
+|`r(x, 1)`||
+|`w(x, 2)`||
+||`r(x, 2)`||
+|`abort`|`commit`|
 
-<div class="caption-center">例 8 - G1a 现象</div>
+<div class="caption-center">例 8-a - G1a 现象</div>
 
-G1b (Intermediate Reads) 指读到了事务的中间内容，例 9 是 G1b 的两种情况，item 类型和 predicate 类型的读取都属于 G1b 现象。
 
-|Txn1|Txn2||Txn1|Txn2|
-|-|-|-|-|-|
-|`r(x, 1)`|||`r(x, 1)`||
-|`w(x, 2)`|||`r(sum, 10)`||
-|`w(x, 3)`|||`w(x, 2)`||
-||`r(x, 2)`||`w(x, 3)`||
-|||||`r(sum, 11)`|
-|`commit`|`commit`||`commit`|`commit`|
+|Txn1|Txn2|
+|-|-|
+|`r(x, 1)`||
+|`r(sum, 10)`||
+|`w(x, 2)`||
+||`r(sum, 11)`|
+|`abort`|`commit`|
 
-<div class="caption-center">例 9 - G1b 现象</div>
+<div class="caption-center">例 8-b - G1a 现象</div>
+
+G1b (Intermediate Reads) 指读到了事务的中间内容，例 9 是 G1b 的两种情况，item 类型和 predicate 类型的读取都属于 G1b 现象。在例 9-a 中，T1 将 x 从 1 修改为 2，最后修改为 3，但是对于其他事务而言，只能观察到 T1 最后修改的值 3，所以 T2 读取到 x=2 的行为属于 G1b 现象；在例 9-b 中，T2 虽然没有直接从 T1 读取到 x=2 的值，但是其读取到的 sum=11 也包括了 x=2 的结果，其结果而言仍然读取到了事务的中间状态，属于 G1b 现象。
+
+|Txn1|Txn2|
+|-|-|
+|`r(x, 1)`||
+|`w(x, 2)`||
+|`w(x, 3)`||
+||`r(x, 2)`|
+|`commit`|`commit`|
+
+<div class="caption-center">例 9-a - G1b 现象</div>
+
+|Txn1|Txn2|
+|-|-|
+|`r(x, 1)`||
+|`r(sum, 10)`||
+|`w(x, 2)`||
+|`w(x, 3)`||
+||`r(sum, 11)`|
+|`commit`|`commit`|
+
+<div class="caption-center">例 9-b - G1b 现象</div>
 
 G1c (Circular Information Flow) 指 WW 依赖和 WR 依赖组成的 DSG 中存在环，图 2 描述了 G1c 现象，这个例子可以理解为，T1 和 T2 同时写了 x，并且 T2 是后写的，所以 T2 应该晚于 T1 提交，同理 T3 应该晚于 T2 提交。而最后 T1 读到了 T3 写入的 z = 4，所以 T3 需要早于 T1 提交，发生了矛盾。
 
