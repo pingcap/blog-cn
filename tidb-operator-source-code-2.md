@@ -29,6 +29,7 @@ controllers := []Controller{
     tidbmonitor.NewController(deps),
 }
 ```
+
 在 Controller 的初始化函数过程中，会初始化一系列 Informer，这些 Informer 主要用来和 kube-apiserver 交互获取 CRD 和相关资源的变更。以 TiDBCluster 为例，在初始化函数 NewController 中，会初始化 Informer 对象：
  
 ```go
