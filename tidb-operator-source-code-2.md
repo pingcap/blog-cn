@@ -6,7 +6,7 @@ summary: 我们将从 Operator 模式的视角，介绍 TiDB Operator 的代码�
 tags: ['TiDB Operator']
 ---
 
-在[上一篇文章](https://pingcap.com/blog-cn/tidb-operator-source-code-1/)中我们讨论了 TiDB Operator 的应用场景，了解了 TiDB Operator 可以在 Kubernetes 集群中管理 TiDB 的生命周期。可是，TiDB Operator 的代码是怎样运行起来的？TiDB 组件的生命周期管理的逻辑又是如何编排的呢？在这篇文章中，我们将从 Operator 模式的视角，介绍 TiDB Operator 的代码组织逻辑，我们将会分析从代码入口到组件的生命周期事件被触发中间的过程。
+在[上一篇文章](https://pingcap.com/blog-cn/tidb-operator-source-code-1/)中我们讨论了 TiDB Operator 的应用场景，了解了 TiDB Operator 可以在 Kubernetes 集群中管理 TiDB 的生命周期。可是，TiDB Operator 的代码是怎样运行起来的？TiDB 组件的生命周期管理的逻辑又是如何编排的呢？我们将从 Operator 模式的视角，介绍 TiDB Operator 的代码实现，在这篇文章中我们主要讨论 controller-manager 的实现，介绍从代码入口到组件的生命周期事件被触发中间的过程。
 
 ## Operator模式的演化: 从 Controller 模式到 Operator 模式
 
