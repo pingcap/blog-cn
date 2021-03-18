@@ -130,7 +130,7 @@ func (c *Controller) processNextWorkItem() bool {
 }
 ```
  
-sync 函数会根据 Key 获取对应的 CR 对象，例如这里的 TiDBCluster 对象，然后对这个 TiDBCluster 对象进行同步。
+Sync 函数会根据 Key 获取对应的 CR 对象，例如这里的 TiDBCluster 对象，然后对这个 TiDBCluster 对象进行同步。
  
 ```go
 // sync syncs the given tidbcluster.
@@ -161,7 +161,7 @@ func (c *Controller) syncTidbCluster(tc *v1alpha1.TidbCluster) error {
 }
 ```
  
-syncTidbCluster 函数调用 updateTidbCluster 函数，进而调用一系列组件的 sync 函数实现 TiDB 集群管理的相关工作。在 pkg/controller/tidbcluster/tidb_cluster_control.go 的 updateTidbCluster 函数实现中，我们可以看到各个组件的 Sync 函数在这里调用，在相关调用代码注释里描述着每个 Sync 函数执行的生命周期操作事件，可以帮助理解每个组件的 Reconcile 需要完成哪些工作，例如 PD 组件:
+syncTidbCluster 函数调用 updateTidbCluster 函数，进而调用一系列组件的 Sync 函数实现 TiDB 集群管理的相关工作。在 pkg/controller/tidbcluster/tidb_cluster_control.go 的 updateTidbCluster 函数实现中，我们可以看到各个组件的 Sync 函数在这里调用，在相关调用代码注释里描述着每个 Sync 函数执行的生命周期操作事件，可以帮助理解每个组件的 Reconcile 需要完成哪些工作，例如 PD 组件:
  
 ```go
 // works that should do to making the pd cluster current state match the desired state:
