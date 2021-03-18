@@ -2,7 +2,7 @@
 title: TiDB Operator 源码阅读 (二) Operator 模式
 author: ['陈逸文']
 date: 2021-03-19
-summary: 本文将从 Operator 模式的视角，介绍 TiDB Operator 的的代码实现，我们将会分析从代码入口到组件的生命周期事件被触发中间的过程。
+summary: 本文讨论了 Operator 模式，并从 Operator 模式的视角介绍 TiDB Operator 的代码的执行逻辑。
 tags: ['TiDB Operator']
 ---
 
