@@ -12,7 +12,7 @@ tags: ['TiDB Operator']
 
 TiDB Operator 参考了 kube-controller-manager 的设计，了解 Kubernetes 的设计有助于了解 TiDB Operator 的代码逻辑。Kubernetes 内的 Resources 都是通过 Controller 实现生命周期管理的，例如 Namespace、Node、Deployment、Statefulset 等等，这些 Controller 的代码在 kube-controller-manager 中实现并由 kube-controller-manager 启动后调用。
 
-为了支持用户自定义资源的开发需求，Kubernetes 社区基于上面的开发经验，提出了 Operator 模式。Kubernetes 支持通过 CRD（CustomResourceDefinition）来描述自定义资源，通过 CRD 创建 CR（CustomResource）对象，开发者实现相应 controller 处理 CR 及关联资源的变更的需求，通过比对资源最新状态和期望状态，逐步完成运维操作，实现最终资源状态与期望状态一致。通过定义 CRD 和实现对应 controller，无需将代码合并到 Kubernetes 中编译使用， 即可完成一个资源的生命周期管理。
+为了支持用户自定义资源的开发需求，Kubernetes 社区基于上面的开发经验，提出了 Operator 模式。Kubernetes 支持通过 CRD（CustomResourceDefinition）来描述自定义资源，通过 CRD 创建 CR（CustomResource）对象，开发者实现相应 Controller 处理 CR 及关联资源的变更的需求，通过比对资源最新状态和期望状态，逐步完成运维操作，实现最终资源状态与期望状态一致。通过定义 CRD 和实现对应 Controller，无需将代码合并到 Kubernetes 中编译使用， 即可完成一个资源的生命周期管理。
 
 ## TiDB Operator 的 Controller Manager
 
