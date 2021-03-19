@@ -181,8 +181,8 @@ if err := c.pdMemberManager.Sync(tc); err != nil {
 
 ## 小结
 
-通过这篇文章，我们了解到 TiDB Operator 如何从 cmd/controller-manager/main.go 初始化运行和如何实现对应的 Controller 对象，并以 TidbCluster Controller 为例介绍了 Controller 从初始化到实际工作的过程以及 Controller 内部的工作逻辑。通过上面的代码运行逻辑的介绍，我们清楚了组件的生命周期控制循环是如何被触发的，问题已经被缩小到如何细化这个控制循环，添加 TiDB 特殊的运维逻辑，使得 TiDB 能在 Kubernetes 上部署和正常运行，完成其他的生命周期操作。
+通过这篇文章，我们了解到 TiDB Operator 如何从 cmd/controller-manager/main.go 初始化运行和如何实现对应的 Controller 对象，并以 TidbCluster Controller 为例介绍了 Controller 从初始化到实际工作的过程以及 Controller 内部的工作逻辑。通过上面的代码运行逻辑的介绍，我们清楚了组件的生命周期控制循环是如何被触发的，问题已经被缩小到如何细化这个控制循环，添加 TiDB 特殊的运维逻辑，使得 TiDB 能在 Kubernetes 上部署和正常运行，完成其他的生命周期操作。我们将在下一篇文章中讨论如何细化这个控制循环，讨论组件的控制循环的实现。
 
-我们介绍了社区对于 Operator 模式的探索和演化。对于一些希望使用 Operator 模式开发资源管理系统的小伙伴，Kubernetes 社区中提供了 Kubebuilder 和 Operator Framework 两个 Controller 脚手架项目。相比于参考 [kubernetes/sample-controller](https://github.com/kubernetes/sample-controller) 进行开发，Operator 脚手架基于 [kubernetes-sigs/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) 生成 Controller 代码，减少了许多重复引入的模板化的代码。开发者只需要专注于完成 CRD 对象的 Reconcile Loop 部分即可，而不需要关心 Reconcile Loop 启动之前的准备工作。
+我们介绍了社区对于 Operator 模式的探索和演化。对于一些希望使用 Operator 模式开发资源管理系统的小伙伴，Kubernetes 社区中提供了 Kubebuilder 和 Operator Framework 两个 Controller 脚手架项目。相比于参考 [kubernetes/sample-controller](https://github.com/kubernetes/sample-controller) 进行开发，Operator 脚手架基于 [kubernetes-sigs/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) 生成 Controller 代码，减少了许多重复引入的模板化的代码。开发者只需要专注于完成 CRD 对象的控制循环部分即可，而不需要关心控制循环启动之前的准备工作。
 
-我们将在下一篇文章中讨论如何细化这个控制循环，讨论组件的 Reconcile Loop 的实现。如果有什么好的想法，欢迎通过 [#sig-k8s](https://slack.tidb.io/invite?team=tidb-community&channel=sig-k8s&ref=pingcap-tidb-operator) 或 [pingcap/tidb-operator](https://github.com/pingcap/tidb-operator) 参与 TiDB Operator 社区交流。
+如果有什么好的想法，欢迎通过 [#sig-k8s](https://slack.tidb.io/invite?team=tidb-community&channel=sig-k8s&ref=pingcap-tidb-operator) 或 [pingcap/tidb-operator](https://github.com/pingcap/tidb-operator) 参与 TiDB Operator 社区交流。
