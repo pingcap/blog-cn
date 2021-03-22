@@ -56,7 +56,7 @@ WR 依赖指的是为 T2 读到了 T1 写入的值。
 
 <div class="caption-center">例 2 - Directly item-read-depends</div>
 
-例 3 是 predicate 条件下的 WR 依赖，例 3-a 是将一个 key 从不符合 predicate 条件改为了符合条件，而例 3-b 是将一个 key 从符合 predicate 条件改为了不符合条件。
+例 3 是 predicate 条件下的 WR 依赖，例 3-a 是将一个 key 从符合 predicate 条件改为了不符合条件，而例 3-b 是将一个 key 从不符合 predicate 条件改为了符合条件。
 
 |Txn1|Txn2|
 |-|-|
@@ -130,7 +130,7 @@ WW 依赖指的是两个事务写了同一个 key，例 6 中 T1 写入了 x 的
 
 #### DSG
 
-DSG (Direct Serialization Graph) 可以被称为有向序列化图，是将对一系列事务进行以来分析后，将上述的三种依赖作为 edge，将事务作为 node 绘制出来的图。图 1 展示了从事务历史分析得到 DSG。看到如果 DSG 是一个有向无环图，那么这些事务间的依赖关系所决定的事务先后关系不会出现矛盾，反之则代表可能有异常，这篇文章根据出现异常时组成环的 edge 的依赖类型，定义了隔离级别。
+DSG (Direct Serialization Graph) 可以被称为有向序列化图，是将对一系列事务进行以来分析后，将上述的三种依赖作为 edge，将事务作为 node 绘制出来的图。图 1 展示了从事务历史分析得到 DSG。如果 DSG 是一个有向无环图（如图 1 所示），那么这些事务间的依赖关系所决定的事务先后关系不会出现矛盾，反之则代表可能有异常，这篇文章根据出现异常时组成环的 edge 的依赖类型，定义了隔离级别。
 
 ![7](media/take-you-through-the-isolation-level-of-tidb-2/7.png)
 
