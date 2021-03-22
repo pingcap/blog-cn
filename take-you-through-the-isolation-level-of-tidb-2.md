@@ -325,7 +325,7 @@ G2-item 指的是 WW 依赖、WR 依赖和 item 类型的 RW 依赖组成的 DSG
 create table t(id int primary key);
 begin pessimistic;
 select * from t where id > 1 for update; -- 0 rows returns, will not lock any key
-select * from t where id = 1 for update; -- 0 rows returns, lock pk(id = 1
+select * from t where id = 1 for update; -- 0 rows returns, lock pk(id = 1)
 ```
 
 <div class="caption-center">例 11 - 混合使用快照读与当前读</div>
