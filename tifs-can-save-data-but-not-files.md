@@ -1,5 +1,5 @@
 ---
-title: TiFS: 能存数据，为什么不能存文件？
+title: TiFS 能存数据，为什么不能存文件？
 author: ['李晨曦']
 date: 2021-04-01
 summary: 本篇文章的作者为龙姐姐说的都队的李晨曦，他们团队在本次Hackathon 比赛中构建了一个基于 TiKV 的分布式 POSIX 文件系统 TiFS，继承了 TiKV 强大的分区容错和严格一致性特性，为 TiKV 生态开辟了一个新的领域。
