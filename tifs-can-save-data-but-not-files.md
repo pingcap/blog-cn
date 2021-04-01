@@ -45,7 +45,7 @@ struct Meta {
 struct Inode {
     file_attr: FileAttr,
     lock_state: LockState,
- inline_data: Option<Vec<u8>>,
+    inline_data: Option<Vec<u8>>,
     next_fh: u64,
     opened_fh: u64,
 }
