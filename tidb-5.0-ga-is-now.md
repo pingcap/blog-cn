@@ -1,5 +1,5 @@
 ---
-title:迈向企业级核心场景的 TiDB 5.0
+title: 迈向企业级核心场景的 TiDB 5.0
 author: ['PingCAP']
 date: 2021-04-08
 summary: TiDB 5.0 的性能和稳定性得到显著提升，从而具备更强大的 OLTP 金融级核心场景的服务能力；在原有 HTAP 引擎 TiFlash 的基础上引入 MPP 架构，TiDB 使得众多企业的实时/交互式 BI 成为现实。
