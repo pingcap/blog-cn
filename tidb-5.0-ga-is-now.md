@@ -73,7 +73,7 @@ TiDB 5.0 支持[不可见索引 ](https://docs.pingcap.com/zh/tidb/v5.0/sql-stat
 
 ### 数据迁移方面
 
-[数据迁移类工具](https://docs.pingcap.com/zh/tidb/v5.0/dumpling-overview#%E5%AF%BC%E5%87%BA%E5%88%B0-amazon-s3-%E4%BA%91%E7%9B%98)支持 AWS S3（也包含支持 S3 协议的其他存储服务）作为数据迁移的中间转存介质，同时支持将 [Aurora 快照数据直接初始化 TiDB](https://docs.pingcap.com/zh/tidb/v5.0/migrate-from-aurora-using-lightning) 中，丰富了数据从 AWS S3/Aurora 迁移到 TiDB 的选择。
+[数据迁移类工具](https://docs.pingcap.com/zh/tidb/v5.0/dumpling-overview#%E5%AF%BC%E5%87%BA%E5%88%B0-amazon-s3-%E4%BA%91%E7%9B%98)支持 AWS S3（也包含支持 S3 协议的其他存储服务）作为数据迁移的中间转存介质，同时支持将 [Aurora 快照数据直接初始化到 TiDB](https://docs.pingcap.com/zh/tidb/v5.0/migrate-from-aurora-using-lightning) 中，丰富了数据从 AWS S3/Aurora 迁移到 TiDB 的选择。
 
 数据导入工具 [TiDB Lightning](https://docs.pingcap.com/zh/tidb/v5.0/tidb-lightning-overview) 针对 [DBaaS  AWS T1.standard](https://en.pingcap.com/products/tidbcloud/)  配置（及其等同配置）的 TiDB 集群进行了数据导入性能优化，测试结果显示使用 TiDB Lightning 导入 1TB TPCC  数据到 TiDB，性能提升了 40%，由 254 GiB/h 提升到了 366 GiB/h。
 
