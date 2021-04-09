@@ -22,6 +22,7 @@ tags: ['TiDB']
 |  PD | m5.xlarge (AWS) | 3  |
 |  TiDB  | c5.4xlarge (AWS)  | 3  |
 |  TiKV | i3.4xlarge (AWS)  | 3 |
+|  TiFlash (TPC-H) | 40C 189G NVMe SSD 3T * 2  | 3 |
 
 ### 负载信息
 
