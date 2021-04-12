@@ -22,7 +22,8 @@ tags: ['TiDB']
 |  PD | m5.xlarge (AWS) | 3  |
 |  TiDB  | c5.4xlarge (AWS)  | 3  |
 |  TiKV | i3.4xlarge (AWS)  | 3 |
-|  TiFlash (TPC-H) | 40C 189G NVMe SSD 3T * 2  | 3 |
+
+TPC-H 100 下的 TiDB MPP 测试的硬件规格和测试详情请点击[这里](https://docs.pingcap.com/zh/tidb/stable/v5.0-performance-benchmarking-with-tpch#%E7%A1%AC%E4%BB%B6%E9%85%8D%E7%BD%AE)查阅。
 
 ### 负载信息
 
