@@ -160,7 +160,7 @@ TiDB 组件使用的 Service 中，包括了 Service 和 Headless Serivce，为�
 
 6. Meta Manager 用于同步 StoreIDLabel，MemberIDLabel，NamespaceLabel 等信息到 Pod，PVC，PV 的 label 上。
 
-7. TiDBCluster Status Manager 用于同步 TidbMonitor。
+7. TiDBCluster Status Manager 用于同步 TidbMonitor 和 TiDB Dashboard 相关信息。
 
 ## 小结
 
