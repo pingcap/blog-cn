@@ -132,7 +132,7 @@ TiDB 组件使用的 Service 中，包括了 Service 和 Headless Serivce，为�
 
 ### 新 Statefulset 的加工(二): 扩缩容
 
-`m.scaler.Scale` 函数负责扩缩容相关操作，主要是更新 Statefulset 中组件的 Replicas。Scale 遵循逐个扩缩容的原则，每次扩缩容的跨度为 1。 Scale 函数会将 TiDBCluster 中指定的组件 Replicas 数，如 `tc.Spec.PD.Replicas`，与现有比较，先判断是扩容需求还是缩容需求，然后完成一个步长的扩缩容的操作，再进入下一次组件 Reconcile，通过多次 Reconcile 完成所有的扩缩容需求。 在扩缩容的过程中，会涉及到 PD 转移 Leader，TiKV 删除 Store 等使用 PD API 的操作，组件 Reconcile 过程中会使用 PD API 完成上述操作，并且判断操作是否成功，再逐步进行下一次扩缩容。
+`m.scaler.Scale` 函数负责扩缩容相关操作，主要是更新 Statefulset 中组件的 Replicas。Scale 遵循逐个扩缩容的原则，每次扩缩容的跨度为 1。Scale 函数会将 TiDBCluster 中指定的组件 Replicas 数，如 `tc.Spec.PD.Replicas`，与现有比较，先判断是扩容需求还是缩容需求，然后完成一个步长的扩缩容的操作，再进入下一次组件 Reconcile，通过多次 Reconcile 完成所有的扩缩容需求。在扩缩容的过程中，会涉及到 PD 转移 Leader，TiKV 删除 Store 等使用 PD API 的操作，组件 Reconcile 过程中会使用 PD API 完成上述操作，并且判断操作是否成功，再逐步进行下一次扩缩容。
 
 ### 新 Statefulset 的加工(三): Failover
 
