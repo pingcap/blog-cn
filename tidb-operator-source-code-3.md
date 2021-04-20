@@ -2,11 +2,11 @@
 title: TiDB Operator 源码阅读 (三) 编排组件控制循环
 author: ['陈逸文']
 date: 2021-04-20
-summary: 本篇文章将介绍组件控制循环的编排设计。我们将会了解到完成 TiDB 集群的生命周期管理过程中， 各种控制循环事件经过了怎样的编排， 这些事件中又完成了哪些资源管理操作。
+summary: 本篇文章将介绍组件控制循环的编排设计。我们将会了解到完成 TiDB 集群的生命周期管理过程中，各种控制循环事件经过了怎样的编排，这些事件中又完成了哪些资源管理操作。
 tags: ['TiDB Operator']
 ---
 
-[上篇文章](https://pingcap.com/blog-cn/tidb-operator-source-code-2/)中， 我们介绍了 TiDB Operator 的 Controller Manager 的设计和实现，了解了各个 Controller 如何接受和处理变更。在这篇文章中，我们将讨论组件的 Controller 的实现。TiDBCluster Controller 负责了 TiDB 主要组件的生命周期管理，我们将以此为例， 介绍组件控制循环的编排设计。我们将会了解到完成 TiDB 集群的生命周期管理过程中，各种控制循环事件经过了怎样的编排，这些事件中又完成了哪些资源管理操作。在阅读时，大家了解这些工作的大致过程和定义即可，我们将在下一篇文章中具体介绍各个组件如何套用下面的范式。
+[上篇文章](https://pingcap.com/blog-cn/tidb-operator-source-code-2/)中，我们介绍了 TiDB Operator 的 Controller Manager 的设计和实现，了解了各个 Controller 如何接受和处理变更。在这篇文章中，我们将讨论组件的 Controller 的实现。TiDBCluster Controller 负责了 TiDB 主要组件的生命周期管理，我们将以此为例，介绍组件控制循环的编排设计。我们将会了解到完成 TiDB 集群的生命周期管理过程中，各种控制循环事件经过了怎样的编排，这些事件中又完成了哪些资源管理操作。在阅读时，大家了解这些工作的大致过程和定义即可，我们将在下一篇文章中具体介绍各个组件如何套用下面的范式。
 
 ## 组件控制循环的调用
 
@@ -167,4 +167,3 @@ TiDB 组件使用的 Service 中，包括了 Service 和 Headless Serivce，为�
 这篇文章介绍了 TiDBCluster 组件的控制循环逻辑的设计，试图让大家了解，当 TiDBCluster Controller 循环触发各个组件的 Reconcile 函数时，组件 Reconcile 函数是按照怎样的流程巡检组件的相关资源，用户预期的状态，是如何通过 Reconcile 函数，变成实际运行的组件。TiDB Operator 中的控制循环都大致符合以上的设计逻辑，在后面的文章中，我们会具体介绍每个组件是如何套用上面的设计逻辑，实现组件的生命周期管理。
 
 如果有什么好的想法，欢迎通过 [#sig-k8s](https://slack.tidb.io/invite?team=tidb-community&channel=sig-k8s&ref=pingcap-tidb-operator) 或 [pingcap/tidb-operator](https://github.com/pingcap/tidb-operator) 参与 TiDB Operator 社区交流。
-
