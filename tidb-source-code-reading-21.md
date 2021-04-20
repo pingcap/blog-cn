@@ -41,7 +41,7 @@ select count(a) from t group by t.pk;
 select if(isnull(a), 0, 1) from t;
 ```
 
-这里其实还可以做进一步的优化：如果列 `a` 具有 `Not Null` 的属性，那么可以将 `if(isnull(a), 0, 1)` 直接替换为常量 1（目前 TiDB 还没做这个优化，感兴趣的同学可以来贡献一个 PR）。
+这里其实还可以做进一步的优化：如果列 `a` 具有 `Not Null` 的属性，那么可以将 `if(isnull(a), 0, 1)` 直接替换为常量 1。
 
 另外提一点，对于大部分聚合函数，参数的类型和返回结果的类型一般是不同的，所以在展开聚合函数的时候一般会在参数列上构造 cast 函数做类型转换，展开后的表达式会保存在作为替换 `LogicalAggregation` 算子的 `LogicalProjection` 算子中。
 
