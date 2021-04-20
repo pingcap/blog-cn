@@ -2,11 +2,11 @@
 title: TiDB Operator 源码阅读 (三) 编排组件控制循环
 author: ['陈逸文']
 date: 2021-04-20
-summary: 本篇文章将介绍组件控制循环的编排设计。我们将会了解到完成 TiDB 集群的生命周期管理过程中， 各种控制循环事件经过了怎样的编排， 这些事件中又完成了哪些资源管理操作。
+summary: 本篇文章将介绍组件控制循环的编排设计。我们将会了解到完成 TiDB 集群的生命周期管理过程中，各种控制循环事件经过了怎样的编排，这些事件中又完成了哪些资源管理操作。
 tags: ['TiDB Operator']
 ---
 
-[上篇文章](https://pingcap.com/blog-cn/tidb-operator-source-code-2/)中， 我们介绍了 TiDB Operator 的 Controller Manager 的设计和实现，了解了各个 Controller 如何接受和处理变更。在这篇文章中，我们将讨论组件的 Controller 的实现。TiDBCluster Controller 负责了 TiDB 主要组件的生命周期管理，我们将以此为例， 介绍组件控制循环的编排设计。我们将会了解到完成 TiDB 集群的生命周期管理过程中，各种控制循环事件经过了怎样的编排，这些事件中又完成了哪些资源管理操作。在阅读时，大家了解这些工作的大致过程和定义即可，我们将在下一篇文章中具体介绍各个组件如何套用下面的范式。
+[上篇文章](https://pingcap.com/blog-cn/tidb-operator-source-code-2/)中，我们介绍了 TiDB Operator 的 Controller Manager 的设计和实现，了解了各个 Controller 如何接受和处理变更。在这篇文章中，我们将讨论组件的 Controller 的实现。TiDBCluster Controller 负责了 TiDB 主要组件的生命周期管理，我们将以此为例， 介绍组件控制循环的编排设计。我们将会了解到完成 TiDB 集群的生命周期管理过程中，各种控制循环事件经过了怎样的编排，这些事件中又完成了哪些资源管理操作。在阅读时，大家了解这些工作的大致过程和定义即可，我们将在下一篇文章中具体介绍各个组件如何套用下面的范式。
 
 ## 组件控制循环的调用
 
@@ -132,7 +132,7 @@ TiDB 组件使用的 Service 中，包括了 Service 和 Headless Serivce，为�
 
 ### 新 Statefulset 的加工(二): 扩缩容
 
-`m.scaler.Scale` 函数负责扩缩容相关操作，主要是更新 Statefulset 中组件的 Replicas。Scale 遵循逐个扩缩容的原则，每次扩缩容的跨度为 1。 Scale 函数会将 TiDBCluster 中指定的组件 Replicas 数，如 `tc.Spec.PD.Replicas`，与现有比较，先判断是扩容需求还是缩容需求，然后完成一个步长的扩缩容的操作，再进入下一次组件 Reconcile，通过多次 Reconcile 完成所有的扩缩容需求。 在扩缩容的过程中，会涉及到 PD 转移 Leader，TiKV 删除 Store 等使用 PD API 的操作，组件 Reconcile 过程中会使用 PD API 完成上述操作，并且判断操作是否成功，再逐步进行下一次扩缩容。
+`m.scaler.Scale` 函数负责扩缩容相关操作，主要是更新 Statefulset 中组件的 Replicas。Scale 遵循逐个扩缩容的原则，每次扩缩容的跨度为 1。Scale 函数会将 TiDBCluster 中指定的组件 Replicas 数，如 `tc.Spec.PD.Replicas`，与现有比较，先判断是扩容需求还是缩容需求，然后完成一个步长的扩缩容的操作，再进入下一次组件 Reconcile，通过多次 Reconcile 完成所有的扩缩容需求。在扩缩容的过程中，会涉及到 PD 转移 Leader，TiKV 删除 Store 等使用 PD API 的操作，组件 Reconcile 过程中会使用 PD API 完成上述操作，并且判断操作是否成功，再逐步进行下一次扩缩容。
 
 ### 新 Statefulset 的加工(三): Failover
 
