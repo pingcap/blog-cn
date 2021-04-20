@@ -6,7 +6,7 @@ summary: 本篇文章将介绍组件控制循环的编排设计。我们将会�
 tags: ['TiDB Operator']
 ---
 
-[上篇文章](https://pingcap.com/blog-cn/tidb-operator-source-code-2/)中，我们介绍了 TiDB Operator 的 Controller Manager 的设计和实现，了解了各个 Controller 如何接受和处理变更。在这篇文章中，我们将讨论组件的 Controller 的实现。TiDBCluster Controller 负责了 TiDB 主要组件的生命周期管理，我们将以此为例， 介绍组件控制循环的编排设计。我们将会了解到完成 TiDB 集群的生命周期管理过程中，各种控制循环事件经过了怎样的编排，这些事件中又完成了哪些资源管理操作。在阅读时，大家了解这些工作的大致过程和定义即可，我们将在下一篇文章中具体介绍各个组件如何套用下面的范式。
+[上篇文章](https://pingcap.com/blog-cn/tidb-operator-source-code-2/)中，我们介绍了 TiDB Operator 的 Controller Manager 的设计和实现，了解了各个 Controller 如何接受和处理变更。在这篇文章中，我们将讨论组件的 Controller 的实现。TiDBCluster Controller 负责了 TiDB 主要组件的生命周期管理，我们将以此为例，介绍组件控制循环的编排设计。我们将会了解到完成 TiDB 集群的生命周期管理过程中，各种控制循环事件经过了怎样的编排，这些事件中又完成了哪些资源管理操作。在阅读时，大家了解这些工作的大致过程和定义即可，我们将在下一篇文章中具体介绍各个组件如何套用下面的范式。
 
 ## 组件控制循环的调用
 
@@ -88,11 +88,11 @@ func syncStatefulSetForTidbCluster(tc *v1alpha1.TidbCluster) error {
 }
 ```
 
-这段代码主要完成了同步 Service 和 同步 Statefulset 的工作，同步 Service 主要是为组件创建或同步 Service 资源，同步 Statefulset 具体包含了一下工作：
+这段代码主要完成了同步 Service 和同步 Statefulset 的工作，同步 Service 主要是为组件创建或同步 Service 资源，同步 Statefulset 具体包含了一下工作：
 
 1. 同步组件的 Status;
 
-2. 检查 TiDBCluster 是否停止暂停了同步;
+2. 检查 TiDBCluster 是否暂停同步;
 
 3. 同步 ConfigMap;
 
