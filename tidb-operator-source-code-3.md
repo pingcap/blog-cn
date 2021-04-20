@@ -150,7 +150,7 @@ TiDB 组件使用的 Service 中，包括了 Service 和 Headless Serivce，为�
 
 1. Discovery，用于 PD 启动参数的配置和 TiDB Dashboard Proxy，Discovery 的存在，可以提供一些动态信息供组件索取，避免了修改 ConfigMap 导致 Pod 滚动更新。
 
-2. ReclaimPolicyManager，用于同步 `tc.Spec.PVReclaimPolicy` 的配置，默认配置下会将PV 的 Reclaim Policy 设置为 Retain，降低数据丢失的风险。
+2. Reclaim Policy Manager，用于同步 `tc.Spec.PVReclaimPolicy` 的配置，默认配置下会将PV 的 Reclaim Policy 设置为 Retain，降低数据丢失的风险。
 
 3. OrphanPodCleaner，用于在 PVC 创建失败的时候清除 Pod，让 Statefulset Controller 重试 Pod 和对应 PVC 的创建。
 
