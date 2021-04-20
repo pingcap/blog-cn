@@ -42,7 +42,7 @@ tags: ['TiDB Operator']
 
 ## TiDB 组件的生命周期管理过程
 
-TiDB 的主要组件控制循环的代码分布在 `pkg/manager/member` 目录下以 `_member_manager.go` 结尾的文件下，比如 `pd_member_manager.go`，这些文件又引用了诸如 `_scaler.go`，`_upgrader.go` 的文件，这些文件包含了扩缩容和升级相关功能的实现。从各个组件的 `_member_manager.go` 相关文件，我们可以提炼出以下通用实现 :
+TiDB 的主要组件控制循环的代码分布在 `pkg/manager/member` 目录下以 `_member_manager.go` 结尾的文件下，比如 `pd_member_manager.go`，这些文件又引用了诸如 `_scaler.go`，`_upgrader.go` 的文件，这些文件包含了扩缩容和升级相关功能的实现。从各个组件的 `_member_manager.go` 相关文件，我们可以提炼出以下通用实现：
 
 ```go
 // Sync Service
@@ -167,4 +167,3 @@ TiDB 组件使用的 Service 中，包括了 Service 和 Headless Serivce，为�
 这篇文章介绍了 TiDBCluster 组件的控制循环逻辑的设计，试图让大家了解，当 TiDBCluster Controller 循环触发各个组件的 Reconcile 函数时，组件 Reconcile 函数是按照怎样的流程巡检组件的相关资源，用户预期的状态，是如何通过 Reconcile 函数，变成实际运行的组件。TiDB Operator 中的控制循环都大致符合以上的设计逻辑，在后面的文章中，我们会具体介绍每个组件是如何套用上面的设计逻辑，实现组件的生命周期管理。
 
 如果有什么好的想法，欢迎通过 [#sig-k8s](https://slack.tidb.io/invite?team=tidb-community&channel=sig-k8s&ref=pingcap-tidb-operator) 或 [pingcap/tidb-operator](https://github.com/pingcap/tidb-operator) 参与 TiDB Operator 社区交流。
-
