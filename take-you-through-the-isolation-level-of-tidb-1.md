@@ -67,13 +67,13 @@ Phantom Read 是 Non-repeatable Read 的 predicate 的版本，这两种异常�
 
 |Txn1|Txn2|
 |-|-|
-|`select * from accounts; -- 0 rows`||
-||`insert into accounts values("tidb", 100);`|
-||`commit;`|
-|`insert into accounts values("tidb", 1000); -- duplicate entry "tidb"`||
-|`select * from accounts; -- 0 rows`||
-|`select * from accounts for update; -- 1 rows`||
-|`commit;`||
+| `select * from accounts; -- 0 rows` ||
+|| `insert into accounts values("tidb", 100);` |
+|| `commit;` |
+| `insert into accounts values("tidb", 1000); -- duplicate entry "tidb"` ||
+| `select * from accounts; -- 0 rows` ||
+| `select * from accounts for update; -- 1 rows` ||
+| `commit;` ||
 
 <div class="caption-center">例 1 - 虚假的 Phantom Read</div>
 
@@ -101,8 +101,8 @@ ANSI SQL-92 所给出的隔离级别的定义被广泛使用，但也造成了�
 
 |Txn1|Txn2|
 |-|-|
-|`w(x, 1)`||
-||`w(x, 2)`|
+| `w(x, 1)` ||
+|| `w(x, 2)` |
 
 <div class="caption-center">例 2 - Dirty Write 的扩大解释</div>
 
@@ -112,11 +112,11 @@ ANSI SQL-92 所给出的隔离级别的定义被广泛使用，但也造成了�
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 10)`||
-||`w(x, x + 1)`|
-||`commit`|
-|`w(x, x + 1) x = 10`||
-|`commit`||
+| `r(x, 10)` ||
+|| `w(x, x + 1)` |
+|| `commit` |
+| `w(x, x + 1) x = 10` ||
+| `commit` ||
 
 <div class="caption-center">例 3 - Lost Update 的扩大解释</div>
 
@@ -126,11 +126,11 @@ ANSI SQL-92 所给出的隔离级别的定义被广泛使用，但也造成了�
 
 |Txn1|Txn2|
 |-|-|
-|`rc(x, 10)`||
-||`w(x, x + 1)`|
-||`commit`|
-|`w(x, x + 1) x = 10`||
-|`commit`||
+| `rc(x, 10)` ||
+|| `w(x, x + 1)` |
+|| `commit` |
+| `w(x, x + 1) x = 10` ||
+| `commit` ||
 
 <div class="caption-center">例 4 - Cursor 条件下的 Lost Update</div>
 
@@ -140,11 +140,11 @@ Read Skew 的现象是因为读到两个状态的数据，导致观察到了违�
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 50)`||
-||`w(x, 10)`|
-||`w(y, 90)`|
-||`commit`|
-|`r(y, 90)`||
+| `r(x, 50)` ||
+|| `w(x, 10)` |
+|| `w(y, 90)` |
+|| `commit` |
+| `r(y, 90)` ||
 
 <div class="caption-center">例 5 - Read Skew 的违反约束的现象</div>
 
@@ -154,13 +154,13 @@ Write Skew 是两个事务在写操作上发生的异常，例 6 表示了 Write
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 10)`||
-||`r(y, 20)`|
-|`w(y, 10)`||
-||`w(x, 20)`|
-|`commit`|`commit`|
-|`r(x, 20)`||
-|`r(y, 10)`||
+| `r(x, 10)` ||
+|| `r(y, 20)` |
+| `w(y, 10)` ||
+|| `w(x, 20)` |
+| `commit` | `commit` |
+| `r(x, 20)` ||
+| `r(y, 10)` ||
 
 <div class="caption-center">例 6 - Write Skew 的违反约束的现象</div>
 
@@ -170,17 +170,17 @@ Dirty Read 的严格解释是需要一个成功提交的事务读取到一个不
 
 |Txn1|Txn2|
 |-|-|
-||`w(x, 1)`|
-|`r(x, 1)`||
-|`commit`|`abort`|
+|| `w(x, 1)` |
+| `r(x, 1)` ||
+| `commit` | `abort` |
 
 <div class="caption-center">例 7 - Dirty Read 的严格解释</div>
 
 |Txn1|Txn2|
 |-|-|
-||`w(x, 1)`|
-|`r(x, 1)`||
-|`...`|`...`|
+|| `w(x, 1)` |
+| `r(x, 1)` ||
+| `...` | `...` |
 
 <div class="caption-center">例 8 - Dirty Read 的扩大解释</div>
 
@@ -194,19 +194,19 @@ Non-repeatable Read 指的是两次 item 类型的读操作读到了不同的数
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 1)`||
-||`w(x, 2)`|
-||`commit`|
-|`r(x, 2)`||
-|`commimt`||
+| `r(x, 1)` ||
+|| `w(x, 2)` |
+|| `commit` |
+| `r(x, 2)` ||
+| `commimt` ||
 
 <div class="caption-center">例 9 - Non-repeatable Read 的严格解释</div>
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 1)`||
-||`w(x, 2)`|
-|`...`|`...`|
+| `r(x, 1)` ||
+|| `w(x, 2)` |
+| `...` | `...` |
 
 <div class="caption-center">例 10 - Non-repeatable Read 的扩大解释</div>
 
@@ -220,19 +220,19 @@ Non-repeatable Read 指的是两次 item 类型的读操作读到了不同的数
 
 |Txn1|Txn2|
 |-|-|
-|`r(sum(x-y), 11)`||
-||`w(x, 2)`|
-||`commit`|
-|`r(sum(x-y), 12)`|||
-|`commit`||
+| `r(sum(x-y), 11)` ||
+|| `w(x, 2)` |
+|| `commit` |
+| `r(sum(x-y), 12)` |||
+| `commit` ||
 
 <div class="caption-center">例 11 - Phantom 的严格解释（Phantom Read）</div>
 
 |Txn1|Txn2|
 |-|-|
-|`r(sum(x-y), 11)`||
-||`w(x, 2)`|
-|`...`|`...`|
+| `r(sum(x-y), 11)` ||
+|| `w(x, 2)` |
+| `...` | `...` |
 
 <div class="caption-center">例 12 - Phantom 的扩大解释</div>
 
