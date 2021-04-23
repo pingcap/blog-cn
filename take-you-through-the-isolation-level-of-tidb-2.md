@@ -17,19 +17,19 @@ tags: ['TiDB', '事务']
 
 |Txn1|Txn2|
 |-|-|
-||`w(x, 1)`|
-|`r(x, 1)`||
-|`abort`||
-||`abort`|
+|| `w(x, 1)` |
+| `r(x, 1)` ||
+| `abort` ||
+|| `abort` |
 
 <div class="caption-center">例 1-a - 提交是出现异常的必要条件</div>
 
 |Txn1|Txn2|
 |-|-|
-||`w(x, 1)`|
-|`r(x, 1)`||
-||`abort`|
-|`commit`||
+|| `w(x, 1)` |
+| `r(x, 1)` ||
+|| `abort` |
+| `commit` ||
 
 <div class="caption-center">例 1-b - 提交是出现异常的必要条件</div>
 
@@ -49,10 +49,10 @@ WR 依赖指的是为 T2 读到了 T1 写入的值。
 
 |Txn1|Txn2|
 |-|-|
-|`w(x, 1)`||
-||`r(x, 1)`|
-||`commit`|
-|`commit`||
+| `w(x, 1)` ||
+|| `r(x, 1)` |
+|| `commit` |
+| `commit` ||
 
 <div class="caption-center">例 2 - Directly item-read-depends</div>
 
@@ -60,21 +60,21 @@ WR 依赖指的是为 T2 读到了 T1 写入的值。
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 1)`||
-|`w(x, 10)`||
-||`r(sum(x)\|x<10)`|
-||`commit`|
-|`commit`||
+| `r(x, 1)` ||
+| `w(x, 10)` ||
+|| `r(sum(x)\|x<10)` |
+|| `commit` |
+| `commit` ||
 
 <div class="caption-center">例 3-a - Directly predicate-read-depends</div>
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 10)`||
-|`w(x, 1)`||
-||`r(sum(x)\|x<10)`|
-||`commit`|
-|`commit`||
+| `r(x, 10)` ||
+| `w(x, 1)` ||
+|| `r(sum(x)\|x<10)` |
+|| `commit` |
+| `commit` ||
 
 <div class="caption-center">例 3-b - Directly predicate-read-depends</div>
 
@@ -86,10 +86,10 @@ WR 依赖指的是为 T2 修改了 T1 读到的值。
 
 |Txn1|Txn2|
 |-|-|
-||`r(x, 1)`|
-|`w(x, 2)`||
-||`commit`|
-|`commit`||
+|| `r(x, 1)` |
+| `w(x, 2)` ||
+|| `commit` |
+| `commit` ||
 
 <div class="caption-center">例 4 - Directly item-anti-depends</div>
 
@@ -97,21 +97,21 @@ WR 依赖指的是为 T2 修改了 T1 读到的值。
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 1)`||
-||`r(sum(x)\|x<10)`|
-|`w(x, 10)`||
-||`commit`|
-|`commit`||
+| `r(x, 1)` ||
+|| `r(sum(x)\|x<10)` |
+| `w(x, 10)` ||
+|| `commit` |
+| `commit` ||
 
 <div class="caption-center">例 5-a - Directly predicate-anti-depends</div>
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 10)`||
-||`r(sum(x)\|x<10)`|
-|`w(x, 1)`||
-||`commit`|
-|`commit`||
+| `r(x, 10)` ||
+|| `r(sum(x)\|x<10)` |
+| `w(x, 1)` ||
+|| `commit` |
+| `commit` ||
 
 <div class="caption-center">例 5-b - Directly predicate-anti-depends</div>
 
@@ -121,10 +121,10 @@ WW 依赖指的是两个事务写了同一个 key，例 6 中 T1 写入了 x 的
 
 |Txn1|Txn2|
 |-|-|
-|`w(x, 1)`||
-||`w(x, 2)`|
-|`commit`||
-||`commit`|
+| `w(x, 1)` ||
+|| `w(x, 2)` |
+| `commit` ||
+|| `commit` |
 
 <div class="caption-center">例 6 - Directly Write-Depends</div>
 
@@ -146,19 +146,19 @@ G0 (Write Cycles) 和类似于脏写定义，但要求 P0 (Dirty Write) 现象�
 
 |Txn1|Txn2|
 |-|-|
-|`w(x, 1)`||
-||`w(x, 2)`|
-|`commit`|`commit`|
+| `w(x, 1)` ||
+|| `w(x, 2)` |
+| `commit` | `commit` |
 
 <div class="caption-center">例 7-a - P0 (Dirty Write) 与 G0 对比 - P0</div>
 
 |Txn1|Txn2|
 |-|-|
-|`w(x, 1)`||
-||`w(x, 2)`|
-||`w(y, 1)`|
-|`w(y, 2)`||
-|`commit`|`commit`|
+| `w(x, 1)` ||
+|| `w(x, 2)` |
+|| `w(y, 1)` |
+| `w(y, 2)` ||
+| `commit` | `commit` |
 
 <div class="caption-center">例 7-b - P0 (Dirty Write) 与 G0 对比 - G0</div>
 
@@ -172,21 +172,21 @@ G1a (Aborted  Reads) 指读到了中断事务的内容，例 8 是 G1a 现象的
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 1)`||
-|`w(x, 2)`||
-||`r(x, 2)`||
-|`abort`|`commit`|
+| `r(x, 1)` ||
+| `w(x, 2)` ||
+|| `r(x, 2)` ||
+| `abort` | `commit` |
 
 <div class="caption-center">例 8-a - G1a 现象</div>
 
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 1)`||
-|`r(sum, 10)`||
-|`w(x, 2)`||
-||`r(sum, 11)`|
-|`abort`|`commit`|
+| `r(x, 1)` ||
+| `r(sum, 10)` ||
+| `w(x, 2)` ||
+|| `r(sum, 11)` |
+| `abort` | `commit` |
 
 <div class="caption-center">例 8-b - G1a 现象</div>
 
@@ -194,22 +194,22 @@ G1b (Intermediate Reads) 指读到了事务的中间内容，例 9 是 G1b 的�
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 1)`||
-|`w(x, 2)`||
-|`w(x, 3)`||
-||`r(x, 2)`|
-|`commit`|`commit`|
+| `r(x, 1)` ||
+| `w(x, 2)` ||
+| `w(x, 3)` ||
+|| `r(x, 2)` |
+| `commit` | `commit` |
 
 <div class="caption-center">例 9-a - G1b 现象</div>
 
 |Txn1|Txn2|
 |-|-|
-|`r(x, 1)`||
-|`r(sum, 10)`||
-|`w(x, 2)`||
-|`w(x, 3)`||
-||`r(sum, 11)`|
-|`commit`|`commit`|
+| `r(x, 1)` ||
+| `r(sum, 10)` ||
+| `w(x, 2)` ||
+| `w(x, 3)` ||
+|| `r(sum, 11)` |
+| `commit` | `commit` |
 
 <div class="caption-center">例 9-b - G1b 现象</div>
 
@@ -292,14 +292,14 @@ G2-item 指的是 WW 依赖、WR 依赖和 item 类型的 RW 依赖组成的 DSG
 
 |Txn1|Txn2|
 |-|-|
-|`create table t(id int primary key, c1 int);`||
-|`begin`||
-|`select * from t; -- 0 rows`||
-||`insert into t values(1, 1);`|
-|`select * from t; -- 0 rows`||
-|`update t set c1 = c1 + 1; -- 1 row affected`||
-|`select * from t; -- 1 row, (1, 2)`||
-|`commit;`||
+| `create table t(id int primary key, c1 int);` ||
+| `begin` ||
+| `select * from t; -- 0 rows` ||
+|| `insert into t values(1, 1);` |
+| `select * from t; -- 0 rows` ||
+| `update t set c1 = c1 + 1; -- 1 row affected` ||
+| `select * from t; -- 1 row, (1, 2)` ||
+| `commit;` ||
 
 <div class="caption-center">例 10 - 混合使用快照读与当前读</div>
 
