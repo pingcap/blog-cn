@@ -3,7 +3,7 @@ title: TiKV 源码解析系列文章（二十一）Region Merge 源码解析
 author: ['耿立琪']
 date: 2020-12-17
 summary: 本文接下来将会解开 Region Merge 的神秘面纱。
-tags: ['TiKV']
+tags: ['TiKV 源码解析','社区']
 ---
 
 Region Merge 是 Range 相邻的两个的 Region 合并的过程，我们把一个 Region 称为 Source Region，另一个称为 Target Region，在 Merge 过程结束后，Target Region 管理的 Range 会扩大到 Source Region 的部分，Source Region 则被删除。 
