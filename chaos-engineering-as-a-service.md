@@ -6,7 +6,7 @@ summary: 本篇文章的作者为 CAAS 团队的王相与于畅，他们在本�
 tags: ['Chaos Mesh']
 ---
 
-Chaos Mesh 已经开源一周年了，目前是 CNCF 的 sanbox 项目，在国内外发展良好，有了很多的 Contributor 和关注度。
+Chaos Mesh 已经开源一周年了，目前是 CNCF 的 sandbox 项目，在国内外发展良好，有了很多的 Contributor 和关注度。
 
 但是目前 Chaos Mesh 仍然存在一些需要继续建设的方面：
 
