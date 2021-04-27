@@ -12,7 +12,7 @@ tags: ['TiDB']
 
 ## 高性能：多项性能指标实现突破
 
-相比于 TiDB 4.0，TiDB 5.0 在性能方面取得了巨大的进步，通过提供[聚簇索引](https://docs.pingcap.com/zh/tidb/v5.0/clustered-indexes)、[异步提交事务](https://docs.pingcap.com/zh/tidb/v5.0/system-variables#tidb_enable_async_commit-%E4%BB%8E-v50-%E7%89%88%E6%9C%AC%E5%BC%80%E5%A7%8B%E5%BC%95%E5%85%A5)、[TiFlash MPP](https://docs.pingcap.com/zh/tidb/v5.0/use-tiflash#%E4%BD%BF%E7%94%A8-mpp-%E6%A8%A1%E5%BC%8F) 等功能， 在 Sysbench 和 TPC-C 等 OLTP 的基准测试中，获得 20% ~ 80% 的性能提升。基于 100 GB 数据量 TPC-H 查询的结果显示：TiDB 5.0 在同等资源下，MPP 引擎的总体性能是 Greenplum 6.15.0 与 Apache Spark 3.1.1 两到三倍之间，部分查询可达 8 倍性能差异。如下是在一些通用性能测试场景下面的数据：
+相比于 TiDB 4.0，TiDB 5.0 在性能方面取得了巨大的进步，通过提供[聚簇索引](https://docs.pingcap.com/zh/tidb/v5.0/clustered-indexes)、[异步提交事务](https://docs.pingcap.com/zh/tidb/v5.0/system-variables#tidb_enable_async_commit-%E4%BB%8E-v50-%E7%89%88%E6%9C%AC%E5%BC%80%E5%A7%8B%E5%BC%95%E5%85%A5)等功能， 在 Sysbench 和 TPC-C 等 OLTP 的基准测试中，获得 20% ~ 80% 的性能提升。如下是在一些通用性能测试场景下面的数据：
 
 ### 配置信息
 
@@ -22,8 +22,6 @@ tags: ['TiDB']
 |  PD | m5.xlarge (AWS) | 3  |
 |  TiDB  | c5.4xlarge (AWS)  | 3  |
 |  TiKV | i3.4xlarge (AWS)  | 3 |
-
-TPC-H 100 下的 TiDB MPP 测试的硬件规格和测试详情请点击[这里](https://docs.pingcap.com/zh/tidb/stable/v5.0-performance-benchmarking-with-tpch#%E7%A1%AC%E4%BB%B6%E9%85%8D%E7%BD%AE)查阅。
 
 ### 负载信息
 
@@ -39,11 +37,13 @@ TPC-H 100 下的 TiDB MPP 测试的硬件规格和测试详情请点击[这里](
 
 ![4](media/tidb-5.0-ga-is-now/4.png)
 
+另外，TiDB 5.0 在 AP 场景下也有架构性提升，提供了 [TiFlash MPP 的计算模型](https://docs.pingcap.com/zh/tidb/v5.0/use-tiflash#%E4%BD%BF%E7%94%A8-mpp-%E6%A8%A1%E5%BC%8F)，基于 TPC-H 查询的结果显示：TiDB 5.0 在同等资源下，MPP 引擎的总体性能是 Greenplum 6.15.0 与 Apache Spark 3.1.1 两到三倍之间，部分查询可达 8 倍性能差异。TPC-H 100 下的 TiDB MPP 测试的硬件规格和测试详情请点击[这里](https://docs.pingcap.com/zh/tidb/stable/v5.0-performance-benchmarking-with-tpch#%E7%A1%AC%E4%BB%B6%E9%85%8D%E7%BD%AE)查阅。
+
 ![5](media/tidb-5.0-ga-is-now/5.png)
 
 ## 稳定性：衡量 TPC-C tpm-C 抖动的标准差值小于等于 2%
 
-相比于 TiDB 4.0，TiDB 5.0 在稳定性上面取得了巨大的进步。通过优化 TiDB 调度过程中对  I/O、网络、CPU、内存等资源的占用，大幅减少 QPS 和延时因为资源被抢占而出现的性能抖动问题，在 TPC-C OLTP 的基准测试中，衡量 TPC-C tpmC 抖动标准差的值小于等于 2%。
+相比于 TiDB 4.0，TiDB 5.0 在稳定性上面取得了巨大的进步。通过优化 TiDB 调度过程中对  I/O、网络、CPU、内存等资源的占用，大幅减少 QPS 和延时因为资源被抢占而出现的性能抖动问题，在 TPC-C OLTP 的基准测试中，衡量 TPC-C QPS 抖动标准差的值小于等于 2%。
 
 ### 配置信息
 
