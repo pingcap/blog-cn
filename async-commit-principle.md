@@ -179,10 +179,10 @@ Async Commit 让 TiDB 事务提交减少了一次写 TiKV 的延时，是对原�
 
 > 欢迎联系我们：
 Transaction SIG 的主要职责是对 TiKV 分布式事务的未来发展进行讨论和规划，并组织社区成员进行相关开发和维护。
-现在你们可以在 TiKV 社区 Slack 的 #sig-transaction channel 找到我们。
+现在你们可以在 TiKV 社区 Slack 的 [#sig-transaction channel](https://slack.tidb.io/invite?team=tikv-wg&channel=sig-transaction&ref=community-sig) 找到我们。
 
 
->从 TiDB 4.0 发布以来总计有 538 位 Contributor 提交了 12513 个 PR 帮助我们一起完成企业级核心场景的里程碑版本的开发，Async Commit 只是这些 PR 的代表。为感谢所有参与 5.0 版本的 Contributor 们，TiDB 社区精心准备了一份 5.0 定制周边。如果你也是 5.0 的 Contributor，请在 5 月 5 日前填写表单，告诉我们你的地址。
+>从 TiDB 4.0 发布以来总计有 538 位 Contributor 提交了 12513 个 PR 帮助我们一起完成企业级核心场景的里程碑版本的开发，Async Commit 只是这些 PR 的代表。为感谢所有参与 5.0 版本的 Contributor 们，TiDB 社区精心准备了一份 5.0 定制周边。如果你也是 5.0 的 Contributor，请在 5 月 5 日前填写[表单](https://forms.pingcap.com/f/tidb-v5-contributors)，告诉我们你的地址。
 
 ## 注释
 
