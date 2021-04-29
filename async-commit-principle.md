@@ -79,7 +79,7 @@ TiDB 通过 MVCC 实现快照隔离。事务在开始时会向 TSO 获取 Start 
 下面的例子中，事务 T1 要写 x 和 y 两个 keys。T2 读取 y 将 Max TS 更新到 5，所以接下来 T1 prewrite y 时，Min Commit TS 至少为 6。T1 prewrite y 成功即意味着 T1 提交成功，而 T1 的 Commit TS 至少为 6。所以之后 T2 再读取 y 时，不会读取到 T1 更新的值，事务 T2 的快照保持了一致。
 
 |  **T1: Begin (Start TS = 1)** |   |
-|  ----  | ----  |
+|  :----:  | :----:  |
 |  **T1: Prewrite(x)** | **T2: Begin (Start TS = 5)** |
 |    | **T2: Read(y) => Max TS = 5**  |
 |  **T1: Prewrite(y) => Min Commit TS = 6**  |   |
@@ -124,7 +124,7 @@ TiDB 通过 MVCC 实现快照隔离。事务在开始时会向 TSO 获取 Start 
 如果省去了 prewrite 前获取 Min Commit TS 的操作，T1 的 Commit TS 可能为 2，小于 T2 的 Commit TS = 6。如果有一个 Start TS 为 3 的事务 T3，它可以观察到 T2 在逻辑上晚于 T1 的事实。 所以此时是没有线性一致性的。
 
 |  **T1: Begin (Start TS = 1)** |    |  |
-|  ----  | ----  | ----  |
+|  :----:  | :----:  | :----:  |
 |   |  | **T3: Begin (Start TS = 3)**  |
 |    | **T2: Begin (Start TS = 5)**  |   |
 |    | **T2: Prewrite(y)Min Commit TS = 6**  |   |
@@ -137,7 +137,7 @@ TiDB 通过 MVCC 实现快照隔离。事务在开始时会向 TSO 获取 Start 
 对于用户来说，T2 在后续读取到 T1 对 x 的修改是不符合预期的。这种情景下，可重复读的性质没有被破坏，但是否还符合快照隔离就存在争议了<sup id="a5">[5](#f5)</sup>。
 
 |  **T1: Begin (Start TS = 1)** |   |
-|  ----  | ----  |
+|  :----:  | :----:  |
 |   | **T2: Begin (Start TS = 5)** |
 |    | **T2: Read(y)**  |
 |    |  **通知 T1 提交** |
