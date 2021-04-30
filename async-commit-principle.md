@@ -3,7 +3,7 @@ title: Async Commit 原理介绍
 author: ['陈奕霖']
 date: 2021-04-29
 summary: 本文将向大家介绍 Async Commit 的设计思路、原理以及关键的实现细节。
-tags: ['Async Commit']
+tags: ['TiDB', '事务', 'Percolator']
 ---
 
 > 本文作者：陈奕霖(sticnarf)，PingCAP 研发工程师，TiKV Committer，热衷于开源技术，在分布式事务领域有丰富经验，目前致力于优化 TiDB 的分布式事务性能。
