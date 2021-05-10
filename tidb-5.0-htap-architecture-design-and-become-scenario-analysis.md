@@ -1,5 +1,5 @@
 ---
-title: 成为一栈式数据服务生态： TiDB 5.0 HTAP 架构设计与成为场景解析
+title: 成为一栈式数据服务生态： TiDB 5.0 HTAP 架构设计与场景解析
 author: ['马晓宇']
 date: 2021-05-08
 summary: 本文将从用户角度出发，介绍 TiDB 5.0 HTAP 架构设计及应用场景。
