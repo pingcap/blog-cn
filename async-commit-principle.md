@@ -99,13 +99,13 @@ TiDB 通过 MVCC 实现快照隔离。事务在开始时会向 TSO 获取 Start 
 
 循序性要求逻辑上发生的顺序不能违反物理上的先后顺序。具体地说，有两个事务 T1 和 T2，如果在 T1 提交后，T2 才开始提交，那么逻辑上 T1 的提交就应该发生在 T2 之前，也就是说 T1 的 Commit TS 应该小于 T2 的 Commit TS。<sup id="a3">[3](#f3)</sup>
 
-为了保证这个特性，TiDB 会在 prewrite 之前向 PD TSO 获取一个时间戳作为 Min Commit TS 的最小约束。由于前面实时性的保证，T2 在 prewrite 前获取的这个时间戳必定大于等于 T1 的 Commit TS，而这个时间戳也不会用于更新 Max TS，所以也不可能发生等于的情况。综上我们可以保证 T2 的 Commit TS 大于 T1 的 Commit TS，即满足了循序性的要求。
+为了保证这个特性，TiDB 会在 prewrite 之前向 PD TSO 获取最新时间戳 + 1 作为 Min Commit TS 的最小约束。由于前面实时性的保证，T2 在 prewrite 前获取的这个时间戳必定大于等于 T1 的 Commit TS。综上我们可以保证 T2 的 Commit TS 大于 T1 的 Commit TS，即满足了循序性的要求。
 
-综上所述，每个 key 的 Min Commit TS 取 prewrite 时的 Max TS + 1 和 prewrite 前从 PD 获取的时间戳的最大值，事务的 Commit TS 取所有 key 的 Min Commit TS 的最大值，就能够同时保证快照隔离和线性一致性。
+综上所述，每个 key 的 Min Commit TS 取 prewrite 时的 Max TS + 1 和 prewrite 前从 PD 获取的时间戳 + 1 的最大值，事务的 Commit TS 取所有 key 的 Min Commit TS 的最大值，就能够同时保证快照隔离和线性一致性。
 
 ### 一阶段提交 (1PC)
 
-如果一个事务只更新一条记录的非唯一索引，或是只插入一条没有二级索引的记录，它只会涉及到单个 Region。在这种只涉及一个 Region的场景下，是不是可以不使用分布式事务提交协议，只用一个阶段完成事务的提交？这当然是可行的，但困难就在于一阶段提交的事务的 Commit TS 如何确定。
+如果一个事务只更新一条记录的非索引列，或是只插入一条没有二级索引的记录，它只会涉及到单个 Region。在这种只涉及一个 Region的场景下，是不是可以不使用分布式事务提交协议，只用一个阶段完成事务的提交？这当然是可行的，但困难就在于一阶段提交的事务的 Commit TS 如何确定。
 
 有了 Async Commit 计算 Commit TS 的基础，一阶段提交实现的困难点也解决了。我们用和 Async Commit 相同的方式去计算出一阶段提交事务的 Commit TS，通过一次和 TiKV 的交互直接将事务提交即可：
 
