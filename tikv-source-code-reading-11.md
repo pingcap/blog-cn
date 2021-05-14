@@ -23,7 +23,7 @@ KV 操作根据功能可以被划分为 Raw KV 操作以及 Txn KV 操作两大�
 
 ### 1. Engine trait
 
-TiKV 把底层 KV 存储引擎抽象成一个 Engine trait（trait 类似其他语言的 interface），定义见 `storage/kv/mod.rs`。Engint trait 主要提供了读和写两个接口，分别为 `async_snapshot` 和 `async_write`。调用者把要写的内容交给 `async_write`，`async_write` 通过回调的方式告诉调用者写操作成功完成了或者遇到错误了。同样的，`async_snapshot` 通过回调的方式把数据库的快照返回给调用者，供调用者读，或者把遇到的错误返回给调用者。
+TiKV 把底层 KV 存储引擎抽象成一个 Engine trait（trait 类似其他语言的 interface），定义见 `storage/kv/mod.rs`。Engine trait 主要提供了读和写两个接口，分别为 `async_snapshot` 和 `async_write`。调用者把要写的内容交给 `async_write`，`async_write` 通过回调的方式告诉调用者写操作成功完成了或者遇到错误了。同样的，`async_snapshot` 通过回调的方式把数据库的快照返回给调用者，供调用者读，或者把遇到的错误返回给调用者。
 
 ```rust
 pub trait Engine: Send + Clone + 'static {
