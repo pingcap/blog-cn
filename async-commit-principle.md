@@ -97,7 +97,7 @@ TiDB 通过 MVCC 实现快照隔离。事务在开始时会向 TSO 获取 Start 
 
 在快照隔离一节提到，Min Commit TS 的一个可能的取值是 Max TS + 1。用于更新 Max TS 的时间戳都来自于 TSO，所以 Max TS + 1 必然小于等于 TSO 上未分配的最小时间戳。除了 TiKV 上的 Max TS 之外，协调者 TiDB 也会提供 Min Commit TS 的约束（后面会提到），但也不会使其超过 TSO 上未分配的最小时间戳。
 
-循序性要求逻辑上发生的顺序不能违反物理上的先后顺序。具体地说，有两个事务 T1 和 T2，如果在 T1 提交后，T2 才开始提交，那么逻辑上 T1 的提交就应该发生在 T2 之前，也就是说 T1 的 Commit TS 应该小于 T2 的 Commit TS。<sup id="a3">[3](#f3)</sup>
+循序性要求逻辑上发生的顺序不能违反物理上的先后顺序。具体地说，有两个事务 T1 和 T2，如果在 T1 提交后，T2 才开始提交，那么逻辑上 T1 的提交不能发生在 T2 之后，也就是说 T1 的 Commit TS 应该小于等于 T2 的 Commit TS。<sup id="a3">[3](#f3)</sup>
 
 为了保证这个特性，TiDB 会在 prewrite 之前向 PD TSO 获取最新时间戳 + 1 作为 Min Commit TS 的最小约束。由于前面实时性的保证，T2 在 prewrite 前获取的这个时间戳必定大于等于 T1 的 Commit TS。综上我们可以保证 T2 的 Commit TS 大于 T1 的 Commit TS，即满足了循序性的要求。
 
