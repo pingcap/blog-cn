@@ -228,8 +228,7 @@ Elle 中的事务有生成和执行两个阶段，在生成阶段，Elle 会随�
 {:type :ok, :f :txn, :value [[:r :y [1 2]]], :process 0, :time 60, :index 6}
 ```
 
-<div class="caption-center">例 1 - 包含 G-SIb 的执行历史
-测</div>
+<div class="caption-center">例 1 - 包含 G-SIb 的执行历史</div>
 
 ![19](media/transaction-frontiers-research-article-talk2/19.png)
 
