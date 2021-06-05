@@ -85,7 +85,7 @@ Chaos Mesh 是社区驱动的项目，项目和生态的迭代和演进离不开
 
 - 持续丰富文档内容，优化文档结构，更新文档信息。目前已形成了包含用户文档，开发文档，快速上手、用户案例文档、贡献指南等在内的面向不同人群的文档体系，并随着版本发布保持迭代更新。
 
-- 和社区一起持续发布包含 Chaos Mesh 教程、案例分享、混沌工程实践等主题的博客文章。截止本文发布时间，已累计产生 25 篇 Chaos Mesh 相关文章，以及 1 个发布于 OReilly Katakoda 的[入门互动教程](https://chaos-mesh.org/interactiveTutorial)，为文档提供了有力补充。
+- 和社区一起持续发布包含 Chaos Mesh 教程、案例分享、混沌工程实践等主题的博客文章。截止本文发布时间，已累计产生 25 篇 Chaos Mesh 相关文章，以及 1 个发布于 OReilly Katakoda 的[入门互动教程](https://chaos-mesh.org/interactive-tutorial)，为文档提供了有力补充。
 
 - 通过社区阅读会议、以及各种会议、meetup 等形式分享视频教程。
 
@@ -103,6 +103,6 @@ Chaos Mesh 是社区驱动的项目，项目和生态的迭代和演进离不开
 
 说了这么多，最后也是最重要的，经过这一年努力，Chaos Mesh 不断成长，但依旧年轻，我们朝着我们的目标，扬帆起航，在成长的过程中，需要大家共同参与，一起打造完善的混沌工程体系生态！
 
-欢迎大家加入 Chaos Mesh 社区，加入 Chaos Mesh [Slack(#project-chaos-mesh)](https://join.slack.com/t/cloud-native/shared_invite/zt-fyy3b8up-qHeDNVqbz1j8HDY6g1cY4w) ，一起参与到项目的讨论与开发中来！大家在使用过程发现 bug 或缺失什么功能，也可以直接在 GitHub 上面提 [issue](https://github.com/pingcap/chaos-mesh/issues) 或 PR。
+欢迎大家加入 Chaos Mesh 社区，加入 Chaos Mesh [Slack(#project-chaos-mesh)](https://slack.cncf.io/) ，一起参与到项目的讨论与开发中来！大家在使用过程发现 bug 或缺失什么功能，也可以直接在 GitHub 上面提 [issue](https://github.com/pingcap/chaos-mesh/issues) 或 PR。
 
 最后附上 Chaos Mesh 社区调查链接，填写有惊喜哦：[https://bit.ly/2LzES5o](https://bit.ly/2LzES5o)
