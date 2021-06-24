@@ -74,7 +74,7 @@ select min(id) from t
 我们用另一种写法，可以做到类似的效果：
 
 ```sql
-select id from t order by id desc limit 1
+select id from t order by id asc limit 1
 ```
 
 这个写法有什么好处呢？前一个语句，生成的执行计划，是一个 TableScan 上面接一个 Aggregation，也就是说这是一个全表扫描的操作。后一个语句，生成执行计划是 TableScan + Sort + Limit。
