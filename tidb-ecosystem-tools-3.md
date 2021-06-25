@@ -57,7 +57,7 @@ DM 是集群模式的，其主要由 DM-master、DM-worker 与 DM-ctl 三个组�
 
 * 对于 DDL，由于会变更下游的表结构，因此必须确保在旧表结构对应的 DML 都同步完成后，才能进行同步。在 DM 中，当解析 binlog event 得到 DDL 后，会向每一个 job channel 发送一个特殊的 flush job；当各 worker 协程遇到 flush job 时，会立刻向下游 TiDB 同步之前已经取出的所有 job；等各 job channel 中的 job 都同步到下游 TiDB 后，开始同步 DDL；等待 DDL 同步完成后，继续同步后续的 DML。即 DDL 不能与 DML 并发同步，且 DDL 之前与之后的 DML 也不能并发同步。sharding 场景下 DDL 的同步处理见后文。
 
-* 对于 DML，多条 DML 可能会修改同一行的数据，甚至是主键。如果并发地同步这些 DML，则可能造成同步后数据的不一致。DM 中对于 DML 之间的冲突检测与处理，与 TiDB-Binlog 中的处理类似，具体原理可以阅读《[TiDB EcoSystem Tools 原理解读（一）TiDB-Binlog 架构演进与实现原理](https://mp.weixin.qq.com/s/N8ozCqkUmdrB3Qu6Mt-5_Q)》中关于 Drainer 内 SQL 之间冲突检测的讨论。
+* 对于 DML，多条 DML 可能会修改同一行的数据，甚至是主键。如果并发地同步这些 DML，则可能造成同步后数据的不一致。DM 中对于 DML 之间的冲突检测与处理，与 TiDB-Binlog 中的处理类似，具体原理可以阅读《[TiDB EcoSystem Tools 原理解读（一）TiDB-Binlog 架构演进与实现原理](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/)》中关于 Drainer 内 SQL 之间冲突检测的讨论。
 
 ### 合库合表数据同步
 
