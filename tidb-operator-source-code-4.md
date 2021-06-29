@@ -2,7 +2,7 @@
 title: TiDB Operator 源码阅读 (四) 组件的控制循环
 author: ['陈逸文']
 date: 2021-06-29
-summary: 本篇文章将将以 PD 为例详细介绍组件生命周期管理的实现过程和相关代码，并且以 PD 的介绍为基础，介绍其他组件的部分差异。
+summary: 本篇文章将以 PD 为例详细介绍组件生命周期管理的实现过程和相关代码，并且以 PD 的介绍为基础，介绍其他组件的部分差异。
 tags: ['TiDB Operator']
 ---
 
@@ -101,7 +101,7 @@ if !tc.Status.PD.Synced && NeedForceUpgrade(tc.Annotations) {
 }
 ```
 
-8. 处理 Scale ，调用 `pd_scaler.go` 内实现的扩缩容逻辑。
+8. 处理 Scale，调用 `pd_scaler.go` 内实现的扩缩容逻辑。
 
 ```
 if err := m.scaler.Scale(tc, oldPDSet, newPDSet); err != nil {
