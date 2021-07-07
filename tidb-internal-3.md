@@ -98,7 +98,7 @@ PD 收集了这些信息后，还需要一些策略来制定具体的调度计�
 - TiKV 节点分布在多个机架上，希望单个机架掉电时，也能保证系统可用性
 - TiKV 节点分布在多个 IDC 中，希望单个机房掉电时，也能保证系统可用
 
-这些需求本质上都是某一个节点具备共同的位置属性，构成一个最小的容错单元，我们希望这个单元内部不会存在一个 Region 的多个 Replica。这个时候，可以给节点配置 [lables](https://github.com/pingcap/tikv/blob/master/etc/config-template.toml#L16) 并且通过在 PD 上配置 [location-labels](https://github.com/pingcap/pd/blob/master/conf/config.toml#L59) 来指明哪些 lable 是位置标识，需要在 Replica 分配的时候尽量保证不会有一个 Region 的多个 Replica 所在结点有相同的位置标识。
+这些需求本质上都是某一个节点具备共同的位置属性，构成一个最小的容错单元，我们希望这个单元内部不会存在一个 Region 的多个 Replica。这个时候，可以给节点配置 [labels](https://github.com/pingcap/tikv/blob/master/etc/config-template.toml#L16) 并且通过在 PD 上配置 [location-labels](https://github.com/pingcap/pd/blob/master/conf/config.toml#L59) 来指明哪些 label 是位置标识，需要在 Replica 分配的时候尽量保证不会有一个 Region 的多个 Replica 所在结点有相同的位置标识。
 
 **副本在 Store 之间的分布均匀分配**
 
