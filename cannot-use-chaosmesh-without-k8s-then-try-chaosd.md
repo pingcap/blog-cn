@@ -34,7 +34,7 @@ Chaosd 具有以下这些优点：
 
 首先要下载 Chaosd，执行以下命令：
 
-curl -fsSL -o chaosd-v1.0.0-linux-amd64.tar.gz [https://mirrors.chaos-mesh.org/chaosd-v1.0.0-linux-amd64.tar.gz](https://mirrors.chaos-mesh.org/chaosd-v1.0.0-linux-amd64.tar.gz)
+curl -fsSL -o chaosd-v1.0.1-linux-amd64.tar.gz [https://mirrors.chaos-mesh.org/chaosd-v1.0.1-linux-amd64.tar.gz](https://mirrors.chaos-mesh.org/chaosd-v1.0.1-linux-amd64.tar.gz)
 
 解压这个文件，可以看到它包含一个 chaosd 文件和一个 tools 文件夹。chaosd 是工具的入口；tools 文件夹下面包含执行混沌实验所需要的一些工具，包括 stress-ng（压力场景）、byteman（JVM 故障）、PortOccupyTool（网络故障占用端口）等。
  
