@@ -5,7 +5,7 @@ date: 2020-03-25
 summary: “我截止目前，360 云平台这边有三套 TiDB 集群，总节点数在 50+。有 9 个业务线接入使用，有过百亿级表 Online 加索引的案例，总数据量目前在 80T。”
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-360-cloud/
+url: /case/user-case-360-cloud/
 weight: 2
 logo: /images/blog-cn/customers/360-cloud-logo.png
 customer: 360CLOUD

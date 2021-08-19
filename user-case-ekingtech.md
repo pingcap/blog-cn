@@ -5,7 +5,7 @@ date: 2018-03-01
 summary: 使用 TiDB 后，我们无需再考虑分表分库，近10 亿行数据都可复用以往 MySQL 代码，进行 OLAP 分析比上一代收益系统提速近 20 倍，还免去了数据同步可能存在的问题。
 tags: ['大型企业']
 category: case
-url: /cases-cn/user-case-ekingtech/
+url: /case/user-case-ekingtech/
 weight: 1
 logo: /images/blog-cn/customers/ekingtech-logo.png
 customer: 易建科技

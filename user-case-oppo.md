@@ -5,7 +5,7 @@ date: 2020-01-03
 summary: OPPO 大数据中心在 2019 年初承接了接入某业务线核心数据的重要任务：一期目标是建立一个能提供准实时大数据查询服务的数据仓库。我们选用了之前从未在公司大规模正式使用过的 TiDB 作为核心数据库引擎。本文记录这次吃螃蟹的一些经验和教训，供大家参考。
 tags: ['大型企业']
 category: case
-url: /cases-cn/user-case-oppo/
+url: /case/user-case-oppo/
 weight: 2
 logo: /images/blog-cn/customers/oppo-logo.png
 customer: OPPO
@@ -224,7 +224,7 @@ timeout server 30m
 
 #### 5. 与 Hadoop 数据湖的打通
 
-项目受到了上级的一个重大的挑战：在 TiDB 中的数据无法与现有数据（主要以 hive 表形式存储于 Hadoop 集群中）形成协同作用，项目价值会因此大打折扣。 
+项目受到了上级的一个重大的挑战：在 TiDB 中的数据无法与现有数据（主要以 hive 表形式存储于 Hadoop 集群中）形成协同作用，项目价值会因此大打折扣。
 
 针对这个挑战，最开始打算再同步一份数据到 Hadoop 集群中，但这样做其实是存储的极大浪费，但在当时似乎是唯一的办法。在项目快接近尾声的时候，发现可以通过在 TiSpark 集群上通过 thriftServer（最后进化到使用 Livy 服务）的方式，打通两个体系的数据，实现 hdfs 和 TiKV 两个数据源的混合查询。最后也确实取得了成功并已经服务了数个需求。相关的技术细节未来将以另外的文章进行说明和分享。
 

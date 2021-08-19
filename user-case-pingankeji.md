@@ -5,7 +5,7 @@ date: 2019-05-28
 summary: 这个应用场景是我们的产险的实际分析场景，表数据量不大但是 SQL 较为复杂，是典型的星型查询。在 Oracle 用了 134 秒，但是 TiDB 用了 50 分钟，我们觉得很诧异，与 TiDB 的同事咨询后，他们通过现场支持我们优化底层代码后 34 秒可以跑出来。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-pingankeji/
+url: /case/user-case-pingankeji/
 weight: 2
 logo: /images/blog-cn/customers/pingankeji-logo.png
 customer: 平安科技
@@ -22,7 +22,7 @@ showOnSwiper: 2
 
 ## 一、TiDB 引入的 POC 测试
 
-作为一名运维人员，引入一个新的数据库产品前必须要明确几点： 
+作为一名运维人员，引入一个新的数据库产品前必须要明确几点：
 
 *   从业务的角度，引入的产品能否满足业务基本需求和使用场景。
 
@@ -42,7 +42,7 @@ TiDB 事务隔级别为 SI，支持 Spark 生态，支持动态扩容，跨数�
 
 ![](media/user-case-pingankeji/2.JPG)
 
-从左至右看，可以通过 MySQL 或 MySQL 客户端接入 TiDB，TiDB 有 TiDB、PD、TiKV 三个组件，组件之间功能相互独立，需独立部署，分别负责计算、调度、存储功能；同时又相互协作，共同完成用户请求处理。在 TiKV 层各节点是使用 Raft 协议保证节点间数据的一致性，同时它还提供 Spark 接口供大数据分析。 
+从左至右看，可以通过 MySQL 或 MySQL 客户端接入 TiDB，TiDB 有 TiDB、PD、TiKV 三个组件，组件之间功能相互独立，需独立部署，分别负责计算、调度、存储功能；同时又相互协作，共同完成用户请求处理。在 TiKV 层各节点是使用 Raft 协议保证节点间数据的一致性，同时它还提供 Spark 接口供大数据分析。
 
 从上往下看，可通过 Data Miaration 工具从 MySQL 迁移到 TiDB，同时提供备份恢复功能、内部性能监控监测及诊断、支持容器化部署。
 

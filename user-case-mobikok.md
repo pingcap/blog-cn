@@ -5,19 +5,19 @@ date: 2018-04-18
 summary: TiDB 对于像我们这样可预期核心数据会暴增的场景，有非常大的意义。在后端支撑力量有限时，业务暴增时只需要增加机器，而不是频繁重构业务，让我们有更多精力在自己的业务上耕耘。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-mobikok/
+url: /case/user-case-mobikok/
 weight: 26
 logo: /images/blog-cn/customers/mobikok-logo.png
 customer: Mobikok
 customerCategory: 高科技
 ---
 
- 
+
 >作者：rayi，深圳可可网络服务端架构负责人
 
 ## 公司介绍
 Mobikok（可可网络）成立于 2013 年，是一家快速成长的移动互联网营销公司，专注于移动 eCPM 营销。总部在中国深圳，聚焦于订阅 offer 的海外流量变现业务。Mobikok 提供的接口方式支持各类手机端流量（API、SDK、Smartlink），RTB（实时竞价系统）对接海外的 DSP（Demand-Side Platform，需求方平台）高效优化客户的广告效果。截止目前，系统已对 2 亿用户进行广告优化，已接入上百家广告主以及上百家渠道，Mobikok 致力于高效，便捷，专业的帮助广告主以及渠道互惠共赢。
- 
+
 ## 场景介绍：SSP 系统
 
 订阅 SSP（Sell-Side-Platform）平台当前业务主要分为：SDK、Smartlink、Online API 以及 Offline API；在当前 SSP SDK 业务系统当中，累计用户已达到 2 亿，最初使用的是 MySQL 主从分表的方式存储用户数据，随着数据量的增加，MySQL 单机容量以及大数据量查询成为了瓶颈；当单表数据达到 2 千万以上时，单机 MySQL 的查询以及插入已经不能满足业务的需求，当访问量到一定阶段后，系统响应能力在数据库这一块是一个瓶颈。
@@ -28,7 +28,7 @@ Mobikok（可可网络）成立于 2013 年，是一家快速成长的移动互�
 
 ![](media/user-case-mobikok/1.png)
 
- 
+
 ## 引入 TiDB
 
 在选择使用替换 MySQL 方案当中。我们主要考虑几点：
@@ -60,6 +60,6 @@ TiDB 数据库整体集群配置：2* TiDB、3* TiKV、3* PD。
 在实际应用当中，因为我们切换的并不是只有用户数据表，还迁移了关于广告业务、渠道业务基础数据表。由于 TiDB 是一个分布式数据库，对于一些小表以及 count(*) 操作会影响效率，后来咨询 TiDB 官方得知，TiDB 有不同的隔离级别，SQL 也有高低优先级，如果有全表扫描的需求，可以使用低的隔离级别或者是低的优先级。将来我们就可以直接所有线上业务使用 TiDB 进行替换，最后还是非常感谢 TiDB 团队的支持与帮助。
 
 
- 
+
 
 

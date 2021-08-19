@@ -12,7 +12,7 @@
 - `summary` 文章简介
 - `tags` 标签分类, 格式: `['tag-1', 'tag-2']`
 - `category` 表示 blog 的类型，目前只有案例文章需要显示定义 `category: case`
-- `url` 表示本篇文章在 PingCAP 官网中指定的 `url`， 而不是 HUGO 生成器默认生成的 `/blog-cn/filename/` 格式的 `url`
+- `url` 表示本篇文章在 PingCAP 官网中指定的 `url`， 而不是 HUGO 生成器默认生成的 `/blog/filename/` 格式的 `url`
 - `aliases` 表示可跳转到本篇文章在 PingCAP 官网中相应页面的 url list
 - `customer` **只在案例 markdown 里添加该 meta**， value 为该案例的客户名称，eg. `customer: 小米`
 - `customerCategory` **只在案例 markdown 里添加该 meta**， value 为该案例的客户所属领域名称，eg. `customerCategory: 金融`

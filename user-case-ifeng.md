@@ -5,8 +5,7 @@ date: 2018-01-04
 summary: TiDB 的出现，帮我们跳过了传统的 Sharding + proxy 的路线，给我们节省了巨大的技术成本，我们对 TiDB 非常的钟爱。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-ifeng/
-aliases: ['/blog-cn/user-case-ifeng/']
+url: /case/user-case-ifeng/
 weight: 23
 logo: /images/blog-cn/customers/ifeng-logo.png
 customer: 凤凰网
@@ -14,7 +13,7 @@ customerCategory: 资讯
 ---
 
 
-> 作者：卞新栋，凤凰网工程师 
+> 作者：卞新栋，凤凰网工程师
 
 
 ## 背景

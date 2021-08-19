@@ -5,7 +5,7 @@ date: 2020-07-16
 summary: 本文介绍了 TiDB 在北京银行交易场景中的应用实践。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-beijing-bank-2/
+url: /case/user-case-beijing-bank-2/
 weight: 3
 logo: /images/blog-cn/customers/beijing-bank-logo.png
 customer: 北京银行

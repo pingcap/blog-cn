@@ -5,7 +5,7 @@ date: 2019-11-29
 summary: 由 SQL Server 迁移至 TiDB，从传统关系型到分布式 HTAP，从商业授权到开源社区，是汽车之家社区历史上一次重大的技术方向转型。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-qichezhijia/
+url: /case/user-case-qichezhijia/
 weight: 6
 logo: /images/blog-cn/customers/qichezhijia-logo.png
 customer: 汽车之家

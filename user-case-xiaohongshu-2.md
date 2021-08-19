@@ -5,7 +5,7 @@ date: 2020-07-14
 summary: 本文介绍了 TiDB HTAP 方案在小红书业务升级中的应用实践。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-xiaohongshu-2/
+url: /case/user-case-xiaohongshu-2/
 weight: 4
 logo: /images/blog-cn/customers/xiaohongshu2-logo.jpg
 customer: 小红书

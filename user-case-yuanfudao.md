@@ -5,7 +5,7 @@ date: 2017-08-01
 summary: TiDB 是一个很有野心的项目，从无到有的解决了 MySQL 过去遇到的扩展性问题，在很多场合下也有 OLAP 的能力，省去了很多数据仓库搭建成本和学习成本。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-yuanfudao/
+url: /case/user-case-yuanfudao/
 weight: 20
 logo: /images/blog-cn/customers/yuanfudao-logo.png
 customer: 猿辅导

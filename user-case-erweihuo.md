@@ -5,15 +5,14 @@ date: 2018-01-31
 summary: TiDB 不管从性能、容量还是高可用性以及可运维性来说，完全超出了我们的预期。TiDB 让我们的业务开发回到了业务本质，让简单的再简单，开发不需要再拆东墙补西墙忙于数据爆发带来的各种手忙脚乱。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-erweihuo/
-aliases: ['/blog-cn/user-case-erweihuo/']
+url: /case/user-case-erweihuo/
 weight: 15
 logo: /images/blog-cn/customers/erweihuo-logo.png
 customer: 二维火
 customerCategory: 电商
 ---
 
-> 作者介绍：火烧（花名），二维火架构运维负责人 
+> 作者介绍：火烧（花名），二维火架构运维负责人
 
 
 ## 二维火 SaaS 平台介绍

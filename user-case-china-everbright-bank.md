@@ -5,7 +5,7 @@ date: 2020-07-03
 summary: 我们把 TiDB 用到了现金理财，在这里我们是在受众最广的渠道中去应用我们真正需要它的技术。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-china-everbright-bank/
+url: /case/user-case-china-everbright-bank/
 weight: 1
 logo: /images/blog-cn/customers/china-everbright-bank-logo.png
 customer: 光大银行

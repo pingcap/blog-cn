@@ -5,7 +5,7 @@ date: 2017-03-09
 summary: TiDB 在数据规模越大的情况下，对比 MySQL 的优势就越明显，应该是 TiDB 自研的分布式 SQL 优化器带来的优势。
 tags: ['游戏']
 category: case
-url: /cases-cn/user-case-gaea-ad/
+url: /case/user-case-gaea-ad/
 weight: 3
 logo: /images/blog-cn/customers/gaea-ad-logo.png
 customer: 盖娅互娱

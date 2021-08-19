@@ -5,7 +5,7 @@ date: 2020-07-08
 summary: TiDB 在 VIPKID 的四大典型应用场景，以及 TiDB 4.0 实践经验。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-vipkid/
+url: /case/user-case-vipkid/
 weight: 2
 logo: /images/blog-cn/customers/vipkid-logo.png
 customer: VIPKID

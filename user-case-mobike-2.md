@@ -5,7 +5,7 @@ date: 2019-02-18
 summary: TiDB 的出现，不仅弥补了 MySQL 单机容量上限、传统 Sharding 方案查询维度单一等缺点，而且其计算存储分离的架构设计让集群水平扩展变得更容易。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-mobike-2/
+url: /case/user-case-mobike-2/
 weight: 7
 logo: /images/blog-cn/customers/mobike-logo.png
 customer: 摩拜单车

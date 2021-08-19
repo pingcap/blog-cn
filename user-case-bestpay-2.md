@@ -5,7 +5,7 @@ date: 2020-11-09
 summary: 本篇文章将介绍 TiDB 助力中国电信翼支付金融核心场景的故事。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-bestpay-2/
+url: /case/user-case-bestpay-2/
 weight: 2
 logo: /images/blog-cn/customers/bestpay-logo.jpg
 customer: 中国电信翼支付

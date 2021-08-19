@@ -5,7 +5,7 @@ date: 2020-06-23
 summary: 通过 TiDB 4.0 的 TiFlash，我们拥有了非常实时的线上分析能力。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-bigo/
+url: /case/user-case-bigo/
 weight: 3
 logo: /images/blog-cn/customers/bigo-logo.png
 customer: Bigo

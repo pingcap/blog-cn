@@ -5,8 +5,7 @@ date: 2017-12-18
 summary: 同时解决 OLAP 和 OLTP 是一件相当困难的事情，TiDB 和 TiSpark 虽然推出不久，但是已经满足很多应用场景，同时在易用性和技术支持上也非常值得称赞。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-yiguo/
-aliases: ['/blog-cn/user-case-yiguo/']
+url: /case/user-case-yiguo/
 weight: 7
 logo: /images/blog-cn/customers/yiguo-logo.png
 customer: 易果集团
@@ -17,7 +16,7 @@ customerCategory: 电商
 > 作者简介：罗瑞星，曾就职于前程无忧，参加过 Elasticsearch 官方文档中文翻译工作，现就职于易果集团，担任资深大数据工程师，负责易果集团数据分析架构设计等工作。
 
 
-## 项目背景  
+## 项目背景
 
 目前企业大多数的数据分析场景的解决方案底层都是围绕 Hadoop 大数据生态展开的，常见的如 HDFS + Hive + Spark + Presto + Kylin，在易果集团，我们初期也是采取这种思路，但是随着业务规模的快速增长和需求的不断变化，一些实时或者准实时的需求变得越来越多，这类业务除了有实时的 OLTP 需求，还伴随着一些有一定复杂度的 OLAP 的需求，单纯地使用 Hadoop 已经无法满足需求。
 
@@ -38,7 +37,7 @@ Greenplum 是一套基于 PostgreSQL 分析为主的 MPP 引擎，大多用在�
 
 再说说 Kudu。Kudu 是 CDH 2015年发布的一套介于 Hbase 和 HDFS 中间的一套存储系统，目前在国内主要是小米公司应用的较多，在测试中，我们发现其在 OLTP 表现大致与 TiDB 相当，但是一些中等数据量下，其分析性能相比 TiDB 有一定差距。另外我们的查询目前主要以 Presto 为主，Presto 对接 Kudu 和 PostgreSQL 都是需要考虑兼容性的问题，而 TiDB 兼容 MySQL 协议，在应用初期可以直接使用 Presto-MySQL 进行统一查询，下一步再考虑专门开发 Presto-TiDB。
 
-另外，我们希望未来的实时系统和离线系统能够通用，一套代码在两个系统中都能够完全兼容，目前 Tispark 和 SparkSQL 已经很大程度上实现了这点，这支持我们在以后离线上的小时级任务可以直接切换到 TiDB上，在 TiDB 上实现实时业务的同时，如果有 T+1 的需求也能够直接指 HDFS 即可，不用二次开发，这是 Kudu 和 GP 暂时实现不了的。     
+另外，我们希望未来的实时系统和离线系统能够通用，一套代码在两个系统中都能够完全兼容，目前 Tispark 和 SparkSQL 已经很大程度上实现了这点，这支持我们在以后离线上的小时级任务可以直接切换到 TiDB上，在 TiDB 上实现实时业务的同时，如果有 T+1 的需求也能够直接指 HDFS 即可，不用二次开发，这是 Kudu 和 GP 暂时实现不了的。
 
 最后，TiSpark 是建立在 Spark 引擎之上，Spark 在机器学习领域里有诸如 Mllib 等诸多成熟的项目，对比 GP 和 Kudu，算法工程师们使用 TiSpark 去操作 TiDB 的门槛非常低，同时也会大大提升算法工程师们的效率。
 

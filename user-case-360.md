@@ -5,8 +5,7 @@ date: 2017-11-27
 summary: 随业务量的增大，TPS 指标提升至 5000 左右，整个数据库平台的峰值计算能力提升了 10 倍左右，但平台整体吞吐量和响应时间都没有特别的抖动，一直稳定在可接受范围内。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-360/
-aliases: ['/blog-cn/user-case-360/']
+url: /case/user-case-360/
 weight: 6
 logo: /images/blog-cn/customers/360-logo.png
 customer: 360金融

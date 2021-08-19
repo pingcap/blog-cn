@@ -5,7 +5,7 @@ date: 2020-11-16
 summary: 本篇文章将介绍 TiDB 联手中通科技打造全场景全链路数字化平台服务的故事。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-zto-express-2/
+url: /case/user-case-zto-express-2/
 weight: 1
 logo: /images/blog-cn/customers/zto-express-logo.png
 customer: 中通快递

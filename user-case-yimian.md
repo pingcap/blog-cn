@@ -5,7 +5,7 @@ date: 2017-09-15
 summary: TiDB 水平扩展性、兼容 MySQL 是非常好的特性，对需要使用关系型数据库作为存储方案的业务有极大的诱惑力，避免了传统分表、分库方案带来的上层应用的复杂性，解决了我们目前迫切的关系型数据存储的需求。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-yimian/
+url: /case/user-case-yimian/
 weight: 25
 logo: /images/blog-cn/customers/yimian-logo.png
 customer: 一面数据
@@ -33,9 +33,9 @@ customerCategory: 高科技
 
 * Cassandra：Cassandra 对磁盘 IO 和内存要求高，添加一个实例，需要从其他实例迁数据，对网络带宽、 磁盘要求特别高。另外 CQL 支持的特性太少，业务开发麻烦，例如不能联表，不支持主键之外的索引，对主键以外的查询比较困难，虽然有 Secondary Index，但是使用限制大。生态圈不完善，例如很难找到好用的监控。
 
-## 改造后的系统架构 
+## 改造后的系统架构
 
-#### 引入 TiDB 替换 MySQL 和 Cassandra 
+#### 引入 TiDB 替换 MySQL 和 Cassandra
 
 为从根本上解决以上问题，一面数据的技术团队决定通过增加部署一套高性能的数据库系统，以解决当前业务的痛点。 在评估和验证了 MySQL Sharding 和 MongoDB 等传统技术手段之后，团队认识到：基于 MySQL Sharding (即利用 MySQL 中间件分库分表) 架构在高可用安全能力，业务和查询的灵活支持以及运维管理难度和成本上都不尽如人意，有着诸多架构上和技术上的缺陷；而 MongoDB 比较适合存储爬虫数据，但迁移成本高，不管是数据还是应用程序都需要做侵入性修改和调整，难度和开发成本骤升。另外，作为 NoSQL 数据库，MongoDB 不支持 SQL 和 JOIN ，对 BI 工具的支持也不完善，数据分析师们无法直接使用。 最终从满足业务需求、降低切换成本和减少运维成本等角度考虑，一面数据选择了分布式关系型数据库－TiDB 作为业务的首选事务型数据库。
 

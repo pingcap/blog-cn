@@ -5,7 +5,7 @@ date: 2020-08-20
 summary: 本文按照数据库架构的演进思路，介绍了 TiDB 在翼支付的演进过程。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-bestpay/
+url: /case/user-case-bestpay/
 weight: 4
 logo: /images/blog-cn/customers/bestpay-logo.jpg
 customer: 翼支付

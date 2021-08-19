@@ -5,7 +5,7 @@ date: 2019-04-22
 summary: 现有集群已经使用 100 多个 Syncer 同步上游 MySQL 数据，目前已经达到 4.7TB 热数据，上百张离线和实时报表。我们结合 TiDB 的特性探索了一种在线不停机迁移机房的方式。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-beikejinfu/
+url: /case/user-case-beikejinfu/
 weight: 2
 logo: /images/blog-cn/customers/beikejinfu-logo.png
 customer: 贝壳金服
@@ -38,7 +38,7 @@ TiDB 是一个分布式 NewSQL 数据库。它支持水平弹性扩展、ACID �
 | 组件 | 数量 |
 |:-----|:---------|
 | TiDB | 4 |
-| TiKV | 9*3（物理机\*实例数）| 
+| TiKV | 9*3（物理机\*实例数）|
 | PD | 3 |
 | 数据量 | 4.7 TB+ |
 
@@ -108,7 +108,7 @@ TiDB 是一个分布式 NewSQL 数据库。它支持水平弹性扩展、ACID �
 
 2. TiSpark 二次开发：TiSpark 无法实现 TiDB 数据插入和删除。贝壳金服基于 TiSpark 二次开发封装了 TiSpark，因此可以实现 TiSpark 直接原生 SparkSQL 执行 Insert 、Create 操作。实现新增 executeTidbSQL 实现 delete、update、drop 操作。增加 TiSpark View 的功能，弥补现阶段 TiDB 不支持 View 的问题。
 
-3. TiSpark 权限控制：TiDB 和 TiSpark 都无法实现基于组和大量用户的权限控制。贝壳金服基于 Catalyst 自研了一套兼容 TiSpark SQL 和 TiDB SQL 的 SQL 解析引擎，并基于此引擎之上开发权限验证、权限申请、权限审批、数据发现等功能。 
+3. TiSpark 权限控制：TiDB 和 TiSpark 都无法实现基于组和大量用户的权限控制。贝壳金服基于 Catalyst 自研了一套兼容 TiSpark SQL 和 TiDB SQL 的 SQL 解析引擎，并基于此引擎之上开发权限验证、权限申请、权限审批、数据发现等功能。
 
 ## 趟过的坑
 

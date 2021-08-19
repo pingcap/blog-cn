@@ -5,7 +5,7 @@ date: 2018-12-10
 summary: 目前我们已经搭建两个 TiDB 集群，几十个物理节点，百亿级数据量，受益于 TiDB 的高可用构架，上线以来一直稳定运行。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-lianghuapai/
+url: /case/user-case-lianghuapai/
 weight: 29
 logo: /images/blog-cn/customers/lianghuapai-logo.png
 customer: 量化派

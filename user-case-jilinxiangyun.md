@@ -5,7 +5,7 @@ date: 2020-12-02
 summary: 本篇文章将介绍 TiDB 在吉林祥云政务大数据平台的应用与实践。
 tags: ['政府']
 category: case
-url: /cases-cn/user-case-jilinxiangyun/
+url: /case/user-case-jilinxiangyun/
 weight: 1
 logo: /images/blog-cn/customers/jilinxiagyun-logo.png
 customer: 吉林祥云

@@ -5,7 +5,7 @@ date: 2019-12-06
 summary: 360 智能商业业务线从 2019 年 3 月份开始使用 TiDB，目前线上有 5 套 TiDB 集群，数据总容量 20T，主要应用在数据分析平台、广告主实时报表、物料库、实时监控平台等核心业务中。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-360-business/
+url: /case/user-case-360-business/
 logo: /images/blog-cn/customers/360-business-logo.jpg
 weight: 10
 customer: 360智慧商业
@@ -111,7 +111,7 @@ TiDB 最核心的应用场景是：大数据量下的分库分表，比如经常
 1\. 找出热点 TiKV 的 Store Number
 
 在 tidb-ansible 的 scripts 目录下 table-regions.py 脚本可以查看热点表和索引 Region 分布情况：
-	
+
 ```
 python table-regions.py --host=tidb_host –port=10080 db_name tb_name
 [RECORD – db_name.tb_name] - Leaders Distribution:
@@ -122,10 +122,10 @@ store: 5, num_leaders: 16, percentage: 5.67%
 store: 7, num_leaders: 252, percentage: 89.36%
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ```
-	
+
 通过执行上面的命令，能查看热点表都在 store 7(227 服务器) 这个 TiKV 节点。
 
-2\. 查看热点的表 Regions 分布 
+2\. 查看热点的表 Regions 分布
 
 ```
 curl http:// ${tidb_host}:10080/tables/db_name/tb_name/regions > regions.log
@@ -138,9 +138,9 @@ curl http:// ${tidb_host}:10080/tables/db_name/tb_name/regions > regions.log
 ```
 pd-ctl -u http:// ${pd_host}:2379 operator add split-region region_id
 ```
-	
+
 使用命令找出 Store7 的 Region ID：
-	
+
 ```
 grep -B 3 ": 7" regions.log |grep "region_id"|awk -F': ' '{print $2}'|awk -F',' '{print "pd-ctl -u http://pd_host:2379 operator add split-region",$1}' > split_region.sh
 ```
@@ -157,8 +157,8 @@ sh split_region.sh
 
 ```
 pd-ctl -u http://pd_host:2379 config set 参数值
-    "hot-region-schedule-limit": 8  
-"leader-schedule-limit": 8,     
+    "hot-region-schedule-limit": 8
+"leader-schedule-limit": 8,
 "region-schedule-limit": 16
 ```
 

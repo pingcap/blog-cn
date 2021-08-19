@@ -5,7 +5,7 @@ date: 2019-07-31
 summary: 自上线以来，TiDB 集群运行稳定，最高 QPS 达到每秒 3.4 万笔。写入速度与原 MySQL 环境相当，kafka 端未出现数据积压，系统资源使用均衡，并且尚有余量。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-huataizhengquan/
+url: /case/user-case-huataizhengquan/
 weight: 4
 logo: /images/blog-cn/customers/huataizhengquan-logo.png
 customer: 华泰证券
@@ -34,7 +34,7 @@ TiDB 采用 Shared-Nothing、计算存储分离的分布式集群架构，主要
 - TiDB Server
 
   负责接收 SQL 请求，处理 SQL 相关的逻辑，并通过 PD 找到存储计算所需数据的 TiKV 地址，与 TiKV 交互获取数据，最终返回结果。TiDB Server 是无状态的，其本身并不存储数据，只负责计算，可以无限水平扩展，可以通过负载均衡组件（如 LVS、HAProxy 或 F5）对外提供统一的接入地址。
-  
+
 - PD（Placement Driver）Server
 
 	PD Server 是整个集群的管理模块，通过 Raft 协议实现多副本集群架构，保证数据的一致性和高可用。其主要工作有三个：一是存储集群的元数据信息（某个 Key 存储在哪个 TiKV 节点）；二是对 TiKV 集群进行调度和负载均衡（如数据的迁移、Raft group leader 的迁移等）；三是分配全局唯一且递增的事务 ID。

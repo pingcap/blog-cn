@@ -4,8 +4,6 @@ author: ['PingCAP']
 date: 2018-04-27
 summary: 2018 年 4 月 27 日，TiDB 发布 2.0 GA 版。相比 1.0 版本，对 MySQL 兼容性、系统稳定性、优化器和执行器做了很多改进。
 tags: ['TiDB']
-aliases:
-  - /blog-cn/tidb-2.0ga-release/
 ---
 
 2018 年 4 月 27 日，TiDB 发布 2.0 GA 版。相比 1.0 版本，对 MySQL 兼容性、系统稳定性、优化器和执行器做了很多改进。
@@ -144,7 +142,7 @@ aliases:
 	* 增加配置参数检查规则，完善配置项的合法性较验
 
 * 调试接口
-	
+
 	* 增加 `Drop Region` 调试接口
 
 	* 增加枚举各个 PD health 状态的接口
@@ -166,7 +164,7 @@ aliases:
 ## TiKV
 
 * 功能
-	
+
 	* 保护关键配置，防止错误修改
 
 	* 支持 `Region Merge` [experimental]

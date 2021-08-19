@@ -5,7 +5,7 @@ date: 2018-03-16
 summary: TiDB 主要应用在今日头条核心 OLTP 系统 - 对象存储系统的部分元数据存储，支持头条图片和视频相关业务，比如抖音等。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-toutiao/
+url: /case/user-case-toutiao/
 weight: 17
 logo: /images/blog-cn/customers/toutiao-logo.png
 customer: 今日头条
@@ -90,7 +90,7 @@ TiDB 主要应用在今日头条核心 OLTP 系统 - 对象存储系统中，存
 
 这就可能碰到一个问题：我们公司有一个组件，是会把 Hive 的数据批量的同步到 MySQL 的一个工具，很多做数据分析的同学就会把 Hive 里的数据同步到 TiDB。但是这个工具产生的事务非常大，而 TiDB 本身对事务的大小是有一个限制的。
 
-此时，把下面这两个配置项打开之后，TiDB 内部会把这种大的事务切成很多小的事务，就没有这个问题：            
+此时，把下面这两个配置项打开之后，TiDB 内部会把这种大的事务切成很多小的事务，就没有这个问题：
 
 + `set @@tidb_batch_insert =ON`
 

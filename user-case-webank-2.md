@@ -5,7 +5,7 @@ date: 2020-11-09
 summary: 本篇文章将介绍 TiDB 助力微众银行金融核心场景的故事。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-webank-2/
+url: /case/user-case-webank-2/
 weight: 1
 logo: /images/blog-cn/customers/webank-logo.png
 customer: 微众银行

@@ -5,7 +5,7 @@ date: 2019-04-17
 summary: 北京银行的架构采用两地三中心五副本的模式部署。跨城长距离的分布式数据库建设具有很大的挑战。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-beijing-bank/
+url: /case/user-case-beijing-bank/
 weight: 9
 logo: /images/blog-cn/customers/beijing-bank-logo.png
 customer: 北京银行
@@ -74,7 +74,7 @@ showOnSwiper: 1
 在这个过程中，要感谢支付清算协会、信通院等上级单位和组织给予我们的帮助，另外，我们也和硬件厂商英特尔进行了比较深的合作，比如今年（2018 年）新的硬件平台，我们也做了专项的分布式数据库测试，为未来我们硬件的架构选型提供了有效的参考。
 
 ### 3.2 部署模式
- 
+
  ![](media/user-case-beijing-bank/5.png)
 
 <div class="caption-center">图 5</div>
