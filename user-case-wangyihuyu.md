@@ -5,7 +5,7 @@ date: 2019-10-21
 summary: TiDB 兼容 MySQL 协议，支持 TP/AP 事务且扩展性好，能很好地解决网易互娱计费组业务大容量、高可用等问题。目前我们的业务在不断深入和扩大规模使用 TiDB。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-wangyihuyu/
+url: /case/user-case-wangyihuyu/
 weight: 2
 logo: /images/blog-cn/customers/wangyihuyu-logo.png
 customer: 网易互娱
@@ -25,7 +25,7 @@ customerCategory: 游戏
 
 网易互娱计费组线上 MySQL 的基本使用架构，如下图所示，其中箭头方向表示数据或请求的指向：
 
-![图 1 网易互娱计费组线上 MySQL 使用架构](media/user-case-wangyihuyu/1.png) 
+![图 1 网易互娱计费组线上 MySQL 使用架构](media/user-case-wangyihuyu/1.png)
 
 <div class="caption-center">图 1 网易互娱计费组线上 MySQL 使用架构</div>
 
@@ -57,9 +57,9 @@ customerCategory: 游戏
     - 不同产品的数据库独立部署；
     - 数据不互通，导致数据相关隔离，形成数据壁垒；
     - 当进行跨产品计算时，需要维护多个异构数据源，访问方式复杂。数据分散在不同的数据孤岛上会增加数据分析难度，不利于共性价值的挖掘。如下图：
-    
-    ![图 2 现状之数据孤岛](media/user-case-wangyihuyu/2.png) 
-    
+
+    ![图 2 现状之数据孤岛](media/user-case-wangyihuyu/2.png)
+
     <div class="caption-center">图 2 现状之数据孤岛</div>
 
 
@@ -100,8 +100,8 @@ customerCategory: 游戏
 
 我们测试了 MySQL 集群 5.7.25 版本对比 8.0.12 版本，在 128 并发写各 1000 万行的 10 个表，比较单节点、3 节点和 5 节点下的情况，如下图所示：
 
-![图 3 对比结果](media/user-case-wangyihuyu/3.png) 
-    
+![图 3 对比结果](media/user-case-wangyihuyu/3.png)
+
 <div class="caption-center">图 3 对比结果</div>
 
 在测试中发现，使用 MySQL InnoDB 集群的方案写性能比单机 MySQL 差约 30%，其他的读写测试结果也不甚满意。之后陆续测试 MySQL InnoDB Cluster 或 MySQL + 中间件的方案，不是测试结果性能不达要求，就是需要修改大量代码。
@@ -124,12 +124,12 @@ customerCategory: 游戏
 
 **集群拓扑**
 
-![图 4 测试：CockroachDB 集群搭建](media/user-case-wangyihuyu/4.png) 
-    
+![图 4 测试：CockroachDB 集群搭建](media/user-case-wangyihuyu/4.png)
+
 <div class="caption-center">图 4 CockroachDB 测试集群搭建</div>
 
-![图 5 测试：TiDB 集群搭建](media/user-case-wangyihuyu/5.png) 
-    
+![图 5 测试：TiDB 集群搭建](media/user-case-wangyihuyu/5.png)
+
 <div class="caption-center">图 5 TiDB 测试集群搭建</div>
 
 **测试语句**
@@ -156,7 +156,7 @@ customerCategory: 游戏
 	```
 
 + 更新索引列：
-	
+
 	```
 	UPDATE sbtest%u SET k=k+1 WHERE id=?
 	```
@@ -171,8 +171,8 @@ customerCategory: 游戏
 
 其中一个重要的测试结果如下：
 
-![图 6 一个重要的测试结果](media/user-case-wangyihuyu/6.png) 
-    
+![图 6 一个重要的测试结果](media/user-case-wangyihuyu/6.png)
+
 <div class="caption-center">图 6 测试结果</div>
 
 结论：
@@ -181,11 +181,11 @@ customerCategory: 游戏
 
 	>注：上面是 2018 年 7 月的基于 TiDB 2.0.5 版本的测试结果，现在 [TiDB 已发布 3.0 GA 版本，在性能上有了质的提升](https://pingcap.com/docs-cn/v3.0/releases/3.0-ga/)，我们在近期进行了补充测试，大多数场景下 3.0 版本较 2.1 版本有数倍的性能提升，最新的测试结果图如下：
 	>
-	>![图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较](media/user-case-wangyihuyu/7.png) 
+	>![图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较](media/user-case-wangyihuyu/7.png)
 	>
 	><div class="caption-center">图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较</div>
 	>
-	>![图 8 TiDB 2.1.15 vs 3.0.3：TPC-C](media/user-case-wangyihuyu/8.png) 
+	>![图 8 TiDB 2.1.15 vs 3.0.3：TPC-C](media/user-case-wangyihuyu/8.png)
 	>
 	><div class="caption-center">图 8 TiDB 2.1.15 vs 3.0.3：TPC-C</div>
 
@@ -208,7 +208,7 @@ customerCategory: 游戏
 
 经过谨慎的考量，我们选择了 TiDB。
 
-![图 9 选择 TiDB ](media/user-case-wangyihuyu/9.png) 
+![图 9 选择 TiDB ](media/user-case-wangyihuyu/9.png)
 
 <div class="caption-center">图 9 选择 TiDB 的重要理由</div>
 
@@ -218,7 +218,7 @@ customerCategory: 游戏
 
 网易互娱使用 TiDB 的架构设计如下：
 
-![图 10 基于 TiDB 的架构设计](media/user-case-wangyihuyu/10.png) 
+![图 10 基于 TiDB 的架构设计](media/user-case-wangyihuyu/10.png)
 
 <div class="caption-center">图 10 基于 TiDB 的架构设计</div>
 
@@ -280,24 +280,24 @@ customerCategory: 游戏
 
 PD 监控示意图如下，集群管理员可以很方便地掌握集群的最新状态，包括集群的空间 Region 等所有情况。
 
-![图 11 最佳运维实践：Prometheus 实时监控](media/user-case-wangyihuyu/11.png) 
+![图 11 最佳运维实践：Prometheus 实时监控](media/user-case-wangyihuyu/11.png)
 
 <div class="caption-center">图 11 最佳运维实践：Prometheus 实时监控</div>
 
 如果集群运行过程出错，在监控面板上很容易就发现，下图是使用过程中的一个案例：
 
-![图 12 最佳运维实践案例](media/user-case-wangyihuyu/12.png) 
+![图 12 最佳运维实践案例](media/user-case-wangyihuyu/12.png)
 
 <div class="caption-center">图 12 最佳运维实践案例</div>
 
 应用访问 TiDB 写入数据时发现特别慢，读请求正常。排查后，根据 TiKV 面板发现 Raft Store CPU 这项指标异常。深入了解原因是因为数据库副本复制是单线程操作，目前已经到了集群的瓶颈。解决办法有以下两点：
 
 + Region 数量过多，Raft Store 还要处理 heartbeat message。
-  
+
   解决方法：删除过期数据。
 
 + Raft Store 单线程处理速度跟不上集群写入速度。
-  
+
   解决方法：从 2.1.5 升级到 2.1.15，开启自动 Region Merge 功能。
 
 #### 4.2.2 部分运维问题及解决方案
@@ -317,7 +317,7 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 
 以前部分业务遍历全网数据库获取所需数据，需要维护多个源，而且是异构源，非常复杂和繁琐。使用 TiDB 很好地解决了这个问题，只需要访问一个源就可以获取到所有想要的数据。
 
-![图 13 全网数据库遍历](media/user-case-wangyihuyu/13.png) 
+![图 13 全网数据库遍历](media/user-case-wangyihuyu/13.png)
 
 <div class="caption-center">图 13 全网数据库遍历</div>
 
@@ -325,7 +325,7 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 
 #### 4.4.1 MySQL 到 TiDB
 
-![图 14 数据从 MySQL 迁移到 TiDB](media/user-case-wangyihuyu/14.png) 
+![图 14 数据从 MySQL 迁移到 TiDB](media/user-case-wangyihuyu/14.png)
 
 <div class="caption-center">图 14 数据从 MySQL 迁移到 TiDB</div>
 
@@ -342,7 +342,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 #### 4.4.2 数据迁出 TiDB
 
-![图 15 数据迁出 TiDB](media/user-case-wangyihuyu/15.png) 
+![图 15 数据迁出 TiDB](media/user-case-wangyihuyu/15.png)
 
 <div class="caption-center">图 15 数据迁出 TiDB</div>
 
@@ -358,7 +358,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 ### 4.5 优雅地「去分库分表」
 
-![图 16 去分库分表举例](media/user-case-wangyihuyu/16.png) 
+![图 16 去分库分表举例](media/user-case-wangyihuyu/16.png)
 
 <div class="caption-center">图 16 去分库分表举例</div>
 
@@ -369,7 +369,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 	```
 	SELECT xx FROM HFeeall join HFee20190101 join ... join ...join ... join HFee20190917 WHERE xx;
 	```
-	
+
 	需要连接 N 个 join 条件，查询需要等待较长时间。
 
 + 下游 TiDB
@@ -377,7 +377,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 	```
 	SELECT xx  FROM SuperHfeeall WHERE xx ;
 	```
-	
+
 	应用此方案，最大单表 700+GB，13+ 亿行，索引查询秒返回。
 
 ### 4.6  业务迁移
@@ -396,7 +396,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 观察一段时间，同步无误后，可以根据业务需要迁移部分读流量到 TiDB 集群。
 
-![图 17 业务迁移之数据同步](media/user-case-wangyihuyu/17.png) 
+![图 17 业务迁移之数据同步](media/user-case-wangyihuyu/17.png)
 
 <div class="caption-center">图 17 业务迁移之数据同步</div>
 
@@ -406,7 +406,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 停止数据同步，使用流量复制工具将线上流量完全拷贝出来，同时读写 MySQL 和 TiDB。将两边的访问结果进行对比，核查 TiDB 是否可靠和可信。根据需要，这个阶段可以测试较长时间。
 
-![图 18 业务迁移之读写验证](media/user-case-wangyihuyu/18.png) 
+![图 18 业务迁移之读写验证](media/user-case-wangyihuyu/18.png)
 
 <div class="caption-center">图 18 业务迁移之读写验证</div>
 
@@ -416,7 +416,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 把访问部分非核心业务的库表写操作迁移到 TiDB，打开 TiDB 的 Binlog 开关对线上 MySQL 进行反向同步。这个操作，保证只写 MySQL 的数据同步到 TiDB ，只写 TiDB 的数据也可以反向同步到 MySQL，保证出了问题，随时可以回滚。当业务长时间访问正常，可以增加切换流量，进行灰度切换。建议观察一段时间，至少一个月。
 
-![图 19 业务迁移之灰度切换](media/user-case-wangyihuyu/19.png) 
+![图 19 业务迁移之灰度切换](media/user-case-wangyihuyu/19.png)
 
 <div class="caption-center">图 19 业务迁移之灰度切换</div>
 
@@ -424,7 +424,7 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 当流量完全迁移完成，保持 TiDB 反同步到 MySQL 过程，继续观察一段时间，确认无误后，断开反向同步，100% 迁移完成。
 
-![图 20 完成迁移](media/user-case-wangyihuyu/20.png) 
+![图 20 完成迁移](media/user-case-wangyihuyu/20.png)
 
 <div class="caption-center">图 20 完成迁移</div>
 

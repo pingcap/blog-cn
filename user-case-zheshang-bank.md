@@ -5,7 +5,7 @@ date: 2020-12-23
 summary: 本篇文章将介绍 TiDB 在扩展浙商银行数据架构体系能力版图的实践。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-zheshang-bank/
+url: /case/user-case-zheshang-bank/
 weight: 1
 logo: /images/blog-cn/customers/zheshang-bank-logo.jpg
 customer: 浙商银行

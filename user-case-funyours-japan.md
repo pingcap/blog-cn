@@ -5,14 +5,14 @@ date: 2018-03-23
 summary: 比较原本架构与 TiDB 架构，现在运营上最直接的效益就是硬体成本的节约。
 tags: ['游戏']
 category: case
-url: /cases-cn/user-case-funyours-japan/
+url: /case/user-case-funyours-japan/
 weight: 4
 logo: /images/blog-cn/customers/funyours-japan-logo.png
 customer: FUNYOURS JAPAN
 customerCategory: 游戏
 ---
 
->作者：张明塘，FUNYOURS JAPAN 运营系统工程師 
+>作者：张明塘，FUNYOURS JAPAN 运营系统工程師
 
 ## 背景
 

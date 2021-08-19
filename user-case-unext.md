@@ -5,7 +5,7 @@ date: 2020-09-07
 summary: 本文介绍了 TiDB 在 U-Next ARM 平台上的应用与实践。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-unext/
+url: /case/user-case-unext/
 weight: 4
 logo: /images/blog-cn/customers/unext-logo.jpg
 customer: U-Next
@@ -49,7 +49,7 @@ ARM 平台的成本相较于 x86 会有一部分优势，对于小体量的用�
 - CPU 配置方面，ARM 平台是 2 core 32 核心（华为鲲鹏 920），x86 平台是 2 core 12 核心（Intel 2650V4），Intel 有着超线能技术，所以它等于有  48 核心。
 
 - Numa 方面，x86 有 2 个节点，ARM 有 4 个节点，这也是一个影响性能很关键的因素。
- 
+
 - 内存都是 128G，但是内存处理方式上面两者有着很大的不同，ARM 采用的是 load-store 微架构，由于 ARM CPU 并不直接处理内存中的数据，这个指令体系就担起了在寄存器和内存之间交换数据的重要媒介。它要比 x86 的内存访问机制复杂一些。
 
 - 硬盘和网络都相同，两个 SSD 系统盘，一个 NVMe 数据盘，采用相同品牌的服务器。

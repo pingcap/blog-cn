@@ -5,7 +5,7 @@ date: 2021-03-25
 summary: 基于创新的计算存储框架，HTAP 数据库能够在一份数据上同时支撑OLTP 和 OLAP 场景，避免在传统架构中，在线与离线数据库之间大量的数据交互。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-zhihuiya/
+url: /case/user-case-zhihuiya/
 weight: 2
 logo: /images/blog-cn/customers/zhihuiya-logo.png
 customer: 智慧芽

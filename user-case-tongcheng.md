@@ -5,7 +5,7 @@ date: 2018-04-12
 summary: 在同程内部，目前共有数套 TiDB 集群，部署服务器数量近百台，总数据量数十 TB。其中最大的一个集群 10 多个数据节点，近十 TB 数据，数据量过百亿，平均 QPS 在 5000，高峰 QPS 过万。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-tongcheng/
+url: /case/user-case-tongcheng/
 weight: 18
 logo: /images/blog-cn/customers/tongcheng-logo.png
 customer: 同程网
@@ -14,7 +14,7 @@ customerCategory: 电商
 
 >作者：瞿锴，同程网资深 DBA。
 
-## 项目背景  
+## 项目背景
 
 初次接触 TiDB，是通过同程网首席架构师王晓波先生的分享，当时同程网正在使开发和数据库全面往开源方向转型，由于业务需要，很多在线业务数据量和访问量都非常的大，而 MySQL 无法满足大数据量下的复杂查询需求，为了使数据库分片对开发透明，同程自研了 DBrouter。但分片后的合并、实时汇总统计及全量数据的监控仍然是困扰我们的一个难点。一直没有特别好的办法解决。
 

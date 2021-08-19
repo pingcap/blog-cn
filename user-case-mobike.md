@@ -5,15 +5,14 @@ date: 2017-12-25
 summary: 部署 TiDB 近一年来，摩拜单车经历了用户数量近十倍、日骑行数据数十倍的增长，依靠其在线扩容的能力，完成了多次数据库扩容与服务器更换。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-mobike/
-aliases: ['/blog-cn/user-case-mobike/']
+url: /case/user-case-mobike/
 weight: 13
 logo: /images/blog-cn/customers/mobike-logo.png
 customer: 摩拜单车
 customerCategory: 出行
 ---
 
-> 作者：丁宬杰 / 胡明，Mobike 技术研发部基础平台中心 
+> 作者：丁宬杰 / 胡明，Mobike 技术研发部基础平台中心
 
 ## 背景
 

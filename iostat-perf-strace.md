@@ -9,8 +9,6 @@ summary: >-
 tags:
   - 性能
   - 工具
-aliases:
-  - /blog-cn/tangliu-tool-1/
 ---
 
 # 使用 iostat 定位磁盘问题

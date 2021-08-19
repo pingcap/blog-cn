@@ -5,7 +5,7 @@ date: 2020-08-03
 summary: 本文阐述了 TiDB 4.0 新特性在转转的探索与实践。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-zhuanzhuan-3/
+url: /case/user-case-zhuanzhuan-3/
 weight: 2
 logo: /images/blog-cn/customers/zhuanzhuan-logo.png
 customer: 转转

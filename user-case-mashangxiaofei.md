@@ -5,7 +5,7 @@ date: 2020-02-11
 summary: 我们积累了账务归档、总账跑批等大数据量、高并发量的 TiDB 实践经验，还将所有 TiDB 运行到了 Kubernetes 容器云平台之上，使数据库真正获得了 Cloud-native 能力。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-mashangxiaofei/
+url: /case/user-case-mashangxiaofei/
 logo: /images/blog-cn/customers/mashangxiaofei-logo.png
 weight: 5
 customer: 马上消费
@@ -13,9 +13,9 @@ customerCategory: 金融
 ---
 
 > **作者介绍：**
-> 
+>
 > 康文权，马上消费金融总账高级研发工程师。
-> 
+>
 > 李银龙，原腾讯云运维工程师，马上消费金融容器云 TiDB 负责人，西南区 TUG Leader。
 
 ## 背景介绍
@@ -81,7 +81,7 @@ MySQL 的集群基于 Binlog 主从异步复制来做，切集群主从角色以
 
 * 分布式强一致性，确保金融数据 100% 安全
 
-* 完整的分布式事务处理能力与 ACID 特性 
+* 完整的分布式事务处理能力与 ACID 特性
 
 在账务系统研发团队、公共平台研发团队、DBA 团队等联合推动下，我们开始对 NewSQL 技术进行调研选型。
 

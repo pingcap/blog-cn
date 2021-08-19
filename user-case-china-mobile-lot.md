@@ -5,7 +5,7 @@ date: 2020-10-14
 summary: 本次分享主要介绍车联网业务，它主要围绕车载位置终端和车载视频终端开展业务，包括停车卫士、路尚个人、路尚行业、和统一填装业务。
 tags: ['大型企业']
 category: case
-url: /cases-cn/user-case-china-mobile-lot/
+url: /case/user-case-china-mobile-lot/
 weight: 2
 logo: /images/blog-cn/customers/china-mobile-lot-logo.jpeg
 customer: China Mobile LoT

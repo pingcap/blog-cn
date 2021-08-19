@@ -4,8 +4,6 @@ author: ['刘寅']
 date: 2018-03-28
 summary: 本文为今年年初 PingCAP 商业产品团队负责人刘寅在 TiDB DevCon2018 上分享的 《 TiDB 工具链和生态》实录内容，文内详细介绍了 TiDB 的周边工具以及生态系统。enjoy~
 tags: ['TiDB','DevCon', '工具']
-aliases:
-  - /blog-cn/liuyin-tidb-devcon/
 ---
 
 > 本文为今年年初 PingCAP 商业产品团队负责人刘寅在 TiDB DevCon2018 上分享的 《 TiDB 工具链和生态》实录内容，文内详细介绍了 TiDB 的周边工具以及生态系统。enjoy~
@@ -31,9 +29,9 @@ TiDB 作为一个可以弹性水平扩展的分布式数据库，天生为云而
 ![DBaaS 结构图](media/tidb-tools-ecosystems/1.png)
 
 DBaaS 结构图可以看到 Cloud TiDB 的分层架构。最下层是容器云，中间一层是 K8s 自身的服务管理和 API Server。我们在此基础上进行扩展，实现各种 Controller 和调度器，自己本地存储管理 Volume Manager，最终通过 Cloud Manager 提供的 RESTful API 进行暴露。可以很容易接一个前端的 Dashboard，或者直接使用 CLI 命令行工具，完成 TiDB 集群实例的统一化管理。
- 
+
  ![细节图](media/tidb-tools-ecosystems/2.png)
- 
+
 这个图就是前面讲的一些细节。这里面可以看到，左半边是 Kube 本身的组件，右侧是我们的扩展出来组件，另外，我们也自己定义了一些 TiDB 的资源类型放在 CDR 里面。比如说 TiDB Cluster，在这个资源对象上可以描述要启动多少个 TiKV，多少个 TiDB。另外还有 TiDB Set / TiKV Set / PD Set 等一系列对象，来分别描述某个服务的配置。
 
 这是在腾讯云上面的一个截图，现在这两个产品都在公测，
@@ -98,8 +96,8 @@ MyDumper 格式的文件作为输入，首先完成 SQL 到 KV 的转换，它�
 
 最后说一下 TiDB 的监控。监控我们后台用的 **Prometheus** 这个非常出名的项目，通过它来做存储数据库各个服务的 metrics。每个 TiDB、TiKV 组件都会把自己的状态上报到 Prometheus（实际是 pull 的模式），我们通过 Node Exporter 来采集每台主机的状态。而对于 K8s 集群，是通过 cAdvisor 进行收集，把 metrics 在 Prometheus 进行汇总。通过 Grafana 来做监控和可视化。我们配置好的 Grafana 面板点击编辑按钮，都可以看到对应的 Prometheus 查询表达式，通过一种类似 SQL 的查询语句，你就可以很方便的从 Prometheus 拉取监控数据然后对接到自己的监控平台。 Alert manager 也是 Prometheus 生态里面的一个工具，它可以去接受 Prometheus 发出的报警事件，然后通过各种报警方式推送出来。日志方面我们也是用比较流行的 EFK 套件。在 K8s 集群中，采集每个 Pod 的日志，存放到 ES 里面再通过 Kibana 进行展示。
 
-![TiDB Monitor & Alerting](media/tidb-tools-ecosystems/11.png)	
-	
+![TiDB Monitor & Alerting](media/tidb-tools-ecosystems/11.png)
+
 这个是监控的几个截图，这个大家可能都比较熟悉了。
 
 ![监控](media/tidb-tools-ecosystems/12.png)
@@ -109,4 +107,4 @@ MyDumper 格式的文件作为输入，首先完成 SQL 到 KV 的转换，它�
 我今天介绍的内容主要就这些了，谢谢大家！
 
 
-	
+

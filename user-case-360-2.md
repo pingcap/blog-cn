@@ -5,7 +5,7 @@ date: 2020-11-16
 summary: 本篇文章将介绍 TiDB 在 360 网盾业务、智慧商业业务、广告物料数据业务等核心场景的应用与实践。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-360-2/
+url: /case/user-case-360-2/
 weight: 3
 logo: /images/blog-cn/customers/360-logo-2.png
 customer: '360'

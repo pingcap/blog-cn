@@ -5,7 +5,7 @@ date: 2019-07-12
 summary: ​本文根据近两年 TiDB 在小红书的落地过程，和大家一起探讨一下，小红书在新数据库选型的考虑因素、以及 TiDB 从场景分类的角度是如何考量及逐步推广使用的。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-xiaohongshu/
+url: /case/user-case-xiaohongshu/
 weight: 4
 logo: /images/blog-cn/customers/xiaohongshu-logo.png
 customer: 小红书

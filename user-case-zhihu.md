@@ -5,7 +5,7 @@ date: 2019-06-26
 summary: 目前已读服务的流量已达每秒 4 万行记录写入，3 万独立查询和 1200 万个文档判读，在这样的压力下已读服务响应时间的 P99 和 P999 仍然稳定的维持在 25ms 和 50ms，其实平均时间是远低于这个数据的。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-zhihu/
+url: /case/user-case-zhihu/
 weight: 1
 logo: /images/blog-cn/customers/zhihu-logo.png
 customer: 知乎

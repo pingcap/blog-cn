@@ -5,7 +5,7 @@ date: 2020-07-02
 summary: 未来我们可能会扩大 TiDB 在分析服务以及非交易业务中的使用。我们产品里还有许多数据挖掘系统、推荐系统等。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-zalopay/
+url: /case/user-case-zalopay/
 weight: 5
 logo: /images/blog-cn/customers/zalopay-logo.png
 customer: ZaloPay

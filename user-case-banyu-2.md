@@ -5,7 +5,7 @@ date: 2020-11-09
 summary: 本篇文章让我们看看伴鱼 All in TiDB 背后的故事。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-banyu-2/
+url: /case/user-case-banyu-2/
 weight: 1
 logo: /images/blog-cn/customers/banyu-logo-2.jpg
 customer: 伴鱼

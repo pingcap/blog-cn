@@ -5,7 +5,7 @@ date: 2020-07-30
 summary: 本文阐述了伴鱼技术团队数据库选型的过程，并分享了伴鱼技术团队对新技术的态度、技术后发优势的理解、成本与效率的衡权和技术生态与红利的思考。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-banyu/
+url: /case/user-case-banyu/
 weight: 6
 logo: /images/blog-cn/customers/banyu-logo.png
 customer: 伴鱼

@@ -5,8 +5,7 @@ date: 2017-12-05
 summary: 借助 TiDB 的分布式计算和存储引擎，集群对外服务的处理能力大大增强，高并发实时的风控规则计算能够轻松的处理完，并且数据库集群获得了线性提升和扩展的能力。
 tags: ['大型企业']
 category: case
-url: /cases-cn/user-case-wanda/
-aliases: ['/blog-cn/user-case-wanda/']
+url: /case/user-case-wanda/
 weight: 3
 logo: /images/blog-cn/customers/wanda-logo.png
 customer: 万达网络科技集团

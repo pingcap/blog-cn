@@ -5,7 +5,7 @@ date: 2018-06-09
 summary: 舆情系统目前总数据量数 T，已正式上线三个月，期间从未出现过异常，系统平稳、使用效果也非常好。可以说 TiDB 给我们的体验远超预期。
 tags: ['游戏']
 category: case
-url: /cases-cn/user-case-xishanju/
+url: /case/user-case-xishanju/
 weight: 1
 logo: /images/blog-cn/customers/xishanju-logo.png
 customer: 西山居

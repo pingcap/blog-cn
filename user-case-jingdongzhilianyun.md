@@ -5,8 +5,7 @@ date: 2019-09-23
 summary: 目前 TiKV 在京东云对象存储业务上是 Primary 数据库，总集群数量为 10+，生产环境单集群 QPS 峰值 4 万（读写 1:1），最大的单集群数据量 200+亿，共有 50 余万个 Region，Latency 能保证在 10ms 左右。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-jingdongzhilianyun/
-aliases: ['/cases-cn/user-case-jingdongyun/']
+url: /case/user-case-jingdongzhilianyun/
 weight: 3
 logo: /images/blog-cn/customers/jingdongzhilianyun-logo.png
 customer: 京东

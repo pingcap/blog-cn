@@ -5,7 +5,7 @@ date: 2018-05-25
 summary: 目前 TiDB 线上已经存储超过 6 个月的数据，总数据量几 T，支持线上的查询和分析需求，很多一般复杂度 OLAP 查询都能够在秒级返回结果。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-keruyun/
+url: /case/user-case-keruyun/
 weight: 16
 logo: /images/blog-cn/customers/keruyun-logo.png
 customer: 客如云

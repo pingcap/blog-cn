@@ -5,7 +5,7 @@ date: 2020-07-24
 summary: 本文介绍了 TiDB HTAP 方案在中通快递的应用实践。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-zto-express/
+url: /case/user-case-zto-express/
 weight: 4
 logo: /images/blog-cn/customers/zto-express-logo.png
 customer: 中通快递

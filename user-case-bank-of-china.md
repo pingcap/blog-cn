@@ -5,7 +5,7 @@ date: 2020-06-30
 summary: TiDB 兼容 MySQL 协议，可以替换 MySQL 从而增强 Zabbix 的大规模监控能力，实现新的监控方案 TiZabbix。TiZabbix 通过优化监控实施逻辑，弥补因 TiDB 和 MySQL 差异造成的诸多问题，成功完成了 10000+ 监控对象和 16T 数据存储查询的实践。
 tags: ['金融']
 category: case
-url: /cases-cn/user-case-bank-of-china/
+url: /case/user-case-bank-of-china/
 weight: 2
 logo: /images/blog-cn/customers/bank-of-china-logo.png
 customer: 中国银行

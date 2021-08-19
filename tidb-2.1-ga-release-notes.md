@@ -4,7 +4,6 @@ author: ['PingCAP']
 date: 2018-11-30
 summary: 2018 年 11 月 30 日，TiDB 发布 2.1 GA 版。相比 2.0 版本，该版本对系统稳定性、性能、兼容性、易用性做了大量改进。
 tags: ['TiDB']
-aliases: ['/blog-cn/tidb-21-ga-release-note/']
 ---
 
 

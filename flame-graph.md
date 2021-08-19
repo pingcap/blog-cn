@@ -4,8 +4,6 @@ author: ['唐刘']
 date: 2017-06-26
 summary: 本篇文章将介绍一下，我们在 TiKV 性能调优上面用的最多的工具 - 火焰图。
 tags: ['性能', '工具']
-aliases:
-  - /blog-cn/tangliu-tool-2/
 ---
 
 在 [工欲性能调优，必先利其器（1）](./iostat-perf-strace.md) ，我们简单提到了 perf，实际 perf 能做的事情远远不止这么少，这里就要好好介绍一下，我们在 TiKV 性能调优上面用的最多的工具 - 火焰图。

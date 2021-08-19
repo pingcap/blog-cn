@@ -5,7 +5,7 @@ date: 2018-06-29
 summary: 目前我们单表数据量接近 20 亿，每天的增量接近 800 万左右。
 tags: ['互联网']
 category: case
-url: /cases-cn/user-case-telaidian/
+url: /case/user-case-telaidian/
 weight: 22
 logo: /images/blog-cn/customers/telaidian-logo.png
 customer: 特来电

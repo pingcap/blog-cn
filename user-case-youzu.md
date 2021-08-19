@@ -5,15 +5,14 @@ date: 2018-02-08
 summary: 经过内部的实际使用后，后续已经有数个符合业务场景在评估或计划使用 TiDB 作为 OLTP 存储层的支撑。
 tags: ['游戏']
 category: case
-url: /cases-cn/user-case-youzu/
-aliases: ['/blog-cn/user-case-youzu/']
+url: /case/user-case-youzu/
 weight: 2
 logo: /images/blog-cn/customers/youzu-logo.png
 customer: 游族
 customerCategory: 游戏
 ---
 
-## 公司介绍  
+## 公司介绍
 
 游族网络股份有限公司（SZ.002174）成立于 2009 年，是全球领先的互动娱乐供应商。公司以“大数据”、“全球化”、“精品化”为战略方向，立足全球化游戏研发与发行，知名 IP 管理，大数据与智能化，泛娱乐产业投资四大业务板块全面发展。
 

@@ -4,8 +4,6 @@ author: ['唐刘']
 date: 2017-02-21
 summary: 最近大家非常关注的一件事情就是 Google Spanner Cloud 的发布，这应该算是 NewSQL 又一个里程碑的事件。在本篇文章中，唐刘同学与大家分享了他自己对 Spanner 的理解，Spanner 的一些关键技术的实现以及与 TiDB 的相关对比。
 tags: ['Cloud', 'Spanner', 'CAP']
-aliases:
-  - /blog-cn/spanner-tangliu/
 ---
 
 
