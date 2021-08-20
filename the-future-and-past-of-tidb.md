@@ -4,6 +4,7 @@ author: ['黄东旭']
 date: 2020-11-30
 summary: 本文根据黄东旭在 PingCAP D 轮融资线上发布会的演讲实录进行整理。
 tags: ['TiDB']
+draft: true
 ---
 
 
@@ -45,7 +46,7 @@ tags: ['TiDB']
 
 ![6-techlanguage](media/the-future-and-past-of-tidb/6-techlanguage.png)
 
-可能有很多观众学过计算机技术，我记得我在上大学的时候，我们有一门课是叫数据库系统，老师上课的时候教我数据库就是增删改查，就是存数据、取数据的一个系统、一个软件，几个关键的命令 INSERT\SELECT\UPDATE\DELETE，我回忆了一下好象也没有教哪些场景是 OLTP 的场景，哪些是 OLAP 的系统，并没有这么复杂。 
+可能有很多观众学过计算机技术，我记得我在上大学的时候，我们有一门课是叫数据库系统，老师上课的时候教我数据库就是增删改查，就是存数据、取数据的一个系统、一个软件，几个关键的命令 INSERT\SELECT\UPDATE\DELETE，我回忆了一下好象也没有教哪些场景是 OLTP 的场景，哪些是 OLAP 的系统，并没有这么复杂。
 
 **数据库应该就是存数据、取数据天经地义，就像水龙头一样一拧开就出水**，我还特地查了一下 database 的定义，在维基百科上面的定义其实并没有说 OLTP 的 database 或者 OLAP 的 database。
 

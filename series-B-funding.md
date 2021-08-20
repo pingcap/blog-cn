@@ -4,6 +4,7 @@ author: ['刘奇', '黄东旭', '崔秋']
 date: 2017-06-13
 summary: 平时技术说得多，今天说点走心的。
 tags: ['PingCAP']
+draft: true
 ---
 
 平时技术说得多，今天说点走心的。

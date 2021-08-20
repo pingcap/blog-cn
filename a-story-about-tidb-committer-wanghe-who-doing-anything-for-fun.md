@@ -4,6 +4,7 @@ author: ['PingCAP']
 date: 2020-11-30
 summary: 本篇文章将介绍王贺 TiDB Committer，DDL SIG 的 xhebox 的贡献之路。
 tags: ['TiDB', 'Committer']
+draft: true
 ---
 
 
@@ -52,7 +53,7 @@ tags: ['TiDB', 'Committer']
 
 ## 给 TiDB 社区的新人们一些建议
 
-贡献最开始的一段比较困难，可能刚进去社区还不熟悉流程，一定要坚持过去，就会豁然开朗。**在参与的过程中一定要 get hands dirty，观望不如动手，实践出真知。** 
+贡献最开始的一段比较困难，可能刚进去社区还不熟悉流程，一定要坚持过去，就会豁然开朗。**在参与的过程中一定要 get hands dirty，观望不如动手，实践出真知。**
 
 ## 对于本次 PingCAP D 轮融资，你作为社区的一份子，你怎么看？
 

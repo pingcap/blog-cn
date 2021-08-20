@@ -4,6 +4,7 @@ author: ['PingCAP']
 date: 2020-11-23
 summary: 企业级开源分布式数据库厂商 PingCAP 日前宣布完成 2.7 亿美元的 D 轮融资，创造全球数据库历史新的里程碑。
 tags: ['TiDB', 'PingCAP']
+draft: true
 ---
 
 **企业级开源分布式数据库厂商 PingCAP 日前宣布完成 2.7 亿美元的 D 轮融资，创造全球数据库历史新的里程碑**。本轮融资由纪源资本（GGV Capital）、Access Technology Ventures、晨曦投资 （Anatole Investment）、时代资本（Jeneration Capital）、五源资本（5Y Capital 原晨兴资本）共同领投，贝塔斯曼亚洲投资基金（BAI）、Coatue、天际资本（FutureX Capital）、昆仑资本（Kunlun）、挚信资本（Trustbridge Partners）及老股东经纬中国（Matrix Partners China）、云启资本（Yunqi Partners）跟投，瑞银担任本轮融资的独家财务顾问。
