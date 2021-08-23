@@ -20,7 +20,7 @@ image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 
 ![TPC-H Query Result](media/for-community-tidb-2019-level-up/1.png)
 
-一直以来，TiDB 的 SQL 层作为纯 Go 语言实现的最完备的 MySQL 语法兼容层，很多第三方的 MySQL 工具在使用着 TiDB 的 SQL Parser，其中的优秀代表比如 [**小米的 Soar**](https://pingcap.com/cases-cn/user-case-xiaomi/)（[https://github.com/XiaoMi/soar](https://github.com/XiaoMi/soar)）。为了方便第三方更好的复用 TiDB Parser，我们在 2018 年将 Parser 从主项目中剥离了出来，成为了一个独立的项目：pingcap/parser，希望能帮到更多的人。
+一直以来，TiDB 的 SQL 层作为纯 Go 语言实现的最完备的 MySQL 语法兼容层，很多第三方的 MySQL 工具在使用着 TiDB 的 SQL Parser，其中的优秀代表比如 **小米的 Soar**（[https://github.com/XiaoMi/soar](https://github.com/XiaoMi/soar)）。为了方便第三方更好的复用 TiDB Parser，我们在 2018 年将 Parser 从主项目中剥离了出来，成为了一个独立的项目：pingcap/parser，希望能帮到更多的人。
 
 说到 TiDB 的底层存储 TiKV 今年也有很多让人眼前一亮的更新。在 TiKV 的基石——一致性算法 Raft 这边，大家知道 TiKV 采用的是 Multi-Raft 的架构，内部通过无数个 Raft Group 动态的分裂、合并、移动以达到动态伸缩和动态负载均衡。我们在今年仍然持续在扩展 Multi-Raft 的边界，我们今年加入了动态的 Raft Group 合并，以减轻元信息存储和心跳通信的负担；给 Raft 扩展了 Learner 角色（只同步 Log 不投票的角色） 为 OLAP Read 打下基础；给 Raft 的基础算法加入了 Pre-Vote 的阶段，让整个系统在异常网络状态下可靠性更高。
 
@@ -57,7 +57,7 @@ image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 
 <div class="caption-center">TiDB 的用户数统计</div>
 
-今年几个比较典型的 [用户案例](https://pingcap.com/zh/case/)，从 [美团](https://pingcap.com/cases-cn/user-case-meituan/) 的横跨 OLTP 和实时数仓的深度实践，到 [转转](https://pingcap.com/cases-cn/user-case-zhuanzhuan/) 的 All-in TiDB 的体验，再到 TiDB 支撑的北京银行的核心交易系统。可以看到，这些案例从互联网公司的离线线数据存储到要求极端 SLA 的传统银行核心交易系统，TiDB 在这些场景里面都发光发热，甚至有互联网公司（转转）都喊出了 All-in TiDB 的口号，我们非常珍视这份信任，一定尽全力做出漂亮的产品，高质量的服务好我们的用户和客户。另一方面，TiDB 也慢慢开始产生国际影响力的，在线视频巨头葫芦软件（Hulu.com），印度最大的在线票务网站 BookMyShow，东南亚最大的电商之一 [Shopee](https://pingcap.com/cases-cn/user-case-shopee/) 等等都在大规模的使用 TiDB，在北美和欧洲也已经不少准上线和测试中的的巨头互联网公司。
+今年几个比较典型的用户案例，从美团的横跨 OLTP 和实时数仓的深度实践，到转转的 All-in TiDB 的体验，再到 TiDB 支撑的北京银行的核心交易系统。可以看到，这些案例从互联网公司的离线线数据存储到要求极端 SLA 的传统银行核心交易系统，TiDB 在这些场景里面都发光发热，甚至有互联网公司（转转）都喊出了 All-in TiDB 的口号，我们非常珍视这份信任，一定尽全力做出漂亮的产品，高质量的服务好我们的用户和客户。另一方面，TiDB 也慢慢开始产生国际影响力的，在线视频巨头葫芦软件（Hulu.com），印度最大的在线票务网站 BookMyShow，东南亚最大的电商之一 Shopee 等等都在大规模的使用 TiDB，在北美和欧洲也已经不少准上线和测试中的的巨头互联网公司。
 
 **简单回顾了一下过去的 2018 年，我们看看未来在哪里。**
 
