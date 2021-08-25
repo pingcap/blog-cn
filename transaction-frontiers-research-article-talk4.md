@@ -1,3 +1,10 @@
+---
+title: 事务前沿研究丨事务并发控制
+author: ['童牧']
+date: 2021-05-20
+summary: 本次我们将学习一些常用的并发控制方法，最后对 VLDB 2020 的 best paper “Opportunities for Optimism in Contended Main-Memory Multicore Transactions” 进行解读，来看看有哪些办法能够提升事务的并行度。
+tags: ['TiDB', '事务']
+---
 事务并发控制技术是数据库的核心之一，在确保隔离性的前提下提高事务执行的并行度是并发控制技术的目标，本次我们将学习一些常用的并发控制方法，最后对 VLDB 2020 的 best paper “Opportunities for Optimism in Contended Main-Memory Multicore Transactions” 进行解读，来看看有哪些办法能够提升事务的并行度。
 ## 绪论
 
