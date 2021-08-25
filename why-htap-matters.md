@@ -108,7 +108,7 @@ mysql> ALTER TABLE orders SET TIFLASH REPLICA 2;
 
 很多现在其实已经有 Hadoop 或者有数据仓库的用户其实是这样使用 TiDB 的 HTAP 体系的（见上图）。对于实施层来说，它会把数据汇聚到 TiDB 当中，TiDB 会提供一个 Real Time Layer，这个 Layer 会直接提供一些实时的查询，甚至直接提供对外的数据业务服务。同时也可以通过 Spark 把数据迁移到 Offline 的 Hadoop Layer，Hadoop Layer 同时可以把数据建完模或者清洗完，或者做一些聚合之后再回馈到 TiDB 层，这样 TiDB 会提供一个更方便的数据服务。因为一般来说不太可能把 Hadoop 直接当做 API 暴露到对外的层面，因为 Hadoop 承载不了这样比较高速实时的查询。所以这样的一套体系就会比较方便的为你整个现有的这套机构赋予一个 real time 的能力。
 
-目前这套系统已经被很多用户应用了，大家可以查看[《TiDB HTAP 助力小红书业务升级》](https://pingcap.com/cases-cn/user-case-xiaohongshu-2/)、[《TiDB 4.0 在 VIPKID 的应用实践》](https://pingcap.com/cases-cn/user-case-vipkid/)、[《海外直播软件 Bigo 的 TiDB 4.0 线上实践》](https://pingcap.com/cases-cn/user-case-bigo/)、[《从 Exadata 到 TiDB，中通快递 HTAP 实践》](https://pingcap.com/cases-cn/user-case-zto-express/)，看看我们的用户现在怎么用以及现在这套他们用的好不好。
+目前这套系统已经被很多用户应用了，大家可以查看[《TiDB HTAP 助力小红书业务升级》](https://pingcap.com/cases-cn/user-case-xiaohongshu/)、[《TiDB 4.0 在 VIPKID 的应用实践》](https://pingcap.com/cases-cn/user-case-vipkid/)、[《海外直播软件 Bigo 的 TiDB 4.0 线上实践》](https://pingcap.com/cases-cn/user-case-bigo/)、[《从 Exadata 到 TiDB，中通快递 HTAP 实践》](https://pingcap.com/cases-cn/user-case-zto-express/)，看看我们的用户现在怎么用以及现在这套他们用的好不好。
 
 >作者简介：马晓宇，PingCAP 实时分析产品负责人。
 >本文整理自马晓宇在 [TiDB DevCon 2020](https://pingcap.com/community-cn/devcon2020/) 上的演讲，大会相关视频回顾可以关注官方 Bilibli 账号 TiDB_Robot 的更新。
