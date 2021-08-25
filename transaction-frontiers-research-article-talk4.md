@@ -34,9 +34,9 @@
 图 3 是 2PL 与其两种变体 Strict 2PL(2PL) 和 Strong Strict 2PL(SS2PL) 的对比，2PL 只要求在锁申请结束后就可以释放锁，而 S2PL 要求事务执行结束后才允许释放写锁，SS2PL 则要求事务执行结束后才能够释放读锁和写锁。SS2PL 虽然是 2PL 的变体，但因为事务的执行只在扩张阶段中进行，实际上是一种一阶段锁。
 
 
+![24](media/transaction-frontiers-research-article-talk4.fld/24.jpg)
 
-
-表 1 - ANSI SQL 隔离级别的加锁要求
+<div class="caption-center">表 1 - ANSI SQL 隔离级别的加锁要求</div>
 
 表 1 是 ANSI SQL 隔离级别的加锁要求，对于脏写现象是否需要在读未提交的情况下被防止 ANSI SQL 中没有明确的说明，但是这一隔离级别在扩展的 ANSI SQL 中被列为最低的级别（ Degree 1），需要防止脏写，表中不作明确的说明。在读已提交下需要防止脏写，因此需要加写锁；而可重复读需要通过 item 上的读锁来防止读到的数据被其他事务所修改；可串行化则需要对 predicate 类型的查询添加读锁。
 
@@ -64,35 +64,9 @@
 ### 多版本并发控制方法 - MVCC
 MVCC 是多版本并发控制方法，即对一份数据会存储多个版本，因此也需要一个 GC 去回收不再被使用的版本，释放系统的空间。
 
-Txn1
-Txn2
-Storage
+![25](media/transaction-frontiers-research-article-talk4.fld/25.jpg)
 
-
-
-
-(x0, 1), (y0, 1)
-r(x, 1, ts1)
-
-
-(x0, 1), (y0, 1)
-
-
-w(x, 2, ts2)
-commit
-(x0, 1), (x2, 2), (y0, 1)
-r(x, 1, ts1)
-
-
-(x0, 1), (x2, 2), (y0, 1)
-commit
-
-
-(x0, 1), (x2, 2), (y0, 1)
-GC works
-(x2, 2), (y0, 1)
-
-例 1 - MVCC 存储多版本的数据
+<div class="caption-center">例 1 - MVCC 存储多版本的数据</div>
 
 ![7](media/transaction-frontiers-research-article-talk4.fld/7.png)
 
