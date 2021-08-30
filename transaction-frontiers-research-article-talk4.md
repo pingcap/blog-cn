@@ -16,7 +16,7 @@ tags: ['TiDB', '事务']
 第一种方法会将数据库之中的并发降低到 1，这显然在大部分系统中都是不能够被接受的，那么如何在并行执行、保证所需隔离性的要求下尽可能的提升并行度就是并发控制方法的目标。
 
 
-![1](media/transaction-frontiers-research-article-talk4.fld/1.png)
+![1](media/transaction-frontiers-research-article-talk4/1.png)
 
 <div class="caption-center">图 1 - 缺少并发控制方法导致的异常提交</div>
 
@@ -26,7 +26,7 @@ tags: ['TiDB', '事务']
 两阶段锁
 两阶段锁的两个阶段分别是锁的扩张（Expanding）和收缩（Shrinking）阶段，而锁的类型又分为读锁和写锁，和常用的读写锁的功能对应。
 
-![2](media/transaction-frontiers-research-article-talk4.fld/2.png)
+![2](media/transaction-frontiers-research-article-talk4/2.png)
 
 <div class="caption-center">图2 - 两阶段锁的互斥表现</div>
 
@@ -34,20 +34,20 @@ tags: ['TiDB', '事务']
 
 除了标准的两阶段锁（2PL），还有一些更加严格的变种。标准的两阶段锁只要求锁的收缩阶段在扩张阶段之后，即在收缩阶段中不再申请新的锁即可，但是事务可能中锁收缩的过程中或是收缩结束之后仍然处于执行的状态。
 
-![3](media/transaction-frontiers-research-article-talk4.fld/3.png)
+![3](media/transaction-frontiers-research-article-talk4/3.png)
 
 <div class="caption-center">图 3 - 两阶段锁的互斥表现 bug</div>
 
 图 3 是 2PL 与其两种变体 Strict 2PL(2PL) 和 Strong Strict 2PL(SS2PL) 的对比，2PL 只要求在锁申请结束后就可以释放锁，而 S2PL 要求事务执行结束后才允许释放写锁，SS2PL 则要求事务执行结束后才能够释放读锁和写锁。SS2PL 虽然是 2PL 的变体，但因为事务的执行只在扩张阶段中进行，实际上是一种一阶段锁。
 
 
-![24](media/transaction-frontiers-research-article-talk4.fld/24.jpg)
+![24](media/transaction-frontiers-research-article-talk4/24.jpg)
 
 <div class="caption-center">表 1 - ANSI SQL 隔离级别的加锁要求</div>
 
 表 1 是 ANSI SQL 隔离级别的加锁要求，对于脏写现象是否需要在读未提交的情况下被防止 ANSI SQL 中没有明确的说明，但是这一隔离级别在扩展的 ANSI SQL 中被列为最低的级别（ Degree 1），需要防止脏写，表中不作明确的说明。在读已提交下需要防止脏写，因此需要加写锁；而可重复读需要通过 item 上的读锁来防止读到的数据被其他事务所修改；可串行化则需要对 predicate 类型的查询添加读锁。
 
-![4](media/transaction-frontiers-research-article-talk4.fld/4.png)
+![4](media/transaction-frontiers-research-article-talk4/4.png)
 
 <div class="caption-center">图 4 - Fuzzy Read(P2) 的现象</div>
 
@@ -57,13 +57,13 @@ tags: ['TiDB', '事务']
 ### 乐观并发控制方法 - OCC
 两阶段锁在事务的执行过程中通过加锁来保证隔离性，但是加锁是有 overhead 的，乐观的并发控制方法使用一种 lazy check 的机制，在事务执行过程中不加锁，在事务提交时候检查是否产生冲突。
 
-![5](media/transaction-frontiers-research-article-talk4.fld/5.png)
+![5](media/transaction-frontiers-research-article-talk4/5.png)
 
 <div class="caption-center">图5 - OCC 下的冲突</div>
 
 图 5 是 OCC 下产生冲突的例子，因为 x 被修改，所以冲突事务必须回滚。但是 OCC 带来的问题就是在高冲突的场景下，频繁的发生事务回滚，会大幅影响系统的性能。
 
-![6](media/transaction-frontiers-research-article-talk4.fld/6.png)
+![6](media/transaction-frontiers-research-article-talk4/6.png)
 
 <div class="caption-center">图6 - OCC 下的高冲突场景</div>
 
@@ -71,29 +71,29 @@ tags: ['TiDB', '事务']
 ### 多版本并发控制方法 - MVCC
 MVCC 是多版本并发控制方法，即对一份数据会存储多个版本，因此也需要一个 GC 去回收不再被使用的版本，释放系统的空间。
 
-![25](media/transaction-frontiers-research-article-talk4.fld/25.jpg)
+![25](media/transaction-frontiers-research-article-talk4/25.jpg)
 
 <div class="caption-center">例 1 - MVCC 存储多版本的数据</div>
 
-![7](media/transaction-frontiers-research-article-talk4.fld/7.png)
+![7](media/transaction-frontiers-research-article-talk4/7.png)
 
 <div class="caption-center">图7 - MVCC 中的异常</div>
 
 图 7 是 MVCC 中的异常现象，在 MVCC 系统中，因为保存了历史数据，所以需要解决一个事务能读取到哪个。解决的常用办法是通过一个全局的版本分配器，版本会决定数据的可见性，在有些系统中，会将 timestamp 当作版本号，下文也用 ts 来代表版本，图中的 Txn2 使用 ts = 1 去读取，能读到 ts <= 1 的数据。即使在 Txn1 将数据写入之后，所写入到 ts = 2 的数据对于 Txn2 来说依旧是不可见的，所以 Txn2 不管使用 item read 还是 predicate read 都能够读到和之前相同的数据，防止了不可重复读或者幻读异常的发生。我们注意到在 2PL 的系统中，幻读被认为是不可重复读的延伸，存在两个原因，一是防止幻读需要范围读锁，比较难高效的实现（尤其是在分布式系统中）；二是防止幻读所需要的范围读锁，可能会严重影响系统的并发度。但是在多版本的系统中，只需要读取一个快照的数据，就能够同时防止不可重复读和幻读，因此将幻读列为不可重复读的延伸异常，就不是那么有道理了。
 
-![8](media/transaction-frontiers-research-article-talk4.fld/8.png)
+![8](media/transaction-frontiers-research-article-talk4/8.png)
 
 <div class="caption-center">图8 - MVCC 中的一致性问题</div>
 
 MVCC 通过一个快照去读取相同的数据是一个很理想的想法，但是图 8 描述了 MVCC 中的一致性问题，如果一个事务在 Commit 过程中另一个事务用更新的 ts 进行读，那么对于尚未存在的数据，MVCC 无法正确处理，导致出现不可重复读的现象。
 
-![9](media/transaction-frontiers-research-article-talk4.fld/9.png)
+![9](media/transaction-frontiers-research-article-talk4/9.png)
 
 <div class="caption-center">图9 - MVCC min_commit_ts 实现一致读</div>
 
 为了解决这个图 8 的问题，MVCC 有两种办法，图 9 在系统中加入了一个约束，也是 TiDB 所使用的方法，写事务的 ts 必须大于所有与之相交的读事务，在实现中会让读事务推高 key 上的 min_commit_ts = read_ts + 1，在提交时候需要计算 commit_ts = max{commit_ts, min_commit_ts}，图 9 中，ts=2 的第一次读取将 min_commit_ts 推高到 3，进而让写事务写入的版本不影响 ts=2 的重复读取。感兴趣的同学还可以思考一下在 Percolator 提交协议下，predicate 读对于尚未存在的数据是如何防止幻读的。
 
-![10](media/transaction-frontiers-research-article-talk4.fld/10.png)
+![10](media/transaction-frontiers-research-article-talk4/10.png)
 
 <div class="caption-center">图10 - MVCC safepoint 实现一致读</div>
 
@@ -127,13 +127,13 @@ MVCC 最大的优点是读事务不需要阻塞写事务，相比于 2PL，在�
 - MSTO，基于 Cicada，使用多版本并发控制。
 ### OSTO
 
-![11](media/transaction-frontiers-research-article-talk4.fld/11.png)
+![11](media/transaction-frontiers-research-article-talk4/11.png)
 
 <div class="caption-center">图11 - OSTO 中的冲突事务</div>
 
 图 11 是 OSTO 处理冲突事务的方式，与传统的 OCC 不同，OSTO 加写锁不加读锁，但是在提交时进行检测，要求读到的数据在提交前不产生变化，否则需要 abort。在 OSTO 中，每条数据上有版本信息用于检测读到的数据是否变化。
 
-![12](media/transaction-frontiers-research-article-talk4.fld/12.png)
+![12](media/transaction-frontiers-research-article-talk4/12.png)
 
 <div class="caption-center">图 12 - OSTO 的时间戳分配方式</div>
 
@@ -144,7 +144,7 @@ OSTO 为了解决单点的时间戳分配瓶颈，使用了多分配器，但是
 MSTO 的实现是多版本的，论文中的结构非分布式数据库，所以采用 safepoint 的策略来保证一致性。
 
 
-![13](media/transaction-frontiers-research-article-talk4.fld/13.png)
+![13](media/transaction-frontiers-research-article-talk4/13.png)
 
 <div class="caption-center">图13 - TSTO 和 MSTO 中的事务重排序</div>
 
@@ -154,7 +154,7 @@ MSTO 的实现是多版本的，论文中的结构非分布式数据库，所以
 ### 冲突管控
 当事务发生冲突时，需要回滚并重试，但如果重试时与之冲突当事务尚未提交完毕，会导致第二次冲突发生，造成性能浪费。
 
-![14](media/transaction-frontiers-research-article-talk4.fld/14.png)
+![14](media/transaction-frontiers-research-article-talk4/14.png)
 
 <div class="caption-center">图14 - Contention Regulation</div>
 
@@ -167,7 +167,7 @@ MSTO 的实现是多版本的，论文中的结构非分布式数据库，所以
 ### 防止竞争索引
 在一些系统中，可能会出现 false-positive 的冲突，减少这种冲突也能够提升系统的性能。
 
-![15](media/transaction-frontiers-research-article-talk4.fld/15.png)
+![15](media/transaction-frontiers-research-article-talk4/15.png)
 
 <div class="caption-center">图15 - false-positive 冲突</div>
 
@@ -176,13 +176,13 @@ MSTO 的实现是多版本的，论文中的结构非分布式数据库，所以
 对于死锁，我们通常有两种解决思路，防止死锁出现和检测出出现的死锁。上一讲所研究的确定性数据库一般就采用防止死锁出现的思路。然而很多数据库没有办法防止死锁的出现，如何高效的进行检测就成了主要问题。因为 in-mem DB 的低延迟特性，论文中使用了一种等待一定时间即判断事务处于死锁的事务，可能会造成一些误判，但对于整体的性能有正面效果。
 ### 性能测试
 
-![16](media/transaction-frontiers-research-article-talk4.fld/16.png)
+![16](media/transaction-frontiers-research-article-talk4/16.png)
 
 <div class="caption-center">图16 - 基本参数的性能测试</div>
 
 图 16 是对基本参数的性能测试，蓝线的 OSTO Baseline 是使用 OSTO 实现了上述的和论文中额外提及的一些优化后的结果，可以发现数据库实现的基本参数对于性能存在着重大的影响。如果缺少大于一个基本参数的实现，在冲突 workload 下数据库的性能可能直接归零。
 
-![17](media/transaction-frontiers-research-article-talk4.fld/17.png)
+![17](media/transaction-frontiers-research-article-talk4/17.png)
 
 <div class="caption-center">图17 - 研究对象的性能测试</div>
 
@@ -193,7 +193,7 @@ MSTO 的实现是多版本的，论文中的结构非分布式数据库，所以
 - Timestamp Splitting(TS)，将一行数据分割为不同的时间戳进行管理，类似于 Column Family（非 RocksDB 的 CF）。
 ### Commit-time Update
 
-![18](media/transaction-frontiers-research-article-talk4.fld/18.png)
+![18](media/transaction-frontiers-research-article-talk4/18.png)
 
 <div class="caption-center">图18 - 冲突出现的风险</div>
 
@@ -202,7 +202,7 @@ Commit-time Update(CU) 可以降低冲突出现的风险。图 18 描述了可�
 为了降低事务中读操作产生冲突的风险，我们必须尽可能短的持有读锁或尽可能缩短从读到提交的时间间隔。CU 设计了一个更新器，在运行更新器的时候不会对数据库做任何操作，在事务提交时，这些更新器才会被应用，避免了读到的数据被客户端所持有。从另一个角度理解，避免将数据读到客户端为数据库系统提供了额外的对事务重排序的可能性。
 
 
-![19](media/transaction-frontiers-research-article-talk4.fld/19.png)
+![19](media/transaction-frontiers-research-article-talk4/19.png)
 
 <div class="caption-center">图19 - CU 的使用条件</div>
 
@@ -210,19 +210,19 @@ Commit-time Update(CU) 可以降低冲突出现的风险。图 18 描述了可�
 ### Timestamp Splitting
 Timestamp Splitting(TS) 的思想类似于 Column Family，注意这里不是 RocksDB 的 Column Family，是将 Columns 分割为多个 families 分别进行存储。一般情况下，TP 数据库系统一个 key 会指向一行数据，所以加锁也是以行为单位的，因此带来了一些不必要的冲突。TS 尝试减少这种冲突。
 
-![20](media/transaction-frontiers-research-article-talk4.fld/20.png)
+![20](media/transaction-frontiers-research-article-talk4/20.png)
 
 <div class="caption-center">图20 - TS 要解决的问题</div>
 
 图 20 中，一个事务写了 col3 和 col4，另一个事务读取了 col1，这两个事务实际上并没有产生冲突，但是在以行为单位的冲突检测下，会被判定为冲突，而导致 Txn1 被 abort。
 
-![21](media/transaction-frontiers-research-article-talk4.fld/21.png)
+![21](media/transaction-frontiers-research-article-talk4/21.png)
 
 <div class="caption-center">图21 - TS 的解决方式</div>
 
 TS 并没有将一行数据分割为多个 families 进行存储，但是在一行数据内设计了多个 timestamp，以图 21 为例，让 col1 和 col2 使用一个不频繁更新的时间戳，让 col3 和 col4 使用一个频繁更新的时间戳，这样 col3 和 col4 上的修改操作就不应影响到 col1 和 col2 上的读取操作。
 
-![22](media/transaction-frontiers-research-article-talk4.fld/22.png)
+![22](media/transaction-frontiers-research-article-talk4/22.png)
 
 <div class="caption-center">图 22 - 不能使用 CU 但是可以使用 TS 的情况</div>
 
@@ -230,7 +230,7 @@ TS 并没有将一行数据分割为多个 families 进行存储，但是在一�
 ### 性能测试
 
 
-![23](media/transaction-frontiers-research-article-talk4.fld/23.png)
+![23](media/transaction-frontiers-research-article-talk4/23.png)
 
 <div class="caption-center">图 23 - CU 和 TS 的性能测试</div>
 
