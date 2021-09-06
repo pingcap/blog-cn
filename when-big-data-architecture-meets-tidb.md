@@ -1,7 +1,7 @@
 ---
 title: 当大数据架构遇上 TiDB
 author: ['胡梦宇']
-date: 2021-7-29
+date: 2021-07-29
 summary: 本文将介绍分布式 NewSQL 数据库 TiDB 应用到了大数据架构的其他场景下，如：Hive 大查询报警，NameNode RPC 加速。
 tags: ['TiDB']
 ---
