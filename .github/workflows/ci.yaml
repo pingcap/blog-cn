@@ -11,38 +11,10 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12'
-    - name: "Check file encoding"
-      run:
-        git remote add upstream https://github.com/pingcap/blog-cn.git;
-        git fetch upstream;
-        wget https://raw.githubusercontent.com/pingcap/docs/master/scripts/check-file-encoding.py;
-        python3 check-file-encoding.py $(git diff-tree --name-only --no-commit-id -r upstream/master..HEAD -- '*.md')
-    - name: "Check front matters"
-      run:
-        python3 ./hack/check-front-matters.py $(git diff-tree --name-only --no-commit-id -r upstream/master..HEAD -- '*.md')
     - name: Markdown lint
       uses: avto-dev/markdown-lint@v1
       with:
         config: './.github/markdownlint.yml'
         args: '.'
-    - name: "Check control characters"
-      run:
-        wget https://raw.githubusercontent.com/pingcap/docs/master/scripts/check-control-char.py;
-        python3 check-control-char.py $(git diff-tree --name-only --no-commit-id -r upstream/master..HEAD -- '*.md')
-    - name: "Check unclosed tags"
-      run:
-        wget https://raw.githubusercontent.com/pingcap/docs/master/scripts/check-tags.py;
-        python3 check-tags.py $(git diff-tree --name-only --no-commit-id -r upstream/master...HEAD -- '*.md')
-    - name: "Check Chinese punctuation"
-      run:
-        wget https://raw.githubusercontent.com/pingcap/docs/master/scripts/check-zh-punctuation.py;
-        pip3 install zhon;
-        python3 check-zh-punctuation.py $(git diff-tree --name-only --no-commit-id -r upstream/master..HEAD -- '*.md')
     - name: Verify internal links
       run: ./hack/verify-links-doc.sh
-    #- name: Verify internal link anchors
-    #  run: ./hack/verify-link-anchors.sh
-    - name: "Check manual line breaks"
-      run:
-        wget https://raw.githubusercontent.com/pingcap/docs/master/scripts/check-manual-line-breaks.py;
-        python3 check-manual-line-breaks.py $(git diff-tree --name-only --no-commit-id -r upstream/master..HEAD -- '*.md')
