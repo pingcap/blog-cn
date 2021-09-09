@@ -129,7 +129,7 @@ let res = match policy {
 
 对于读请求，我们只需要确认此时 leader 是否真的是 leader 即可，一个较为轻量的方法是发送一次心跳，再检查是否收到了过半的响应，这在 raft-rs 中被称为 ReadIndex （关于 ReadIndex 的介绍可以参考 [这篇文章](https://pingcap.com/blog-cn/lease-read/) ）。对于写请求，则需要 propose 一条 Raft log，这是在 `propose_normal` 函数中调用 `Raft::propose` 接口完成的。在 propose 了一条 log 之后，Peer 会将 proposal 保存在一个名为 `apply_proposals` 的  `Vec` 中。随后一个 Batch （包含了多个 Peer）内的 proposal 会被 Poll 线程统一收集起来，放入一个名为 `pending_proposals`  的 `Vec` 中待后续处理。
 
-在一个 Batch 的消息都经 `PeerDelegate::handle_msgs` 处理完毕之后，Poll 对 Batch 内的每一个 Peer 调用 `Peer::handle_raft_ready_append`： 
+在一个 Batch 的消息都经 `PeerDelegate::handle_msgs` 处理完毕之后，Poll 对 Batch 内的每一个 Peer 调用 `Peer::handle_raft_ready_append`：
 
 1. 用记录的 `last_applied_index` 获取一个 Ready。
 

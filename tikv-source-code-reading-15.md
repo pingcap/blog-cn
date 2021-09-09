@@ -33,7 +33,7 @@ SELECT (count * price) AS sum FROM orders WHERE order_id < 100
 执行 RPN 的过程需要一个栈来缓存中间结果，比如说对于 `2 3 4 + * 5 +`，我们从左到右遍历表达式，遇到值就压入栈中。直到 `+` 操作符，栈中已经压入了 `2 3 4`。
 
 ![图 3 sample(3/8)](media/tikv-source-code-reading-15/3-sample-3.png)
- 
+
 因为 `+` 是二元操作符，需要从栈中弹出两个值 `3 4`，结果为 `7`，重新压入栈中：
 
 ![图 4 sample(4/8)](media/tikv-source-code-reading-15/4-sample-4.png)
@@ -50,7 +50,7 @@ SELECT (count * price) AS sum FROM orders WHERE order_id < 100
 
 ![图 7 sample(7/8)](media/tikv-source-code-reading-15/7-sample-7.png)
 
-最后 `+` 运算符弹出 `14 5`，结果为 `19 `，压入栈。
+最后 `+` 运算符弹出 `14 5`，结果为 `19`，压入栈。
 
 ![图 8 sample(8/8)](media/tikv-source-code-reading-15/8-sample-8.png)
 

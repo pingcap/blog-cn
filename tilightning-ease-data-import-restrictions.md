@@ -6,9 +6,9 @@ summary: TiLightning 可以轻松解除数据导入限制，解决了大数据�
 tags: ['TiDB', 'TiSpark']
 ---
 
-TiDB 作为 HTAP 数据库的代表在越来越多的行业得到了广泛的使用。 在这一过程中，大家最为苦恼的事情之一就是如何将海量数据以比较快的速度导入 TiDB 集群。 单纯通过 load 语句导入数据非常的慢；而目前作为数据导入速度最快的 TiDB Lightning 也因为数据源的问题也存在一些局限。 某些公司的 PoC 也因为数据导入的问题而进展缓慢。公司内部的各种 benchmark 测试也是苦恼于数据导入速度。 
+TiDB 作为 HTAP 数据库的代表在越来越多的行业得到了广泛的使用。 在这一过程中，大家最为苦恼的事情之一就是如何将海量数据以比较快的速度导入 TiDB 集群。 单纯通过 load 语句导入数据非常的慢；而目前作为数据导入速度最快的 TiDB Lightning 也因为数据源的问题也存在一些局限。 某些公司的 PoC 也因为数据导入的问题而进展缓慢。公司内部的各种 benchmark 测试也是苦恼于数据导入速度。
 
-可以说，天下苦数据导入速度久矣。 
+可以说，天下苦数据导入速度久矣。
 
 基于以上背景，本次我们项目的出发点就是两个：
 
@@ -60,13 +60,13 @@ Batch Write 完成的一个非常重要的事情是，处理了 Spark 类型到 
 
 ## 测试结果
 
-我们测试场景比较简单，选择了著名决策支持性能测试数据集的 TPC-H 中的 Lineitem 作为我们的数据源。 我们分别选取了 10G 和 100 G 的测试场景，其中 Lineitem 表大小分别是 6.5G 和 65G。 
+我们测试场景比较简单，选择了著名决策支持性能测试数据集的 TPC-H 中的 Lineitem 作为我们的数据源。 我们分别选取了 10G 和 100 G 的测试场景，其中 Lineitem 表大小分别是 6.5G 和 65G。
 
-我们先将数据通过 TiDB Lightning 的方式导入到 TiDB 集群中，同时可以获取 TiDB Lightning 的数据。 
+我们先将数据通过 TiDB Lightning 的方式导入到 TiDB 集群中，同时可以获取 TiDB Lightning 的数据。
 
-之后，我们先将源表的数据读取出来并在 Spark 中缓存。 然后是调用 TiLightning 的逻辑将数据导入到目标表中。 TiLightning 中的数据不仅仅包含数据导入的时间同时还包含数据读取的时间。 
+之后，我们先将源表的数据读取出来并在 Spark 中缓存。 然后是调用 TiLightning 的逻辑将数据导入到目标表中。 TiLightning 中的数据不仅仅包含数据导入的时间同时还包含数据读取的时间。
 
-下图是我们的测试结果。 
+下图是我们的测试结果。
 
 ![图 2 测试结果](media/tilightning-ease-data-import-restrictions/2.png)
 
@@ -76,18 +76,18 @@ Batch Write 完成的一个非常重要的事情是，处理了 Spark 类型到 
 
 相比较 TiDB Lightining，TiLightning 在部署上更加自由，既可以选择在空闲机器上部署 Spark 集群，也可以直接使用现有的 Spark 集群，或直接使用 Spark 的 standalone 模式启动。TiLightning 目前需要手动部署一个或多个 Importer，在未来我们希望能去掉这一步，将 Importer 也整合到 TiLightning 中。
 
-为使 TiLightning 连接并使用 Importer，我们需要先开启 TiLightning 功能，涉及具体使用细节在此不再赘述。用户可以使用 beeline，spark-shell，和 spark-submit 等等连接 Spark 集群使用 TiLightning 数据导入功能。 
+为使 TiLightning 连接并使用 Importer，我们需要先开启 TiLightning 功能，涉及具体使用细节在此不再赘述。用户可以使用 beeline，spark-shell，和 spark-submit 等等连接 Spark 集群使用 TiLightning 数据导入功能。
 
-和原本 TiDB Lightning 不同的是， TiLightning 并未对数据源作出任何限制。 数据可以来自于 TiDB 本身，也可以是 Hive 上的数据，甚至可以是 Oracle 的数据。 可以说，只要 Spark 可以访问的数据源都可以通过 insert 语句将数据高速插入 TiDB 中。 
+和原本 TiDB Lightning 不同的是， TiLightning 并未对数据源作出任何限制。 数据可以来自于 TiDB 本身，也可以是 Hive 上的数据，甚至可以是 Oracle 的数据。 可以说，只要 Spark 可以访问的数据源都可以通过 insert 语句将数据高速插入 TiDB 中。
 
-一个简单的例子便是跑批。 跑批是指将数据从数据源捞出进行计算之后再次导入到 TiDB 集群中。在没有 TiLightning 的情况下，用户需要预先用 TiSpark 读取数据之后进行计算。 计算完毕之后的数据，需要通过 JDBC 连接器才能将数据导入到 TiDB 集群中。这个过程非常痛苦和漫长。在 TiLightning 的加持下，我们可以直接将计算完的数据直接高速导入到 TiDB 集群中。 从我们的测试结果来说，这将是原来的几十倍（测试并未测试 Spark JDBC 导入到 TiDB，但是 TiDB Lightning 有相关的对比数据）。 小时级别任务将会变成分钟级别。 
+一个简单的例子便是跑批。 跑批是指将数据从数据源捞出进行计算之后再次导入到 TiDB 集群中。在没有 TiLightning 的情况下，用户需要预先用 TiSpark 读取数据之后进行计算。 计算完毕之后的数据，需要通过 JDBC 连接器才能将数据导入到 TiDB 集群中。这个过程非常痛苦和漫长。在 TiLightning 的加持下，我们可以直接将计算完的数据直接高速导入到 TiDB 集群中。 从我们的测试结果来说，这将是原来的几十倍（测试并未测试 Spark JDBC 导入到 TiDB，但是 TiDB Lightning 有相关的对比数据）。 小时级别任务将会变成分钟级别。
 
 再者，大数据从业者经常需要的 ETL （Extract, Transform and Load) 任务。在没有 TiLightning 之前，如果需要将数据源导入 TiDB，能做的是只有两个。
- 
+
 1. 将 ETL 的数据源转化成为 csv/mydumper 格式，进而通过 TiDB Lightning 导入。
 
-2. 通过 Spark 的 JDBC 进行数据的插入。 
+2. 通过 Spark 的 JDBC 进行数据的插入。
 
-前者，需要对每一种数据源进行定制化开发。 虽然有着较快的导入数度，但是可扩展性差。 后者，虽然无需定制开发但是导入速度非常的慢。TiLightning 完美的融合了这两种方法的优点，而又规避了两种方法的缺点。 可以在不伤害可扩展性的前提同时又有着比 TiDB Lightning 更快的导入速度。 
+前者，需要对每一种数据源进行定制化开发。 虽然有着较快的导入数度，但是可扩展性差。 后者，虽然无需定制开发但是导入速度非常的慢。TiLightning 完美的融合了这两种方法的优点，而又规避了两种方法的缺点。 可以在不伤害可扩展性的前提同时又有着比 TiDB Lightning 更快的导入速度。
 
-未来，我们计划将这样特性在 TiSpark 中重新实现，并且包含 checkpoints 和 带索引表的导入。 对于目前 TiDB 的生态是一个极好的补充，解决了大数据生态系统和 TiDB 之间的鸿沟。可以说，只要是 Spark 可以访问的数据源，在未来都可以通过 TiSpark 导入 TiDB； 同时也可以由 TiSpark 将 TiDB 中的数据快速的导出到其他数据库中。 
+未来，我们计划将这样特性在 TiSpark 中重新实现，并且包含 checkpoints 和 带索引表的导入。 对于目前 TiDB 的生态是一个极好的补充，解决了大数据生态系统和 TiDB 之间的鸿沟。可以说，只要是 Spark 可以访问的数据源，在未来都可以通过 TiSpark 导入 TiDB； 同时也可以由 TiSpark 将 TiDB 中的数据快速的导出到其他数据库中。

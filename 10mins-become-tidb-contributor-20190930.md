@@ -40,7 +40,7 @@ A2：我们在 [PR/12153](https://github.com/pingcap/tidb/pull/12153) 中，支�
 
 **Q3：如何计算结果向量的 Null Bitmap？**
 
-A3：在 TiDB 中，我们使用一个 Bitmap 来标记 Column（也就是我们的“向量”） 中某个元素是否为 `NULL`，在向量化计算的函数中，经常会有如下处理 `NULL` 的需求： 
+A3：在 TiDB 中，我们使用一个 Bitmap 来标记 Column（也就是我们的“向量”） 中某个元素是否为 `NULL`，在向量化计算的函数中，经常会有如下处理 `NULL` 的需求：
 
 ```
 for rowID := range rows {
@@ -69,7 +69,7 @@ for rowID := range rows {
 
 如上面所说，在表达式向量化优化过程中的代码绝大多数都是由社区开发者们贡献的，具体来说是以下 Contributor（按照 PR 数排序，“*” 表示这次活动中新晋的 TiDB Contributor）：
 
-![](media/10mins-become-tidb-contributor-20190930/1.png)
+![十分钟如何成为 TiDB Contributor](media/10mins-become-tidb-contributor-20190930/1.png)
 
 再次感谢社区伙伴们的大力支持！也恭喜新晋 Contributor，当然 TiDB Contributor 专属马克杯也已经准备好啦，社区运营小姐姐将会统一邮寄给大家，敬请期待！
 

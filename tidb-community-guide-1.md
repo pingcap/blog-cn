@@ -24,7 +24,7 @@ tags: ['TiDB','社区']
 * [TiDB 源码阅读系列文章](https://pingcap.com/blog-cn/#%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)
 * [Deep Dive TiKV (Work-In-Process)](https://github.com/tikv/deep-dive-tikv/)
 
-当然，最高效地熟悉 TiDB 的方式还是使用它，在某些场景下遇到了问题或者是想要新的 feature，去跟踪代码，找到相关的代码逻辑，在这个过程中很容易对相关模块有了解，不少 Contributor 就是这样完成了第一次贡献。 
+当然，最高效地熟悉 TiDB 的方式还是使用它，在某些场景下遇到了问题或者是想要新的 feature，去跟踪代码，找到相关的代码逻辑，在这个过程中很容易对相关模块有了解，不少 Contributor 就是这样完成了第一次贡献。
 
 我们还有一系列的 Infra Meetup，大约两周一次，如果方便到现场的同学可以听到这些高质量的 Talk。除了北京之外，其他的城市（上海、广州、成都、杭州）也开始组织 Meetup，方便更多的同学到现场来面基。
 
@@ -34,7 +34,7 @@ tags: ['TiDB','社区']
 
 当然除了那些标记为 for-new-contributors 的 issue 之外，也可以考虑其他的 issue，标记为 [help-wanted](https://github.com/pingcap/tidb/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) 标签的 issue 可以优先考虑。除此之外的 issue 可能会比较难解决，需要对 TiDB 有较深入的了解或者是对完成时间有较高的要求，不适合第一次参与的同学。
 
-当然除了现有的 issue 之外，也欢迎将自己发现的问题或者是想要的特性提为新的 issue，然后自投自抢 :) 。 
+当然除了现有的 issue 之外，也欢迎将自己发现的问题或者是想要的特性提为新的 issue，然后自投自抢 :) 。
 
 当你已经对 TiDB 有了深入的了解，那么可以尝试从 [Roadmap](https://pingcap.com/docs-cn/v3.0/roadmap/) 上找到感兴趣的事项，和我们讨论一下如何参与。
 
@@ -44,17 +44,17 @@ tags: ['TiDB','社区']
 
 但是如果要做的事情比较大，可以先写一个详细的设计文档，提交到 [docs/design](https://github.com/pingcap/tidb/tree/master/docs/design) 目录下面，这个目录下有设计模板以及一些已有的设计方案供你参考。一篇好的设计方案要写清楚以下几点：
 
-*   背景知识
+* 背景知识
 
-*   解决什么问题
+* 解决什么问题
 
-*   方案详细设计
+* 方案详细设计
 
-*   对方案的解释说明，证明正确性和可行性
+* 对方案的解释说明，证明正确性和可行性
 
-*   和现有系统的兼容性
+* 和现有系统的兼容性
 
-*   方案的具体实现 
+* 方案的具体实现
 
 用一句话来总结就是写清楚“你做了什么，为什么要做这个，怎么做的，为什么要这样做”。如果对自己的方案不太确定，可以先写一个 Google Doc，share 给我们简单评估一下，再提交 PR。
 
@@ -90,7 +90,7 @@ PR review 的过程就是 reviewer 不断地提出 comment，PR 作者持续解�
 
 **每个 PR 在合并之前都需要至少得到两个 Committer/Maintainer 的 LGTM，一些重要的 PR 需要得到三个，比如对于 DDL 模块的修改，默认都需要得到三个 LGTM。**
 
-#### Tips：
+#### Tips
 
 * 提了PR 之后，可以 at 一下相关的同学来 review；
 

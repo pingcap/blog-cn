@@ -48,9 +48,9 @@ tags: ['跨数据中心','Hackathon']
 
 在 TiDB 里面，当我们需要从西安这边读取数据的时候，一个典型的流程如下：
 
-1.  西安的 TiDB 向北京的 PD 发起获取 TSO 请求，得到一个 `start_ts`（事务开始阶段的 ID）。（1 RTT）
+1. 西安的 TiDB 向北京的 PD 发起获取 TSO 请求，得到一个 `start_ts`（事务开始阶段的 ID）。（1 RTT）
 
-2.  西安的 TiDB 为涉及到的每个 Region 向北京的 TiKV Leader 节点发起多个（并行）读请求（如图 4）。（1 RTT）
+2. 西安的 TiDB 为涉及到的每个 Region 向北京的 TiKV Leader 节点发起多个（并行）读请求（如图 4）。（1 RTT）
 
 >名词解释：
 >
@@ -63,9 +63,9 @@ tags: ['跨数据中心','Hackathon']
 
 可以看到，虽然西安本地也有 TiKV 副本数据，但完全没有参与这个过程。该实现存在两个问题：
 
-*   跨地域网络宽带占用大。
+* 跨地域网络宽带占用大。
 
-*   延迟高（2 RTT）。
+* 延迟高（2 RTT）。
 
 下面我们分别阐述对这两个问题的优化思路。
 
@@ -115,18 +115,18 @@ Follower Replication 的目标是将这个多次的跨数据中心传输尽量�
 
 关于这个对 Raft 实现的改进，我们已经提交了 RFC 和实现的 PR，后续也会贡献给 etcd，感兴趣的同学可以参考：
 
-*   [https://github.com/tikv/rfcs/pull/33](https://github.com/tikv/rfcs/pull/33)
+* [https://github.com/tikv/rfcs/pull/33](https://github.com/tikv/rfcs/pull/33)
 
-*   [https://github.com/tikv/raft-rs/pull/249/](https://github.com/tikv/raft-rs/pull/249/)
+* [https://github.com/tikv/raft-rs/pull/249/](https://github.com/tikv/raft-rs/pull/249/)
 
-*   [https://github.com/etcd-io/etcd/issues/11357](https://github.com/etcd-io/etcd/issues/11357)
+* [https://github.com/etcd-io/etcd/issues/11357](https://github.com/etcd-io/etcd/issues/11357)
 
 ## 总结
 
 除了我们在 Hackathon 做的两个优化，跨数据中心的场景有更多需要解决的问题和可以优化的点，我们的优化也远非最终实现，一些不难想到的优化还有：
 
-1.  Follower Read Improvement 能将一个非交互式的读事务从 2RTT 降到 1RTT，但对于交互式的读事务，由于事先不知道涉及到事务的 Region，无法预读整个读请求中所有 Region `read_index`，因此只有第一次读请求和 `get_tso` 可以并行，将 n+1 RTT 优化到了 n RTT（n 为交互式事务中读语句的数量），而如果我们能将 ts 和 committed index 的对应关系找到，并且定期维护每个 Region 的 safe ts（小于该 ts 的事务一定已经 committed or aborted），那么我们就可以将交互式读事务的延迟也降低到 1RTT。
+1. Follower Read Improvement 能将一个非交互式的读事务从 2RTT 降到 1RTT，但对于交互式的读事务，由于事先不知道涉及到事务的 Region，无法预读整个读请求中所有 Region `read_index`，因此只有第一次读请求和 `get_tso` 可以并行，将 n+1 RTT 优化到了 n RTT（n 为交互式事务中读语句的数量），而如果我们能将 ts 和 committed index 的对应关系找到，并且定期维护每个 Region 的 safe ts（小于该 ts 的事务一定已经 committed or aborted），那么我们就可以将交互式读事务的延迟也降低到 1RTT。
 
-2.  跨数据中心的读请求一个很常见的场景是并不需要是最新的数据，应该提供怎么样的语义来让这种场景下的读请求完全在本地 0RTT 地读取数据，真正做到对主数据中心无依赖，做到数据中心级别的 scalability。
+2. 跨数据中心的读请求一个很常见的场景是并不需要是最新的数据，应该提供怎么样的语义来让这种场景下的读请求完全在本地 0RTT 地读取数据，真正做到对主数据中心无依赖，做到数据中心级别的 scalability。
 
 有句话是这样说的，“对于基础架构方向的软硬件工程师而言，世界上最远的距离，是你在联通，我在电信 :D”软件工程师做得越好，秃顶的硬件工程师就越少。希望我们的项目在切实落地之后，能够大幅优化 TiDB 跨地域数据中心的延迟和网络流量，让 TiDB 能够满足更多用户的需求，成为分布式数据库领域的事实标准。

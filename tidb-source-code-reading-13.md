@@ -34,7 +34,7 @@ select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 
 
 ### 单列索引
 
-单列索引的情况相对来说比较简单。很多满足 Column op Constant 形式的简单表达式都可以用来计算 range，单个表达式的判断逻辑在 [checker.go](https://github.com/pingcap/tidb/blob/source-code/util/ranger/checker.go) 的 conditionChecker 中。而对于包含了 AND 或者 OR 的复杂情况，我们可以按照下述规则进行处理： 
+单列索引的情况相对来说比较简单。很多满足 Column op Constant 形式的简单表达式都可以用来计算 range，单个表达式的判断逻辑在 [checker.go](https://github.com/pingcap/tidb/blob/source-code/util/ranger/checker.go) 的 conditionChecker 中。而对于包含了 AND 或者 OR 的复杂情况，我们可以按照下述规则进行处理：
 
 1. AND 表达式无关的 filter 并不会影响其可以计算 range 的子项。所以直接舍去无关的表示即可。以流程图中的一个子表达式 `a > 1 and a < 5 and b > 2` 为例，我们只要将 `b > 2` 扔掉，保留 `a > 1 and a < 5` 即可。
 
@@ -48,9 +48,9 @@ select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 
 
 1. AND 表达式中，只有当之前的列均为点查的情况下，才会考虑下一个列。
 
-	e.g. 对于索引 (a, b, c)，有条件 `a > 1 and b = 1`，那么会被选中的只有 `a > 1`。对于条件 `a in (1, 2, 3) and b > 1`，两个条件均会被选到用来计算 range。
+ e.g. 对于索引 (a, b, c)，有条件 `a > 1 and b = 1`，那么会被选中的只有 `a > 1`。对于条件 `a in (1, 2, 3) and b > 1`，两个条件均会被选到用来计算 range。
 
-	由于非点查的部分只会涉及到一个列，所以可以直接复用 `detachColumnCNFConditions`。
+ 由于非点查的部分只会涉及到一个列，所以可以直接复用 `detachColumnCNFConditions`。
 
 2. OR 表达式中，每个子项会视为 AND 表达式分开考虑。与单列索引的情况一样，如果其中一个子项无法用来计算索引，那么该 OR 表达式便完全无法计算索引。
 
@@ -79,9 +79,9 @@ select * from t where ((a > 1 and a < 5 and b > 2) or (a > 8 and a < 10 and c > 
 ```go
 // Point is the end point of range interval.
 type point struct {
-	value types.Datum
-	excl  bool // exclude
-	start bool
+ value types.Datum
+ excl  bool // exclude
+ start bool
 }
 ```
 
@@ -106,11 +106,11 @@ merge 函数使用 inRangeCount 来记录当前位置被 a, b 两个区间序列
 ```go
 // NewRange represents a range generated in physical plan building phase.
 type NewRange struct {
-	LowVal  []types.Datum
-	HighVal []types.Datum
+ LowVal  []types.Datum
+ HighVal []types.Datum
 
-	LowExclude  bool // Low value is exclusive.
-	HighExclude bool // High value is exclusive.
+ LowExclude  bool // Low value is exclusive.
+ HighExclude bool // High value is exclusive.
 }
 ```
 

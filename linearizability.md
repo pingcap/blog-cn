@@ -16,12 +16,12 @@ tags: ['TiDB', 'knossos', 'Linearizability']
 
   一致性模型确定了编写系统的程序员与系统之间的某种协议，如果程序员遵守了这种协议，那么这个系统就能提供某种一致性。常见的一致性模型有：
 
-  + Strict Consistency
-  + Linearizability (Atomic Consistency)
-  + Sequential Consistency
-  + Causal Consistency
-  + Serializability
-  + ……
++ Strict Consistency
++ Linearizability (Atomic Consistency)
++ Sequential Consistency
++ Causal Consistency
++ Serializability
++ ……
 
   需要注意的是这里的系统指并发系统，分布式系统只是其中的一类。
 
@@ -29,20 +29,20 @@ tags: ['TiDB', 'knossos', 'Linearizability']
 
   首先我们需要引入*历史*（history）的概念，历史是并发系统中由 invocation 事件和 response 事件组成的有限序列。
 
-  > - invocation: `\<x op(args\*) A\>`，`x` 表示被执行对象的名称；`op` 表示操作名称，如读和写；`args*` 表示一系列参数值；`A` 表示进程的名称。
+  > + invocation: `\<x op(args\*) A\>`，`x` 表示被执行对象的名称；`op` 表示操作名称，如读和写；`args*` 表示一系列参数值；`A` 表示进程的名称。
   >
-  > - response：`\<x term(res\*) A\>`，`term` 表示结束（termination）状态；`res*` 表示一系列结果值。
+  > + response：`\<x term(res\*) A\>`，`term` 表示结束（termination）状态；`res*` 表示一系列结果值。
   >
-  > - 如果 invocation 和 response 的 `x`（对象）和 `A`（进程）相同，那么我们认为它们是对应操作，并且 `complete(H)` 表示历史中的最多成对操作。
+  > + 如果 invocation 和 response 的 `x`（对象）和 `A`（进程）相同，那么我们认为它们是对应操作，并且 `complete(H)` 表示历史中的最多成对操作。
 
   当我们的*历史* H 满足以下条件时我们把它称为*顺序化*（sequential）历史：
 
   1. H 中的第一个事件是 invocation。
   2. 除了可能的最后一个事件外，每个 invocation 事件都紧跟着对应[^对应意味着对象和进程相同]的 response 事件；每个 response 事件都紧跟着对应的 invocation 事件。
 
-  > - H|A 代表只含有进程A操作的子历史，H|x 代表只含有对象x操作的子历史
+  > + H|A 代表只含有进程A操作的子历史，H|x 代表只含有对象x操作的子历史
   >
-  > - 定义well-formed：如果每个进程子历史 H|A 都是顺序化的，那么这个历史 H 就是 well-formed。
+  > + 定义well-formed：如果每个进程子历史 H|A 都是顺序化的，那么这个历史 H 就是 well-formed。
 
   如果一个*历史*不是顺序化的话那么就是并发的。
 
@@ -54,9 +54,9 @@ tags: ['TiDB', 'knossos', 'Linearizability']
 
   当*历史* H 可以通过增加 >=0 个 response 事件被延长时成为 H' 并且满足以下两个条件时，则这个*历史*是线性化（linearizable）的。
 
-  > - L1: `complete(H')` 与某个合法的顺序化历史 S 相等
+  > + L1: `complete(H')` 与某个合法的顺序化历史 S 相等
   >
-  > - L2: `<H  ⊆ <S`
+  > + L2: `<H  ⊆ <S`
 
   `complete(H')` 表示进程以完整的操作进行交互，L2 表示如果 op1 在 H 中先于 op2 存在（注意这里的先于强调实时发生的顺序 real-time order），那么在 S 中也是这样。我们把 S 称为 H 的线性化点（linearization）。
 
@@ -89,9 +89,8 @@ tags: ['TiDB', 'knossos', 'Linearizability']
 
 #### Linearizability 的性质
 
-* 局部性（Locality），当且仅当 H 中每个对象 x 都是线性化的，才能保证 H 是线性化的。
-* 非阻塞（Nonblocking），invocation 事件不用等待对应的 response 事件。
-
++ 局部性（Locality），当且仅当 H 中每个对象 x 都是线性化的，才能保证 H 是线性化的。
++ 非阻塞（Nonblocking），invocation 事件不用等待对应的 response 事件。
 
 ## 验证 Linearizability
 
@@ -158,7 +157,7 @@ Enq 和 Deq 可以看做是 abstract operation，而 Enq 和 Deq 中的每条语
 ```
  I(r)=(r.back >= 1)Λ(∀i. i >= r.back ->r.elements[i]=null)Λ(lbound(r.elements)=1)
 ```
- 
+
 其中 `lbound` 是最小的数组索引（队列从 1 开始）
 
 `A(r) = {q | elements(r) = elements(q) & <r ⊆ <q}`
@@ -229,8 +228,9 @@ typedef struct {
 
 4. 对选择的操作进行顺序化模拟，调用 op；
 
-5. - A：如果 op 返回真，意味着目前被检查的所有操作能够组成线性化的子历史，所以把这个操作推入栈中，并将这个操作从历史中移出，然后回到 2；
-   - B: ① 如果当前区域内还有一些未被选择的触发（inv）事件没有排在任何返回（res）事件之后，那么选择一个然后回到 4；② 当前区域的所有操作已经被尝试但是失败了，所以我们需要将操作出栈然后尝试其他的顺序，如果栈是空的，那么意味着历史不是线性化的，函数返回；否则，将顶层元素出栈，这个元素包含了之前区域的所有信息，以及被选择的操作，然后 undo 之前的 op，unlift 这个操作，最后，设置 current 为之前区域的指针，然后回到 5B①。
++. - A：如果 op 返回真，意味着目前被检查的所有操作能够组成线性化的子历史，所以把这个操作推入栈中，并将这个操作从历史中移出，然后回到 2；
+
++ B: ① 如果当前区域内还有一些未被选择的触发（inv）事件没有排在任何返回（res）事件之后，那么选择一个然后回到 4；② 当前区域的所有操作已经被尝试但是失败了，所以我们需要将操作出栈然后尝试其他的顺序，如果栈是空的，那么意味着历史不是线性化的，函数返回；否则，将顶层元素出栈，这个元素包含了之前区域的所有信息，以及被选择的操作，然后 undo 之前的 op，unlift 这个操作，最后，设置 current 为之前区域的指针，然后回到 5B①。
 
 >注：4 中 op 操作取决于具体模型，如果被测试的是一个寄存器的话，那 op 可以是 read、write 和 cas，如果 read 和 cas 时读到的值和预期值不一致，则操作无法进行。
 
@@ -241,12 +241,9 @@ typedef struct {
 
 对此 knossos 库的第二个算法使用了 WGL 算法的改进版本，与 WGL 中的栈存放操作信息不同的是它使用了树遍历和图搜索两种方法来使算法更高效，同时存在“记忆”机制来避免对相同的操作进行重复验证，并且如果所验证的历史不满足一致性，会给出具体出错的点。篇幅有限，如果你对这个算法感兴趣的话，文末有链接。
 
-
 ### 最后的思考
 
 这篇文章介绍了什么是 Linearizability、Linearizability 正确性的验证及其算法。这些算法在分布式系统中的应用只是一个很小的方面，算法本身是独立的，它只需要一个历史 H，至于这个历史是随机生成的还是某个应用在实际中产生的并不重要。你可以使用这些算法对任何并发系统进行验证，小到一个无锁队列、Set，大到某个分布式系统。TiDB 作为一个分布式数据库却能被抽象化为一个队列、寄存器来被用作测试这本身就是一个很有意思的地方，同时也很好地展现了这些算法自身的魅力。
-
-
 
 ### 参考
 

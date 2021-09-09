@@ -15,7 +15,7 @@ tags: ['TiDB', 'Contributor','社区']
 1. 对尚未重写的 built-in 函数进行陈列
 2. 对继上篇文章后，计算框架所进行的修改，进行详细介绍
 
-### 一. 尚未重写的 built-in 函数陈列如下：
+### 一. 尚未重写的 built-in 函数陈列如下
 
 共计 165 个
 在 expression 目录下运行 `grep -rn "^\tbaseBuiltinFunc$" -B 1 * | grep "Sig struct {" | awk -F "Sig" '{print $1}' | awk -F "builtin" '{print $3}' > ~/Desktop/func.txt` 命令可以获得所有未实现的 built-in 函数
@@ -56,7 +56,7 @@ tags: ['TiDB', 'Contributor','社区']
 | UnixTimestamp |       UTCTimestamp       |    UTCDate    |      Time       | CurrentTime |
 |    ToDays     |       TimestampAdd       |   TimeToSec   |   CurrentDate   | SysDate |
 
-### 二. 计算框架进行的修改:
+### 二. 计算框架进行的修改
 
 此处依然使用 Length 函数( expression/builtin_string.go )为例进行说明，与前文采取相同目录结构:
 
@@ -88,7 +88,7 @@ func (c *lengthFunctionClass) getFunction(args []Expression, ctx context.Context
     `bf.tp.[charset | collate | flag]`
 查看 MySQL 行为可以通过在终端启动
 
-    ` $ mysql -uroot \-\-column-type-info`，这样对于每一个查询语句，可以查看每一列详细的 metadata
+    `$ mysql -uroot \-\-column-type-info`，这样对于每一个查询语句，可以查看每一列详细的 metadata
 对于返回值类型为 string 的函数，以 [concat](https://github.com/pingcap/tidb/blob/master/expression/builtin_string.go#L204) 为例，当存在类型为 string 且包含 binary flag 的参数时，其返回值也应设置 binary flag
 
 - 对于**返回值类型为 Time** 的函数，需要注意，根据函数行为，设置
@@ -182,7 +182,7 @@ func (s *testPlanSuite) TestInferType(c *C) {
 
 **成为 New Contributor 赠送限量版马克杯**的活动还在继续中，任何一个新加入集体的小伙伴都将收到我们充满了诚意的礼物，很荣幸能够认识你，也很高兴能和你一起坚定地走得更远。
 
-#### 成为 New Contributor 获赠限量版马克杯，马克杯获取流程如下：
+#### 成为 New Contributor 获赠限量版马克杯，马克杯获取流程如下
 
 1. 提交 PR
 2. PR提交之后，请耐心等待维护者进行 Review。
@@ -193,7 +193,6 @@ func (s *testPlanSuite) TestInferType(c *C) {
    - 表单填写地址：[http://cn.mikecrm.com/01wE8tX](http://cn.mikecrm.com/01wE8tX)
 4. 后台 AI 核查 GitHub ID 及资料信息，确认无误后随即便快递寄出属于你的限量版马克杯
 5. 期待你分享自己参与开源项目的感想和经验，TiDB Contributor Club 将和你一起分享开源的力量
-
 
 了解更多关于 TiDB 的资料请登陆我们的官方网站：[https://pingcap.com](https://pingcap.com)
 

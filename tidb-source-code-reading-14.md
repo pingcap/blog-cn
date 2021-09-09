@@ -11,13 +11,13 @@ tags: ['TiDB 源码阅读','社区']
 
 文内会先介绍直方图和 Count-Min(CM) Sketch 的数据结构，然后介绍 TiDB 是如何实现统计信息的查询、收集以及更新的。
 
-## 数据结构定义 
+## 数据结构定义
 
 直方图的定义可以在 [histograms.go](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L40) 中找到，值得注意的是，对于桶的上下界，我们使用了在 [《TiDB 源码阅读系列文章（十）Chunk 和执行框架简介》](https://pingcap.com/blog-cn/tidb-source-code-reading-10/) 中介绍到 Chunk 来存储，相比于用 Datum 的方式，可以减少内存分配开销。
 
 CM Sketch 的定义可以在 [cmsketch.go](https://github.com/lamxTyler/tidb/blob/source-code/statistics/cmsketch.go#L31) 中找到，比较简单，包含了 CM Sketch 的核心——二维数组 `table`，并存储了其深度与宽度，以及总共插入的值的数量，当然这些都可以直接从 `table` 中得到。
 
-除此之外，对列和索引的统计信息，分别使用了 [Column](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L699) 和 [Index](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L773) 来记录，主要包含了直方图，CM Sketch 等。 
+除此之外，对列和索引的统计信息，分别使用了 [Column](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L699) 和 [Index](https://github.com/lamxTyler/tidb/blob/source-code/statistics/histogram.go#L773) 来记录，主要包含了直方图，CM Sketch 等。
 
 ## 统计信息创建
 
@@ -120,4 +120,3 @@ CM Sketch 的定义可以在 [cmsketch.go](https://github.com/lamxTyler/tidb/bl
 * 使用查询得到的真实数去反馈调整直方图，假定所有桶贡献的误差都是均匀的，用连续值假设去调整所有涉及到的桶。然而误差均匀的假设常常会引起问题，比如当新插入的值大于直方图的最大值时，就会把新插入的值引起的误差分摊到直方图中，从而引起误差。
 
 目前 TiDB 的统计信息还是以单列的统计信息为主，为了减少独立性假设的使用，在将来 TiDB 会探索多列统计信息的收集和维护，为优化器提供更准确的统计信息。
-

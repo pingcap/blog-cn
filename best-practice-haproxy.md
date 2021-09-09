@@ -18,22 +18,21 @@ HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，�
 
 ## HAProxy 部分核心功能
 
-*   [高可用性](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.4)：HAProxy 提供优雅关闭服务和无缝切换的高可用功能；
+* [高可用性](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.4)：HAProxy 提供优雅关闭服务和无缝切换的高可用功能；
 
-*   [负载均衡](http://cbonte.github.io/haproxy-dconv/1.9/configuration.html#4.2-balance)：L4（TCP）和 L7（HTTP）负载均衡模式，至少 9 类均衡算法，比如 roundrobin，leastconn，random 等；
+* [负载均衡](http://cbonte.github.io/haproxy-dconv/1.9/configuration.html#4.2-balance)：L4（TCP）和 L7（HTTP）负载均衡模式，至少 9 类均衡算法，比如 roundrobin，leastconn，random 等；
 
-*   [健康检查](http://cbonte.github.io/haproxy-dconv/1.9/configuration.html#5.2-check)：对 HAProxy 配置的 HTTP 或者 TCP 模式状态进行检查；
+* [健康检查](http://cbonte.github.io/haproxy-dconv/1.9/configuration.html#5.2-check)：对 HAProxy 配置的 HTTP 或者 TCP 模式状态进行检查；
 
-*   [会话保持](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.6)：在应用程序没有提供会话保持功能的情况下，HAProxy 可以提供该项功能；
+* [会话保持](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.6)：在应用程序没有提供会话保持功能的情况下，HAProxy 可以提供该项功能；
 
-*   [SSL](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.2)：支持 HTTPS 通信和解析；
+* [SSL](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.2)：支持 HTTPS 通信和解析；
 
-*   [监控与统计](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.3)：通过 web 页面可以实时监控服务状态以及具体的流量信息。
-
+* [监控与统计](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.3)：通过 web 页面可以实时监控服务状态以及具体的流量信息。
 
 ## HAProxy 部署操作
 
-### 1. 硬件要求 
+### 1. 硬件要求
 
 根据 [HAProxy 官方文档](http://cbonte.github.io/haproxy-dconv/2.0/management.html#1) 对 HAProxy 的服务器硬件配置有以下建议（也可以根据负载均衡环境进行实际推算，在此基础上提高服务器配置）：
 
@@ -50,20 +49,19 @@ HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，�
 
 #### 操作系统
 
-- Linux 2.4 操作系统，支持 x86、x86_64、Alpha、SPARC、MIPS 和 PA-RISC 架构。
-- Linux 2.6 或 3.x 操作系统，支持 x86、x86_64、ARM、SPARC 和 PPC64 架构。
-- Solaris 8 或 9 操作系统，支持 UltraSPARC II 和 UltraSPARC III 架构。
-- Solaris 10 操作系统，支持 Opteron 和 UltraSPARC 架构。
-- FreeBSD 4.10~10 操作系统，支持 x86 架构。
-- OpenBSD 3.1 及以上版本操作系统，支持 i386、AMD64、macppc、Alpha 和 SPARC64 架构。
-- AIX 5.1~5.3 操作系统，支持 Power™ 架构。
+* Linux 2.4 操作系统，支持 x86、x86_64、Alpha、SPARC、MIPS 和 PA-RISC 架构。
+* Linux 2.6 或 3.x 操作系统，支持 x86、x86_64、ARM、SPARC 和 PPC64 架构。
+* Solaris 8 或 9 操作系统，支持 UltraSPARC II 和 UltraSPARC III 架构。
+* Solaris 10 操作系统，支持 Opteron 和 UltraSPARC 架构。
+* FreeBSD 4.10~10 操作系统，支持 x86 架构。
+* OpenBSD 3.1 及以上版本操作系统，支持 i386、AMD64、macppc、Alpha 和 SPARC64 架构。
+* AIX 5.1~5.3 操作系统，支持 Power™ 架构。
 
 #### 依赖包
 
-- epel-release
-- gcc
-- systemd-devel
-
+* epel-release
+* gcc
+* systemd-devel
 
 ### 3. 推荐版本
 
@@ -74,49 +72,49 @@ HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，�
 HAProxy 配置 Database 负载均衡场景操作简单，以下 step by step 操作具有普遍性，不具有特殊性，建议根据实际场景，个性化配置相关的配置文件。
 
 1. 安装 HAProxy：推荐 yum 安装
-	
-	```
-	# yum 安装 HAProxy
-	yum -y install haproxy
-	# 验证 HAProxy 安装是否成功
-	which haproxy
-	```
-	
-2.  配置 HAProxy
 
-	```
-	# yum 安装过程中会生成配置模版
-	vim /etc/haproxy/haproxy.cfg
-	```
+ ```
+ # yum 安装 HAProxy
+ yum -y install haproxy
+ # 验证 HAProxy 安装是否成功
+ which haproxy
+ ```
 
-3.  启动  HAProxy
+2. 配置 HAProxy
 
-	方法一：直接启动
-	
-	```
-	haproxy -f /etc/haproxy/haproxy.cfg
-	```
+ ```
+ # yum 安装过程中会生成配置模版
+ vim /etc/haproxy/haproxy.cfg
+ ```
 
-	方法二：systemd 启动 HAProxy，默认读取（推荐）
-	
-	```
-	systemctl start haproxy.service
-	```
+3. 启动  HAProxy
 
-4.  停止  HAProxy
+ 方法一：直接启动
 
-	方法一：kill -9
+ ```
+ haproxy -f /etc/haproxy/haproxy.cfg
+ ```
 
-	```
-	ps -ef | grep haproxy 
-	kill -9 haproxy.pid
-	```
-	
-	方法二：systemd 停止 HAProxy（如果使用 systemd 启动）
+ 方法二：systemd 启动 HAProxy，默认读取（推荐）
 
-	```
-	systemctl stop haproxy.service
-	```
+ ```
+ systemctl start haproxy.service
+ ```
+
+4. 停止  HAProxy
+
+ 方法一：kill -9
+
+ ```
+ ps -ef | grep haproxy
+ kill -9 haproxy.pid
+ ```
+
+ 方法二：systemd 停止 HAProxy（如果使用 systemd 启动）
+
+ ```
+ systemctl stop haproxy.service
+ ```
 
 ## HAProxy 命令介绍
 
@@ -155,7 +153,6 @@ Usage : haproxy [-f <cfgfile|cfgdir>]* [ -vdVD ] [ -n <maxconn> ] [ -N <maxpconn
 |-sf/-st &lt;unix_socket&gt; |在启动后，在 pidlist 中发送 FINISH 信号给 PID。收到此信号的进程将等待所有会话在退出之前完成，即优雅停止服务。此选项必须最后指定，后跟任意数量的 PID，SIGTTOU 和 SIGUSR1 都被发送。|
 |-x &lt;unix_socket&gt;,[&lt;bind options&gt;...]|获取 socket 信息。|
 |-S &lt;unix_socket&gt;,[&lt;bind options&gt;...]|分配新的 socket。|
-
 
 ## HAProxy 最佳实践
 

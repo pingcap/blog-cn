@@ -1,12 +1,11 @@
 ---
 title: 做一切为了好玩的极客，TiDB Committer 王贺的心路历程
-author: ['PingCAP']
+author: ["PingCAP"]
 date: 2020-11-30
 summary: 本篇文章将介绍王贺 TiDB Committer，DDL SIG 的 xhebox 的贡献之路。
-tags: ['TiDB', 'Committer']
+tags: ["TiDB", "Committer"]
 draft: true
 ---
-
 
 王贺看起来是一个不走寻常路的大三学生，从小就喜欢计算机，对于很多大学才开始接触编程的同学来说，高三就可以自己做一个 Linux 发行版无疑是同龄人中的佼佼者了。
 
@@ -15,7 +14,6 @@ draft: true
 ![1-certificatewanghe](media/a-story-about-tidb-committer-wanghe-who-doing-anything-for-fun/1-certificatewanghe.jpeg)
 
 ## 当时怎么想到要自己做一个 Linux 发行版呢？
-
 
 开始接触 Linux 的时候我觉得 glibc 太大了，下载下来有几十 MB 所以想换掉它。当时正好接触到了除了 glibc 以外的 libc，我就萌生了自己做发行版这个想法，甚至还想把 GNU 所有的东西都换掉，虽然最后失败了，但发行版还是做了下来。
 
@@ -37,7 +35,7 @@ draft: true
 
 有，不过其他项目的补丁比较散，不像 TCP 做了一个比较完整的功能。比如 musl libc 的兼容性不太好，我和使用 musl libc 的外国网友讨论过这个问题，也给 Google Chrome，Firefox 都提过补丁。
 
-##  贡献过程中遇到最困难的地方是什么？
+## 贡献过程中遇到最困难的地方是什么？
 
 困难可能是因为从来没写过数据库，学校的数据库课程也才开始，教的也只是基本的 SQL 语句，所以我本身对 TiDB 和数据库也没什么了解，觉得入门比较难。
 

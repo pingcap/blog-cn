@@ -26,47 +26,46 @@ DML 语句包括 Insert/Replace、Update、Delete，这里挑 Insert 语句来�
 ```
 // TableMutation 存储表中数据的变化
 message TableMutation {
-	    // 表的 id，唯一标识一个表
-	    optional int64 table_id      = 1 [(gogoproto.nullable) = false]; 
-	    
-	    // 保存插入的每行数据
-	    repeated bytes inserted_rows = 2;
-	    
-	    // 保存修改前和修改后的每行的数据
-	    repeated bytes updated_rows  = 3;
-	    
-	    // 已废弃
-	    repeated int64 deleted_ids   = 4;
-	    
-	    // 已废弃
-	    repeated bytes deleted_pks   = 5;
-	     
-	    // 删除行的数据
-	    repeated bytes deleted_rows  = 6;
-	    
-	    // 记录数据变更的顺序
-	    repeated MutationType sequence = 7;
+     // 表的 id，唯一标识一个表
+     optional int64 table_id      = 1 [(gogoproto.nullable) = false]; 
+     
+     // 保存插入的每行数据
+     repeated bytes inserted_rows = 2;
+     
+     // 保存修改前和修改后的每行的数据
+     repeated bytes updated_rows  = 3;
+     
+     // 已废弃
+     repeated int64 deleted_ids   = 4;
+     
+     // 已废弃
+     repeated bytes deleted_pks   = 5;
+      
+     // 删除行的数据
+     repeated bytes deleted_rows  = 6;
+     
+     // 记录数据变更的顺序
+     repeated MutationType sequence = 7;
 }
 ```
-
 
 这个结构体保存于跟每个 Session 链接相关的事务上下文结构体中 `TxnState.mutations`。 一张表对应一个 `TableMutation` 对象，`TableMutation` 里面保存了这个事务对这张表的所有变更数据。Insert 会把当前语句插入的行，根据 `RowID` + `Row-value` 的格式编码之后，追加到 `TableMutation.InsertedRows` 中：
 
 ```
 func (t *Table) addInsertBinlog(ctx context.Context, h int64, row []types.Datum, colIDs []int64) error {
-	mutation := t.getMutation(ctx)
-	pk, err := codec.EncodeValue(ctx.GetSessionVars().StmtCtx, nil, types.NewIntDatum(h))
-	if err != nil {
-		return errors.Trace(err)
-	}
-	value, err := tablecodec.EncodeRow(ctx.GetSessionVars().StmtCtx, row, colIDs, nil, nil)
-	if err != nil {
-		return errors.Trace(err)
-	}
-	bin := append(pk, value...)
-	mutation.InsertedRows = append(mutation.InsertedRows, bin)
-	mutation.Sequence = append(mutation.Sequence, binlog.MutationType_Insert)
-	return nil
+ mutation := t.getMutation(ctx)
+ pk, err := codec.EncodeValue(ctx.GetSessionVars().StmtCtx, nil, types.NewIntDatum(h))
+ if err != nil {
+  return errors.Trace(err)
+ }
+ value, err := tablecodec.EncodeRow(ctx.GetSessionVars().StmtCtx, row, colIDs, nil, nil)
+ if err != nil {
+  return errors.Trace(err)
+ }
+ bin := append(pk, value...)
+ mutation.InsertedRows = append(mutation.InsertedRows, bin)
+ mutation.Sequence = append(mutation.Sequence, binlog.MutationType_Insert)
+ return nil
 }
 ```
 
@@ -91,11 +90,11 @@ message PrewriteValue {
 
 ```
 info := &binloginfo.BinlogInfo{
-	Data: &binlog.Binlog{
-		Tp:            binlog.BinlogType_Prewrite,
-		PrewriteValue: prewriteData,
-	},
-	Client: s.sessionVars.BinlogClient.(binlog.PumpClient),
+ Data: &binlog.Binlog{
+  Tp:            binlog.BinlogType_Prewrite,
+  PrewriteValue: prewriteData,
+ },
+ Client: s.sessionVars.BinlogClient.(binlog.PumpClient),
 }
 ```
 
@@ -111,10 +110,10 @@ s.txn.SetOption(kv.BinlogInfo, info)
 binlogChan := c.prewriteBinlog()
 err := c.prewriteKeys(NewBackoffer(prewriteMaxBackoff, ctx), c.keys)
 if binlogChan != nil {
-	binlogErr := <-binlogChan // 等待 write prewrite binlog 完成
-	if binlogErr != nil {
-		return errors.Trace(binlogErr)
-	}
+ binlogErr := <-binlogChan // 等待 write prewrite binlog 完成
+ if binlogErr != nil {
+  return errors.Trace(binlogErr)
+ }
 }
 ```
 
@@ -127,8 +126,8 @@ if binlogChan != nil {
 ```
 err = committer.execute(ctx)
 if err != nil {
-	committer.writeFinishBinlog(binlog.BinlogType_Rollback, 0)
-	return errors.Trace(err)
+ committer.writeFinishBinlog(binlog.BinlogType_Rollback, 0)
+ return errors.Trace(err)
 }
 committer.writeFinishBinlog(binlog.BinlogType_Commit, int64(committer.commitTS))
 ```
@@ -137,18 +136,18 @@ committer.writeFinishBinlog(binlog.BinlogType_Commit, int64(committer.commitTS))
 
 ```
 func (c *twoPhaseCommitter) writeFinishBinlog(tp binlog.BinlogType, commitTS int64) {
-	if !c.shouldWriteBinlog() {
-		return
-	}
-	binInfo := c.txn.us.GetOption(kv.BinlogInfo).(*binloginfo.BinlogInfo)
-	binInfo.Data.Tp = tp
-	binInfo.Data.CommitTs = commitTS
-	go func() {
-		err := binInfo.WriteBinlog(c.store.clusterID)
-		if err != nil {
-			log.Errorf("failed to write binlog: %v", err)
-		}
-	}()
+ if !c.shouldWriteBinlog() {
+  return
+ }
+ binInfo := c.txn.us.GetOption(kv.BinlogInfo).(*binloginfo.BinlogInfo)
+ binInfo.Data.Tp = tp
+ binInfo.Data.CommitTs = commitTS
+ go func() {
+  err := binInfo.WriteBinlog(c.store.clusterID)
+  if err != nil {
+   log.Errorf("failed to write binlog: %v", err)
+  }
+ }()
 }
 ```
 
@@ -160,13 +159,13 @@ func (c *twoPhaseCommitter) writeFinishBinlog(tp binlog.BinlogType, commitTS int
 
 ```
 const (
-	JobStateNone    		JobState = 0
-	JobStateRunning 		JobState = 1
-	JobStateRollingback  	JobState = 2
-	JobStateRollbackDone 	JobState = 3
-	JobStateDone         	JobState = 4
-	JobStateSynced 			JobState = 6
-	JobStateCancelling 		JobState = 7
+ JobStateNone      JobState = 0
+ JobStateRunning   JobState = 1
+ JobStateRollingback   JobState = 2
+ JobStateRollbackDone  JobState = 3
+ JobStateDone          JobState = 4
+ JobStateSynced    JobState = 6
+ JobStateCancelling   JobState = 7
 )
 ```
 
@@ -192,20 +191,19 @@ const (
 worker.handleDDLJobQueue():
 
 if job.IsDone() || job.IsRollbackDone() {
-		binloginfo.SetDDLBinlog(d.binlogCli, txn, job.ID, job.Query)
-		if !job.IsRollbackDone() {
-			job.State = model.JobStateSynced
-		}
-		err = w.finishDDLJob(t, job)
-		return errors.Trace(err)
+  binloginfo.SetDDLBinlog(d.binlogCli, txn, job.ID, job.Query)
+  if !job.IsRollbackDone() {
+   job.State = model.JobStateSynced
+  }
+  err = w.finishDDLJob(t, job)
+  return errors.Trace(err)
 }
 
 type Binlog struct {
-	DdlQuery []byte
-	DdlJobId         int64
+ DdlQuery []byte
+ DdlJobId         int64
 }
 ```
-
 
 `DdlQuery` 会设置为原始的 DDL 语句，`DdlJobId` 会设置为 DDL 的任务 ID。
 

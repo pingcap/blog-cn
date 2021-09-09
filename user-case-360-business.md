@@ -36,13 +36,13 @@ customerCategory: 高科技
 
 ![TiDB-架构](media/user-case-360-business/2-TiDB-架构.png)
 
-1.  可在线扩展：TiDB Server/PD/TiKV 这 3 大核心模块各司其职，并且支持在线扩容，region 自动 balance，迁移过程对业务无感知。
+1. 可在线扩展：TiDB Server/PD/TiKV 这 3 大核心模块各司其职，并且支持在线扩容，region 自动 balance，迁移过程对业务无感知。
 
-2.  高可用：基于 Raft 的多数派选举协议实现了金融级别的数据强一致性保证，且在不丢失大多数副本的前提下，可以实现故障的自动恢复 (auto-failover)，无需人工介入。
+2. 高可用：基于 Raft 的多数派选举协议实现了金融级别的数据强一致性保证，且在不丢失大多数副本的前提下，可以实现故障的自动恢复 (auto-failover)，无需人工介入。
 
-3.  无缝迁移：支持 MySQL 协议，业务迁移无需修改代码。
+3. 无缝迁移：支持 MySQL 协议，业务迁移无需修改代码。
 
-4.  丰富的监控+运维工具：
+4. 丰富的监控+运维工具：
     - 监控：基于 Prometheus + Grafana 的丰富监控模板；
     - 运维工具：TiDB Ansible 部署+运维；
     - TiDB Data Migration(DM)：将数据从 MySQL 迁移+同步的工具；
@@ -57,14 +57,14 @@ TiDB 最核心的应用场景是：大数据量下的分库分表，比如经常
 
 **服务器硬件配置**
 
-+ CPU:E5-2630v2*2
-+ Mem:16G DDR3*8
-+ Disk：
-    - Intel S3500 300G*1
-    - flash:宝存1.6T*1
-+ Net:1000M*2
+- CPU:E5-2630v2*2
+- Mem:16G DDR3*8
+- Disk：
+  - Intel S3500 300G*1
+  - flash:宝存1.6T*1
+- Net:1000M*2
 
-**服务器系统版本** ：CentOS Linux release 7.4.1708 (Core) 
+**服务器系统版本** ：CentOS Linux release 7.4.1708 (Core)
 
 **TiDB 的版本** ：tidb-ansible-3.0.0
 
@@ -216,9 +216,9 @@ ALTER TABLE t SHARD_ROW_ID_BITS = 4;  #值为 4 表示 16 个分片
 
 关于 `SHARD_ROW_ID_BITS` 和 `PRE_SPLIT_REGION` 这 2 个参数使用详情参见官方文档：
 
-* [https://pingcap.com/docs-cn/v3.0/faq/tidb/#6-1-2-如何打散热点](https://pingcap.com/docs-cn/stable/faq/tidb/#6-1-2-%E5%A6%82%E4%BD%95%E6%89%93%E6%95%A3%E7%83%AD%E7%82%B9)
+- [https://pingcap.com/docs-cn/v3.0/faq/tidb/#6-1-2-如何打散热点](https://pingcap.com/docs-cn/stable/faq/tidb/#6-1-2-%E5%A6%82%E4%BD%95%E6%89%93%E6%95%A3%E7%83%AD%E7%82%B9)
 
-* [https://pingcap.com/docs-cn/v3.0/reference/sql/statements/split-region/#pre-split-region](https://pingcap.com/docs-cn/v3.0/reference/sql/statements/split-region/#pre-split-region)
+- [https://pingcap.com/docs-cn/v3.0/reference/sql/statements/split-region/#pre-split-region](https://pingcap.com/docs-cn/v3.0/reference/sql/statements/split-region/#pre-split-region)
 
 此外，针对自增主键 ID 造成写入热点的问题，TiDB 将会在 4.0 版本为提供一个新的列属性：`Auto_Random`。这个属性类似于 `Auto_Increment`，可以定义在整型主键上，由 TiDB 自动分配一个保证不重复的随机 ID。有了这个特性后，上面的例子可以做到不删除主键 ID，同时避免写入热点。
 
@@ -237,5 +237,3 @@ ALTER TABLE t SHARD_ROW_ID_BITS = 4;  #值为 4 表示 16 个分片
 本文只是拿 360 智能商业业务线的一个业务场景分享了热点 Region 的打散方法，目的是提供写热点优化的思路，希望能对大家有一定的帮助。本文调优过程中得到了 PingCAP 公司技术人员的大力支持，在此表示衷心的感谢。
 
 TiDB 的存储和计算分离的架构，结合高可用、高性能、易扩展、易运维等特性，给大数据量的数据拆分带来了曙光，未来会在 360 智能商业业务线有更多的项目落地。在未来，我们期望用 TiFlash 解决 TiDB 下游数据治理问题，并做到跨数据中心部署的方案。
-
-

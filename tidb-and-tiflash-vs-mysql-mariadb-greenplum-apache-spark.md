@@ -22,11 +22,11 @@ tags: ['TiFlash']
 
 测试所用查询见后文，我们先来看看对比结果：
 
-| 查询语句 | TiDB + TiFlash | MySQL 5.7.29 | Greenplum 6.1 | Mariadb Columnstore 1.2.5 | Spark 2.4.5 + Parquet | Oracle 12.2.0.1 | 
+| 查询语句 | TiDB + TiFlash | MySQL 5.7.29 | Greenplum 6.1 | Mariadb Columnstore 1.2.5 | Spark 2.4.5 + Parquet | Oracle 12.2.0.1 |
 |:------|:------|:------|:------|:------|:------|:------|
 | Q1 | 0.508 | 290.340 | 4.206 | 1.209 | 2.044 | 88.53 |
 | Q2 | 0.295 | 262.650 | 3.795 | 0.740 | 0.564 | 76.05 |
-| Q3 | 0.395 | 247.260 | 2.339 | 0.583 | 0.684 | 74.76 | 
+| Q3 | 0.395 | 247.260 | 2.339 | 0.583 | 0.684 | 74.76 |
 | Q4 | 0.512 | 254.960 | 2.923 | 0.625 | 1.306 | 74.75 |
 | Q5 | 0.184 | 242.530 | 2.077 | 0.258 | 0.627 | 67.44 |
 | Q6 | 0.273 | 288.290 | 4.471 | 0.462 | 1.084 | 134.08 |
@@ -170,7 +170,7 @@ mysql> select count(*) from ontime where 1845 = CRSDepTime;
 >
 >* Mem: 188G @ 2133 MHz
 >
->* 1 x NVMe SSD 3.6T 
+>* 1 x NVMe SSD 3.6T
 >
 >* OS: centos-release-7-6.1810.2.el7.centos.x86_64
 >
@@ -181,4 +181,3 @@ mysql> select count(*) from ontime where 1845 = CRSDepTime;
 >* Greenplum 16 Segments (DISTRIBUTED RANDOMLY)
 >
 >* Oracle noparallel
-

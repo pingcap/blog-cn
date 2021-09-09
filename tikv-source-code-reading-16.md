@@ -91,15 +91,15 @@ pub fn handle_request(&mut self) -> Result<SelectResponse> {
 
 为什么要引入向量化模型呢，原因有以下几点：
 
-1.  对于每行我们至少得调用 1 次 `next()` 方法，如果 `DAG` 的最大深度很深，为了获取一行我们需要调用更多次的 `next()` 方法，所以在传统的迭代模型中，虚函数调用的开销非常大。如果一次 `next()` 方法就返回多行，这样平均下来每次 `next()` 方法就可以返回多行，而不是至多一行。
+1. 对于每行我们至少得调用 1 次 `next()` 方法，如果 `DAG` 的最大深度很深，为了获取一行我们需要调用更多次的 `next()` 方法，所以在传统的迭代模型中，虚函数调用的开销非常大。如果一次 `next()` 方法就返回多行，这样平均下来每次 `next()` 方法就可以返回多行，而不是至多一行。
 
-2.  由于迭代的开销非常大，整个执行的循环无法被 `loop-pipelining` 优化，使得整个循环流水线被卡死，IPC 大大下降。返回多行之后，每个算子内部可以采用开销较小的循环，更好利用 `loop-pipelining` 优化。
+2. 由于迭代的开销非常大，整个执行的循环无法被 `loop-pipelining` 优化，使得整个循环流水线被卡死，IPC 大大下降。返回多行之后，每个算子内部可以采用开销较小的循环，更好利用 `loop-pipelining` 优化。
 
 当然向量化模型也会带来一些问题：
 
-1.  原先最上层算子按需向下层算子拿上一行，而现在拿上多行，内存开销自然会增加。
+1. 原先最上层算子按需向下层算子拿上一行，而现在拿上多行，内存开销自然会增加。
 
-2.  计算模型发生变化，原来基于标量计算的表达式框架需要重构 （详见上篇文章）。
+2. 计算模型发生变化，原来基于标量计算的表达式框架需要重构 （详见上篇文章）。
 
 但是这样并不影响向量化查询带来的显著的性能提升，下边是引入向量化模型后一个基准测试结果：（需要注意的是，Coprocessor 计算还只是 TPC-H 中的其中一部分，所以计算任务比重很大程度上决定了开不开向量化带来的提升比例）。
 
@@ -312,15 +312,15 @@ pub struct BatchSelectionExecutor<Src: BatchExecutor> {
 
 1. `SimpleAggregation` (没有 `group by` 字句，只有聚合函数)
 
-  - => `select count(*) from t where a > 1`
+- => `select count(*) from t where a > 1`
 
 2. `FastHashAggregation` (只有一个 `group by` column)
 
-  - => `select count(*) from t group by a`
+- => `select count(*) from t group by a`
 
 3. `SlowHashAggregation` (多个 `groub by` columns, 或者表达式值不是 `Hashable` 的)
 
-  - => `select sum(*) from t group by a, b`
+- => `select sum(*) from t group by a, b`
 
 4. `StreamAggregation` 这种聚合算子假设输入已经按照 `group by` columns 排好序。
 
@@ -340,9 +340,9 @@ select count(*) from t group by a
 
 接下来就涉及到两个重要的细节：
 
-1.  聚合函数如何求值。
+1. 聚合函数如何求值。
 
-2.  如何根据 `group_by column` 对行进行分组并聚合。
+2. 如何根据 `group_by column` 对行进行分组并聚合。
 
 后续几节我们着重介绍一下这两个细节是如何实现的。
 
@@ -395,11 +395,11 @@ pub trait AggrFunctionStateUpdatePartial<T: Evaluable> {
 
 聚合函数的求值过程分为三个步骤：
 
-1.  创建并初始化状态，这一过程一般是由调用者调用：`create_state` 实现的。
+1. 创建并初始化状态，这一过程一般是由调用者调用：`create_state` 实现的。
 
-2.  然后在不断遍历行/向量的过程中，我们会将行的内容传入 `update/update_repeat/update_vector` 函数(具体调用那种取决于不同的聚合函数实现)，更新内部的状态，比如遇到一个非空行，`COUNT()` 就会给自己内部计数器+1。
+2. 然后在不断遍历行/向量的过程中，我们会将行的内容传入 `update/update_repeat/update_vector` 函数(具体调用那种取决于不同的聚合函数实现)，更新内部的状态，比如遇到一个非空行，`COUNT()` 就会给自己内部计数器+1。
 
-3.  当遍历结束之后，聚合函数就会将自己的状态通过 push_result(), 写入到一个列数组里边，这里之所以是列数组是因为聚合函数可能有多个输出列，比如 AVG()，在分布式的场景，我们需要返回两列：`SUM` 和 `COUNT`。
+3. 当遍历结束之后，聚合函数就会将自己的状态通过 push_result(), 写入到一个列数组里边，这里之所以是列数组是因为聚合函数可能有多个输出列，比如 AVG()，在分布式的场景，我们需要返回两列：`SUM` 和 `COUNT`。
 
 这个 `trait` 可以通过 `#[derive(AggrFuntion)]` 自动推导出实现，并且可以通过过程宏 `#[aggr_funtion(state = FooState::new())]` 来指定 `create_state` 创建出来的 `State` 类型。举个例子，`COUNT` 的实现：
 

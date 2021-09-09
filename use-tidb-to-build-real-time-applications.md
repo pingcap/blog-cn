@@ -9,13 +9,12 @@ tags: ['TiDB']
 **本文由 PingCAP 研发工程师雷宇分享，主要从宏观角度分析 TiDB 究竟能做什么，创造什么样的价值，以及研发过程中的一些设计立足点。** 文章将从四个部分分享：
 
 - 首先，数据管理技术的演进；
-    
+
 - 其次，TiDB 能做什么？
-    
+
 - 第三，大家是怎么用 TiDB 的？
-    
+
 - 第四，TiDB HTAP 的未来。
-    
 
 ## 数据管理技术的演进
 
@@ -24,15 +23,15 @@ tags: ['TiDB']
 首先，简单的回顾一下数据管理技术的演进。
 
 - 上个世纪 70 年代，IBM 研发了世界上第一个关系型数据库 System R，是第一个使用 SQL 作为查询语言的数据库，也为后来的关系型数据库的设计奠定了基础。
-    
+
 - 到了 80 和 90 年代，关系型数据库开始野蛮生长，涌现出一大批商业关系型数据库，比如当前知名的 Oracle、IBM 的 DB2、微软的 SQL Server，以及现在比较流行的开源关系型数据库 PostgreSQL、MySQL 等。这个时期，技术上的重点主要是数据库的功能完善，比如存储过程、触发器、各种各样的索引，以满足不同的业务需求。
-    
+
 - 2000 年代初期，全世界都进入了互联网时代，数据开始呈现指数型增长，传统的关系型数据库无法容纳如此庞大的数据。此时，一些互联网公司开始牵头，将内部处理海量数据的方案进行开源。2004 年左右，由谷歌牵头发表了三篇论文，分别是他们的**分布式文件系统 GFS、分布式计算系统 MapReduce、分布式存储系统 BigTable**。在这三篇论文的指导下，Hadoop 生态社区繁荣发展。同时，分布式 KV 数据库 Cassandra、MongoDB 等也在这个时期出现；传统的关系型数据库也在发展，出现了一些非常关键的技术，比如 MySQL 的 InnoDB 引擎、Oracle RAC 分析引擎。单一的数据库产品已无法满足用户的需求，整个数据处理领域的技术方向出现了严重的分化。OLTP 领域依然被传统关系型数据库占领，OLAP 领域则成为了后来的大数据技术主战场。
-    
+
 - Pre - 2010s，得益于硬件的发展，内存的容量和网络的带宽与延迟有了极大提升，数据库架构迎来变革。内存数据库和分布式数据库大规模投入生产。代表产品：Google Spanner、SAP HANA、SQL Server Hekaton、Amazon Aurora。这个时期 OLTP 的概念和 OLAP 的概念逐渐开始模糊，并有人提出了 HTAP，将 OLTP 和 OLAP 混合在一起，在同一个数据库上同时处理这两种负载，回到了数据库产品的初衷。
-    
+
 - Post - 2010s，延续了 2010 年代初期的辉煌，各种 NewSQL 数据库出现，可以承载更加复杂的负载。代表产品：CockroachDB、TiDB、VoltDB、Azure Cosmos DB，各种技术开始走向不同的方向。
-    
+
 整体来看，从 2000 年开始，大数据的技术就迈入了互联网生态，使用大数据技术来建立数据仓库已较为普遍。尽管数据仓库的理念在 90 年代就已经出现了，但各个数据仓库的产品都尚未开源，业界缺乏共识。而 Hadoop 开源之后，基于**Hadoop 的数仓架构逐渐成为主流**，也即传统的数仓架构。
 
 ### 传统数仓架构
@@ -76,15 +75,15 @@ TiDB 的架构非常简单，首先是 Load Balancer，可以将用户的 SQL �
 在 TiDB 4.0 之前，我们一直延续这套架构。以下是 TiDB 4.0 之前我们能做到什么的总结：
 
 - 兼容 MySQL 协议及特性的关系型数据库；
-    
+
 - 存储天生具备水平扩展能力，无需分库分表；
-    
+
 - 承载千万级 QPS 在线业务；
-    
+
 - 计算存储分离，可进行弹性的资源配置；
-    
+
 - 数仓 Serving 层的优质载体（数据中台）。
-    
+
 首先，TiDB 的立足点是一个**兼容 MySQL 协议以及 MySQL 特性的关系型数据库**，具备水平扩展能力，包括存储和计算都可以进行水平扩展，并且不需要分库分表。在此基础上，因为支持计算的水平扩展，所以能承载高 QPS 的在线业务，并且存储、计算分离，为弹性资源配置提供了基础。
 
 但超乎我们想象的是，许多开源社区用户将 TiDB 作为数仓的优质载体。TiDB 可以接受海量数据的存储，同时也可以提供比较方便的访问接口，所以很多用户自然地将其作为数仓的中间层。
@@ -110,15 +109,15 @@ TiDB 的架构非常简单，首先是 Load Balancer，可以将用户的 SQL �
 总体而言，在有了 TiDB 4.0之后，**分析能力上了一个台阶**。此时，我们可以自豪说 TiDB 是一个真正意义上的 HTAP 数据库了。**TiDB 的特点**如下：
 
 - 真正意义上的 HTAP 数据库；
-    
+
 - 互相隔离的 OLAP 和 OLTP 负载；
-    
+
 - 分析友好，强实时性、强一致性的列存；
-    
+
 - 一体化部署运维体系，优化器智能选择存储引擎；
-    
+
 - ALTER TABLE \`db\`.\`table\` SET TIFLASH REPLICA 1，一句简单的 SQL 即可体验 TiFlash 带来的增强。
-    
+
 ### TiDB 5.0 HTAP
 
 在 5.0 的时候，为了解决上述痛点，我们研发了 TiDB 的 MPP。先了解一下 MPP 究竟是什么。
@@ -150,33 +149,33 @@ TiDB 的架构非常简单，首先是 Load Balancer，可以将用户的 SQL �
 总结一下**TiDB 的 MPP**。
 
 - 支持多种并行执行算法：
-    
-    - Broadcast Join。
-        
-    - Repartition(Shuffle) Join；
-        
-    - Two Phase Aggregation；
-        
-    - One Phase Aggregation；
-        
+
+  - Broadcast Join。
+
+  - Repartition(Shuffle) Join；
+
+  - Two Phase Aggregation；
+
+  - One Phase Aggregation；
+
 - 可扩展复杂的查询处理能力；
-    
+
 - TiDB 高度集成，优化器自动选择；
-    
+
 - 升级到 TiDB 5.0 后，仅需开启开关 SET tidb\_allow\_mpp=ON 即可使用。
-    
+
 TiDB 5.0 新引入的几个 Feature，使 TiDB 的 HTAP 能力得到了极大的提升：
 
 - **OLTP**:
-    
-    - Async Commit，1PC 提供更低的事务延迟。
-        
-    - Clustered Index 强化特定负载下的延迟和吞吐量。
-        
+
+  - Async Commit，1PC 提供更低的事务延迟。
+
+  - Clustered Index 强化特定负载下的延迟和吞吐量。
+
 - **OLAP**:
-    
-    - MPP 大幅提升 TiDB 处理复杂查询的能力。
-        
+
+  - MPP 大幅提升 TiDB 处理复杂查询的能力。
+
 以上分享了 TiDB 不同阶段的功能特性和产品能力，下面将具体说明大家是怎么用 TiDB 的。
 
 ## 大家是怎么用 TiDB 的
@@ -208,25 +207,25 @@ TiDB 5.0 新引入的几个 Feature，使 TiDB 的 HTAP 能力得到了极大的
 实时分析中使用 Flink 也有几种常见的架构。
 
 - **使用 Flink MySQL connector 解析 MySQL CDC**
-    
+
 ![13](media/use-tidb-to-build-real-time-applications/13.png)
 
 第一种架构，前端业务使用的是 MySQL，比如分库分表方案，通过 Flink MySQL Connector 获取MySQL 的数据变更，然后再将数据写入 TiDB。
 
 - **使用 Kafka 推送 Canal JSON 等格式**
-    
+
 ![14](media/use-tidb-to-build-real-time-applications/14.png)
 
 第二种架构，通过 MySQL binlog 处理的中间件，比如 Canal 等处理数据，然后写入到 Kafka 供 Flink 消费，最后再写进 TiDB，这种方式比较常见。
 
 - **使用 TiCDC 推送 Canal JSON 到 Kafka**
-    
+
 ![15](media/use-tidb-to-build-real-time-applications/15.png)
 
 第三种架构，用户前端已经使用了 TiDB，通过 TiDB 的 CDC 功能，输出 Canal JSON 格式到 Kafka 中供消费，Flink 再将数据写入到 TiDB 类似的数据库或者其他 sink 中。
 
 - **数仓加速层 / ODS 层**
-    
+
 ![16](media/use-tidb-to-build-real-time-applications/16.png)
 
 还有一种常见的方案，数据仓库的加速层或者说 ODS 层。
@@ -242,19 +241,19 @@ TiDB 5.0 新引入的几个 Feature，使 TiDB 的 HTAP 能力得到了极大的
 首先是大家都比较熟悉的中通快递，中通快递是全球业务规模最大的快递企业之一。近几年，他们开始尝试使用 TiDB 来支持包裹追踪管理的业务。在早期的架构中，他们会定期使用 Spark 进行批处理，将来自在线业务的数据拼成宽表写入到 TiDB 中以提供数据分析服务。这套架构可以满足当时他们的业务需求，但是无法实现强实时的数据分析。
 
 - **中通快递**
-    
-    - 全球业务规模最大快递企业。
-        
+
+  - 全球业务规模最大快递企业。
+
 - **物流全链路生命周期管理**
-    
-    - 同一套 TiDB 平台服务包裹追踪管理与实时报表。
-        
-    - QPS 峰值 12万+。
-        
-    - 实时统计分析。
-        
-    - 通过 TiSpark 衔接离线平台。
-        
+
+  - 同一套 TiDB 平台服务包裹追踪管理与实时报表。
+
+  - QPS 峰值 12万+。
+
+  - 实时统计分析。
+
+  - 通过 TiSpark 衔接离线平台。
+
 ![17](media/use-tidb-to-build-real-time-applications/17.png)
 
 中通快递的架构如上。首先，包裹追踪是线上业务，通过 Spark Streaming 训练方式写入到 TiDB 中，同时进行实时分析，然后 TiDB 的归档数据将发送到中通的大数据平台进行计算，最后大数据平台的计算的结果再写回到 TiDB。在这个结构中，TiDB 是整个实时计算的整合层。
@@ -280,15 +279,15 @@ TiDB 5.0 新引入的几个 Feature，使 TiDB 的 HTAP 能力得到了极大的
 智慧芽是提供 SaaS 服务的厂商，为全球 50 多个国家超 10000 家科技公司、高校、科研与金融机构提供大数据情报服务。
 
 - **智慧芽**
-    
-    - 高速发展的科技创新 SaaS 服务商，为全球 50 多个国家超 10000 家科技公司、高校、科研与金融机构提供大数据情报服务。
-        
+
+  - 高速发展的科技创新 SaaS 服务商，为全球 50 多个国家超 10000 家科技公司、高校、科研与金融机构提供大数据情报服务。
+
 - **实时数仓**
-    
-    - 部署于 AWS 云环境。
-        
+
+  - 部署于 AWS 云环境。
+
 - **通过 AWS Kinesis / AWS EMR Flink 进行数仓建模**。
-    
+
 ![20](media/use-tidb-to-build-real-time-applications/20.png)
 
 智慧芽的所有业务都部署在 AWS 之上。早期，智慧芽通过 AWS 的 Redshift 来进行数据分析，但是 Redshift 本身的速度并不特别理想，因此为了获得更好的实时性，智慧芽开始尝试使用 TiDB 构建实时数仓。在数仓架构上跟其他公司非常相似，也是使用 Flink 进行实时数据处理，然后将各种各样的数据写入到 TiDB，最后直接呈现给数据应用。

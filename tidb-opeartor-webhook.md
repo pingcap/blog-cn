@@ -46,8 +46,8 @@ spec:
 最后我们串起来再整个表述一下 Pod 退出的流程（[官方文档里更严谨哦](https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods)）：
 
 1. 用户删除 Pod。
-2. 
-    - 2.1. Pod 进入 Terminating 状态。 
+2.
+    - 2.1. Pod 进入 Terminating 状态。
     - 2.2. 与此同时，K8s 会将 Pod 从对应的 service 上摘除。
     - 2.3. 与此同时，针对有 PreStop Hook 的容器，kubelet 会调用每个容器的 PreStop Hook，假如 PreStop Hook 的运行时间超出了 grace period，kubelet 会发送 SIGTERM 并再等 2 秒。
     - 2.4. 与此同时，针对没有 PreStop Hook 的容器，kubelet 发送 SIGTERM。
@@ -113,4 +113,3 @@ spec:
 其实 [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) 的应用很广，比如 Istio 就是用 `MutatingAdmissionWebhook` 来实现 envoy 容器的注入的。从上面的例子中我们也可以看到它的扩展能力很强，而且常常能站在一个正交的视角上，非常干净地解决问题，与其它逻辑做到很好的解耦。
 
 当然了，Kubernetes 中还有 [非常多的扩展点](https://kubernetes.io/docs/concepts/extend-kubernetes/extend-cluster/)，从 kubectl 到 apiserver，scheduler，kubelet（device plugin，flexvolume），自定义 Controller 再到集群层面的网络（CNI），存储（CSI）可以说是处处可以做事情。以前做一些常规的微服务部署对这些并不熟悉也没用过，而现在面对 TiDB 这样复杂的分布式系统，尤其在 Kubernetes 对有状态应用和本地存储的支持还不够好的情况下，得在每一个扩展点上去悉心考量，做起来非常有意思，因此后续可能还有一些 [TiDB Operator](https://github.com/pingcap/tidb-operator) 中思考过的解决方案分享。
-

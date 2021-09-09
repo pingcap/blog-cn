@@ -61,15 +61,18 @@ Spanner 对外提供了 read-only transaction 和 read-write transaction 两种�
 2. API Layer 将写入请求发送给 Split 1 的 leader。
 3. Leader 开始一个事务。
 4. Leader 首先尝试对于 Row 1 获取一个 write lock，如果这时候有另外的 read-write transaction 已经对于这行数据上了一个 read lock，那么就会等待直到能获取到 write lock。
-	+ 这里需要注意的是，假设事务 1 先 lock a，然后 lock b，而事务 2 是先 lock b，在 lock a，这样就会出现 dead lock 的情况。这里 Spanner 采用的是 `wound-wait` 的解决方式，新的事务会等待老的事务的 lock，而老的事务可能会直接 abort 掉新的事务已经占用的 lock。
+
++ 这里需要注意的是，假设事务 1 先 lock a，然后 lock b，而事务 2 是先 lock b，在 lock a，这样就会出现 dead lock 的情况。这里 Spanner 采用的是 `wound-wait` 的解决方式，新的事务会等待老的事务的 lock，而老的事务可能会直接 abort 掉新的事务已经占用的 lock。
+
 5. 当 lock 被成功获取到之后，Leader 就使用 TrueTime 给当前事务绑定一个 timestamp。因为用 TrueTime，我们能够保证这个 timestamp 一定大于之前已经提交的事务 timestamp，也就是我们一定能够读取到之前已经更新的数据。
 6. Leader 将这次事务和对应的 timestamp 复制给 Split 1 其他的副本，当大多数副本成功的将这个相关 Log 保存之后，我们就可以认为该事务已经提交（注意，这里还并没有将这次改动 apply）。
 7. Leader 等待一段时间确保事务的 timestamp 有效（TrueTime 的误差限制），然后告诉 client 事务的结果。这个 `commit wait` 机制能够确保后面的 client 读请求一定能读到这次事务的改动。另外，因为 `commit wait` 在等待的时候，Leader 同时也在处理上面的步骤 6，等待副本的回应，这两个操作是并行的，所以 `commit wait` 开销很小。
 8. Leader 告诉 client 事务已经被提交，同时也可以顺便返回这次事务的 timestamp。
 9. 在 Leader 返回结果给 client 的时候，这次事务的改动也在并行的被 apply 到状态机里面。
-	+ Leader 将事务的改动 apply 到状态机，并且释放 lock。
-		- Leader 同时通知其他的副本也 apply 事务的改动。
-		- 后续其他的事务需要等到这次事务的改动被 apply 之后，才能读取到数据。对于 read-write 事务，因为要拿 read lock，所以必须等到之前的 write lock 释放。而对于 read-only 事务，则需要比较 read-only 的 timestamp 是不是大于最后已经被成功 apply 的数据的 timestamp。
+
++ Leader 将事务的改动 apply 到状态机，并且释放 lock。
++ Leader 同时通知其他的副本也 apply 事务的改动。
++ 后续其他的事务需要等到这次事务的改动被 apply 之后，才能读取到数据。对于 read-write 事务，因为要拿 read lock，所以必须等到之前的 write lock 释放。而对于 read-only 事务，则需要比较 read-only 的 timestamp 是不是大于最后已经被成功 apply 的数据的 timestamp。
 
 TiDB 现在并没有使用 1PC 的方式，但不排除未来也针对单个 region 的 read-write 事务，提供 1PC 的支持。
 
@@ -86,14 +89,16 @@ TiDB 现在并没有使用 1PC 的方式，但不排除未来也针对单个 reg
 5. Split1 的 Leader 尝试将 Row 1 获取一个 read lock。如果这行数据之前有 write lock，则会持续等待。如果之前已经有另一个事务上了一个 read lock，则不会等待。至于 deadlock，仍然采用上面的  `wound-wait` 处理方式。
 6. Leader 获取到 Row 1 的数据并且返回。
 7. . Clients 开始发起一个 commit request，包括 Row 2，Row 3 的改动。所有的跟这个事务关联的 Split 都变成参与者 participants。
-8.  一个 participant 成为协调者 coordinator，譬如这个 case 里面 Row 2 成为 coordinator。Coordinator 的作用是确保事务在所有 participants 上面要不提交成功，要不失败。这些都是在 participants 和 coordinator 各自的 Split Leader 上面完成的。
-9.  Participants 开始获取 lock
-	+ Split 2 对 Row 2 获取 write lock。
-	+ Split 3 对 Row 3 获取 write lock。
-	+ Split 1 确定仍然持有 Row 1 的 read lock。
-	+ 每个 participant 的 Split Leader 将 lock 复制到其他 Split 副本，这样就能保证即使节点挂了，lock 也仍然能被持有。
-	+ 如果所有的 participants 告诉 coordinator lock 已经被持有，那么就可以提交事务了。coordinator 会使用这个时候的时间点作为这次事务的提交时间点。
-	+ 如果某一个 participant  告诉 lock 不能被获取，事务就被取消
+8. 一个 participant 成为协调者 coordinator，譬如这个 case 里面 Row 2 成为 coordinator。Coordinator 的作用是确保事务在所有 participants 上面要不提交成功，要不失败。这些都是在 participants 和 coordinator 各自的 Split Leader 上面完成的。
+9. Participants 开始获取 lock
+
++ Split 2 对 Row 2 获取 write lock。
++ Split 3 对 Row 3 获取 write lock。
++ Split 1 确定仍然持有 Row 1 的 read lock。
++ 每个 participant 的 Split Leader 将 lock 复制到其他 Split 副本，这样就能保证即使节点挂了，lock 也仍然能被持有。
++ 如果所有的 participants 告诉 coordinator lock 已经被持有，那么就可以提交事务了。coordinator 会使用这个时候的时间点作为这次事务的提交时间点。
++ 如果某一个 participant  告诉 lock 不能被获取，事务就被取消
+
 10. 如果所有 participants 和 coordinator 成功的获取了 lock，Coordinator 决定提交这次事务，并使用 TrueTime 获取一个 timestamp。这个 commit 决定，以及 Split 2 自己的 Row 2 的数据，都会复制到 Split 2 的大多数节点上面，复制成功之后，就可以认为这个事务已经被提交。
 11. Coordinator 将结果告诉其他的 participants，各个 participant 的 Leader 自己将改动复制到其他副本上面。
 12. 如果事务已经提交，coordinator 和所有的 participants 就 apply 实际的改动。
@@ -110,9 +115,11 @@ TiDB 现在并没有使用 1PC 的方式，但不排除未来也针对单个 reg
 1. API Layer 发现 Row 1，Row 2，和 Row 3 在 Split1，Split 2 和 Split 3 上面。
 2. API Layer  通过 TrueTime 获取一个 read timestamp（如果我们能够接受 Stale Read 也可以直接选择一个以前的 timestamp 去读）。
 3. API Layer 将读的请求发给 Split 1，Split 2 和 Split 3 的一些副本上面，这里有几种情况：
-	+ 多数情况下面，各个副本能通过内部状态和 TrueTime 知道自己有最新的数据，直接能提供 read。
-	+ 如果一个副本不确定是否有最新的数据，就向 Leader 问一下最新提交的事务 timestamp 是啥，然后等到这个事务被 apply 了，就可以提供 read。
-	+ 如果副本本来就是 Leader，因为 Leader 一定有最新的数据，所以直接提供 read。
+
++ 多数情况下面，各个副本能通过内部状态和 TrueTime 知道自己有最新的数据，直接能提供 read。
++ 如果一个副本不确定是否有最新的数据，就向 Leader 问一下最新提交的事务 timestamp 是啥，然后等到这个事务被 apply 了，就可以提供 read。
++ 如果副本本来就是 Leader，因为 Leader 一定有最新的数据，所以直接提供 read。
+
 4. 各个副本的结果汇总然会返回给 client。
 
 当然，Spanner 对于 Read 还有一些优化，如果我们要进行 stale read，并且这个 stale 的时间在 10s 之前，那么就可以直接在任何副本上面读取，因为 Leader 会每隔 10s 将最新的 timestamp 更新到其他副本上面。

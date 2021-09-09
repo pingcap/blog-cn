@@ -90,7 +90,7 @@ type InsertStmt struct {
 ```sql
     for _, row := range rows {
             h, err := e.Table.AddRecord(e.ctx, row, false)
-	}
+ }
 ```
 
 接下来我们看一下 [AddRecord](https://github.com/pingcap/tidb/blob/source-code/table/tables/tables.go#L345) 这个函数是如何将一行数据写入存储引擎中。要理解这段代码，需要了解一下 TiDB 是如何将 SQL 的数据映射为 Key-Value，可以先读一下我们之前写的一些文章，比如[三篇文章了解 TiDB 技术内幕 - 说计算](https://pingcap.com/blog-cn/tidb-internal-2/)。这里假设读者已经了解了这一点背景知识，那么一定会知道这里需要将 Row 和 Index 的 Key-Value 构造出来的，写入存储引擎。

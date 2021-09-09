@@ -47,7 +47,7 @@ TiKV 使用的是 [Raft](https://raft.github.io/) 一致性协议。为了保证
 最后，我们会说明如何去使用这个 Raft 库，这样大家就能在自己的应用里面集成 Raft 了。
 
 ### gRPC
- 
+
 TiKV 使用的是 [gRPC](https://grpc.io/) 作为通讯框架，我们直接把 Google [C gRPC](https://github.com/grpc/grpc) 库封装在 grpc-rs 这个库里面。我们会详细告诉大家如何去封装和操作 C gRPC 库，启动一个 gRPC 服务。
 
 另外，我们还会介绍如何使用 Rust 的 [futures-rs](https://github.com/rust-lang-nursery/futures-rs) 来将异步逻辑变成类似同步的方式来处理，以及如何通过解析 protobuf 文件来生成对应的 API 代码。
@@ -67,7 +67,6 @@ TiKV 使用 [Prometheus](https://prometheus.io/) 作为其监控系统， [rust-
 [Fail](https://github.com/pingcap/fail-rs) 是一个错误注入的库。通过这个库，我们能很方便的在代码的某些地方加上 hook，注入错误，然后在系统运行的时候触发相关的错误，看系统是否稳定。
 
 我们会详细的介绍 Fail 是如何通过 macro 来注入错误，会告诉大家如何添加自己的 hook，以及在外面进行触发
-
 
 ### TiKV
 
@@ -94,11 +93,3 @@ TiKV 是一个非常复杂的系统，这块我们会重点介绍，主要包括
 我们希望通过该源码解析系列，能让大家对 TiKV 有一个更深刻的理解。当然，TiKV 的源码也是一直在不停的演化，我们也会尽量保证文档的及时更新。
 
 最后，欢迎大家参与 TiKV 的开发。
-
-
-
-
-
- 
-
-

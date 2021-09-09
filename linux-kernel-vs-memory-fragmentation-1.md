@@ -20,7 +20,7 @@ tags: ['Linux']
 
 在开始正题前，先为大家汇总了部分 Linux 内核开发史上为改善高阶内存分配而做出的所有努力。这里的每一篇文章都非常值得细细的读一读，期望这个表格能为对反碎片细节感兴趣的读者带来便利。
 
-|  lwn 发布时间 | 标题  | 
+|  lwn 发布时间 | 标题  |
 |  ----  | ----  |
 |  2004-09-08  | [Kswapd and high-order allocations](https://lwn.net/Articles/101230/)  |
 |  2004-05-10  | [Active memory defragmentation](https://lwn.net/Articles/105021/)  |
@@ -36,7 +36,6 @@ tags: ['Linux']
 |  2017-03-21  | [Proactive compaction](https://lwn.net/Articles/717656/)  |
 |  2018-10-31  | [Fragmentation avoidance improvements](https://lwn.net/Articles/770235/)  |
 |  2020-04-21  | [Proactive compaction for the kernel](https://lwn.net/Articles/817905/)  |
-
 
 下面我们开始进入正题。
 
@@ -68,16 +67,16 @@ Per-CPU pageset 是用来优化单页分配的，可以减少处理器之间的�
 
 具体从哪种迁移类型分配页面是由申请页面时，使用的页面分配标志位决定的。比如对于用户空间的内存需求使用 __GFP_MOVABLE，对于文件页使用 __GFP_RECLAIMABLE。当某种迁移类型的页用完时，可以从其他迁移类型盗用物理页。盗用时会从最大的页块 （大小由 pageblock_order 决定，细节不在本文展开）开始盗用，避免产生碎片。上述三个迁移类型的备用优先级从高到低依次为:
 
-MIGRATE_UNMOVABLE:        MIGRATE_RECLAIMABLE, MIGRATE_MOVABLE 
+MIGRATE_UNMOVABLE:        MIGRATE_RECLAIMABLE, MIGRATE_MOVABLE
 
-MIGRATE_RECALIMABlE:      MIGRATE_UNMOVABLE, MIGRATE_MOVABLE 
+MIGRATE_RECALIMABlE:      MIGRATE_UNMOVABLE, MIGRATE_MOVABLE
 
 MIGRATE_MOVABLE:             MIGRATE_RECLAIMABLE, MIGRATE_UNMOVABLE
 
 内核引入迁移类型进行分组的目的是反碎片化，因此当出现频繁盗用时，说明存在外部内存碎片事件，这些外部碎片事件为未来埋下了隐患。我在上一篇文章 [我们为什么要禁用 THP](https://pingcap.com/blog-cn/why-should-we-disable-thp/) 有提到可以用内核提供了 ftrace 事件来分析外部内存碎片事件，具体的步骤如下：
 
 ```
-echo 1 > /sys/kernel/debug/tracing/events/kmem/mm_page_alloc_extfrag/enable              
+echo 1 > /sys/kernel/debug/tracing/events/kmem/mm_page_alloc_extfrag/enable
 cat /sys/kernel/debug/tracing/trace_pipe > ~/extfrag.log
 ```
 
@@ -95,6 +94,4 @@ echo 0 > /sys/kernel/debug/tracing/events/kmem/mm_page_alloc_extfrag/enable
 
 我们可以看到根据迁移类型进行分组只是延缓了内存碎片，而并不是从根本解决，所以随着时间的推移，当内存碎片过多，无法满足连续物理内存需求时，将会引起性能问题。因此仅仅依靠此功能是不够的，内核需要一些手段来整治内存碎片。
 
-**未完待续...** 
-
-
+**未完待续...**

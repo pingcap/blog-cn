@@ -14,7 +14,7 @@ tags: ['Linux','TiDB']
 
 众所周知，perf 是 Linux 系统下非常强大的性能工具，由 Linux 内核开发人员在不断演进和优化。除了可以分析  PMU (Performance Monitoring Unit) 硬件事件，内核事件等通用功能外，perf 还提供了其他“子模块”，比如 sched 分析调度器，timechart 根据负载特征可视化系统行为，c2c 分析可能存在的 false sharing （RedHat 在大量 Linux 的应用上，测试过这套 c2c 的开发原型，成功地发现了很多热点的伪共享缓存行问题。）等，而 trace 则可用于分析系统调用，其功能非常强大，并保证了可以接受的开销 —— 运行速度仅放慢 1.36 倍(dd 作为测试负载) 。我们一起看下几个常用的场景：
 
-1. 调用 syscall 数量的 top 排行榜 
+1. 调用 syscall 数量的 top 排行榜
 
     ```
     perf top -F 49 -e raw_syscalls:sys_enter --sort comm,dso --show-nr-samples
@@ -34,7 +34,6 @@ tags: ['Linux','TiDB']
 
    从输出中可以看到进程名称、pid ，超过 200 ms 的具体系统调用参数和返回值。
 
-
 3. 统计某个进程一段时间内系统调用的开销
 
     ```
@@ -44,7 +43,6 @@ tags: ['Linux','TiDB']
     ![3-输出图示](media/online-environment-analysis-system/3-输出图示.png)
 
     从输出中可以看到各系统调用的次数，返回错误次数，总延迟，平均延迟等信息。
-
 
 4. 我们也可以进一步分析高延迟的调用栈信息
 
@@ -64,7 +62,7 @@ tags: ['Linux','TiDB']
     ```
 
    ![5-系统调用使用情况](media/online-environment-analysis-system/5-系统调用使用情况.png)
- 
+
 perf-trace 的使用就介绍到这里，更多的用法请参考 man 手册，从上面可以看到 perf-trace 的功能非常强大，根据 pid 或 tid 就可以进行过滤。但似乎没有对容器和 Kubernetes（K8s） 环境进行便捷的支持。不用着急，接下来介绍的这个工具就是针对容器和 K8s 环境的。
 
 ## Traceloop
@@ -89,7 +87,6 @@ sudo -E ./traceloop cgroups  --dump-on-exit /sys/fs/cgroup/system.slice/sshd.ser
 
 ![7-输出图示](media/online-environment-analysis-system/7-输出图示.png)
 
-
 从输出中可以看到，其输出和 strace/perf trace 类似，只是针对 cgroup 进行过滤。需要注意的是 Centos 8 没有像 Ubuntu 将 cgroup v2 挂载到 /sys/fs/cgroup/unified，而是直接挂载到 /sys/fs/cgroup 下，在使用前建议执行 `mount -t cgroup2` 来确定挂载信息。
 
 对于 K8s 平台，该团队将 traceloop 集成到 Inspektor Gadget 项目中，通过 kubectl 插件来运行，由于管网给出详细的 gif 示例，在这里就不做过多介绍了，对 cgroup v2 有需求的朋友可以试一试。
@@ -103,4 +100,3 @@ sudo -E ./traceloop cgroups  --dump-on-exit /sys/fs/cgroup/system.slice/sshd.ser
 ## 总结
 
 strace 依然是解决 “为什么这个软件无法在这台机器上运行？” 相关问题的利器，但对于分析系统调用延迟等问题，perf trace 是合适的选择，其也是基于 BPF 的实现，对于使用 cgroup v2 的容器、K8s 环境，traceloop 会更方便一些。
-

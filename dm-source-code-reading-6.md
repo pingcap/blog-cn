@@ -2,7 +2,7 @@
 title: DM 源码阅读系列文章（六）relay log 的实现
 author: ['张学程']
 date: 2019-05-31
-summary: 本篇文章的内容包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。 
+summary: 本篇文章的内容包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。
 tags: ['DM 源码阅读','社区']
 ---
 
@@ -14,7 +14,6 @@ tags: ['DM 源码阅读','社区']
 值得注意的是，由于我们近期正在对 relay 处理单元进行重构，因此源码中会同时包含重构前后的相关代码实现。
 
 ## relay log 目录结构
-
 
 一个已经进行过一次主从切换的 relay log 目录结构大致如下：
 
@@ -43,7 +42,6 @@ tags: ['DM 源码阅读','社区']
 
 ## relay log 处理流程
 
-
 ![relay log 处理流程](media/dm-source-code-reading-6/1.png)
 
 <div class="caption-center">relay log 处理流程</div>
@@ -60,16 +58,15 @@ tags: ['DM 源码阅读','社区']
 
 ## 读取 binlog event
 
-
 relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L30) 从上游读取 binlog event，其中最重要的方法为读取 binlog event 对象的 [`GetEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L43)。
 
 当前对 Reader interface 的实现为 [`reader`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L57)，它最终通过 [`in`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L64) 这个 [`br.Reader interface`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/binlog/reader/reader.go#L25) 从上游读取 binlog event。reader 的使用流程为：
 
-1.  调用 [`Start`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L77) 启动读取流程，并根据配置中是否启用了 GTID 模式分别调用 [`setUpReaderByGTID`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L94) 或 [`setUpReaderByPos`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L96) 来启动下层的 [`br.Reader`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/binlog/reader/reader.go#L25) 对象。
+1. 调用 [`Start`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L77) 启动读取流程，并根据配置中是否启用了 GTID 模式分别调用 [`setUpReaderByGTID`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L94) 或 [`setUpReaderByPos`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L96) 来启动下层的 [`br.Reader`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/binlog/reader/reader.go#L25) 对象。
 
-2.  调用 [`GetEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L116) 读取 binlog event，具体为 [调用下层的 `GetEvent` 方法](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L128) 获取 binlog event。
+2. 调用 [`GetEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L116) 读取 binlog event，具体为 [调用下层的 `GetEvent` 方法](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L128) 获取 binlog event。
 
-3.  当不再需要读取 binlog event 时，调用 [`Close`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L102) 关闭读取操作。
+3. 当不再需要读取 binlog event 时，调用 [`Close`](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L102) 关闭读取操作。
 
 从上面的流程可以看出，具体的 binlog event 读取操作使用的是另一个下层的 [`br.Reader interface`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/binlog/reader/reader.go#L25)，[当前选择的具体实现](https://github.com/pingcap/dm/blob/f6f0566424/relay/reader/reader.go#L72) 为通过 TCP 连接进行读取的 [`TCPReader`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/binlog/reader/tcp.go#L33)。在 [`TCPReader`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/binlog/reader/tcp.go#L33) 中，使用了 [go-mysql](https://github.com/siddontang/go-mysql) 提供的 [`BinglogSyncer.StartSync`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/binlog/reader/tcp.go#L76) 和 [`BinlogSyncer.StartSyncGTID`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/binlog/reader/tcp.go#L99) 来启动以 binlog position 模式或 GTID sets 模式读取 binlog event，并通过 [`BinlogStreamer.GetEvent`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/binlog/reader/tcp.go#L147) 读取来自 TCP 的 binlog event。
 
@@ -111,13 +108,13 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 因此，在处理 `RotateEvent` 写入的 [`handleRotateEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L216) 方法中，主要包含以下操作：
 
-1.  [尝试更新 `FileWriter` 内部记录的当前 binlog 文件名为 `RotateEvent` 内包含的文件名](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L240)。
+1. [尝试更新 `FileWriter` 内部记录的当前 binlog 文件名为 `RotateEvent` 内包含的文件名](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L240)。
 
-2.  [判断是否是 `fake RotateEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L246)，如果是则跳过后续处理。
+2. [判断是否是 `fake RotateEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L246)，如果是则跳过后续处理。
 
-3.  与当前 relay log file 的 size 及内部 event 进行比较，[判断如果将当前 event 写入到文件后是否会造成文件存在 hole 及该 event 是否在 relay log file 中已经存在](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L256)，如果会造成 hole 则需要填充该 hole，如果已经存在则跳过后续的处理。
+3. 与当前 relay log file 的 size 及内部 event 进行比较，[判断如果将当前 event 写入到文件后是否会造成文件存在 hole 及该 event 是否在 relay log file 中已经存在](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L256)，如果会造成 hole 则需要填充该 hole，如果已经存在则跳过后续的处理。
 
-4.  [将 event 写入到 relay log file 中](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L263)。
+4. [将 event 写入到 relay log file 中](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L263)。
 
 需要注意的是，我们不能确保 master server 会将其 binlog file 中的所有 event 都发送给 slave（如当 MariaDB 未设置 [`BINLOG_SEND_ANNOTATE_ROWS_EVENT`](https://mariadb.com/kb/en/library/com_binlog_dump/) flag 时，master 就不会向 slave 发送 [`ANNOTATE_ROWS_EVENT`](https://mariadb.com/kb/en/library/annotate_rows_event/)），因此在写入 event 到文件前，需要通过 [`handleFileHoleExist`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L319) 判断如果将 event 写入到文件是否会存在 hole。如果存在 hode，则通过 [`event.GenDummyEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L347) 生成相应 size 的 dummy event [对 hole 进行填充](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L353)。
 
@@ -127,27 +124,27 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 在从上游读取 binlog event 时，主要在以下情况下可能会读取到 `FormatDescriptionEvent`：
 
-1.  上游 master server 在发送除 RotateEvent 外的其他 binlog event 之前，会发送一个 `FormatDescriptionEvent` 以使 slave 能正确 decode 后续的 binlog event。
+1. 上游 master server 在发送除 RotateEvent 外的其他 binlog event 之前，会发送一个 `FormatDescriptionEvent` 以使 slave 能正确 decode 后续的 binlog event。
 
-2.  上游 master server 会将自身 binlog file 中存在的 `FormatDescriptionEvent` 发送给 slave，且这个 `FormatDescriptionEvent` 总是 binlog file 中的第 1 个 event。
+2. 上游 master server 会将自身 binlog file 中存在的 `FormatDescriptionEvent` 发送给 slave，且这个 `FormatDescriptionEvent` 总是 binlog file 中的第 1 个 event。
 
 因此，在处理 `FormatDescriptionEvent` 的 [`handleFormatDescriptionEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L155) 方法中，主要包含以下操作：
 
-1.  [关闭之前可能已经打开的 relay log file](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L164)。
+1. [关闭之前可能已经打开的 relay log file](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L164)。
 
-2.  [打开该 event 需要写入到的 relay log file](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L182) 作为当前活跃的 relay log file。
+2. [打开该 event 需要写入到的 relay log file](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L182) 作为当前活跃的 relay log file。
 
-3.  [检查当前 relay log file 中是否存在 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L190)（``` fe `bin` ```），如果不存在则为其 [写入 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L194)。
+3. [检查当前 relay log file 中是否存在 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L190)（``` fe `bin` ```），如果不存在则为其 [写入 binlog file header](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L194)。
 
-4.  [检查当前 relay log file 中是否存在 `FormatDescriptionEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L201)，如果不存在则为其 [写入该 FormatDescriptionEvent](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L205)。
+4. [检查当前 relay log file 中是否存在 `FormatDescriptionEvent`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L201)，如果不存在则为其 [写入该 FormatDescriptionEvent](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L205)。
 
 #### 其他类型 event
 
 对于其他类型的 binlog event，写入操作由 [`handleEventDefault`](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L273) 进行处理，主要包含以下操作：
 
-1.  与当前 relay log file 的 size 及内部 event 进行比较，[判断如果将当前 event 写入到文件后是否会造成文件存在 hole 及该 event 是否在 relay log file 中已经存在](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L278)，如果会造成 hole 则需要填充该 hole，如果已经存在则跳过后续的处理。
+1. 与当前 relay log file 的 size 及内部 event 进行比较，[判断如果将当前 event 写入到文件后是否会造成文件存在 hole 及该 event 是否在 relay log file 中已经存在](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L278)，如果会造成 hole 则需要填充该 hole，如果已经存在则跳过后续的处理。
 
-2.  [将 event 写入到 relay log file 中](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L286)。
+2. [将 event 写入到 relay log file 中](https://github.com/pingcap/dm/blob/f6f0566424/relay/writer/file.go#L286)。
 
 ### 2. Recover relay log file
 
@@ -171,9 +168,9 @@ relay 处理单元通过 [Reader interface](https://github.com/pingcap/dm/blob/f
 
 为支持上述功能，relay 处理单元在读取 binlog event 前主要执行以下操作：
 
-1.  [比较当前上游 server 的 UUID 信息与 `relay.meta` 信息，判断当前连接到的是否是前一次连接过的 server](https://github.com/pingcap/dm/blob/f6f0566424/relay/relay.go#L220)。
+1. [比较当前上游 server 的 UUID 信息与 `relay.meta` 信息，判断当前连接到的是否是前一次连接过的 server](https://github.com/pingcap/dm/blob/f6f0566424/relay/relay.go#L220)。
 
-2.  [如果不是前一次连接过的 server，则说明切换到了新的 server，因此创建新的 relay log 子目录并更新对应的 meta 信息](https://github.com/pingcap/dm/blob/f6f0566424/relay/relay.go#L226)。
+2. [如果不是前一次连接过的 server，则说明切换到了新的 server，因此创建新的 relay log 子目录并更新对应的 meta 信息](https://github.com/pingcap/dm/blob/f6f0566424/relay/relay.go#L226)。
 
 ## 读取 relay log
 
@@ -181,17 +178,17 @@ relay 处理单元用于从上游读取 binlog event 并将其写入到本地的
 
 由前文介绍过的主从切换支持可知我们会将具体的 relay log 数据存储在可能的多个子目录中，因此在读取 relay log 时，我们也 需要考虑按序依次读取，主要操作包括：
 
-1.  [调用 `parseRelay`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L114) 开始从 relay log 的根目录执行解析读取。
+1. [调用 `parseRelay`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L114) 开始从 relay log 的根目录执行解析读取。
 
-2.  [调用 `parseDirAsPossible`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L141) 开始从外部指定的或上一次调用返回的子目录、文件及 offset 处开始读取，并返回下一次调用时需要的子目录、文件及 offset（即可实现切换到新的 relay log 子目录）。
+2. [调用 `parseDirAsPossible`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L141) 开始从外部指定的或上一次调用返回的子目录、文件及 offset 处开始读取，并返回下一次调用时需要的子目录、文件及 offset（即可实现切换到新的 relay log 子目录）。
 
-3.  对于当前需要读取的子目录，[调用 `CollectBinlogFilesCmp`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L184) 收集该目录内指定 relay log 文件及其之后的所有 relay log 文件。
+3. 对于当前需要读取的子目录，[调用 `CollectBinlogFilesCmp`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L184) 收集该目录内指定 relay log 文件及其之后的所有 relay log 文件。
 
-4.  对于每一个收集到的 relay log 文件，[调用 `parseFileAsPossible`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L212) 尝试对其进行解析读取。
+4. 对于每一个收集到的 relay log 文件，[调用 `parseFileAsPossible`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L212) 尝试对其进行解析读取。
 
-5.  在 `parseFileAsPossible` 中，反复返回 [调用 `parseFile`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L244) 进行 binlog event 的读取，直到 [发生错误](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L246) 或 [检测到需要切换到新的 relay log 文件或子目录](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L253)。
+5. 在 `parseFileAsPossible` 中，反复返回 [调用 `parseFile`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L244) 进行 binlog event 的读取，直到 [发生错误](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L246) 或 [检测到需要切换到新的 relay log 文件或子目录](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L253)。
 
-6.  对于是否需要切换到新的 relay log 文件或子目录的检测通过在 parseFile 内 [调用 `needSwitchSubDir`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L345) 与 [调用 `relaySubDirUpdated`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L356) 实现。
+6. 对于是否需要切换到新的 relay log 文件或子目录的检测通过在 parseFile 内 [调用 `needSwitchSubDir`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L345) 与 [调用 `relaySubDirUpdated`](https://github.com/pingcap/dm/blob/f6f0566424/pkg/streamer/reader.go#L356) 实现。
 
 ## 小结
 

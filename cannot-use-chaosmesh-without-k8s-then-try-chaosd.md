@@ -37,7 +37,7 @@ Chaosd 具有以下这些优点：
 curl -fsSL -o chaosd-v1.0.1-linux-amd64.tar.gz [https://mirrors.chaos-mesh.org/chaosd-v1.0.1-linux-amd64.tar.gz](https://mirrors.chaos-mesh.org/chaosd-v1.0.1-linux-amd64.tar.gz)
 
 解压这个文件，可以看到它包含一个 chaosd 文件和一个 tools 文件夹。chaosd 是工具的入口；tools 文件夹下面包含执行混沌实验所需要的一些工具，包括 stress-ng（压力场景）、byteman（JVM 故障）、PortOccupyTool（网络故障占用端口）等。
- 
+
 ### 2. 创建实验
 
 我们以创建一个网络类型的混沌实验为例，注入故障，使服务器无法访问 chaos-mesh.org，执行以下命令：
@@ -48,7 +48,7 @@ Attack network successfully, uid: c55a84c5-c181-426b-ae31-99c8d4615dbe
 简单来说，这个命令的作用是：通过 ens33 网卡向 chaos-mesh.org 发送或者接收的网络包会 100% 丢失。使用 sudo 是因为该实验会修改网络规则， 需要 root 权限。
 
 此外，别忘了保存好这个实验的 uid，用于后续的实验恢复。
- 
+
 ### 3. 检查实验效果
 
 让我们通过 ping 命令来检查是否可以正常访问 chaos-mesh.org：
@@ -67,8 +67,8 @@ PING chaos-mesh.org (185.199.109.153) 56(84) bytes of data.
 sudo ./chaosd recover c55a84c5-c181-426b-ae31-99c8d4615dbe
 Recover c55a84c5-c181-426b-ae31-99c8d4615dbe successfully
 
-恢复实验时也会修改网络规则，因此也需要使用 sudo。在执行完成后，可以再 ping chaos-mesh.org 确认网络已经恢复。 
- 
+恢复实验时也会修改网络规则，因此也需要使用 sudo。在执行完成后，可以再 ping chaos-mesh.org 确认网络已经恢复。
+
 ## 后续的规划
 
 ### 提高易用性 & 平台化
@@ -80,11 +80,9 @@ Recover c55a84c5-c181-426b-ae31-99c8d4615dbe successfully
 ![chaosmesh](media/cannot-use-chaosmesh-without-k8s-then-try-chaosd/chaosmesh.png)
 
 详细介绍可以参考 [Chaos Mesh® 的 Chaos Engineering as a Service 探索之路](https://pingcap.com/blog-cn/chaos-engineering-as-a-service/)。
- 
+
 ### 更多的故障注入功能
 
 目前 Chaosd 提供了进程、网络、JVM、压力、磁盘、主机总共六大故障注入功能，但是仍然需要继续拓展。后续我们计划将 Chaos Mesh 在 K8s 环境支持的一些故障注入功能在 Chaosd 中实现，包括 HTTP、IO 等。
 
 大家可以通过 Chaosd 的[使用文档](https://chaos-mesh.org/website-zh/docs/chaosd-overview)，尝试创建一些混沌实验来体验一下。在使用过程中遇到什么问题，或者有新的需求，都可以提 [issue](https://github.com/chaos-mesh/chaosd/issues) 来反馈。
-
-

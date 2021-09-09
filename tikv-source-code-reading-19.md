@@ -52,11 +52,11 @@ message Request {
 
 上面代码中加粗的就是 TiKV 目前支持的几种读请求。
 
-*   GetRequest：读取一个 key value 对。
+* GetRequest：读取一个 key value 对。
 
-*   SnapRequest：获取当前时刻 RocksDB 的 snapshot。
+* SnapRequest：获取当前时刻 RocksDB 的 snapshot。
 
-*   ReadIndexRequest：获取当前时刻能保证线性一致的 Raft log index。
+* ReadIndexRequest：获取当前时刻能保证线性一致的 Raft log index。
 
 注意：不要把 ReadIndexRequest 和 Read Index 搞混。ReadIndexRequest 是一种读的请求，ReadIndex 是一种处理读请求的方式。
 
@@ -137,15 +137,15 @@ pub fn propose<T: Transport, C>(
 
 由于 RaftCmdRequest 可能包含了多种请求，加上请求间的处理方式各有不同，所以我们需要判断下该如何处理。
 
-*   inspect：判断请求类别和处理方式。让我们聚焦到读请求，处理方式总共有两种：
+* inspect：判断请求类别和处理方式。让我们聚焦到读请求，处理方式总共有两种：
 
-	*   RequestPolicy::ReadLocal，也就是 local read，说明该 Peer 是 leader 且在 lease 内，可以直接读取数据。
+  * RequestPolicy::ReadLocal，也就是 local read，说明该 Peer 是 leader 且在 lease 内，可以直接读取数据。
 
-	*   RequestPolicy::ReadIndex，也就是 read index，说明该 Peer 是 leader 但不在 lease 内，或者该请求明确要求使用 read index 处理。
+  * RequestPolicy::ReadIndex，也就是 read index，说明该 Peer 是 leader 但不在 lease 内，或者该请求明确要求使用 read index 处理。
 
-*   self.read_local：以 local read 方式处理请求，直接读取 RocksDB。
+* self.read_local：以 local read 方式处理请求，直接读取 RocksDB。
 
-*   self.read_index：以 read index 方式处理请求，询问一遍大多数节点，确保自己是合法 leader，然后到达或超过线性一致性的点（read index）后读取 RocksDB。
+* self.read_index：以 read index 方式处理请求，询问一遍大多数节点，确保自己是合法 leader，然后到达或超过线性一致性的点（read index）后读取 RocksDB。
 
 ### [`Peer::inspect`](https://github.com/tikv/tikv/blob/v4.0.0-rc.1/components/raftstore/src/store/peer.rs#L2676)
 
@@ -181,13 +181,13 @@ fn inspect_lease(&mut self) -> LeaseState {
 
 inspect 方法也不复杂，我们住逐行看一下：
 
-*   req.get_header().get_read_quorum()：该请求明确要求需要用 read index 方式处理，所以返回 ReadIndex。
+* req.get_header().get_read_quorum()：该请求明确要求需要用 read index 方式处理，所以返回 ReadIndex。
 
-*   self.has_applied_to_current_term()：如果该 leader 尚未 apply 到它自己的 term，则使用 ReadIndex 处理，原因见 [TiKV 功能介绍 - Lease Read](https://pingcap.com/blog-cn/lease-read/)。
+* self.has_applied_to_current_term()：如果该 leader 尚未 apply 到它自己的 term，则使用 ReadIndex 处理，原因见 [TiKV 功能介绍 - Lease Read](https://pingcap.com/blog-cn/lease-read/)。
 
-*   self.raft_group.raft.in_lease()：如果该 leader 不在 raft 的 lease 内，说明可能出现了一些问题，比如网络不稳定，心跳没成功等。使用 ReadIndex 处理.
+* self.raft_group.raft.in_lease()：如果该 leader 不在 raft 的 lease 内，说明可能出现了一些问题，比如网络不稳定，心跳没成功等。使用 ReadIndex 处理.
 
-*   self.leader_lease.inspect(None)：使用 CPU 时钟判断 leader 是否在 lease 内，如果在，则使用 ReadLocal 处理.
+* self.leader_lease.inspect(None)：使用 CPU 时钟判断 leader 是否在 lease 内，如果在，则使用 ReadLocal 处理.
 
 这判断总的来说就是，如果不确定能安全地读 RocksDB 就用 read index，否则大胆地使用 local read 处理。
 
@@ -215,9 +215,9 @@ impl<E> RaftStoreRouter<E> for ServerRaftStoreRouter<E> where E: KvEngine
 
 这个实现的有些取巧，我们直接把它做到 raftstore 的入口处，也就是 RaftStoreRouter 中。这里的 LocalReader 其实就是一个 cache，缓存了现有 leader 处理读请求时的一些状态。
 
-*   acceptable(): 检查这个请求是否允许用 local read 方式处理。
+* acceptable(): 检查这个请求是否允许用 local read 方式处理。
 
-*   execute_raft_command(): 尝试以 local read 方式处理该请求。
+* execute_raft_command(): 尝试以 local read 方式处理该请求。
 
 ### [`LocalReader::execute_raft_command`](https://github.com/tikv/tikv/blob/v4.0.0-rc.1/components/raftstore/src/store/worker/read.rs#L298-L357)
 
@@ -263,9 +263,9 @@ pub fn execute_raft_command(&self, cmd: RaftCommand<E>) {
 
 上述代码就是 Localreader 中处理请求的关键逻辑。注意为了突出重点，我们对该函数做了适当精简，完整代码请参考[链接](https://github.com/tikv/tikv/blob/v4.0.0-rc.1/components/raftstore/src/store/worker/read.rs#L298-L357)。
 
-*   pre_propose_raft_command(): 这个函数和 PeerFsm 中的同名函数做的事情是类似的，对 lease 的检查也在这里发生，如果所有检查通过，就会返回 Ok(Some(delegate))，用来执行读请求。
+* pre_propose_raft_command(): 这个函数和 PeerFsm 中的同名函数做的事情是类似的，对 lease 的检查也在这里发生，如果所有检查通过，就会返回 Ok(Some(delegate))，用来执行读请求。
 
-*   redirect()：如果 Localreader 不确定如何处理，那它就用该方法将请求重新转发到 raftstore 中，一切以 raftstore 为准。
+* redirect()：如果 Localreader 不确定如何处理，那它就用该方法将请求重新转发到 raftstore 中，一切以 raftstore 为准。
 
 Localreader 中对 lease 的处理和 raftstore 略有不同，关键代码在[这里](https://github.com/tikv/tikv/blob/v4.0.0-rc.1/components/raftstore/src/store/worker/read.rs#L429-L439)和[这里](https://github.com/tikv/tikv/blob/v4.0.0-rc.1/components/raftstore/src/store/worker/read.rs#L92-L106)，至于为什么可以这么写，在这就不说了，作为课后作业留给读者思考 :-p
 

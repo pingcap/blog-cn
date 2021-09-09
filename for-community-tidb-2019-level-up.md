@@ -13,7 +13,6 @@ image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 
 回想起来，TiDB 是最早定位为 HTAP 的通用分布式数据库之一，如果熟悉我们的老朋友一定知道，我们最早时候一直都是定位 NewSQL，当然现在也是。但是 NewSQL 这个词有个问题，到底 New 在哪，解决了哪些问题，很难一目了然，其实一开始我们就想解决一个 MySQL 分库分表的问题，但是后来慢慢随着我们的用户越来越多，使用的场景也越来越清晰，很多用户的场景已经开始超出了一个「更大的 MySQL 」的使用范围，于是我们从实验室和学术界找到了我们觉得更加清晰的定义：HTAP，希望能构建一个融合 OLTP 和 OLAP 通用型分布式数据库。但是要达成这个目标非常复杂，我们的判断是如果不是从最底层重新设计，很难达到我们的目标，**我们认为这是一条更困难但是正确的路，现在看来，这条路是走对了，而且未来会越走越快，越走越稳。**
 
-
 在 SQL 层这边，TiDB 选择了 MySQL 的协议兼容，一方面持续的加强语法兼容性，另一方面选择自研优化器和执行器，带来的好处就是没有任何历史负担持续优化。回顾今年最大的一个工作应该是重构了执行器框架，TiDB的 SQL 层还是经典的 Volcano 模型，我们引入了新的内存数据结构 Chunk 来批量处理多行数据，并对各个算子都实现了基于 Chunk 的迭代器接口，这个改进对于 OLAP 请求的改进非常明显，在 TiDB 的 TPC-H 测试集上能看出来（[TiDB TPC-H 50G 性能测试报告](https://docs.pingcap.com/zh/search/?lang=zh&type=tidb&version=v4.0&q=TPCH)），Chunk 的引入为我们全面的向量化执行和 CodeGen 支持打下了基础。目前在 TiKV 内部对于下推算子的执行还没有使用 Chunk 改造，不过这个已经在计划中，在 TiKV 中这个改进，预期对查询性能的提升也将非常显著。
 
 另一方面，一个数据库查询引擎最核心的组件之一：优化器，在今年也有长足的进步。我们在 2017 年就已经全面引入了基于代价的 SQL 优化（CBO，Cost-Based Optimization），我们在今年改进了我们的代价评估模型，加入了一些新的优化规则，同时实现了 Join Re-Order 等一系列优化，从结果上来看，目前在 TPC-H 的测试集上，对于所有 Query，TiDB 的 SQL 优化器大多已给出了最优的执行计划。CBO 的另一个关键模块是统计信息收集，在今年，我们引入了自动的统计信息收集算法，使优化器的适应性更强。另外针对 OLTP 的场景 TiDB 仍然保留了轻量的 RBO 甚至直接 Bypass 优化器，以提升 OLTP 性能。另外，感谢三星韩国研究院的几位工程师的贡献，他们给 TiDB 引入了 Query Plan Cache，对高并发场景下查询性能的提升也很明显。另外在功能上，我们引入了 Partition Table 的支持，对于一些 Partition 特性很明显的业务，TiDB 能够更加高效的调度数据的写入读取和更新。
@@ -89,7 +88,6 @@ image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 
 这个 HTAP 方案的另一个关键是存储引擎本身。2019 年，我们会引入新的存储引擎，当然第一阶段仍然会继续在 RocksDB 上改进，改进的目标仍然是减小 LSM-Tree 本身的写放大问题。选用的模型是 [WiscKey（FAST16）](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf)，WiscKey 的核心思想是将 Value 从 LSM-Tree 中剥离出来，以减少写放大，如果关注 TiKV 的朋友，已经能注意到我们已经在前几天将一个**新存储引擎 Titan**（PingCAP 的 Titan，很遗憾和美图那个项目重名了）合并到了 TiKV 的主干分支，这个 Titan 是我们在 RocksDB 上的 WiscKey 模型的一个实现，除了 WiscKey 的核心本身，我们还加入了对小 KV 的 inline 等优化，Titan 在我们的内部测试中效果很好，对长度随机的 key-value 写入的吞吐基本能达到原生 RocksDB 的 2 - 3 倍，当然性能提升并不是我最关注的，这个引擎对于 TiDB 最大的意义就是，这个引擎将让 TiDB 适应性更强，做到更加稳定，更加「可预测」。
 
-
 ![TiKV 新的本地存储引擎 Titan](media/for-community-tidb-2019-level-up/8.png)
 
 <div class="caption-center">TiKV 新的本地存储引擎 Titan</div>
@@ -107,6 +105,3 @@ image: /images/blog-cn/for-community-tidb-2019-level-up/tidb-2019-level-up.jpg
 Success is not final, failure is not fatal: it is the courage to continue that counts.
 
 成功不是终点，失败也并非终结，最重要的是继续前进的勇气。
-
-
-

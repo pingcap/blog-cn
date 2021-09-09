@@ -16,7 +16,6 @@ tags: ['TiDB']
 
 ### 配置信息
 
-
 |  组件名称 |  配置信息  | 数量 |
 |  ----  | ----  | ----  |
 |  PD | m5.xlarge (AWS) | 3  |
@@ -67,7 +66,7 @@ Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz  40Core 189GB Memory  3TB SSD
 
 ### 更全面的 SQL 调优
 
-TiDB 5.0 支持[不可见索引 ](https://docs.pingcap.com/zh/tidb/v5.0/sql-statement-create-index#%E4%B8%8D%E5%8F%AF%E8%A7%81%E7%B4%A2%E5%BC%95)(Invisible Indexes)，DBA 在调试和选择相对最优的索引时，可以通过 SQL 语句将某个索引设置成 `Visible` 或者 `Invisible`，避免执行消耗资源较多的操作，例如：`DROP INDEX` 或 `ADD INDEX`。
+TiDB 5.0 支持[不可见索引](https://docs.pingcap.com/zh/tidb/v5.0/sql-statement-create-index#%E4%B8%8D%E5%8F%AF%E8%A7%81%E7%B4%A2%E5%BC%95)(Invisible Indexes)，DBA 在调试和选择相对最优的索引时，可以通过 SQL 语句将某个索引设置成 `Visible` 或者 `Invisible`，避免执行消耗资源较多的操作，例如：`DROP INDEX` 或 `ADD INDEX`。
 
 在 TiDB 5.0 性能调优或者运维过程中，用户可以根据实际需要或者基于 [EXPLAIN ANALYZE](https://docs.pingcap.com/zh/tidb/v5.0/sql-statement-explain-analyze#explain-analyze) 测试选择优化过的 SQL 语句，通过 [SQL BINDING](https://docs.pingcap.com/zh/tidb/v5.0/sql-plan-management) 将优化过的 SQL 语句与业务代码执行的 SQL 语句绑定，确保稳定性。
 
@@ -105,7 +104,7 @@ TiDB 5.0 引入 Raft Joint Consensus 算法将 Region 成员变更操作中的�
 
 作为企业级开源分布式数据库，TiDB 5.0 在性能、稳定性、易用性、高可用与安全合规等方面都取得了巨大的进步，并增加了多个企业级特性，在 OLTP Scale 的基础之上实现了一栈式数据实时分析的需求，将带动企业用户借助增强性 HTAP 的能力，加速推进数字化转型与升级。
 
-今天就去下载吧！ 
+今天就去下载吧！
 
 [TiDB 5.0 Download](https://pingcap.com/download-cn/)
 

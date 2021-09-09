@@ -2,7 +2,7 @@
 title: DM 源码阅读系列文章（十）测试框架的实现
 author: ['杨非']
 date: 2019-07-23
-summary: 本篇文章将从质量保证的角度来介绍 DM 测试框架的设计和实现，探讨如何通过多维度的的测试方法保证 DM 的正确性和稳定性。 
+summary: 本篇文章将从质量保证的角度来介绍 DM 测试框架的设计和实现，探讨如何通过多维度的的测试方法保证 DM 的正确性和稳定性。
 tags: ['DM 源码阅读','社区']
 ---
 
@@ -39,7 +39,7 @@ DM 完整的测试体系包括以下四个部分：
 | 破坏性测试 | 黑盒测试，随机数据，随机触发的固定类型外部扰动 | 系统在异常场景下的稳定性和正确性 | 在内部测试平台长期、反复运行 | 对已有确定输入测试的补充，增加测试输入的不确定性，通过未知、随机的外部扰动发现系统潜在的问题 |
 | 长期稳定性测试 | 黑盒测试，确定性的同步场景，随机数据负载 | 系统长期运行的稳定性和正确性 | 在内部 K8s 集群长期运行 | 补充集成测试的场景，测试系统在更高负载、更长运行时间内的表现 |
 
-## 测试 case 与测试工具的实现 
+## 测试 case 与测试工具的实现
 
 ### 1. 在单元测试中进行 mock
 
@@ -67,7 +67,7 @@ DM 完整的测试体系包括以下四个部分：
 
 6. [检查 relay log 文件写入的数据长度与 `allData` 存储的数据长度相同](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/relay/writer/file_test.go#L432)
 
-7.  [读取 relay log 文件，检查数据内容和 `allData` 存储的数据内容相同](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/relay/writer/file_test.go#L435-L438)
+7. [读取 relay log 文件，检查数据内容和 `allData` 存储的数据内容相同](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/relay/writer/file_test.go#L435-L438)
 
 至此我们就结合 binlog 生成工具完成了一个 relay 模块的测试 case。目前 DM 已经在很多 case 中使用 binlog 生成工具模拟生成 binlog，仍然存在的 [少量 case](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/syncer/syncer_test.go) 依赖上游数据库生成 binlog，我们已经计划借助 binlog 生成工具移除这些外部依赖。
 
@@ -83,9 +83,9 @@ DM 完整的测试体系包括以下四个部分：
 
 DM 内部定义了一个简单的信息 trace 收集工具，其设计目标是在 DM 运行过程中，通过增加代码内部的埋点，定期收集系统运行时的各类信息。trace 工具包含一个提供 gRPC 上报信息接口和 HTTP 控制接口的 [tracer 服务器](https://github.com/pingcap/dm/tree/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/tracer) 和提供埋点以及后台收集信息上传功能的 [tracing 包](https://github.com/pingcap/dm/tree/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/pkg/tracing)。tracing 模块上传到 tracer 服务器的事件数据通过 `protobuf` 进行定义，[`BaseEvent`](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/proto/tracer_base.proto#L11-L18) 定义了最基本的 trace 事件，包含了运行代码文件名、代码行、事件时间戳、事件 ID、事件组 ID 和事件类型，用户自定义的事件需要包含 `BaseEvent`。tracing 模块会 [定期向 tracer 服务器同步全局时间戳](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/pkg/tracing/tracer.go#L129)，通过这种方式保证多节点不同的 trace 事件会保持大致的时间顺序（注意这里并不是严格的时间序，会依赖于每分钟内本地时钟的准确性，仍然有各种出现乱序的可能）。设计 tracing 模块的主要目的有以下两点：
 
-*  对于同一个 DM 组件（DM-master/DM-worker），希望记录一些重要内存信息的数据流历史。例如在 binlog replication 处理单元处理一条 query event 过程中会经历处理 binlog event 、生成 ddl job、执行 job 这三个阶段，我们将这三个处理逻辑抽象为三个事件，三个事件在时间上是有先后关系的，在逻辑上关联了同一个 binlog 的处理流程，在 DM 中记录这三个事件的 trace event 时使用了同一个 `traceID`（[处理 binlog event 生成一个新的 traceID](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/syncer/syncer.go#L1597)，该 `traceID` 记录在 ddl job 中，[分发 ddl job 时记录的 trace 事件会复用此 traceID](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/syncer/syncer.go#L688)；[在 executor 中最后执行 ddl job 的过程中记录的 trace 事件也会复用此 `traceID`](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/syncer/syncer.go#L864)），这样就将三个事件关联起来，因为在同一个进程内，他们的时间戳真实反映了时间维度上的顺序关系。
+* 对于同一个 DM 组件（DM-master/DM-worker），希望记录一些重要内存信息的数据流历史。例如在 binlog replication 处理单元处理一条 query event 过程中会经历处理 binlog event 、生成 ddl job、执行 job 这三个阶段，我们将这三个处理逻辑抽象为三个事件，三个事件在时间上是有先后关系的，在逻辑上关联了同一个 binlog 的处理流程，在 DM 中记录这三个事件的 trace event 时使用了同一个 `traceID`（[处理 binlog event 生成一个新的 traceID](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/syncer/syncer.go#L1597)，该 `traceID` 记录在 ddl job 中，[分发 ddl job 时记录的 trace 事件会复用此 traceID](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/syncer/syncer.go#L688)；[在 executor 中最后执行 ddl job 的过程中记录的 trace 事件也会复用此 `traceID`](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/syncer/syncer.go#L864)），这样就将三个事件关联起来，因为在同一个进程内，他们的时间戳真实反映了时间维度上的顺序关系。
 
-*  由于 DM 提供了 shard DDL 的机制，多个 DM-worker 之间的数据会存在关联，譬如在进行 shard DDL 的过程中，处于同一个 shard group 内的多个 DM-worker 的 DDL 是关联在一起的。`BaseEvent` 定义中的 [`groupID`](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/proto/tracer_base.proto#L16) 字段就是用来解决多进程间 trace 事件关联性的问题，定义具有相同 `groupID` 的事件属于同一个事件组，表示它们之间在逻辑上有一定关联性。举一个例子，在 shard DDL 这个场景下，DM-master 协调 shard DDL 时会分别 [向 DDL owner 分发执行 SQL 的请求](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/master/server.go#L1423-L1432)，以及 [向非 owner 分发忽略 DDL 的请求](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/master/server.go#L1457-L1466)，在这两组请求中携带了相同的 `groupID`，binlog replication 分发 ddl job 时会获取到 `groupID`，这样就将不同进程间 shard DDL 的执行关联了起来。
+* 由于 DM 提供了 shard DDL 的机制，多个 DM-worker 之间的数据会存在关联，譬如在进行 shard DDL 的过程中，处于同一个 shard group 内的多个 DM-worker 的 DDL 是关联在一起的。`BaseEvent` 定义中的 [`groupID`](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/proto/tracer_base.proto#L16) 字段就是用来解决多进程间 trace 事件关联性的问题，定义具有相同 `groupID` 的事件属于同一个事件组，表示它们之间在逻辑上有一定关联性。举一个例子，在 shard DDL 这个场景下，DM-master 协调 shard DDL 时会分别 [向 DDL owner 分发执行 SQL 的请求](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/master/server.go#L1423-L1432)，以及 [向非 owner 分发忽略 DDL 的请求](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/dm/master/server.go#L1457-L1466)，在这两组请求中携带了相同的 `groupID`，binlog replication 分发 ddl job 时会获取到 `groupID`，这样就将不同进程间 shard DDL 的执行关联了起来。
 
 我们可以利用收集的 trace 信息辅助验证数据同步的正确性。譬如在 [验证 `safe_mode` 逻辑正确性的测试](https://github.com/pingcap/dm/tree/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/tests/safe_mode) 中，[我们将 DM 启动阶段的 `safe_mode` 时间调短为 0s](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/tests/safe_mode/run.sh#L35)，期望验证对于上游 update 操作产生的 binlog，如果该操作发生时上下游 shard DDL 没有完全同步，那么同步该 binlog 时的 `safe_mode` 为 true；反之如果该操作发生时上下游没有进行 shard DDL 或 shard DDL 已经同步，那么 `safe_mode` 为 false。通过 trace 机制，可以很容易从 [tracer server 的接口获取测试过程中的所有事件信息](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/tests/_dmctl_tools/check_safe_mode.go#L42-L55)，[并且抽取出 update DML，DDL 等对应的 trace event 信息](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/tests/_dmctl_tools/check_safe_mode.go#L123-L133)，[进一步通过这些信息验证 `safe_mode` 在 shard DDL 同步场景下工作的正确性](https://github.com/pingcap/dm/blob/7cba6d21d78dd16e9ab159e9c0300efcbdeb1e4a/tests/_dmctl_tools/check_safe_mode.go#L167-L180)。
 

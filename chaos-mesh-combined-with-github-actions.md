@@ -48,7 +48,7 @@ tags: ['Chaos Mesh']
 
 ```
 name: Chaos
- 
+
 on:
  push:
    branches:
@@ -69,10 +69,10 @@ jobs:
  build:
    runs-on: ubuntu-latest
    steps:
- 
+
    - name: Creating kind cluster
      uses: helm/kind-action@v1.0.0-rc.1
- 
+
    - name: Print cluster information
      run: |
        kubectl config view
@@ -81,7 +81,7 @@ jobs:
        kubectl get pods -n kube-system
        helm version
        kubectl version
- 
+
    - uses: actions/checkout@v2
 ```
 

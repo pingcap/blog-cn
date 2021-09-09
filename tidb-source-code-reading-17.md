@@ -18,7 +18,7 @@ TiDB 的 DDL 通过实现 Google F1 的在线异步 schema 变更算法，来完
 
 这里只是简单概述了 TiDB 的 DDL 设计，下两篇文章详细介绍了 TiDB DDL 的设计实现以及优化，推荐阅读：
 
-* [TiDB 的异步 schema 变更实现  ](https://github.com/ngaut/builddatabase/blob/master/f1/schema-change-implement.md)
+* [TiDB 的异步 schema 变更实现](https://github.com/ngaut/builddatabase/blob/master/f1/schema-change-implement.md)
 
 * [TiDB 的异步 schema 变更优化](http://zimulala.github.io/2017/12/24/optimize/)
 
@@ -31,10 +31,10 @@ TiDB 的 DDL 通过实现 Google F1 的在线异步 schema 变更算法，来完
 TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 | File | Introduction |
-| :------------- | :------------------------------------------ | 
+| :------------- | :------------------------------------------ |
 | `ddl.go` | 包含 DDL 接口定义和其实现。 |
-| `ddl_api.go` | 提供 create , drop , alter , truncate , rename 等操作的 API，供 Executor 调用。主要功能是封装 DDL 操作的 job 然后存入 DDL job queue，等待 job 执行完成后返回。| 
-| `ddl_worker.go` | DDL worker 的实现。owner 节点的 worker 从 job queue 中取 job，然后执行，执行完成后将 job 存入 job history queue 中。| 
+| `ddl_api.go` | 提供 create , drop , alter , truncate , rename 等操作的 API，供 Executor 调用。主要功能是封装 DDL 操作的 job 然后存入 DDL job queue，等待 job 执行完成后返回。|
+| `ddl_worker.go` | DDL worker 的实现。owner 节点的 worker 从 job queue 中取 job，然后执行，执行完成后将 job 存入 job history queue 中。|
 | `syncer.go` | 负责同步 ddl worker 的 owner 和 follower 间的 `schema version`。 每次 DDL 状态变更后 `schema version ID` 都会加 1。|
 
 `ddl owner` 相关的代码单独放在 `owner` 目录下，实现了 owner 选举等功能。
@@ -51,7 +51,7 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 2. 编译生成 Plan：[Compile](https://github.com/pingcap/tidb/blob/source-code/session.go#L805) 生成 DDL plan , 并 check 权限等。
 
-3. 生成执行器：[buildExecutor](https://github.com/pingcap/tidb/blob/source-code/executor/adapter.go#L227) 生成 [ DDLExec](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L33) 执行器。TiDB 的执行器是火山模型。
+3. 生成执行器：[buildExecutor](https://github.com/pingcap/tidb/blob/source-code/executor/adapter.go#L227) 生成 [DDLExec](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L33) 执行器。TiDB 的执行器是火山模型。
 
 4. 执行器调用 [e.Next](https://github.com/pingcap/tidb/blob/source-code/executor/adapter.go#L300) 开始执行，即 [DDLExec.Next](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L42) 方法，判断 DDL 类型后执行 [executeCreateTable](https://github.com/pingcap/tidb/blob/source-code/executor/ddl.go#L68) , 其实质是调用 `ddl_api.go` 的 [CreateTable](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_api.go#L739) 函数。
 
@@ -64,7 +64,6 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
         * [runDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L275) 函数里面会根据 job 的类型，然后调用对应的执行函数，对于 `create table` 类型的 job，会调用 [onCreateTable](https://github.com/pingcap/tidb/blob/source-code/ddl/table.go#L31) 函数，然后做一些 check 后，会调用 [t.CreateTable](https://github.com/pingcap/tidb/blob/source-code/ddl/table.go#L56) 函数，将 `db_ID` 和 `table_ID` 映射为 `key`，`tableInfo` 作为 value 存到 TiKV 里面去，并更新 job 的状态。
     * [finishDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L152) 函数将 job 从 DDL job 队列中移除，然后加入 history ddl job 队列中去。
     * [doDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl.go#L451) 函数中检测到 history DDL job 队列中有对应的 job 后，返回。
- 
 
 ## Add index
 
@@ -92,8 +91,6 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 5. 后续执行 [finishDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L152)，检测 history ddl job 流程和 `create table` 类似。
 
-
-
 ## Drop Column
 
 `drop Column` 只要修改 table 的元信息，把 table 元信息中对应的要删除的 column 删除。`drop Column` 不会删除原有 table 数据行中的对应的 Column 数据，在 decode 一行数据时，会根据 table 的元信息来 decode。
@@ -119,10 +116,9 @@ TiDB 的 DDL 组件相关代码存放在源码目录的 `ddl` 目录下。
 
 1. `tableInfo` 的状态变化是：`public -> write only -> delete only -> none`。
 
-2. `tableInfo` 的状态变为 `none` 之后，会调用 [ DropTable](https://github.com/pingcap/tidb/blob/source-code/meta/meta.go#L306) 将 table 的元信息从 TiKV 上删除。
+2. `tableInfo` 的状态变为 `none` 之后，会调用 [DropTable](https://github.com/pingcap/tidb/blob/source-code/meta/meta.go#L306) 将 table 的元信息从 TiKV 上删除。
 
 至于删除 table 中的数据，后面在调用 [finishDDLJob](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L152) 函数将 job 从 job queue 中移除，加入 history ddl job queue 前，会调用 [delRangeManager.addDelRangeJob(job)](https://github.com/pingcap/tidb/blob/source-code/ddl/ddl_worker.go#L160)，将要删除的 table 数据范围插入到表 `gc_delete_range` 中，然后由 [GC worker](https://github.com/pingcap/tidb/blob/source-code/store/tikv/gcworker/gc_worker.go) 根据 `gc_delete_range` 中的信息在 GC 过程中做真正的删除数据操作。
-
 
 ## New Parallel DDL
 

@@ -14,6 +14,7 @@ tags: ['TiDB', 'Jepsen']
 Jepsen 是由 [Kyle Kingsbury](https://aphyr.com/about) 采用函数式编程语言 Clojure 编写的验证分布式系统一致性的测试框架，作者使用它对许多著名的分布式系统（etcd, cockroachdb...）进行了“攻击”（一致性验证），并且帮助其中的部分系统找到了 bug。这里一系列的[博客](https://aphyr.com/tags/jepsen)展示了作者的验证过程以及对于一致性验证的许多思考。
 
 ## Jepsen 如何工作
+
 Jepsen 验证系统由 6 个节点组成，一个控制节点（control node），五个被控制节点（默认为 n1, n2, n3, n4, n5），控制节点将所有指令发送到某些或全部被控制节点，这些指令包括底层的 shell 命令到上层的 SQL 语句等等。Jepsen 提供了几个核心 API 用于验证分布式系统：
 
 + **DB**
@@ -100,8 +101,6 @@ TiDB 中的 Jepsen 测试有 3 个，分别是 bank、set 和 register 测试。
 ![截图 5](media/tidb-jepsen/5.png)
 
 然后利用 Jepsen 产生的一系列操作历史（如上图）进行 Linearizability 一致性验证。这个算法是 Jepsen 的核心，也是 Jepsen 被业界所熟知的原因之一，所以花时间去深入学习了下，我会在另一篇文章具体介绍这个算法。
-
-
 
 ### 写在最后
 

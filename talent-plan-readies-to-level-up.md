@@ -58,7 +58,6 @@ Talent Plan Courses 2.0 Framework如上图所示，我们将 Talent Plan 1.0 的
 
 ### 3. 用 Go 语言设计的分布式 Key-Value 数据库（TinyKV）课程
 
-
 [TinyKV](https://github.com/pingcap-incubator/tinykv) 课程是基于 Go 语言全新设计的分布式 Key-Value 数据库课程。类似已有的 Distributed System in Rust 课程，TinyKV 同样受著名的 MIT 6.824 所启发，但更加接近 TiKV 的实现。我们引入调度相关逻辑，学员可以从 0 到 1 实现一个完整可用的分布式 KV 服务。课程主要分为四个部分：
 
 * LAB1：实现单机 KV server；
@@ -79,4 +78,4 @@ Talent Plan Courses 2.0 Framework如上图所示，我们将 Talent Plan 1.0 的
 
 以上课程及自动化作业分发工具都还处于调试阶段，大家可以加入 [Talent Plan Courses Working Group](https://tidbcommunity.slack.com/archives/CR746G049) 参与 2.0 课程体验、交流或吐槽，期待与各位共同打磨这门课程！
 
-另外，在 2.0 课程细节完全敲定对外公布之前，大家依然可以继续学习 Talent Plan 1.0，作业提交与成绩评定规则与之前保持一致，更多细则详见 [PingCAP University 官网](https://university.pingcap.com/talent-plan/)。 
+另外，在 2.0 课程细节完全敲定对外公布之前，大家依然可以继续学习 Talent Plan 1.0，作业提交与成绩评定规则与之前保持一致，更多细则详见 [PingCAP University 官网](https://university.pingcap.com/talent-plan/)。

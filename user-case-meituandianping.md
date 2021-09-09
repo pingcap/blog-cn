@@ -121,12 +121,12 @@ TiDB 是在线存储体系中的一环，它同时也需要融入到公司现有
 公司目前 MySQL 和 Hive 结合的比较重，而 TiDB 要代替 MySQL 的部分功能，需要解决 2 个问题：
 
 * MySQL to TiDB
-    * MySQL 到 TiDB 的迁移，需要解决数据迁移以及增量的实时同步，也就是 DTS，Mydumper + Loader 解决存量数据的同步，官方提供了 DM 工具可以很好的解决增量同步问题。
-    * MySQL 大量使用了自增 ID 作为主键。分库分表 MySQL 合并到 TiDB 时，需要解决自增 ID 冲突的问题。这个通过在 TiDB 端去掉自增 ID 建立自己的唯一主键来解决。新版 DM 也提供分表合并过程主键自动处理的功能。
+  * MySQL 到 TiDB 的迁移，需要解决数据迁移以及增量的实时同步，也就是 DTS，Mydumper + Loader 解决存量数据的同步，官方提供了 DM 工具可以很好的解决增量同步问题。
+  * MySQL 大量使用了自增 ID 作为主键。分库分表 MySQL 合并到 TiDB 时，需要解决自增 ID 冲突的问题。这个通过在 TiDB 端去掉自增 ID 建立自己的唯一主键来解决。新版 DM 也提供分表合并过程主键自动处理的功能。
 
 * Hive to TiDB & TiDB to Hive
-    * Hive to TiDB 比较好解决，这体现了 TiDB 和 MySQL 高度兼容的好处，insert 语句可以不用调整，基于 Hive to MySQL 简单改造即可。
-    * TiDB to Hive 则需要基于官方 Pump + Drainer 组件，Drainer 可以消费到 Kafka、MySQL、TiDB，我们初步考虑用下图 5 中的方案通过使用 Drainer 的 Kafka 输出模式同步到 Hive。
+  * Hive to TiDB 比较好解决，这体现了 TiDB 和 MySQL 高度兼容的好处，insert 语句可以不用调整，基于 Hive to MySQL 简单改造即可。
+  * TiDB to Hive 则需要基于官方 Pump + Drainer 组件，Drainer 可以消费到 Kafka、MySQL、TiDB，我们初步考虑用下图 5 中的方案通过使用 Drainer 的 Kafka 输出模式同步到 Hive。
 
 ![图 5 TiDB to Hive 方案图](media/user-case-meituandianping/5.png)
 
@@ -163,7 +163,6 @@ TiKV 底层有 2 个 RocksDB 作为存储。新写的数据写入 L0 层，当 R
 * 写入量大，Compact 完不成。
 * Snapshot 一直创建不完，导致堆积的副本一下释放，rocksdb-raft 创建大量的 L0 文件，监控展示如图 6。
 
-
 ![图 6 TiKV 发生 Write Stall 监控展示图](media/user-case-meituandianping/6.png)
 
 <div class="caption-center">图 6 TiKV 发生 Write Stall 监控展示图</div>
@@ -189,16 +188,15 @@ TiKV 底层有 2 个 RocksDB 作为存储。新写的数据写入 L0 层，当 R
 解决问题的办法：
 
 * 临时解决
-    * 增加 Heartbeat 的周期，从 1s 改为 2s，效果比较明显，监控展示如图 7。
-
+  * 增加 Heartbeat 的周期，从 1s 改为 2s，效果比较明显，监控展示如图 7。
 
 ![图 7 insert 响应时间优化前后对比图](media/user-case-meituandianping/7.png)
 
 <div class="caption-center">图 7 insert 响应时间优化前后对比图</div>
 
 * 彻底解决
-    * 需要减少 Region 个数，Merge 掉空 Region，官方在 2.1 版本中已经实现了 Region Merge 功能，我们在升级到 2.1 后，得到了彻底解决。
-    * 另外，等待 Raftstore 改为多线程，能进一步优化。（官方回复相关开发已基本接近尾声，将于 2.1 的下一个版本发布。）
+  * 需要减少 Region 个数，Merge 掉空 Region，官方在 2.1 版本中已经实现了 Region Merge 功能，我们在升级到 2.1 后，得到了彻底解决。
+  * 另外，等待 Raftstore 改为多线程，能进一步优化。（官方回复相关开发已基本接近尾声，将于 2.1 的下一个版本发布。）
 
 #### 4.1.4 Truncate Table 空间无法完全回收
 
@@ -206,9 +204,9 @@ DBA Truncate 一张大表后，发现 2 个现象，一是空间回收较慢，�
 
 * 由于底层 RocksDB 的机制，很多数据落在 level 6 上，有可能清不掉。这个需要打开 cdynamic-level-bytes 会优化 Compaction 的策略，提高 Compact 回收空间的速度。
 * 由于 Truncate 使用 delete_files_in_range 接口，发给 TiKV 去删 SST 文件，这里只删除不相交的部分，而之前判断是否相交的粒度是 Region，因此导致了大量 SST 无法及时删除掉。
-    * 考虑 Region 独立 SST 可以解决交叉问题，但是随之带来的是磁盘占用问题和 Split 延时问题。
-    * 考虑使用 RocksDB 的 DeleteRange 接口，但需要等该接口稳定。
-    * 目前最新的 2.1 版本优化为直接使用 DeleteFilesInRange 接口删除整个表占用的空间，然后清理少量残留数据，已经解决。
+  * 考虑 Region 独立 SST 可以解决交叉问题，但是随之带来的是磁盘占用问题和 Split 延时问题。
+  * 考虑使用 RocksDB 的 DeleteRange 接口，但需要等该接口稳定。
+  * 目前最新的 2.1 版本优化为直接使用 DeleteFilesInRange 接口删除整个表占用的空间，然后清理少量残留数据，已经解决。
 
 #### 4.1.5 开启 Region Merge 功能
 
@@ -252,11 +250,11 @@ TiDB 的物理优化阶段需要依靠统计信息。在 2.0 版本统计信息�
 
 长期来看，结合美团不断增长的业务规模，我们将与 PingCAP 官方合作打造更强大的生态体系：
 
-+ **Titan**：Titan 是 TiDB 下一步比较大的动作，也是我们非常期待的下一代存储引擎，它对大 Value 支持会更友好，将解决我们单行大小受限，单机 TiKV 最大支持存储容量的问题，大大提升大规模部署的性价比。
+* **Titan**：Titan 是 TiDB 下一步比较大的动作，也是我们非常期待的下一代存储引擎，它对大 Value 支持会更友好，将解决我们单行大小受限，单机 TiKV 最大支持存储容量的问题，大大提升大规模部署的性价比。
 
-+ **Cloud TiDB（based on Docker & K8s）**：云计算大势所趋，PingCAP 在这块也布局比较早，今年 8 月份开源了 TiDB Operator，Cloud TiDB 不仅实现了数据库的高度自动化运维，而且基于 Docker 硬件隔离，实现了数据库比较完美的多租户架构。和官方同学沟通，目前他们的私有云方案在国内也有重要体量的 POC，这也是美团看重的一个方向。
+* **Cloud TiDB（based on Docker & K8s）**：云计算大势所趋，PingCAP 在这块也布局比较早，今年 8 月份开源了 TiDB Operator，Cloud TiDB 不仅实现了数据库的高度自动化运维，而且基于 Docker 硬件隔离，实现了数据库比较完美的多租户架构。和官方同学沟通，目前他们的私有云方案在国内也有重要体量的 POC，这也是美团看重的一个方向。
 
-+ **TiDB HTAP Platform**：PingCAP 在原有 TiDB Server 计算引擎的基础上，还构建 TiSpark 计算引擎，和他们官方沟通，他们在研发了一个基于列的存储引擎，这样就形成了下层行、列两个存储引擎、上层两个计算引擎的完整混合数据库（HTAP），这个架构不仅大大的节省了核心业务数据在整个公司业务周期里的副本数量，还通过收敛技术栈，节省了大量的人力成本、技术成本、机器成本，同时还解决了困扰多年的 OLAP 的实效性。后面我们也会考虑将一些有实时、准实时的分析查询系统接入 TiDB。
+* **TiDB HTAP Platform**：PingCAP 在原有 TiDB Server 计算引擎的基础上，还构建 TiSpark 计算引擎，和他们官方沟通，他们在研发了一个基于列的存储引擎，这样就形成了下层行、列两个存储引擎、上层两个计算引擎的完整混合数据库（HTAP），这个架构不仅大大的节省了核心业务数据在整个公司业务周期里的副本数量，还通过收敛技术栈，节省了大量的人力成本、技术成本、机器成本，同时还解决了困扰多年的 OLAP 的实效性。后面我们也会考虑将一些有实时、准实时的分析查询系统接入 TiDB。
 
 ![图 8 TiDB HTAP Platform 整体架构图](media/user-case-meituandianping/8.png)
 
@@ -265,4 +263,3 @@ TiDB 的物理优化阶段需要依靠统计信息。在 2.0 版本统计信息�
 后续的物理备份方案，跨机房多写等也是我们接下来逐步推进的场景，总之我们坚信未来 TiDB 在美团的使用场景会越来越多，发展也会越来越好。
 
 TiDB 在业务层面、技术合作层面都已经在美团扬帆起航，美团点评将携手 PingCAP 开启新一代数据库深度实践、探索之旅。后续，还有美团点评架构存储团队针对 TiDB 源码研究和改进的系列文章，敬请期待！
-

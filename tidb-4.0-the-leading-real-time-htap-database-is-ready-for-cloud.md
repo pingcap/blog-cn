@@ -24,7 +24,7 @@ tags: ['TiDB 4.0','版本','社区动态']
 
 ![1-htap-架构解决方案](media/tidb-4.0-the-leading-real-time-htap-database-is-ready-for-cloud/1-htap-架构解决方案.png)
 
-1. 实时的强一致性。在 TiDB 里面更新的数据会实时的同步到 TiFlash，保证 TiFlash 在处理的时候一定能读取到最新的数据。 
+1. 实时的强一致性。在 TiDB 里面更新的数据会实时的同步到 TiFlash，保证 TiFlash 在处理的时候一定能读取到最新的数据。
 
 2. TiDB 的 SQL 计算层可以智能判断选择行存或者列存，以应对各种不同的查询场景，无需用户干预。
 
@@ -36,7 +36,7 @@ tags: ['TiDB 4.0','版本','社区动态']
 
 1. 弹性的扩缩容，当业务高峰来临，TiDB 会自动增加实例，满足业务请求，反之也能自动收缩实例；
 
-2. 自动分散读负载高的热点区域； 
+2. 自动分散读负载高的热点区域；
 
 3. 热点隔离，将热点业务数据移动到单独的实例上面，保证不影响其他业务。
 
@@ -88,19 +88,19 @@ TiDB 4.0 还新增了非常多的特性和改进，无论从安全、生态，�
 
 在 TiDB 生态上面：
 
-*   增加 TiDB 官方的组件管理工具 TiUP，使用 TiUP 用户可以方便的在 1 分钟以内部署好 TiDB 集群，详细可以参考 [tiup.io](https://tiup.io/)；
+* 增加 TiDB 官方的组件管理工具 TiUP，使用 TiUP 用户可以方便的在 1 分钟以内部署好 TiDB 集群，详细可以参考 [tiup.io](https://tiup.io/)；
 
-*   在分布式系统上面进行故障定位是一件很困难的事情，我们在 TiDB 4.0 提供了一个可视化的 Dashboard，让用户能方便的对 TiDB 性能瓶颈，故障等进行定位，大家可以阅读 [Key Visualizer: Observe Distributed Databases to Discover the Unknowns](https://pingcap.com/blog/observe-distributed-databases-to-discover-unknowns/) 来看一些实际的诊断事例；
+* 在分布式系统上面进行故障定位是一件很困难的事情，我们在 TiDB 4.0 提供了一个可视化的 Dashboard，让用户能方便的对 TiDB 性能瓶颈，故障等进行定位，大家可以阅读 [Key Visualizer: Observe Distributed Databases to Discover the Unknowns](https://pingcap.com/blog/observe-distributed-databases-to-discover-unknowns/) 来看一些实际的诊断事例；
 
-*   随着用户在 TiDB 存入越来越多数据，如何快速的备份和恢复成了我们的一个很大的挑战。在 TiDB 4.0，我们提供了分布式备份工具 - BR(Backup&Restore)，使用 BR，用户可以非常方便的将 TiDB 数据备份到共享存储，云存储（S3）等地方，详细可以参考文章：[How to Back Up and Restore a 10-TB Cluster at 1+ GB/s](https://pingcap.com/blog/back-up-and-restore-a-10-tb-cluster-at-1-gb-per-second/)；
+* 随着用户在 TiDB 存入越来越多数据，如何快速的备份和恢复成了我们的一个很大的挑战。在 TiDB 4.0，我们提供了分布式备份工具 - BR(Backup&Restore)，使用 BR，用户可以非常方便的将 TiDB 数据备份到共享存储，云存储（S3）等地方，详细可以参考文章：[How to Back Up and Restore a 10-TB Cluster at 1+ GB/s](https://pingcap.com/blog/back-up-and-restore-a-10-tb-cluster-at-1-gb-per-second/)；
 
-*   为了更快速的将业务的数据在 TiDB 内的变更同步给外部系统，TiDB 4.0 提供了 Change Data Capture(CDC) 的支持，大家可以阅读文章 [TiCDC: Replication Latency in Milliseconds for 100+ TB Clusters](https://pingcap.com/blog/replication-latency-in-milliseconds-for-100-tb-clusters/) 来了解 TiCDC 是如何做到毫秒级别延迟的数据同步的。
+* 为了更快速的将业务的数据在 TiDB 内的变更同步给外部系统，TiDB 4.0 提供了 Change Data Capture(CDC) 的支持，大家可以阅读文章 [TiCDC: Replication Latency in Milliseconds for 100+ TB Clusters](https://pingcap.com/blog/replication-latency-in-milliseconds-for-100-tb-clusters/) 来了解 TiCDC 是如何做到毫秒级别延迟的数据同步的。
 
 在 TiDB 功能上面：
 
-*   TiDB 4.0 去掉了之前 100MB 的事务大小限制，现在能支持最多 10GB 的事务，有了这个特性，用户可以方便的一个事务里面处理大量的数据，而不用考虑分批处理问题。具体可以参考 [Large Transactions in TiDB](https://pingcap.com/blog/large-transactions-in-tidb/)。另外，TiDB 4.0 也正式将悲观锁模式作为自己的默认事务模型，使用悲观锁，TiDB 4.0 能更好的去兼容 MySQL，也能方便用户更方便的将自己的业务从 MySQL 迁移到 TiDB 中，详见 [Pessimistic Locking: Better MySQL Compatibility, Fewer Rollbacks Under High Load](https://pingcap.com/blog/pessimistic-locking-better-mysql-compatibility-fewer-rollbacks-under-high-load/)。
+* TiDB 4.0 去掉了之前 100MB 的事务大小限制，现在能支持最多 10GB 的事务，有了这个特性，用户可以方便的一个事务里面处理大量的数据，而不用考虑分批处理问题。具体可以参考 [Large Transactions in TiDB](https://pingcap.com/blog/large-transactions-in-tidb/)。另外，TiDB 4.0 也正式将悲观锁模式作为自己的默认事务模型，使用悲观锁，TiDB 4.0 能更好的去兼容 MySQL，也能方便用户更方便的将自己的业务从 MySQL 迁移到 TiDB 中，详见 [Pessimistic Locking: Better MySQL Compatibility, Fewer Rollbacks Under High Load](https://pingcap.com/blog/pessimistic-locking-better-mysql-compatibility-fewer-rollbacks-under-high-load/)。
 
-*   在 TiDB 长时间运行过程中，随着数据的变更，优化器可能会选错索引，出现慢查询，影响业务。为了解决这个问题，在 TiDB 4.0，我们引入了 SQL Plan Management(SPM)，通过 SPM，TiDB 能很好的控制查询优化器尽量选择最优的执行计划，用户也不需要修改代码去显示的添加 force index 来控制优化器，详见： [SQL Plan Management: Never Worry About Slow Queries Again](https://pingcap.com/blog/sql-plan-management-never-worry-about-slow-queries-again/)。
+* 在 TiDB 长时间运行过程中，随着数据的变更，优化器可能会选错索引，出现慢查询，影响业务。为了解决这个问题，在 TiDB 4.0，我们引入了 SQL Plan Management(SPM)，通过 SPM，TiDB 能很好的控制查询优化器尽量选择最优的执行计划，用户也不需要修改代码去显示的添加 force index 来控制优化器，详见： [SQL Plan Management: Never Worry About Slow Queries Again](https://pingcap.com/blog/sql-plan-management-never-worry-about-slow-queries-again/)。
 
 除了上面提到的特性，TiDB 4.0 还新增了 Sequence，Flashback，Case-Insensitive Collation，Add/Drop primary key 等特性，大家可以在使用 TiDB 4.0 的时候体验。
 

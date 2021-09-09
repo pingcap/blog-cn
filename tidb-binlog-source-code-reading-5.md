@@ -16,22 +16,22 @@ Pump Storage 由 Pump Server 调用，主要负责 binlog 的持久化存储，�
 
 ```
 type Storage interface {
-	// WriteBinlog 写入 binlog 数据到 Storage
-	WriteBinlog(binlog *pb.Binlog) error
-	// GC 清理 tso 小于指定 ts 的 binlog
-	GC(ts int64)
-	// GetGCTS 返回最近一次触发 GC 指定的 ts
-	GetGCTS() int64
-	// AllMatched 返回是否所有的 P-binlog 都和 C-binlog 匹配
-	AllMatched() bool
-	// MaxCommitTS 返回最大的 CommitTS，在这个 TS 之前的数据已经完备，可以安全的同步给下游
-	MaxCommitTS() int64
-	// GetBinlog 指定 ts 返回 binlog
-	GetBinlog(ts int64) (binlog *pb.Binlog, err error)
-	// PullCommitBinlog 按序拉 commitTs > last 的 binlog
-	PullCommitBinlog(ctx context.Context, last int64) <-chan []byte
-	// Close 安全的关闭 Storage
-	Close() error
+ // WriteBinlog 写入 binlog 数据到 Storage
+ WriteBinlog(binlog *pb.Binlog) error
+ // GC 清理 tso 小于指定 ts 的 binlog
+ GC(ts int64)
+ // GetGCTS 返回最近一次触发 GC 指定的 ts
+ GetGCTS() int64
+ // AllMatched 返回是否所有的 P-binlog 都和 C-binlog 匹配
+ AllMatched() bool
+ // MaxCommitTS 返回最大的 CommitTS，在这个 TS 之前的数据已经完备，可以安全的同步给下游
+ MaxCommitTS() int64
+ // GetBinlog 指定 ts 返回 binlog
+ GetBinlog(ts int64) (binlog *pb.Binlog, err error)
+ // PullCommitBinlog 按序拉 commitTs > last 的 binlog
+ PullCommitBinlog(ctx context.Context, last int64) <-chan []byte
+ // Close 安全的关闭 Storage
+ Close() error
 }
 ```
 
@@ -60,40 +60,39 @@ go append.writeToSorter(append.writeToKV(toKV))
 
 1. vlog
 
-	这个过程的主要实现在 [`writeToValueLog`](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L889) 中：
+ 这个过程的主要实现在 [`writeToValueLog`](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L889) 中：
 
-	```
-	// valuePointer 定义
-	type valuePointer struct {
-		// Fid 是 valuelog 文件 Id
-		Fid    uint32
-		// Offset 是 pointer 指向的 valuelog 在文件中的偏移量
-		Offset int64
-	}
-	```
+ ```
+ // valuePointer 定义
+ type valuePointer struct {
+  // Fid 是 valuelog 文件 Id
+  Fid    uint32
+  // Offset 是 pointer 指向的 valuelog 在文件中的偏移量
+  Offset int64
+ }
+ ```
 
-	Append 将从 `Append.writeCh` 读出的 binlog，批量写入到 ValueLog 组件中。我们可以将 ValueLog 组件看作一种由 `valuePointer` 映射到 binlog 的持久化键值存储实现，我们将在下一篇文章详细介绍 ValueLog 组件。
+ Append 将从 `Append.writeCh` 读出的 binlog，批量写入到 ValueLog 组件中。我们可以将 ValueLog 组件看作一种由 `valuePointer` 映射到 binlog 的持久化键值存储实现，我们将在下一篇文章详细介绍 ValueLog 组件。
 
 2. kv
 
-	这个过程的主要实现在 [`writeBatchToKV`](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L1350) 中，Append 将 binlog 的 tso 作为 Key, `valuePointer` 作为 Value 批量写入 Metadata 存储中，在目前的 Pump 实现中，我们采用 goleveldb 作为 Metadata 存储数据库。由于 goleveldb 的底层是数据结构是 LSM-Tree，存储在 Metadata 存储的 binlog 相关信息已经天然按 tso 排好序了。
+ 这个过程的主要实现在 [`writeBatchToKV`](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d51df57ef117ba70839a1fd0beac5a2c/pump/storage/storage.go#L1350) 中，Append 将 binlog 的 tso 作为 Key, `valuePointer` 作为 Value 批量写入 Metadata 存储中，在目前的 Pump 实现中，我们采用 goleveldb 作为 Metadata 存储数据库。由于 goleveldb 的底层是数据结构是 LSM-Tree，存储在 Metadata 存储的 binlog 相关信息已经天然按 tso 排好序了。
 
 3. sorter
 
-	既然 binlog 的元数据在 writeToKV 过程已经排好序了，为什么还需要 `writeToSorter` 呢？这里和《[TiDB-Binlog 架构演进与实现原理](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/)》一文提到的 Binlog 工作原理有关：
+ 既然 binlog 的元数据在 writeToKV 过程已经排好序了，为什么还需要 `writeToSorter` 呢？这里和《[TiDB-Binlog 架构演进与实现原理](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/)》一文提到的 Binlog 工作原理有关：
 
-	> TiDB 的事务采用 2pc 算法，一个成功的事务会写两条 binlog，包括一条 Prewrite binlog 和一条 Commit binlog；如果事务失败，会发一条 Rollback binlog。
-	
+ > TiDB 的事务采用 2pc 算法，一个成功的事务会写两条 binlog，包括一条 Prewrite binlog 和一条 Commit binlog；如果事务失败，会发一条 Rollback binlog。
 
-	要完整的还原事务，我们需要对 Prewrite binlog 和 Commit binlog（下文简称 P-binlog 和 C-binlog） 配对，才能知晓某一个事务是否被 Commit 成功了。[Sorter](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/sorter.go#L95) 就起这样的作用，这个过程的主要实现在 [sorter.run](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/sorter.go#L156) 中。Sorter 逐条读出 binlog，对于 P-binlog 则暂时存放在内存中等待配对，对于 C-binlog 则与内存中未配对的 P-binlog 进行匹配。如果某一条 P-binlog 长期没有 C-binlog 与之牵手，Sorter 将反查 TiKV 问问这条单身狗 P-binlog 的伴侣是不是迷路了。
+ 要完整的还原事务，我们需要对 Prewrite binlog 和 Commit binlog（下文简称 P-binlog 和 C-binlog） 配对，才能知晓某一个事务是否被 Commit 成功了。[Sorter](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/sorter.go#L95) 就起这样的作用，这个过程的主要实现在 [sorter.run](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pump/storage/sorter.go#L156) 中。Sorter 逐条读出 binlog，对于 P-binlog 则暂时存放在内存中等待配对，对于 C-binlog 则与内存中未配对的 P-binlog 进行匹配。如果某一条 P-binlog 长期没有 C-binlog 与之牵手，Sorter 将反查 TiKV 问问这条单身狗 P-binlog 的伴侣是不是迷路了。
 
-	为什么会有 C-binlog 迷路呢？要解释这个现象，我们首先要回顾一下 binlog 的写入流程：
+ 为什么会有 C-binlog 迷路呢？要解释这个现象，我们首先要回顾一下 binlog 的写入流程：
 
-	![图 2 binlog 写入流程](media/tidb-binlog-source-code-reading-5/2.png)
-	
-	<div class="caption-center">图 2 binlog 写入流程</div>
+ ![图 2 binlog 写入流程](media/tidb-binlog-source-code-reading-5/2.png)
 
-	在 Prepare 阶段，TiDB 同时向 TiKV 和 Pump 发起 prewrite 请求，只有 TiKV 和 Pump 全部返回成功了，TiDB 才认为 Prepare 成功。因此可以保证只要 Prepare 阶段成功，Pump 就一定能收到 P-binlog。这里可以这样做的原因是，TiKV 和 Pump 的 prewrite 都可以回滚，因此有任一节点 prewrite 失败后，TiDB 可以回滚其他节点，不会影响数据一致性。然而 Commit 阶段则不然，Commit 是无法回滚的操作，因此 TiDB 先 Commit TiKV，成功后再向 Pump 写入 C-binlog。而 TiKV Commit 后，这个事务就已经提交成功了，如果写 C-binlog 操作失败，则会产生事务提交成功但 Pump 未收到 C-binlog 的现象。在生产环境中，C-binlog 写失败大多是由于重启 TiDB 导致的，这本身属于一个可控事件或小概率事件。
+ <div class="caption-center">图 2 binlog 写入流程</div>
+
+ 在 Prepare 阶段，TiDB 同时向 TiKV 和 Pump 发起 prewrite 请求，只有 TiKV 和 Pump 全部返回成功了，TiDB 才认为 Prepare 成功。因此可以保证只要 Prepare 阶段成功，Pump 就一定能收到 P-binlog。这里可以这样做的原因是，TiKV 和 Pump 的 prewrite 都可以回滚，因此有任一节点 prewrite 失败后，TiDB 可以回滚其他节点，不会影响数据一致性。然而 Commit 阶段则不然，Commit 是无法回滚的操作，因此 TiDB 先 Commit TiKV，成功后再向 Pump 写入 C-binlog。而 TiKV Commit 后，这个事务就已经提交成功了，如果写 C-binlog 操作失败，则会产生事务提交成功但 Pump 未收到 C-binlog 的现象。在生产环境中，C-binlog 写失败大多是由于重启 TiDB 导致的，这本身属于一个可控事件或小概率事件。
 
 ### PullCommitBinlog
 
@@ -111,18 +110,18 @@ GC 实现在 [doGCTS](https://github.com/pingcap/tidb-binlog/blob/7acad5c5d5/pum
 
 ```
 for iter.Next() && deleteBatch < 100 {
-	batch.Delete(iter.Key())
-	deleteNum++
-	lastKey = iter.Key()
+ batch.Delete(iter.Key())
+ deleteNum++
+ lastKey = iter.Key()
 
-	if batch.Len() == 1024 {
-	    err := a.metadata.Write(batch, nil)
-	    if err != nil {
-	        log.Error("write batch failed", zap.Error(err))
-	    }
-	    deletedKv.Add(float64(batch.Len()))
-	    batch.Reset()
-	    deleteBatch++
+ if batch.Len() == 1024 {
+     err := a.metadata.Write(batch, nil)
+     if err != nil {
+         log.Error("write batch failed", zap.Error(err))
+     }
+     deletedKv.Add(float64(batch.Len()))
+     batch.Reset()
+     deleteBatch++
     }
 }
 ```
@@ -131,13 +130,13 @@ for iter.Next() && deleteBatch < 100 {
 
 ```
 if l0Num >= l0Trigger {
-	log.Info("wait some time to gc cause too many L0 file", zap.Int("files", l0Num))
-	if iter != nil {
-		iter.Release()
-		iter = nil
-	}
-	time.Sleep(5 * time.Second)
-	continue
+ log.Info("wait some time to gc cause too many L0 file", zap.Int("files", l0Num))
+ if iter != nil {
+  iter.Release()
+  iter = nil
+ }
+ time.Sleep(5 * time.Second)
+ continue
 }
 ```
 

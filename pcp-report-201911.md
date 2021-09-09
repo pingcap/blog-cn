@@ -10,11 +10,11 @@ tags: ['TiDB 性能挑战赛','社区动态','社区']
 11 月初我们开启了一项社区新活动「TiDB 性能挑战赛」(Performance Challenge Program，简称 PCP)，这项积分赛将持续 3 个月，选手将完成一系列难度不同的任务，赢得相应的积分。目前赛程刚刚过去三分之一，已经取得了十分耀眼的阶段性成果：
 
 + 过去一个月共吸引了来自社区的 156 位贡献者，包括：
-    - 14 支参赛队伍。
-    - 110 位个人参赛者。
+  + 14 支参赛队伍。
+  + 110 位个人参赛者。
 + 参赛选手们总共完成了 147 个挑战任务，这些成果已经逐步落地到 TiDB 产品中：
-    - TiDB 表达式框架中完成了 70+ 个函数的向量化。
-    - TiKV 协处理器中完成了 40+ 个函数的向量化，其中 34 个已在 TiDB 侧新开启了下推，让下推的函数计算速度大幅上升。
+  + TiDB 表达式框架中完成了 70+ 个函数的向量化。
+  + TiKV 协处理器中完成了 40+ 个函数的向量化，其中 34 个已在 TiDB 侧新开启了下推，让下推的函数计算速度大幅上升。
 
 **截至发稿时积分排行榜前五名的参赛选手 / Team 分别是：.* team、ekalinin、mmyj、AerysNan、js00070。**
 
@@ -32,7 +32,7 @@ tags: ['TiDB 性能挑战赛','社区动态','社区']
 >
 >—— TennyZhuang（PCP 团队参赛者 .* team 成员）
 
->“I like Go & databases. TiDB has both of them. So I just decided to deep dive into internals of the TiDB and check if I can be useful for it. I'm a big fan of open source. I have a couple of open sourced projects and I understand the importance of the contribution into open source projects. 
+>“I like Go & databases. TiDB has both of them. So I just decided to deep dive into internals of the TiDB and check if I can be useful for it. I'm a big fan of open source. I have a couple of open sourced projects and I understand the importance of the contribution into open source projects.
 >
 >I feel great after joining the PCP and TiDB community! Good docs, a lot of tests, well written code :)”
 >

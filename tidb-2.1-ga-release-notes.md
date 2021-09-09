@@ -50,19 +50,19 @@ tags: ['TiDB']
 ### 表达式
 
 * 支持内建函数：
-    * `json_contains`  
-    * `json_contains_path`
-    * `encode/decode`
+  * `json_contains`  
+  * `json_contains_path`
+  * `encode/decode`
 
 ### Server
 
 * 支持在单个 tidb-server 实例内部对冲突事务排队，优化事务间冲突频繁的场景下的性能
 * 支持 Server Side Cursor
 * 新增 [HTTP 管理接口](https://github.com/pingcap/tidb/blob/master/docs/tidb_http_api.md)
-    * 打散 table 的 regions 在 TiKV 集群中的分布
-    * 控制是否打开 `general log`
-    * 在线修改日志级别
-    * 查询 TiDB 集群信息
+  * 打散 table 的 regions 在 TiKV 集群中的分布
+  * 控制是否打开 `general log`
+  * 在线修改日志级别
+  * 查询 TiDB 集群信息
 * [添加 `auto_analyze_ratio` 系统变量控制自动 Analyze 的阈值](https://pingcap.com/docs-cn/FAQ/#3-3-11-%E5%9C%A8-tidb-%E4%B8%AD-auto-analyze-%E7%9A%84%E8%A7%A6%E5%8F%91%E7%AD%96%E7%95%A5%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84)
 * [添加 `tidb_retry_limit` 系统变量控制事务自动重试的次数](https://pingcap.com/docs-cn/sql/tidb-specific/#tidb-retry-limit)
 * [添加 `tidb_disable_txn_auto_retry` 系统变量控制事务是否自动重试](https://pingcap.com/docs-cn/sql/tidb-specific/#tidb-disable-txn-auto-retry)
@@ -70,7 +70,7 @@ tags: ['TiDB']
 * [增加环境变量 `tidb_slow_log_threshold` 动态设置 slow log 的阈值](https://pingcap.com/docs-cn/sql/tidb-specific/#tidb_slow_log_threshold)
 * [增加环境变量 `tidb_query_log_max_len` 动态设置日志中被截断的原始 SQL 语句的长度](https://pingcap.com/docs-cn/sql/tidb-specific/#tidb_query_log_max_len)
 
-###  DDL
+### DDL
 
 * 支持 Add Index 语句与其他 DDL 语句并行执行，避免耗时的 Add Index 操作阻塞其他操作
 * 优化 `Add Index` 的速度，在某些场景下速度大幅提升
@@ -117,17 +117,17 @@ tags: ['TiDB']
 * 新增 [`GCSafePoint` 接口](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L64-L66)，用于支持 TiDB 并发分布式 GC
 * 新增 [`GetAllStores` 接口](https://github.com/pingcap/kvproto/blob/8e3f33ac49297d7c93b61a955531191084a2f685/proto/pdpb.proto#L32)，用于支持 TiDB 并发分布式 GC
 * pd-ctl 新增：
-    * [使用统计信息进行 Region split](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#operator-show--add--remove)
-    * [调用 `jq` 来格式化 JSON 输出](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#jq-格式化-json-输出示例)
-    * [查询指定 store 的 Region 信息](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-store-store_id)
-    * [查询按 version 排序的 topN 的 Region 列表](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-topconfver-limit)
-    * [查询按 size 排序的 topN 的 Region 列表](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-topsize-limit)
-    * [更精确的 TSO 解码](https://github.com/pingcap/pd/pull/1242)
+  * [使用统计信息进行 Region split](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#operator-show--add--remove)
+  * [调用 `jq` 来格式化 JSON 输出](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#jq-格式化-json-输出示例)
+  * [查询指定 store 的 Region 信息](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-store-store_id)
+  * [查询按 version 排序的 topN 的 Region 列表](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-topconfver-limit)
+  * [查询按 size 排序的 topN 的 Region 列表](https://pingcap.com/docs-cn/dev/reference/tools/pd-control/#region-topsize-limit)
+  * [更精确的 TSO 解码](https://github.com/pingcap/pd/pull/1242)
 * [pd-recover](https://github.com/pingcap/docs-cn/blob/aea707820d683c0564bab28ca756d1c4a3eb62c2/v2.1/reference/tools/pd-recover.md) 不再需要提供 max-replica 参数
 
 ### 监控
 
-* 增加 `Filter `相关的监控
+* 增加 `Filter`相关的监控
 * 新增 etcd Raft 状态机相关监控
 
 ### 性能优化
@@ -185,5 +185,5 @@ tags: ['TiDB']
 * 新版本默认开启 `raft learner` 功能，如果从 1.x 版本集群升级至 2.1 版本，须停机升级或者先滚动升级 TiKV，完成后再滚动升级 PD
 * 从 2.0.6 之前的版本升级到 2.1.0 之前，最好确认集群中是否存在正在运行中的 DDL 操作，特别是耗时的 Add Index 操作
 * 因为 2.1 版本启用了并行 DDL，对于早于 2.0.1 版本的集群，无法滚动升级到 2.1，可以选择下面两种方案：
-    * 停机升级，直接从早于 2.0.1 的 TiDB 版本升级到 2.1
-    * 先滚动升级到 2.0.1 或者之后的 2.0.x 版本，再滚动升级到 2.1 版本
+  * 停机升级，直接从早于 2.0.1 的 TiDB 版本升级到 2.1
+  * 先滚动升级到 2.0.1 或者之后的 2.0.x 版本，再滚动升级到 2.1 版本

@@ -41,42 +41,39 @@ tags: ['TiDB','社区','Contributor']
 1. 参照 MySQL 规则推导 LEGNTH 的返回值类型
 2. 根据 LENGTH 函数的参数个数、类型及返回值类型生成函数签名。由于 LENGTH 的参数个数、类型及返回值类型只存在确定的一种情况，因此此处没有定义新的函数签名类型，而是修改已有的 builtinLengthSig，使其**组合了 baseIntBuiltinFunc（表示该函数签名返回值类型为 int）**
 
-
 ```go
 type builtinLengthSig struct {
-	baseIntBuiltinFunc
+ baseIntBuiltinFunc
 }
 
 func (c *lengthFunctionClass) getFunction(args []Expression, ctx context.Context) (builtinFunc, error) {
-	// 参照 MySQL 规则，对 LENGTH 函数返回值类型进行推导
-	tp := types.NewFieldType(mysql.TypeLonglong)
-	tp.Flen = 10
-	types.SetBinChsClnFlag(tp)
+ // 参照 MySQL 规则，对 LENGTH 函数返回值类型进行推导
+ tp := types.NewFieldType(mysql.TypeLonglong)
+ tp.Flen = 10
+ types.SetBinChsClnFlag(tp)
 
-	// 根据参数个数、类型及返回值类型生成对应的函数签名，注意此处与重构前不同，使用的是 newBaseBuiltinFuncWithTp 方法，而非 newBaseBuiltinFunc 方法
-	// newBaseBuiltinFuncWithTp 的函数声明中，args 表示函数的参数，tp 表示函数的返回值类型，argsTp 表示该函数签名中所有参数对应的正确类型
-	// 因为 LENGTH 的参数个数为1，参数类型为 string，返回值类型为 int，因此此处传入 tp 表示函数的返回值类型，传入 tpString 用来标识参数的正确类型。对于多个参数的函数，调用 newBaseBuiltinFuncWithTp 时，需要传入所有参数的正确类型
-	bf, err := newBaseBuiltinFuncWithTp(args, tp, ctx, tpString)
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
-	sig := &builtinLengthSig{baseIntBuiltinFunc{bf}}
-	return sig.setSelf(sig), errors.Trace(c.verifyArgs(args))
+ // 根据参数个数、类型及返回值类型生成对应的函数签名，注意此处与重构前不同，使用的是 newBaseBuiltinFuncWithTp 方法，而非 newBaseBuiltinFunc 方法
+ // newBaseBuiltinFuncWithTp 的函数声明中，args 表示函数的参数，tp 表示函数的返回值类型，argsTp 表示该函数签名中所有参数对应的正确类型
+ // 因为 LENGTH 的参数个数为1，参数类型为 string，返回值类型为 int，因此此处传入 tp 表示函数的返回值类型，传入 tpString 用来标识参数的正确类型。对于多个参数的函数，调用 newBaseBuiltinFuncWithTp 时，需要传入所有参数的正确类型
+ bf, err := newBaseBuiltinFuncWithTp(args, tp, ctx, tpString)
+ if err != nil {
+  return nil, errors.Trace(err)
+ }
+ sig := &builtinLengthSig{baseIntBuiltinFunc{bf}}
+ return sig.setSelf(sig), errors.Trace(c.verifyArgs(args))
 }
 ```
 
-
 (2) 实现 builtinLengthSig.evalInt() 方法
-
 
 ```go
 func (b *builtinLengthSig) evalInt(row []types.Datum) (int64, bool, error) {
-	// 对于函数签名 builtinLengthSig，其参数类型已确定为 string 类型，因此直接调用 b.args[0].EvalString() 方法计算参数
-	val, isNull, err := b.args[0].EvalString(row, b.ctx.GetSessionVars().StmtCtx)
-	if isNull || err != nil {
-		return 0, isNull, errors.Trace(err)
-	}
-	return int64(len([]byte(val))), false, nil
+ // 对于函数签名 builtinLengthSig，其参数类型已确定为 string 类型，因此直接调用 b.args[0].EvalString() 方法计算参数
+ val, isNull, err := b.args[0].EvalString(row, b.ctx.GetSessionVars().StmtCtx)
+ if isNull || err != nil {
+  return 0, isNull, errors.Trace(err)
+ }
+ return int64(len([]byte(val))), false, nil
 }
 ```
 
@@ -84,80 +81,75 @@ func (b *builtinLengthSig) evalInt(row []types.Datum) (int64, bool, error) {
 
 ```go
 func (s *testEvaluatorSuite) TestLength(c *C) {
-	defer testleak.AfterTest(c)() // 监测 goroutine 泄漏的工具，可以直接照搬
-  	// cases 的测试用例对 length 方法实现进行测试
-	// 此处注意，除了正常 case 之外，最好能添加一些异常的 case，如输入值为 nil，或者是多种类型的参数
-	cases := []struct {
-		args     interface{}
-		expected int64
-		isNil    bool
-		getErr   bool
-	}{
-		{"abc", 3, false, false},
-		{"你好", 6, false, false},
-		{1, 1, false, false},
-		...
-	}
-	for _, t := range cases {
-		f, err := newFunctionForTest(s.ctx, ast.Length, primitiveValsToConstants([]interface{}{t.args})...)
-		c.Assert(err, IsNil)
-		// 以下对 LENGTH 函数的返回值类型进行测试
-		tp := f.GetType()
-		c.Assert(tp.Tp, Equals, mysql.TypeLonglong)
-		c.Assert(tp.Charset, Equals, charset.CharsetBin)
-		c.Assert(tp.Collate, Equals, charset.CollationBin)
-		c.Assert(tp.Flag, Equals, uint(mysql.BinaryFlag))
-		c.Assert(tp.Flen, Equals, 10)
-		// 以下对 LENGTH 函数的计算结果进行测试
-		d, err := f.Eval(nil)
-		if t.getErr {
-			c.Assert(err, NotNil)
-		} else {
-			c.Assert(err, IsNil)
-			if t.isNil {
-				c.Assert(d.Kind(), Equals, types.KindNull)
-			} else {
-				c.Assert(d.GetInt64(), Equals, t.expected)
-			}
-		}
-	}
-	// 以下测试函数是否是具有确定性
-	f, err := funcs[ast.Length].getFunction([]Expression{Zero}, s.ctx)
-	c.Assert(err, IsNil)
-	c.Assert(f.isDeterministic(), IsTrue)
+ defer testleak.AfterTest(c)() // 监测 goroutine 泄漏的工具，可以直接照搬
+   // cases 的测试用例对 length 方法实现进行测试
+ // 此处注意，除了正常 case 之外，最好能添加一些异常的 case，如输入值为 nil，或者是多种类型的参数
+ cases := []struct {
+  args     interface{}
+  expected int64
+  isNil    bool
+  getErr   bool
+ }{
+  {"abc", 3, false, false},
+  {"你好", 6, false, false},
+  {1, 1, false, false},
+  ...
+ }
+ for _, t := range cases {
+  f, err := newFunctionForTest(s.ctx, ast.Length, primitiveValsToConstants([]interface{}{t.args})...)
+  c.Assert(err, IsNil)
+  // 以下对 LENGTH 函数的返回值类型进行测试
+  tp := f.GetType()
+  c.Assert(tp.Tp, Equals, mysql.TypeLonglong)
+  c.Assert(tp.Charset, Equals, charset.CharsetBin)
+  c.Assert(tp.Collate, Equals, charset.CollationBin)
+  c.Assert(tp.Flag, Equals, uint(mysql.BinaryFlag))
+  c.Assert(tp.Flen, Equals, 10)
+  // 以下对 LENGTH 函数的计算结果进行测试
+  d, err := f.Eval(nil)
+  if t.getErr {
+   c.Assert(err, NotNil)
+  } else {
+   c.Assert(err, IsNil)
+   if t.isNil {
+    c.Assert(d.Kind(), Equals, types.KindNull)
+   } else {
+    c.Assert(d.GetInt64(), Equals, t.expected)
+   }
+  }
+ }
+ // 以下测试函数是否是具有确定性
+ f, err := funcs[ast.Length].getFunction([]Expression{Zero}, s.ctx)
+ c.Assert(err, IsNil)
+ c.Assert(f.isDeterministic(), IsTrue)
 }
 ```
 
-
-
 **最后看 executor/executor_test.go，对 LENGTH 的实现进行 SQL 层面的测试：**
-
 
 ```go
 // 关于 string built-in 函数的测试可以在这个方法中添加
 func (s *testSuite) TestStringBuiltin(c *C) {
-	defer func() {
-		s.cleanEnv(c)
-		testleak.AfterTest(c)()
-	}()
-	tk := testkit.NewTestKit(c, s.store)
-	tk.MustExec("use test")
+ defer func() {
+  s.cleanEnv(c)
+  testleak.AfterTest(c)()
+ }()
+ tk := testkit.NewTestKit(c, s.store)
+ tk.MustExec("use test")
 
-	// for length
-	// 此处的测试最好也能覆盖多种不同的情况
-	tk.MustExec("drop table if exists t")
-	tk.MustExec("create table t(a int, b double, c datetime, d time, e char(20), f bit(10))")
-	tk.MustExec(`insert into t values(1, 1.1, "2017-01-01 12:01:01", "12:01:01", "abcdef", 0b10101)`)
-	result := tk.MustQuery("select length(a), length(b), length(c), length(d), length(e), length(f), length(null) from t")
-	result.Check(testkit.Rows("1 3 19 8 6 2 <nil>"))
+ // for length
+ // 此处的测试最好也能覆盖多种不同的情况
+ tk.MustExec("drop table if exists t")
+ tk.MustExec("create table t(a int, b double, c datetime, d time, e char(20), f bit(10))")
+ tk.MustExec(`insert into t values(1, 1.1, "2017-01-01 12:01:01", "12:01:01", "abcdef", 0b10101)`)
+ result := tk.MustQuery("select length(a), length(b), length(c), length(d), length(e), length(f), length(null) from t")
+ result.Check(testkit.Rows("1 3 19 8 6 2 <nil>"))
 }
 ```
-
 
 ## 重构前的表达式计算框架
 
 TiDB 通过 Expression 接口(在 expression/expression.go 文件中定义)对表达式进行抽象，并定义 eval 方法对表达式进行计算：
-
 
 ```go
 type Expression interface{
@@ -166,7 +158,6 @@ type Expression interface{
     ...
 }
 ```
-
 
 实现 Expression 接口的表达式包括：
 
@@ -178,7 +169,6 @@ type Expression interface{
 
 例如：
 
-
 ```sql
 create table t (
     c1 int,
@@ -188,7 +178,6 @@ create table t (
 
 select * from t where c1 + CONCAT( c2, c3 < “1.1” )
 ```
-
 
 对于上述 select 语句 where 条件中的表达式：
 在**编译阶段**，TiDB 将构建出如下图所示的表达式树:
@@ -215,7 +204,6 @@ select * from t where c1 + CONCAT( c2, c3 < “1.1” )
 
 ![编译阶段表达式树 2](media/reconstruct-built-in-function/2.jpg)
 
-
 这样，在**执行阶段**，对于每一个 ScalarFunction，可以保证其所有的参数类型一定是符合该表达式运算规则的数据类型，无需在执行过程中再对参数类型进行检查和转换。
 
 ## 附录
@@ -232,7 +220,6 @@ select * from t where c1 + CONCAT( c2, c3 < “1.1” )
   通过 WrapWithCastAsXX() 方法可以将一个表达式转换为对应的类型。
 - 对于一个函数签名，其返回值类型已经确定，所以定义时需要组合与该类型对应的 baseXXBuiltinFunc，并实现 evalXX() 方法。(XX 不超过上述 6 种类型的范围)
 
-
 ---------------------------- 我是 AI 的分割线 ----------------------------------------
 
 回顾三月启动的《十分钟成为 TiDB Contributor 系列 | 添加內建函数》活动，在短短的时间内，我们收到了来自社区贡献的超过 200 条新建內建函数，这之中有很多是来自大型互联网公司的资深数据库工程师，也不乏在学校或是刚毕业在刻苦钻研分布式系统和分布式数据库的学生。
@@ -243,7 +230,7 @@ TiDB Contributor Club 将大家聚集起来，我们互相分享、讨论，一�
 
 **成为 New Contributor 赠送限量版马克杯**的活动还在继续中，任何一个新加入集体的小伙伴都将收到我们充满了诚意的礼物，很荣幸能够认识你，也很高兴能和你一起坚定地走得更远。
 
-#### 成为 New Contributor 获赠限量版马克杯，马克杯获取流程如下：
+#### 成为 New Contributor 获赠限量版马克杯，马克杯获取流程如下
 
 1. 提交 PR
 2. PR提交之后，请耐心等待维护者进行 Review。
@@ -254,7 +241,6 @@ TiDB Contributor Club 将大家聚集起来，我们互相分享、讨论，一�
    - 表单填写地址：[http://cn.mikecrm.com/01wE8tX](http://cn.mikecrm.com/01wE8tX)
 4. 后台 AI 核查 GitHub ID 及资料信息，确认无误后随即便快递寄出属于你的限量版马克杯
 5. 期待你分享自己参与开源项目的感想和经验，TiDB Contributor Club 将和你一起分享开源的力量
-
 
 了解更多关于 TiDB 的资料请登陆我们的官方网站：[https://pingcap.com](https://pingcap.com)
 

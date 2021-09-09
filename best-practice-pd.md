@@ -15,54 +15,54 @@ tags: ['PD', '调度','最佳实践']
 首先我们介绍一下调度系统涉及到的相关概念，理解这些概念以及它们相互之间的关系，有助于在实践中快速定位问题并通过配置进行调整。
 
 * Store
-	
-	PD 中的 Store 指的是集群中的存储节点，也就是 tikv-server 实例。注意 Store 与 TiKV 实例是严格一一对应的，即使在同一主机甚至同一块磁盘部署多个 TiKV 实例，这些实例也会对应不同的 Store。
+
+ PD 中的 Store 指的是集群中的存储节点，也就是 tikv-server 实例。注意 Store 与 TiKV 实例是严格一一对应的，即使在同一主机甚至同一块磁盘部署多个 TiKV 实例，这些实例也会对应不同的 Store。
 
 * Region / Peer / Raft Group
 
-	每个 Region 负责维护集群的一段连续数据（默认配置下平均约 96 MiB），每份数据会在不同的 Store 存储多个副本（默认配置是 3 副本），每个副本称为 Peer。同一个 Region 的多个 Peer 通过 raft 协议进行数据同步，所以 Peer 也用来指代 raft 实例中的成员。TiKV 使用 multi-raft 模式来管理数据，即每个 Region 都对应一个独立运行的 raft 实例，我们也把这样的一个 raft 实例叫做一个 Raft Group。
+ 每个 Region 负责维护集群的一段连续数据（默认配置下平均约 96 MiB），每份数据会在不同的 Store 存储多个副本（默认配置是 3 副本），每个副本称为 Peer。同一个 Region 的多个 Peer 通过 raft 协议进行数据同步，所以 Peer 也用来指代 raft 实例中的成员。TiKV 使用 multi-raft 模式来管理数据，即每个 Region 都对应一个独立运行的 raft 实例，我们也把这样的一个 raft 实例叫做一个 Raft Group。
 
 * Leader / Follower / Learner
 
-	它们分别对应 Peer 的三种角色。其中 Leader 负责响应客户端的读写请求；Follower 被动地从 Leader 同步数据，当 Leader 失效时会进行选举产生新的 Leader；Learner 是一种特殊的角色，它只参与同步 raft log 而不参与投票，在目前的实现中只短暂存在于添加副本的中间步骤。
+ 它们分别对应 Peer 的三种角色。其中 Leader 负责响应客户端的读写请求；Follower 被动地从 Leader 同步数据，当 Leader 失效时会进行选举产生新的 Leader；Learner 是一种特殊的角色，它只参与同步 raft log 而不参与投票，在目前的实现中只短暂存在于添加副本的中间步骤。
 
 * Region Split
 
-	TiKV 集群中的 Region 不是一开始就划分好的，而是随着数据写入逐渐分裂生成的，分裂的过程被称为 Region Split。
-	
-	其机制是集群初始化时构建一个初始 Region 覆盖整个 key space，随后在运行过程中每当 Region 数据达到一定量之后就通过 Split 产生新的 Region。
+ TiKV 集群中的 Region 不是一开始就划分好的，而是随着数据写入逐渐分裂生成的，分裂的过程被称为 Region Split。
+
+ 其机制是集群初始化时构建一个初始 Region 覆盖整个 key space，随后在运行过程中每当 Region 数据达到一定量之后就通过 Split 产生新的 Region。
 
 * Pending / Down
 
-	Pending 和 Down 是 Peer 可能出现的两种特殊状态。其中 Pending 表示 Follower 或 Learner 的 raft log 与 Leader 有较大差距，Pending 状态的 Follower 无法被选举成 Leader。Down 是指 Leader 长时间没有收到对应 Peer 的消息，通常意味着对应节点发生了宕机或者网络隔离。
+ Pending 和 Down 是 Peer 可能出现的两种特殊状态。其中 Pending 表示 Follower 或 Learner 的 raft log 与 Leader 有较大差距，Pending 状态的 Follower 无法被选举成 Leader。Down 是指 Leader 长时间没有收到对应 Peer 的消息，通常意味着对应节点发生了宕机或者网络隔离。
 
 * Scheduler
 
-	Scheduler（调度器）是 PD 中生成调度的组件。PD 中每个调度器是独立运行的，分别服务于不同的调度目的。常用的调度器及其调用目标有：
-	  
-	* `balance-leader-scheduler`：保持不同节点的 Leader 均衡。
-	* `balance-region-scheduler`：保持不同节点的 Peer 均衡。
-	* `hot-region-scheduler`：保持不同节点的读写热点 Region 均衡。
-	* `evict-leader-{store-id}`：驱逐某个节点的所有 Leader。（常用于滚动升级）
+ Scheduler（调度器）是 PD 中生成调度的组件。PD 中每个调度器是独立运行的，分别服务于不同的调度目的。常用的调度器及其调用目标有：
+
+* `balance-leader-scheduler`：保持不同节点的 Leader 均衡。
+* `balance-region-scheduler`：保持不同节点的 Peer 均衡。
+* `hot-region-scheduler`：保持不同节点的读写热点 Region 均衡。
+* `evict-leader-{store-id}`：驱逐某个节点的所有 Leader。（常用于滚动升级）
 
 * Operator
 
-	Operator 是应用于一个 Region 的，服务于某个调度目的的一系列操作的集合。例如“将 Region 2 的 Leader 迁移至 Store 5”，“将 Region 2 的副本迁移到 Store 1, 4, 5” 等。
-	
-	Operator 可以是由 Scheduler 通过计算生成的，也可以是由外部 API 创建的。
+ Operator 是应用于一个 Region 的，服务于某个调度目的的一系列操作的集合。例如“将 Region 2 的 Leader 迁移至 Store 5”，“将 Region 2 的副本迁移到 Store 1, 4, 5” 等。
+
+ Operator 可以是由 Scheduler 通过计算生成的，也可以是由外部 API 创建的。
 
 * Operator Step
 
-	Operator Step 是 Operator 执行过程的一个步骤，一个 Operator 常常会包含多个 Operator Step。
-	
-	目前 PD 可生成的 Step 包括：
-	  
-	* `TransferLeader`：将 Region Leader 迁移至指定 Peer
-	* `AddPeer`：在指定 Store 添加 Follower
-	* `RemovePeer`：删除一个 Region Peer
-	* `AddLearner`：在指定 Store 添加 Region Learner
-	* `PromoteLearner`：将指定 Learner 提升为 Follower
-	* `SplitRegion`：将指定 Region 一分为二
+ Operator Step 是 Operator 执行过程的一个步骤，一个 Operator 常常会包含多个 Operator Step。
+
+ 目前 PD 可生成的 Step 包括：
+
+* `TransferLeader`：将 Region Leader 迁移至指定 Peer
+* `AddPeer`：在指定 Store 添加 Follower
+* `RemovePeer`：删除一个 Region Peer
+* `AddLearner`：在指定 Store 添加 Region Learner
+* `PromoteLearner`：将指定 Learner 提升为 Follower
+* `SplitRegion`：将指定 Region 一分为二
 
 ### 调度流程
 
@@ -73,20 +73,20 @@ tags: ['PD', '调度','最佳实践']
 TiKV 节点周期性地向 PD 上报 `StoreHeartbeat` 和 `RegionHeartbeat` 两种心跳消息。其中 `StoreHeartbeat` 包含了 Store 的基本信息，容量，剩余空间，读写流量等数据，`RegionHeartbeat` 包含了 Region 的范围，副本分布，副本状态，数据量，读写流量等数据。PD 将这些信息梳理并转存供调度来决策。
 
 2\. 生成调度
-   
+
 不同的调度器从自身的逻辑和需求出发，考虑各种限制和约束后生成待执行的 Operator。这里所说的限制和约束包括但不限于：
-  
-  * 不往断连中、下线中、繁忙、空间不足、在大量收发 snapshot 等各种异常状态的 Store 添加副本
-  * Balance 时不选择状态异常的 Region
-  * 不尝试把 Leader 转移给 Pending Peer
-  * 不尝试直接移除 Leader
-  * 不破坏 Region 各种副本的物理隔离
-  * 不破坏 Label property 等约束
+
+* 不往断连中、下线中、繁忙、空间不足、在大量收发 snapshot 等各种异常状态的 Store 添加副本
+* Balance 时不选择状态异常的 Region
+* 不尝试把 Leader 转移给 Pending Peer
+* 不尝试直接移除 Leader
+* 不破坏 Region 各种副本的物理隔离
+* 不破坏 Label property 等约束
 
 3\. 执行调度
-   
+
 生成的 Operator 不会立即开始执行，而是首先会进入一个由 `OperatorController` 管理的一个等待队列。`OperatorController` 会根据配置以一定的并发从等待队列中取出 Operator 进行执行，执行的过程就是依次把每个 Operator Step 下发给对应 Region 的 Leader。
-   
+
 最终 Operator 执行完毕会被标记为 finish 状态或者超时被标记为 timeout，并从执行列表中移除。
 
 ### Balance

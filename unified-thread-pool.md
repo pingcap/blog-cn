@@ -8,7 +8,7 @@ tags: ['TiKV','社区','Hackathon']
 
 >本文由逊馁队的成员夏锐航同学主笔，介绍 Unified Thread Pool 项目的设计与实现过程。该项目实现了在 TiKV 中使用一个统一的自适应线程池处理读请求，能够显著提升性能，并可预测性地限制大查询对小请求的干扰，最终在 [TiDB Hackathon 2019](https://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247490046&idx=1&sn=962bb8aa4619c3815fcc561ed96331d7&chksm=eb163e94dc61b7826b7e73a057f4c9823261c1a79005104dd41dbd6ef4276c01bd6e41a69d14&scene=21&token=1896003006&lang=zh_CN#wechat_redirect) 中斩获一等奖。
 
-距离 TiDB Hackathon 落幕已经过去了半个多月，回忆这次比赛、获奖的经历，依然让我感到非常兴奋。我目前是华南理工大学大三的学生，我和正在 PingCAP 实习的学长奕霖一起组队参加了这次 TiDB Hackathon，比赛的主题为 “Improve”，即提升 TiDB 及相关项目的性能、易用性等。我们项目设计的切入点是： 
+距离 TiDB Hackathon 落幕已经过去了半个多月，回忆这次比赛、获奖的经历，依然让我感到非常兴奋。我目前是华南理工大学大三的学生，我和正在 PingCAP 实习的学长奕霖一起组队参加了这次 TiDB Hackathon，比赛的主题为 “Improve”，即提升 TiDB 及相关项目的性能、易用性等。我们项目设计的切入点是：
 
 * TiKV 现有的线程池在大小查询混合场景下的表现不太优秀。
 
@@ -29,7 +29,7 @@ tags: ['TiKV','社区','Hackathon']
 我们的 Unified Thread Pool 是一个在用户态模拟多级反馈队列调度的线程池，能较好的解决上述现行线程池方案的几个缺点。两者具体的对比如下表所示：
 
 | 现行线程池方案 | 我们的改进 |
-|:--------|:--------| 
+|:--------|:--------|
 | 多个线程池共存，每个线程池都不能分配所有的资源 | 一个统一的线程池，可以分配尽量多的资源|
 | 通过分配到不同的线程池来实现优先级，但效果不佳 | 内部实现按时间的调度 |
 | 大请求对小请求的影响不可控 | 可预测的大请求对系统的影响 |
@@ -82,6 +82,6 @@ Unified Thread Pool 的调度方案参考自多级反馈队列算法，在 Unifi
 
 比赛最后 Demo Time 的时候看别人的项目都好优秀，看得有点想提前跑路了，还好不是我上去做 presentation，能夺魁事实上挺让我感到意外的，现在 Hackathon 虽然已经结束了，但还想继续完善这个作品。现在它虽然能提升最大吞吐量，但是在延时方面的表现还能更进一步。在比赛时我们的线程池是基于比较简单的 juliex 来设计的，后续计划参考一些比如 tokio 之类的成熟的线程池来进行优化，希望能够将它完善合进 master。大家可以在 [TiDB 性能挑战赛](https://pingcap.com/community-cn/tidb-performance-challenge/) 中继续一起鼓捣这个项目，该项目对应的 [链接](https://github.com/tikv/tikv/issues/5765)。
 
-最后感谢奕霖老师这么强还愿意带我玩，感谢 PingCAP 让我蹭吃蹭喝的辛苦付出 :D 
+最后感谢奕霖老师这么强还愿意带我玩，感谢 PingCAP 让我蹭吃蹭喝的辛苦付出 :D
 
 >附：[逊馁队 Demo Show 视频（0:00 - 10:35）](https://v.qq.com/x/page/s30152xwbyj.html)

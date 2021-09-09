@@ -56,7 +56,7 @@ if err := m.syncTidbClusterStatus(tc, oldPDSet); err != nil {
 
 3. 检查 TidbCluster 是否处于 Paused 状态，如果是，则停止接下来的 Reconcile 过程。
 
-```	
+```
 if tc.Spec.Paused {
     klog.V(4).Infof("tidb cluster %s/%s is paused, skip syncing for pd statefulset", tc.GetNamespace(), tc.GetName())
     return nil
@@ -175,7 +175,7 @@ if config == nil {
 ```
 
 2. 修改配置中 TLS 有关配置，其中 4.0 以下不支持 Dashboard，因此 4.0 以下 PD 版本不用设置 Dashboard 证书。
- 
+
 ```
 // override CA if tls enabled
 if tc.IsTLSClusterEnabled() {
@@ -267,7 +267,7 @@ if tc.Status.TiCDC.Phase == v1alpha1.UpgradePhase ||
 
 2. 在同步 StatefulSet 部分提到，进入 Upgrader 有两种条件，一是 newSet 和 oldSet Template Spec 不一致，这一情况发生在更新开始时，此时返回 nil，直接更新 StatefulSet 即可，不需要执行下面逐个 Pod 检查的操作。如果是根据 `tc.Status.PD.Phase == v1alpha1.UpgradePhase` 条件进入的 Upgrader，则 `newSet` 和 `oldSet Template Spec` 一致，此时需要继续执行下面的检查。
 
-``` 
+```
 if !templateEqual(newSet, oldSet) {
     return nil
 }
@@ -514,7 +514,7 @@ if !evicting {
     return u.beginEvictLeader(tc, storeID, upgradePod)
 }
 ```
- 
+
 在 readyToUpgrade 函数中，当 Region Leader 为零，或者转移 Region Leader时间超过了 `tc.Spec.TiKV.EvictLeaderTimeout` 设置的时间，则更新 StatefulSet UpgradeStrategy 中的 partition 配置，触发 Pod 升级。当 Pod 完成升级之后，调用 endEvictLeaderbyStoreID 结束 evictLeader 操作。
 
 7. 故障转移方面，TiKV Member Manager 在状态同步时，会记录最后一次 Store 状态变更的时间。

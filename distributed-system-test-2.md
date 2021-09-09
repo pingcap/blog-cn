@@ -30,14 +30,14 @@ meetup_type: memoir
 **所以比较好的做法是什么？**
 
 + **Fault injection**
-	- Hardware
-		- disk error
-		- network card
-		- cpu
-		- clock
-	- Software
-		- file system
- 		- network & protocol
+  + Hardware
+    + disk error
+    + network card
+    + cpu
+    + clock
+  + Software
+    + file system
+  + network & protocol
 + **Simulate everything**
 
 **模拟一切东西。**就是磁盘是模拟的，网络是模拟的，那我们可以监控它，你可以在任何时间、任何的场景下去注入各种错误，你可以注入任何你想要的错误。比如说你写一个磁盘，我就告诉你磁盘满了，我告诉你磁盘坏了，然后我可以让你 hang 住，比如 sleep 五十几秒。我们确实在云上面出现过这种情况，就是我们一次写入，然后被 hang 了为 53 秒，最后才写进去，那肯定是网络磁盘，对吧？这种事情其实是很吓人的，但是肯定没有人会想说我一次磁盘写入然后要耗掉 53 秒，但是当 53 秒出现的时候，整个程序的行为是什么？TiDB 里面用了大量的 Raft，所以当时出现一个情况就是 53 秒，然后所有的机器就开始选举了，说这肯定是哪儿不对，重新把 leader 都选出来了，这时候卡 53 秒的哥们说“我写完了”，然后整个系统状态就做了一次全新的迁移。这种错误注入的好处是什么？就是知道当出错的时候，你的错误能严重到什么程度，这个事情很重要，就是 predictable，整个系统要可预测的。如果没有做错误路径的测试，那很简单的一个问题，现在假设走到其中一条错误路径了，整个系统行为是什么？这一点不知道是很吓人的。你不知道是否可能破坏数据；还是业务那边会 block 住；还是业务那边会 retry？
@@ -98,7 +98,6 @@ InnoDB: Error number 5 means 'Input/output error'.
 
 举 Netflix 的一个例子，下图是 Netflix 的系统。
 
-
 ![Netflix](media/distributed-system-test-2/5.png)
 
 他们在 2014 年 10 月份的时候写了一篇博客，叫《 Failure Injection Testing 》，是讲他们整个系统怎么做错误注入，然后他们的这个说法是 Internet Scale，就是整个多数据中心互联网的这个级别。大家可能记得 Spanner 刚出来的时候他们叫做 Global Scale，然后这地方可以看到，蓝色是注射点，黑色的是网络调用，就是所有这些请求在这些情况下面，所有这些蓝色的框框都有可能出错。大家可以想一想，在 Microservice 系统上，一个业务调用可能涉及到几十个系统的调用，如果其中一个失败了会怎么样？如果是第一次第一个失败，第二次第二个失败，第三次第三个失败是怎么样的？有没有系统做过这样的测试？有没有系统在自己的程序里面去很好的验证过是不是每一个可以预期的错误都是可预测的，这个变得非常的重要。这里以 cache 为例，就说每一次访问  Cassandra 的时候可能出错，那么也就给了我们一个错误的注入点。
@@ -107,14 +106,13 @@ InnoDB: Error number 5 means 'Input/output error'.
 
 **OpenStack fault-injection library:**
 
-***https://pypi.org/project/os-faults/***
+***<https://pypi.org/project/os-faults/>***
 
 大名鼎鼎的 OpenStack 其实也有一个 Failure Injection Library，然后我把这个例子也贴到这里，大家有兴趣可以看一下这个 OpenStack 的 Failure Injection。这以前大家可能不太关注，其实大家在这一点上都很痛苦， OpenStack 现在还有一堆人在骂，说稳定性太差了，其实他们已经很努力了。但是整个系统确实是做的异乎寻常的复杂，因为组件太多。如果你出错的点特别多，那可能会带来另外一个问题，就是出错的点之间还能组合，就是先 A 出错，再 B 出错，或者 AB 都出错，这也就几种情况，还好。那你要是有十万个错误的点，这个组合怎么弄？当然现在还有新的论文在研究这个，2015 年的时候好像有一篇论文，讲的就是会探测你的程序的路径，然后在对应的路径下面去注入错误。
 
 再来说 Jepsen.
 
 **Jepsen: Distributed Systems Safety Analysis**
-
 
 ![图例 3](media/distributed-system-test-2/6.jpg)
 
@@ -123,25 +121,25 @@ InnoDB: Error number 5 means 'Input/output error'.
 当我们的分布式系统启动起来之后，control node 会启动很多进程，每一个进程都能使用特定的 client 访问到我们的分布式系统。一个 generator 为每一个进程生成一系列的操作，比如 get/set/cas，让其执行。每一个操作都会被记录到 history 里面。在执行操作的同时，另一个 nemesis 进程会尝试去破坏这个分布式系统，譬如使用 iptable 断开网络连接等，当所有操作执行完毕之后，jepsen 会使用一个 checker 来分析验证系统的行为是否符合预期。PingCAP 的首席架构师唐刘写过两篇文章介绍我们实际怎么用 Jepsen 来测试 TiDB，大家可以搜索一下，我这里就不详细展开了。
 
 + FoundationDB
-	- It is difficult to be deterministic
-		- Random
-		- Disk Size
-		- File Length
-		- Time
-		- Multithread
+  + It is difficult to be deterministic
+    + Random
+    + Disk Size
+    + File Length
+    + Time
+    + Multithread
 
 FoundationDB 这就是前辈了，2015 年被 Apple 收购了。他们为了解决错误注入的问题，或者说怎么去让它重现的这个问题，做了很多事情，很重要的一个事情就是 deterministic 。如果我给你一样的输入，跑几遍，是不是能得到一样的输出？这个听起来好像很科学、很自然，但是实际上我们绝大多数程序都是做不到的，比如说你们有判断程序里面有随机数吗？有多线程吗？有判断磁盘空间吗？有判断时间吗？你再一次判断的时候还是一样的吗？你再跑一次，同样的输入，但行为已经不一样了，比如你生了一个随机数，比如你判断磁盘空间，这次判断和下次判断可能是不一样的。
 
 所以他们为了做到“我给你一样的输入，一定能得到一样的输出”，花了大概两年的时间做了一个库。这个库有以下特性：它是个单线程的，然后是个伪并发的。为什么？因为如果用多线程你怎么让它这个相同的输入变成相同的输出，谁先拿到锁呢？这里面的问题很多，所以他们选择使用单线程，但是单线程本身有单线程的问题。而且比如你用 Go 语言，那你单线程它也是个并发的。然后它的语言规范就告诉我们说，如果一个 select 作用在两个 channel 上，两个 channel 都 ready 的时候，它会随机的一个，就是在语言定义的规范上面，就已经不可能让你得到一个 deterministic 了。但还好 FoundationDB 是用 C++ 写的。
 
 + FoundationDB
-	- Single-threaded pseudo-concurrency
-	- Simulated the implementation of all the external communication
-	- Determinism
-	- Disasters happen more frequently here than in the real world.
+  + Single-threaded pseudo-concurrency
+  + Simulated the implementation of all the external communication
+  + Determinism
+  + Disasters happen more frequently here than in the real world.
 
 另外 FoundationDB 模拟了所有的网络，就是两个之间认为通过网络通讯，对吧？实际上是通过它自己模拟的一套东西在通讯。它里面有一个很重要的观点就是说，如果磁盘损坏，出现的概率是三年百分之八的话，那么在用户那出现的概率是三年百分之八。但是在用户那一旦出现了，那证明就很严重了，所以他们对待这个问题的办法是什么？就是我通过自己的模拟系统让它每时每刻都在产生。它们大概是每两分钟产生一次磁盘损坏，也就是说它比现实中的概率要高几十万倍，所以它就觉得它调的技术 more frequently，就是我这种错误出现的更加频繁，那网卡损坏的概率是多少？这都是极低的，但是你可以用这个系统让它每分每秒都产生，这样一来你就让你的系统遇到这种错误的概率是比现实中要大非常非常多。那你重现，比如说现实中跑三年能重现一次，你可能跑三十秒就能重现一次。
 
 但对于一个 bug 来说最可怕的是什么？就是它不能重现。发现一个 bug，后来说我 fix 了，然后不能重现了，那你到底 fix 了没有？不知道，这个事情就变得非常的恐怖。所以通过 deterministic 肯定能保证重现，我只要把我的输入重放一次，我把它录下来，每一次我把它录下来一次，然后只要是曾经出现过，我重放，一定能出现。当然这个代价太大了，所以现在学术界走的是另外一条路，不是完全 deterministic，但是我只需要它  reasonable。比如说我在三十分钟内能把它重现也是不错的，我并不需要在三秒内把它重现。所以，每前一步要付出相应的成本代价。
 
-##### 未完待续...
+##### 未完待续

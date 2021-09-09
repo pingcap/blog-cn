@@ -10,13 +10,13 @@ Chaos Mesh 已经开源一周年了，目前是 CNCF 的 sandbox 项目，在国
 
 但是目前 Chaos Mesh 仍然存在一些需要继续建设的方面：
 
-*   需要继续提高易用性。目前有些 Chaos 的功能较为复杂，用户在创建 Chaos 实验后，可能还需要人工确认实验是否生效，需要改进 Metrics 以及与监控系统的联动。
+* 需要继续提高易用性。目前有些 Chaos 的功能较为复杂，用户在创建 Chaos 实验后，可能还需要人工确认实验是否生效，需要改进 Metrics 以及与监控系统的联动。
 
-*   主要支持 K8s 环境。目前 Chaos Mesh 主要针对 K8s 环境设计的，而且每个 K8s 集群都需要部署一个 Chaos Mesh，无法统一进行管理。另外，支持物理机的混沌实验工具 Chaosd 支持的功能有限，而且通过命令行注入实验的方式对用户不太友好。
+* 主要支持 K8s 环境。目前 Chaos Mesh 主要针对 K8s 环境设计的，而且每个 K8s 集群都需要部署一个 Chaos Mesh，无法统一进行管理。另外，支持物理机的混沌实验工具 Chaosd 支持的功能有限，而且通过命令行注入实验的方式对用户不太友好。
 
-*   暂不支持插件。目前添加自定义 Chaos 只能通过修改源码，暂不支持插件以及 Go 以外的语言，不利于新 Chaos 功能的扩展。
+* 暂不支持插件。目前添加自定义 Chaos 只能通过修改源码，暂不支持插件以及 Go 以外的语言，不利于新 Chaos 功能的扩展。
 
-*   没有原生支持编排。目前可以[通过 Argo 来做编排](https://pingcap.com/blog-cn/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/)，但是还不够易用。Chaos Mesh 计划是在 V2.0 版本支持原生编排，这样也可以闭环做一些回调操作。
+* 没有原生支持编排。目前可以[通过 Argo 来做编排](https://pingcap.com/blog-cn/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/)，但是还不够易用。Chaos Mesh 计划是在 V2.0 版本支持原生编排，这样也可以闭环做一些回调操作。
 
 总体来说，Chaos Mesh 距离 Chaos Engineering as a Service 还需要继续建设，并且还有很大的想象空间。
 
@@ -40,7 +40,7 @@ CAAS（ChaosEngineering-As-a-Service）意味着可以快速的看到直观的�
 
 ![1-架构图](media/chaos-engineering-as-a-service/1-架构图.png)
 
-我们对 Chaos Mesh 的架构进行了简单的调整，将 Dashboard 独立出来，不再与某个特定的 K8s 环境绑定。如果 Dashboard 部署在 K8s 集群外，则通过界面添加 K8s 集群；如果 Dashboard 部署在集群内，则可以通过环境变量自动获取集群信息。 
+我们对 Chaos Mesh 的架构进行了简单的调整，将 Dashboard 独立出来，不再与某个特定的 K8s 环境绑定。如果 Dashboard 部署在 K8s 集群外，则通过界面添加 K8s 集群；如果 Dashboard 部署在集群内，则可以通过环境变量自动获取集群信息。
 
 ![2-dashboard](media/chaos-engineering-as-a-service/2-dashboard.png)
 
@@ -72,17 +72,17 @@ Chaosd 可以通过配置主动向 Dashboard 注册，增加 heartbeat 机制，
 
 Metrics 主要是解决三个问题：
 
-1.  如何观测 Chaos 被成功注入
+1. 如何观测 Chaos 被成功注入
 
-2.  如何观测 Chaos 注入以后对于服务的影响，并能做周期性的对比
+2. 如何观测 Chaos 注入以后对于服务的影响，并能做周期性的对比
 
-3.  异常 Chaos 事件的相应
+3. 异常 Chaos 事件的相应
 
 综上，可能需要从三个方面入手，实验数据 Metrics、正常指标监控、实验 Event。也就是说，目前还欠缺：
 
-*   实验数据 Metrics，例如注入网络延迟的具体延迟时间、模拟负载的具体模拟值等等。
+* 实验数据 Metrics，例如注入网络延迟的具体延迟时间、模拟负载的具体模拟值等等。
 
-*   实验 Event，实验创建、删除、运行周期的 K8s Event。
+* 实验 Event，实验创建、删除、运行周期的 K8s Event。
 
 可以参考 [https://github.com/litmuschaos/chaos-exporter#example-metrics](https://github.com/litmuschaos/chaos-exporter#example-metrics)。
 
@@ -120,9 +120,9 @@ Chaos Mesh 目前对插件支持比较有限，只能通过扩展 CRD 的形式�
 
 但这样就会有两个问题：
 
-1.  开发者必须使用 Golang 来做扩展开发，对开发者还是有一定要求的，虽然 Golang 是高级 PHP(PHP 是世界上最好的语言)。
+1. 开发者必须使用 Golang 来做扩展开发，对开发者还是有一定要求的，虽然 Golang 是高级 PHP(PHP 是世界上最好的语言)。
 
-2.  扩展的代码需要合进项目，合进主代码又有可能引发额外的风险，毕竟没有 BPF 那种安全机制(是不是文章中包含 BPF 就能蹭一波热度)。
+2. 扩展的代码需要合进项目，合进主代码又有可能引发额外的风险，毕竟没有 BPF 那种安全机制(是不是文章中包含 BPF 就能蹭一波热度)。
 
 可能需要探索一种魔(ye)幻(lu)的(zi)插件方式。基于 Go 的插件，HashiCorp 出过一个 [go-plugin](https://github.com/hashicorp/go-plugin)，但还是基于 Go。回归本质， Chaos Mesh 其实是基于 CRD 进行 Chaos 实验。也就是说，只要能够生成、监听处理、删除 CRD 就可以完成混沌实验。基于 client-go？开发 Controller、Operator 操作 CRD？不，还有其他好(ye)办(lu)法(zi)。
 
@@ -150,29 +150,29 @@ Chaos Mesh 目前对插件支持比较有限，只能通过扩展 CRD 的形式�
 
 物理节点层面：
 
-*   支持执行物理机执行自定义脚本。CRD 配置脚本路径，通过 Chaos Daemon 运行自定义 Shell 脚本，但需要特权模式运行容器，不是很友好。
+* 支持执行物理机执行自定义脚本。CRD 配置脚本路径，通过 Chaos Daemon 运行自定义 Shell 脚本，但需要特权模式运行容器，不是很友好。
 
-*   基于自定义 Shell 脚本模拟 reboot、shutdown、Kernel Panic。
+* 基于自定义 Shell 脚本模拟 reboot、shutdown、Kernel Panic。
 
-*   基于自定义 Shell 脚本将节点网卡 down 掉(随机 down 掉节点，可能会造成物理机启动失败)。Shell 脚本内实现 ifdown、ifup 即可。
+* 基于自定义 Shell 脚本将节点网卡 down 掉(随机 down 掉节点，可能会造成物理机启动失败)。Shell 脚本内实现 ifdown、ifup 即可。
 
-*   使用 sysbench 制造上下文频繁切换。模拟“吵闹的邻居”。
+* 使用 sysbench 制造上下文频繁切换。模拟“吵闹的邻居”。
 
-*   基于 BPF 的 seccomp 实现对容器的系统调用拦截。传递 PID，基于 PID 过滤即可。
+* 基于 BPF 的 seccomp 实现对容器的系统调用拦截。传递 PID，基于 PID 过滤即可。
 
 容器层面：
 
-*   随机修改 Deployment 的副本数量，测试应用的流量是否有异常。
+* 随机修改 Deployment 的副本数量，测试应用的流量是否有异常。
 
-*   基于 CRD 对象嵌套，在 Chaos CRD 中填写 Ingress 对象，模拟接口限速。
+* 基于 CRD 对象嵌套，在 Chaos CRD 中填写 Ingress 对象，模拟接口限速。
 
-*   基于 CRD 对象嵌套，在 Chaos CRD 中填写 Cilium Network Policy 对象，模拟网络时好时坏。
+* 基于 CRD 对象嵌套，在 Chaos CRD 中填写 Cilium Network Policy 对象，模拟网络时好时坏。
 
 业务层面：
 
-*   支持自定义 Job。目前 Chaos Mesh 主要是基于 Chaos Daemon 实现注入，不具备调度的公平性以及亲和性，通过 Controller Manager 针对不同的 CRD 类型，直接创建 Job 即可实现。
+* 支持自定义 Job。目前 Chaos Mesh 主要是基于 Chaos Daemon 实现注入，不具备调度的公平性以及亲和性，通过 Controller Manager 针对不同的 CRD 类型，直接创建 Job 即可实现。
 
-*   自定义 Job 跑 [Newman](https://github.com/postmanlabs/newman)，随机修改 HTTP 参数。实现 HTTP 接口层面的 Chaos 实验，模拟用户异常行为。
+* 自定义 Job 跑 [Newman](https://github.com/postmanlabs/newman)，随机修改 HTTP 参数。实现 HTTP 接口层面的 Chaos 实验，模拟用户异常行为。
 
 综上，是一些对 Chaos 的个人拙见、对 Chaos Mesh 的胡思乱想、基于 Chaos Mesh 的野路子混沌工程系统落地实践。全文仅供参考，不建议在生产环境模拟使用，如造成混沌状态，纯属巧合。
 
@@ -180,14 +180,14 @@ Chaos Mesh 目前对插件支持比较有限，只能通过扩展 CRD 的形式�
 
 ## 一些可以阅读的资料
 
-*   [https://principlesofchaos.org/zh/](https://principlesofchaos.org/zh/)
+* [https://principlesofchaos.org/zh/](https://principlesofchaos.org/zh/)
 
-*   [https://netflixtechblog.com/the-netflix-simian-army-16e57fbab116](https://netflixtechblog.com/the-netflix-simian-army-16e57fbab116)
+* [https://netflixtechblog.com/the-netflix-simian-army-16e57fbab116](https://netflixtechblog.com/the-netflix-simian-army-16e57fbab116)
 
-*   [https://medium.com/better-practices/chaos-d3ef238ec328](https://medium.com/better-practices/chaos-d3ef238ec328)
+* [https://medium.com/better-practices/chaos-d3ef238ec328](https://medium.com/better-practices/chaos-d3ef238ec328)
 
-*   [Learning Chaos Engineering: Discovering and Overcoming System Weaknesses through Experimentation](https://www.oreilly.com/library/view/learning-chaos-engineering/9781492050995/)
+* [Learning Chaos Engineering: Discovering and Overcoming System Weaknesses through Experimentation](https://www.oreilly.com/library/view/learning-chaos-engineering/9781492050995/)
 
-*   [Chaos Engineering: System Resiliency in Practice](https://www.oreilly.com/library/view/chaos-engineering/9781492043850/)
+* [Chaos Engineering: System Resiliency in Practice](https://www.oreilly.com/library/view/chaos-engineering/9781492043850/)
 
-*   [Chaos Engineering Observability](https://www.oreilly.com/library/view/chaos-engineering-observability/9781492051046/)
+* [Chaos Engineering Observability](https://www.oreilly.com/library/view/chaos-engineering-observability/9781492051046/)

@@ -26,7 +26,7 @@ tags: ['DM 源码阅读','社区']
 1. 在操作目标数据库上使用 `create table ghost table like origin table` 来创建 ghost 表；
 2. 按照需求变更表结构，比如 `add column/index`；
 3. gh-ost 自身变为 MySQL replica slave，将原表的全量数据和 binlog 增量变更数据迁移到 ghost 表；
-4. 数据迁移完成之后执行 `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换 
+4. 数据迁移完成之后执行 `rename origin table to table_del, table_gho to origin table` 完成 ghost 表和原始表的切换
 
 pt-online-schema-change 通过 trigger 的方式来实现数据迁移，剩余流程类似。
 
@@ -62,9 +62,9 @@ DM 将 [迁移的表分为三类](https://github.com/pingcap/dm/blob/25f95ee08d0
 * real table - [对 rename table statement 进行模式检查，直接返回执行](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L55)
 * trash table - [对 rename table statement 做一些模式检查，直接忽略迁移](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L70)
 * ghost table
-    * 如果 DDL 是 [create/drop table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L86) ，则 [清空内存中的残余信息后忽略这个 DDL 继续迁移](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L87)
-    * 如果 DDL 是 [rename table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L96) ，则 [返回内存中保存的 ghost table 的 DDLs](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L103)
-    * 如果是其他类型 DDL，[则把这些 DDL 保存在内存中](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L119)
+  * 如果 DDL 是 [create/drop table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L86) ，则 [清空内存中的残余信息后忽略这个 DDL 继续迁移](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L87)
+  * 如果 DDL 是 [rename table statement](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L96) ，则 [返回内存中保存的 ghost table 的 DDLs](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L103)
+  * 如果是其他类型 DDL，[则把这些 DDL 保存在内存中](https://github.com/pingcap/dm/blob/25f95ee08d008fb6469f0b172e432270aaa6be52/syncer/ghost.go#L119)
 
 下面是一个执行示例，方便大家对照着来理解上面的代码逻辑：
 

@@ -68,11 +68,11 @@ Prepare 成功之后，客户端会通过 `COM_STMT_EXECUTE` 命令请求执行�
 
 3. 使用上一节第 2 步中准备的 [`prepared.Params`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/core/common_plans.go#L167) 来快速查找并填充参数值；同时会保存一份参数到 [`sessionVars.PreparedParams`](https://github.com/lysu/tidb/blob/source-read-prepare/sessionctx/variable/session.go#L190) 中，这个主要用于支持 `PreparePlanCache` 延迟获取参数。
 
-4.  判断对比判断 Prepare 和 Execute 之间 schema 是否有变化，如果有变化则重新 Preprocess。
+4. 判断对比判断 Prepare 和 Execute 之间 schema 是否有变化，如果有变化则重新 Preprocess。
 
-5.  之后调用 [`Execute#getPhysicalPlan`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/core/common_plans.go#L188) 获取物理计划，实现中首先会根据是否启用 PreparedPlanCache 来查找已缓存的 Plan，本文后面我们也会专门介绍这个。
+5. 之后调用 [`Execute#getPhysicalPlan`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/core/common_plans.go#L188) 获取物理计划，实现中首先会根据是否启用 PreparedPlanCache 来查找已缓存的 Plan，本文后面我们也会专门介绍这个。
 
-6.  在没有开启 PreparedPlanCache 或者开启了但没命中 cache 时，会对 AST 进行一次正常的 Optimize。
+6. 在没有开启 PreparedPlanCache 或者开启了但没命中 cache 时，会对 AST 进行一次正常的 Optimize。
 
 在获取到 PhysicalPlan 后就是正常的 [Executing 执行](https://zhuanlan.zhihu.com/p/35134962)。
 
@@ -110,7 +110,7 @@ TiDB 可以通过 [修改配置文件](https://github.com/lysu/tidb/blob/source-
 
 在 Execute 的处理逻辑 [`PrepareExec`](https://github.com/lysu/tidb/blob/source-read-prepare/executor/prepared.go#L161) 中除了检查 `PreparePlanCache` 是否开启外，还会判断当前的语句是否能使用 `PreparePlanCache`。
 
-1. 只有 `SELECT`，`INSERT`，`UPDATE`，`DELETE` 有可能可以使用 `PreparedPlanCache`	。
+1. 只有 `SELECT`，`INSERT`，`UPDATE`，`DELETE` 有可能可以使用 `PreparedPlanCache` 。
 
 2. 并进一步通过 [`cacheableChecker`](https://github.com/lysu/tidb/blob/source-read-prepare/planner/core/cacheable_checker.go#L43) visitor 检查 AST 中是否有变量表达式，子查询，"order by ?"，"limit ?，?" 和 UnCacheableFunctions 的函数调用等不可以使用 PlanCache 的情况。
 

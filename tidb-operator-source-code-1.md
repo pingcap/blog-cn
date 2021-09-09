@@ -56,7 +56,7 @@ TiDB Operator 是从什么角度给用户的运维操作带来了简化的呢? �
 
 - Operator 模式 - 讨论 TiDB Operator 的代码入口，运行逻辑，Reconcile 循环的触发；
 
-- TiDB Operator 的组件 Reconcile Loop 设计 - 讨论 TiDB 组件的 Reconcile 
+- TiDB Operator 的组件 Reconcile Loop 设计 - 讨论 TiDB 组件的 Reconcile
 Loop 的通用设计，并介绍可能的拓展点；
 
 - TiDB Operator 的 Feature 设计 - 讨论备份、Auto-Scaling,、Webhook、Advanced Statefulset、TiDB Scheduler、监控等特性的设计与实现；

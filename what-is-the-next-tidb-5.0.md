@@ -60,7 +60,7 @@ PingCAP 认为，**一个真正的企业级数据库厂商应该把自己放在�
 
 ## 里程碑！TiDB 5.0 核心能力向企业级演进
 
-### TiDB 5.0 的内功：TiDB，栈稳了！
+### TiDB 5.0 的内功：TiDB，栈稳了
 
 ![2](media/what-is-the-next-tidb-5.0/2.png)
 

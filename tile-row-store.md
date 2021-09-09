@@ -80,7 +80,7 @@ Peloton 提供 algebra operators 来让外面更方便的使用。Operators 主�
 + Mutators ：Mutator operators 会改变 table 的实际存储数据。譬如 insert operator 首先会重新构建 logical tile 的 tuple，然后在插入到对应的 table 里面，而 delete operator 则是删除 table 里面的数据，update operator 则是先在 logical tile 里面删除，在通过之前的 tuple 重新构建一个新版本的 tuple，在插入到 table。Mutators 同时也会控制 tuple 在 transaction 里面的可见性。
 + Pipeline Breakers：当我们给一个 query plan 生成对应的 query plan tree 之后，在 tree 上层的 operators 需要等待 children 的操作完成返回了，才能继续进行。譬如 join operator 需要处理多个 logical tiles，并且在这些 tiles 上面执行 predicate。首先，join operator 会构建一个 output logical tile，它的 schema 是根据输入的 logical tile 来构建的。然后 join operator 会遍历 input logical tile，如果发现满足 predicate，就将结果放到 output logical tile，下面是 join 的一个例子：
 
-	![join 图例](media/tile-row-store/6.png)
+ ![join 图例](media/tile-row-store/6.png)
 
 ## Layout reorganization
 

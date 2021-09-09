@@ -89,9 +89,9 @@ image: /images/media/DevCon2018/15.JPG
 
 为了让大家更好的观察到整个集群的运行状态，我们也做了一个非常炫的图形界面。
 
-+ [视频 | PD 图形界面 Demo 1](https://v.qq.com/x/page/d0536vetmqo.html)
+- [视频 | PD 图形界面 Demo 1](https://v.qq.com/x/page/d0536vetmqo.html)
 
-+ [视频 | PD 图形界面 Demo 2](https://v.qq.com/x/page/j0536ndb5np.html)
+- [视频 | PD 图形界面 Demo 2](https://v.qq.com/x/page/j0536ndb5np.html)
 
 ![](media/DevCon2018/13.jpeg)
 
@@ -118,5 +118,3 @@ image: /images/media/DevCon2018/15.JPG
 最后，就是大家有很多的地理位置相关的查询这种特性，我们计划是在 2018 年的 Q4 到 2019 年的 Q1 来提供。
 
 ![](media/DevCon2018/14.jpeg)
-
-

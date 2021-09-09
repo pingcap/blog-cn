@@ -26,18 +26,18 @@ Core 能异步处理 RPC 请求，在考虑到 Rust 中已有较为成熟的异�
 
 Core 中有几个比较重要的对象：
 
-  + Call 以及 4 种类型 RPC： Call 代表了一次 RPC，可以派生出四种类型 RPC，
++ Call 以及 4 种类型 RPC： Call 代表了一次 RPC，可以派生出四种类型 RPC，
 
-    - Unary： 这是最简单的一种 RPC 模式，即一问一答，客户端发送一个请求，服务端返回一个回复，该轮 RPC 结束。
-    - Client streaming： 这类的 RPC 会创建一个客户端到服务端的流，客户端可以通过这个流，向服务端发送多个请求，而服务端只会返回一个回复。
-    - Server streaming： 与上面的类似，不过它会创建一个服务端到客户端的流，服务端可以发送多个回复，
-    - Bidirectional streaming： 如果说上面两类是单工，那么这类就是双工了，客户端和服务端可以同时向对方发送消息。
+  + Unary： 这是最简单的一种 RPC 模式，即一问一答，客户端发送一个请求，服务端返回一个回复，该轮 RPC 结束。
+  + Client streaming： 这类的 RPC 会创建一个客户端到服务端的流，客户端可以通过这个流，向服务端发送多个请求，而服务端只会返回一个回复。
+  + Server streaming： 与上面的类似，不过它会创建一个服务端到客户端的流，服务端可以发送多个回复，
+  + Bidirectional streaming： 如果说上面两类是单工，那么这类就是双工了，客户端和服务端可以同时向对方发送消息。
 
       > 值得一提的是由于 gRPC 基于 HTTP2，它利用了 HTTP2 多路复用特性，使得一个 TCP 连接上可以同时进行多个 RPC，一次 RPC 即为 HTTP2 中的一个 Stream。
 
-  + Channel： 它是对底层链接的抽象，具体来说一个 Channel 就是一条连着远程服务器的 TCP 链接。
-  + Server： 顾名思义，它就是 gRPC 服务端封装，可以在上面注册我们的服务。
-  + Completion queue: 它是 gRPC 完成事件队列，事件可以是收到新的回复，可以是新来的请求。
++ Channel： 它是对底层链接的抽象，具体来说一个 Channel 就是一条连着远程服务器的 TCP 链接。
++ Server： 顾名思义，它就是 gRPC 服务端封装，可以在上面注册我们的服务。
++ Completion queue: 它是 gRPC 完成事件队列，事件可以是收到新的回复，可以是新来的请求。
 
 简要介绍一下 Core 库的实现，Core 中有一个 [Combiner] 的概念，Combiner 中一个函数指针或称组合子（Combinator）队列。每个组合子都有特定的功能，通过不同的组合可以实现不同的功能。下面的伪码大概说明了 Combiner 的工作方式。
 

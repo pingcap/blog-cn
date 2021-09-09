@@ -47,7 +47,7 @@ tiup cluster deploy test v4.0.0-rc topology.yaml  -i ~/.ssh/id_rsa
 
 简单来说，我们会在 TiDB 里面处理 OLTP 类型业务，在 TiFlash 里面处理 OLAP 类型业务，相比于传统的 ETL 方案，或者其他的 HTAP 解决方案，我们做了更多：
 
-1. **实时的强一致性。在 TiDB 里面更新的数据会实时的同步到 TiFlash，保证 TiFlash 在处理的时候一定能读取到最新的数据**。 
+1. **实时的强一致性。在 TiDB 里面更新的数据会实时的同步到 TiFlash，保证 TiFlash 在处理的时候一定能读取到最新的数据**。
 
 2. **TiDB 可以智能判断选择行存或者列存，以应对各种不同的查询场景，无需用户干预**。
 
@@ -107,10 +107,10 @@ tiup cluster deploy test v4.0.0-rc topology.yaml  -i ~/.ssh/id_rsa
 
 ![4-tpc-h-100g](media/the-overview-of-tidb-4.0/4-tpc-h-100g.png)
 
-**Sysbench 16 table, 10000000 table size** *（注：测试使用 3 台 16 核 62G 虚拟机部署  3 * TiKV，1 台 40 核 189G 服务器部署 1 * TiDB）*
+**Sysbench 16 table, 10000000 table size** *（注：测试使用 3 台 16 核 62G 虚拟机部署  3* TiKV，1 台 40 核 189G 服务器部署 1 *TiDB）*
 
 ![5-read-write-threads](media/the-overview-of-tidb-4.0/5-read-write-threads.png)
 
 我们相信，TiDB 4.0 是一个会让大家非常兴奋的版本，也是 TiDB 走在「[未来的数据库](https://pingcap.com/blog-cn/talk-about-the-future-of-databese-on-5th-anniversary-of-pingcap/)」道路上面一个坚固的里程碑。当然，这个幸福的时刻里面一定少不了支持我们的用户，因为有大家，我们才能走到现在。我们也相信，未来 TiDB 会变得越来越好，能给用户带来更多的价值。
 
-最后欢迎感兴趣的伙伴尝鲜并反馈建议，点击【[这里](http://t.cn/A6hw9daf)】添加 TiDB Robot(wechat: tidbai) 为好友并回复“新特性”即可进入**「TiDB 4.0 尝鲜群」**交流～ 
+最后欢迎感兴趣的伙伴尝鲜并反馈建议，点击【[这里](http://t.cn/A6hw9daf)】添加 TiDB Robot(wechat: tidbai) 为好友并回复“新特性”即可进入**「TiDB 4.0 尝鲜群」**交流～

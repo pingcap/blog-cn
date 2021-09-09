@@ -33,7 +33,7 @@ Repo: [https://github.com/pingcap/tidb-binlog](https://github.com/pingcap/tidb-b
 
 TiDB-Binlog 的核心组件都在这个仓库，下面是各个关键目录：
 
-* `cmd`：包含 `pump`，`drainer`，`binlogctl`，`reparo`，`arbiter` 等 5 个子目录，分别对应 5 个同名命令行工具。这些子目录下面的 `main.go` 是对应命令行工具的入口，而主要功能的实现则依赖下面将介绍到的各个同名 packages。 
+* `cmd`：包含 `pump`，`drainer`，`binlogctl`，`reparo`，`arbiter` 等 5 个子目录，分别对应 5 个同名命令行工具。这些子目录下面的 `main.go` 是对应命令行工具的入口，而主要功能的实现则依赖下面将介绍到的各个同名 packages。
 * `pump`：Pump 源码，主要入口是 [`pump.NewServer`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pump/server.go#L103) 和 [`Server.Start`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/pump/server.go#L313)；服务启动后，主要的功能是 `WriteBinlog`（面向 `TiDB/pump_client`） 和 `PullBinlogs`（面向 `Drainer`）。
 * `drainer`：Drainer 源码，主要入口是 [`drainer.NewServer`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/drainer/server.go#L88) 和 [`Server.Start`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/drainer/server.go#L238)；服务启动后，Drainer 会先找到所有 Pump 节点，然后调用 Pump 节点的 `PullBinlogs` 接口同步 binlog 到下游。目前支持的下游有：mysql/tidb，file（文件增量备份），kafka 。
 * `binlogctl`：Binlogctl 源码，实现一些常用的 Binlog 运维操作，例如用 `-cmd pumps` 参数可以查看当前注册的各个 Pump 节点信息，相应的实现就是 [`QueryNodesByKind`](https://github.com/pingcap/tidb-binlog/blob/v3.0.0-rc.3/binlogctl/nodes.go#L37)。
@@ -48,13 +48,13 @@ TiDB-Binlog 的核心组件都在这个仓库，下面是各个关键目录：
 
 启动测试集群前，需要在 `bin` 目录下准备好相关组件的可执行文件：
 
-1.  pd-server：下载链接（[Linux](https://download.pingcap.org/pd-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/pd-master-darwin-amd64.tar.gz)）
+1. pd-server：下载链接（[Linux](https://download.pingcap.org/pd-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/pd-master-darwin-amd64.tar.gz)）
 
-2.  tikv-server：下载链接（[Linux](https://download.pingcap.org/tikv-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tikv-master-darwin-amd64.tar.gz)）
+2. tikv-server：下载链接（[Linux](https://download.pingcap.org/tikv-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tikv-master-darwin-amd64.tar.gz)）
 
-3.  tidb-server：下载链接（[Linux](https://download.pingcap.org/tidb-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tidb-master-darwin-amd64.tar.gz)）
+3. tidb-server：下载链接（[Linux](https://download.pingcap.org/tidb-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tidb-master-darwin-amd64.tar.gz)）
 
-4.  `pump`, `drainer`, `binlogctl`：在 tidb-binlog 目录执行 `make build`
+4. `pump`, `drainer`, `binlogctl`：在 tidb-binlog 目录执行 `make build`
 
 脚本依赖 MySQL 命令行客户端来确定 TiDB 已经成功启动，所以我们还需要安装一个 MySQL 客户端。
 
@@ -88,7 +88,6 @@ $ bin/binlogctl -pd-urls=localhost:2379 -cmd pumps
 接下来我们可以用 MySQL 客户端连接上端口为 4000 或 4001 的 TiDB 数据库，插入一些测试数据。
 
 ![图例 2](media/tidb-binlog-source-code-reading-2/3.png)
-
 
 上图的演示中创建了一个叫 `hello_binlog` 的 database，在里面新建了 `user_info` 表并插入了两行数据。完成上述操作后，就可以连接到端口为 3306 的下游数据库验证同步是否成功：
 

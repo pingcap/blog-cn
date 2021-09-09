@@ -1,9 +1,9 @@
 ---
 title: 三十分钟成为 Contributor | 提升 TiDB Parser 对 MySQL 8.0 语法的兼容性
-author: ['谢腾进','赵一霖']
+author: ["谢腾进", "赵一霖"]
 date: 2019-08-08
 summary: 本次活动聚焦于语法兼容，提升 TiDB SQL Parser 对 MySQL 8.0 的语法支持。对于新的贡献者而言，除了能将理论知识运用到实践上以外，还可以从中体验参与一个开源项目的整体流程与规范。
-tags: ['TiDB','社区','Contributor']
+tags: ["TiDB", "社区", "Contributor"]
 ---
 
 TiDB 的一大特性就是和 MySQL 高度兼容，目标是让用户能够无需修改代码即可从 MySQL 迁移至 TiDB。要达成这个目标，需要完成两个提升兼容性的任务，分别是「语法兼容」和「功能行为兼容」。
@@ -14,7 +14,7 @@ TiDB 的一大特性就是和 MySQL 高度兼容，目标是让用户能够无�
 
 ## 参与流程
 
-参与流程分为 7 步：**领任务  -> 写 test case -> make test -> coding -> 补充 test case -> make test -> 提 PR**。
+参与流程分为 7 步：**领任务   -> 写 test case -> make test -> coding -> 补充 test case -> make test -> 提 PR**。
 
 ### 1. 从 Issue 领取任务
 
@@ -45,10 +45,10 @@ Contributor 修改文法规则。对于涉及到语义层面的规则变动，�
 parser 根目录下运行 `make test`，确保测试通过。
 
 ### 7. 提交 PR
-	
+
 提交 PR 之前请先阅读 [contributing 指南](https://github.com/pingcap/tidb/blob/master/CONTRIBUTING.md)。下面是 PR 的模板，逐项填写即可。
 
-```	
+```
 ### What problem does this PR solve?
 
 #### [ Put the subtask title here ]
@@ -64,11 +64,11 @@ Issue: [ put the subtask issue link here ]
 [ give a SQL statement example that passes MySQL but fails TiDB parser ]
 
 [ give a SQL statement example that passes MySQL but fails TiDB parser ]
-	
+
 ...
-	
+
 ### Check List
-	
+
 Tests
 
 - Unit test
@@ -163,23 +163,23 @@ AlterTablePartitionOpt: PartitionOpt | "REMOVE" "PARTITIONING"
 
 ```
 AlterTablePartitionOpt:
-	PartitionOpt
-	{
-		if $1 != nil {
-			$$ = &ast.AlterTableSpec{
-				Tp: ast.AlterTablePartition,
-				Partition: $1.(*ast.PartitionOptions),
-			}
-		} else {
-			$$ = nil
-		}
-	}
-|	"REMOVE" "PARTITIONING"
-	{
-		$$ = nil
-		yylex.AppendError(yylex.Errorf("The REMOVE PARTITIONING clause is parsed but ignored by all storage engines."))
-		parser.lastErrorAsWarn()
-	}
+ PartitionOpt
+ {
+  if $1 != nil {
+   $$ = &ast.AlterTableSpec{
+    Tp: ast.AlterTablePartition,
+    Partition: $1.(*ast.PartitionOptions),
+   }
+  } else {
+   $$ = nil
+  }
+ }
+| "REMOVE" "PARTITIONING"
+ {
+  $$ = nil
+  yylex.AppendError(yylex.Errorf("The REMOVE PARTITIONING clause is parsed but ignored by all storage engines."))
+  parser.lastErrorAsWarn()
+ }
 ```
 
 由于 `REMOVE` 和 `PARTITIONING` 都是新添加的关键字，如果不做任何处理，lexer 扫描的时候只会将它们看作普通的标识符。于是需要在 `parser.y` 的 `%token` 字段上补充声明，其中一个目的是为该字符串产生一个 `tokenID`（一个整数），供 lexer 标识。另外 `goyacc` 也会对 `parser.y` 中所有的字符串常量进行检查，如果没有相应的 `token` 声明，会报 `Undefined symbol` 的错误。
@@ -323,17 +323,17 @@ Tests
 
 **需要特别指出的是，我们鼓励各位 Contributor 多使用 `make test`。当不知道从何处入手或者失去目标时，`make test` 输出的错误信息或许能够引导大家进行思考和探索**。
 
->Tips: [完整的 PR 示例](https://github.com/pingcap/parser/pull/396)
+> Tips: [完整的 PR 示例](https://github.com/pingcap/parser/pull/396)
 
 ## FAQ
 
 以下是在增加 remove partitioning 语法支持时遇到的问题和解决方法。
 
-**Q1. 为什么不在 `PartitionOpt` 中直接添加规则？** 
+**Q1. 为什么不在 `PartitionOpt` 中直接添加规则？**
 
 **A1**：`PartitionOpt` 用于匹配含有 `partition by` 的 SQL 语句，除了 `Alter Table` 语句以外，它还被 `Create Table` 使用，而 `remove partitioning` 只存在于 `alter table` 语句中，因此不能在 `PartitionOpt` 中添加规则。
 
-**Q2. 执行 make test 时报错：** 
+**Q2. 执行 make test 时报错：**
 
 ```
 parser.y:1100:1: undefined symbol "PARTITIONING"
@@ -351,7 +351,7 @@ Names representing tokens must be declared; this is most simply done by writing
 
 所以，修复方法是在 `parser.y` 的 `%token` 字段上添加 `PARTITIONING` 和 `REMOVE` 的声明。
 
-**Q3. 执行 make test 时报错：** 
+**Q3. 执行 make test 时报错：**
 
 ```
  c.Assert(len(tokenMap)-len(aliases), Equals, keywordCount-len(windowFuncTokenMap))
@@ -361,7 +361,7 @@ Names representing tokens must be declared; this is most simply done by writing
 
 **A3**：这是关键字的一致性检查出了问题，解决方案是补充 `tokenMap`（它是关键字到 `token ID` 的映射，被 scanner 用来判断某个字符串是否为关键字）。
 
-**Q4. 执行 make test 时报错：** 
+**Q4. 执行 make test 时报错：**
 
 ```
 FAIL: parser_test.go:1666: testParserSuite.TestDDL
@@ -376,4 +376,4 @@ parser_test.go:351:
 
 **A4**：这个错误说明 parser 已经解析通过，但不能从语法树中恢复原 SQL 语句的 remove partitioning 部分。此时应检查相应 AST 节点的 Restore 方法是否正确处理了 `REMOVE PARTITIONING`。
 
-***最后欢迎大家加入 [TiDB Contributor Club](https://pingcap.com/community-cn/)，无门槛参与开源项目，改变世界从这里开始吧！***
+**_最后欢迎大家加入 [TiDB Contributor Club](https://pingcap.com/community-cn/)，无门槛参与开源项目，改变世界从这里开始吧！_**

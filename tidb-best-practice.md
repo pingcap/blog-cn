@@ -10,14 +10,14 @@ tags: ['TiDB']
 建议先阅读讲解 TiDB 原理的三篇文章([讲存储](tidb-internal-1.md)，[说计算](tidb-internal-2.md)，[谈调度](tidb-internal-3.md))，再来看这篇文章。
 
 ## 前言
+
 数据库是一个通用的基础组件，在开发过程中会考虑到多种目标场景，在具体的业务场景中，需要根据业务的实际情况对数据的参数或者使用方式进行调整。
 
 TiDB 是一个兼容 MySQL 协议和语法的分布式数据库，但是由于其内部实现，特别是支持分布式存储以及分布式事务，使得一些使用方法和 MySQL 有所区别。
 
-
 ## 基本概念
-TiDB 的最佳实践与其实现原理密切相关，建议读者先了解一些基本的实现机制，包括 Raft、分布式事务、数据分片、负载均衡、SQL 到 KV 的映射方案、二级索引的实现方法、分布式执行引擎。下面会做一点简单的介绍，更详细的信息可以参考 PingCAP 公众号以及知乎专栏的一些文章。
 
+TiDB 的最佳实践与其实现原理密切相关，建议读者先了解一些基本的实现机制，包括 Raft、分布式事务、数据分片、负载均衡、SQL 到 KV 的映射方案、二级索引的实现方法、分布式执行引擎。下面会做一点简单的介绍，更详细的信息可以参考 PingCAP 公众号以及知乎专栏的一些文章。
 
 ### Raft
 
@@ -25,33 +25,32 @@ Raft 是一种一致性协议，能提供强一致的数据复制保证，TiDB �
 
 相比 Master-Slave 方式的同步，同样是保存三副本，Raft 的方式更为高效，写入的延迟取决于最快的两个副本，而不是最慢的那个副本。所以使用 Raft 同步的情况下，异地多活成为可能。在典型的两地三中心场景下，每次写入只需要本数据中心以及离得近的一个数据中心写入成功就能保证数据的一致性，而并不需要三个数据中心都写成功。但是这并不意味着在任何场景都能构建跨机房部署的业务，当写入量比较大时候，机房之间的带宽和延迟成为关键因素，如果写入速度超过机房之间的带宽，或者是机房之间延迟过大，整个 Raft 同步机制依然无法很好的运转。
 
-
 ### 分布式事务
+
 TiDB 提供完整的分布式事务，事务模型是在 [Google Percolator](https://research.google.com/pubs/pub36726.html) 的基础上做了一些优化。具体的实现大家可以参考[《Percolator 和 TiDB 事务算法》](./percolator-and-txn.md)这篇文章。这里只说两点：
 
 + 乐观锁
 
-	TiDB 的事务模型采用乐观锁，只有在真正提交的时候，才会做冲突检测，如果有冲突，则需要重试。这种模型在冲突严重的场景下，会比较低效，因为重试之前的操作都是无效的，需要重复做。举一个比较极端的例子，就是把数据库当做计数器用，如果访问的并发度比较高，那么一定会有严重的冲突，导致大量的重试甚至是超时。但是如果访问冲突并不十分严重，那么乐观锁模型具备较高的效率。所以在冲突严重的场景下，推荐在系统架构层面解决问题，比如将计数器放在 Redis 中。
-
+ TiDB 的事务模型采用乐观锁，只有在真正提交的时候，才会做冲突检测，如果有冲突，则需要重试。这种模型在冲突严重的场景下，会比较低效，因为重试之前的操作都是无效的，需要重复做。举一个比较极端的例子，就是把数据库当做计数器用，如果访问的并发度比较高，那么一定会有严重的冲突，导致大量的重试甚至是超时。但是如果访问冲突并不十分严重，那么乐观锁模型具备较高的效率。所以在冲突严重的场景下，推荐在系统架构层面解决问题，比如将计数器放在 Redis 中。
 
 + 事务大小限制
 
-	由于分布式事务要做两阶段提交，并且底层还需要做 Raft 复制，如果一个事务非常大，会使得提交过程非常慢，并且会卡住下面的 Raft 复制流程。为了避免系统出现被卡住的情况，我们对事务的大小做了限制：
+ 由于分布式事务要做两阶段提交，并且底层还需要做 Raft 复制，如果一个事务非常大，会使得提交过程非常慢，并且会卡住下面的 Raft 复制流程。为了避免系统出现被卡住的情况，我们对事务的大小做了限制：
 
-    - 单个事务包含的 SQL 语句不超过 5000 条（默认）
-	- 单条 KV entry 不超过 6MB
-	- KV entry 的总条数不超过 30W
-	- KV entry 的总大小不超过 100MB
++ 单个事务包含的 SQL 语句不超过 5000 条（默认）
++ 单条 KV entry 不超过 6MB
++ KV entry 的总条数不超过 30W
++ KV entry 的总大小不超过 100MB
 
-	在 Google 的 Cloud Spanner 上面，也有[类似的限制](https://cloud.google.com/spanner/docs/limits)。
+ 在 Google 的 Cloud Spanner 上面，也有[类似的限制](https://cloud.google.com/spanner/docs/limits)。
 
 ### 数据分片
+
 TiKV 自动将底层数据按照 Key 的 Range 进行分片。每个 Region 是一个 Key 的范围，从 StartKey 到 EndKey 的左闭右开区间。Region 中的 Key-Value 总量超过一定值，就会自动分裂。这部分用户不需要担心。
 
-
 ### 负载均衡
-PD 会根据整个 TiKV 集群的状态，对集群的负载进行调度。调度是以 Region 为单位，以 PD 配置的策略为调度逻辑，自动完成。
 
+PD 会根据整个 TiKV 集群的状态，对集群的负载进行调度。调度是以 Region 为单位，以 PD 配置的策略为调度逻辑，自动完成。
 
 ### SQL on KV
 
@@ -66,53 +65,53 @@ TiDB 自动将 SQL 结构映射为 KV 结构。具体的可以参考[《三篇�
 
 TiDB 支持完整的二级索引，并且是全局索引，很多查询可以通过索引来优化。如果利用好二级索引，对业务非常重要，很多 MySQL 上的经验在 TiDB 这里依然适用，不过 TiDB 还有一些自己的特点，需要注意，这一节主要讨论在 TiDB 上使用二级索引的一些注意事项。
 
- + 二级索引是否越多越好
++ 二级索引是否越多越好
 
  二级索引能加速查询，但是要注意新增一个索引是有副作用的，在上一节中我们介绍了索引的存储模型，那么每增加一个索引，在插入一条数据的时候，就要新增一个 Key-Value，所以索引越多，写入越慢，并且空间占用越大。另外过多的索引也会影响优化器运行时间，并且不合适的索引会误导优化器。所以索引并不是越多越好。
 
 + 对哪些列建索引比较合适
 
-	上面提到，索引很重要但不是越多越好，我们需要根据具体的业务特点创建合适的索引。原则上我们需要对查询中需要用到的列创建索引，目的是提高性能。下面几种情况适合创建索引：
+ 上面提到，索引很重要但不是越多越好，我们需要根据具体的业务特点创建合适的索引。原则上我们需要对查询中需要用到的列创建索引，目的是提高性能。下面几种情况适合创建索引：
 
-	- 区分度比较大的列，通过索引能显著地减少过滤后的行数
-	- 有多个查询条件时，可以选择组合索引，注意需要把等值条件的列放在组合索引的前面
++ 区分度比较大的列，通过索引能显著地减少过滤后的行数
++ 有多个查询条件时，可以选择组合索引，注意需要把等值条件的列放在组合索引的前面
 
-	这里举一个例子，假设常用的查询是 `select * from t where c1 = 10 and c2 = 100 and c3 > 10`, 那么可以考虑建立组合索引 `Index cidx (c1, c2, c3)`，这样可以用查询条件构造出一个索引前缀进行 Scan。
+ 这里举一个例子，假设常用的查询是 `select * from t where c1 = 10 and c2 = 100 and c3 > 10`, 那么可以考虑建立组合索引 `Index cidx (c1, c2, c3)`，这样可以用查询条件构造出一个索引前缀进行 Scan。
 
 + 通过索引查询和直接扫描 Table 的区别
 
-	TiDB 实现了全局索引，所以索引和 Table 中的数据并不一定在一个数据分片上，通过索引查询的时候，需要先扫描索引，得到对应的行 ID，然后通过行 ID 去取数据，所以可能会涉及到两次网络请求，会有一定的性能开销。
+ TiDB 实现了全局索引，所以索引和 Table 中的数据并不一定在一个数据分片上，通过索引查询的时候，需要先扫描索引，得到对应的行 ID，然后通过行 ID 去取数据，所以可能会涉及到两次网络请求，会有一定的性能开销。
 
-	如果查询涉及到大量的行，那么扫描索引是并发进行，只要第一批结果已经返回，就可以开始去取 Table 的数据，所以这里是一个并行 + Pipeline 的模式，虽然有两次访问的开销，但是延迟并不会很大。
+ 如果查询涉及到大量的行，那么扫描索引是并发进行，只要第一批结果已经返回，就可以开始去取 Table 的数据，所以这里是一个并行 + Pipeline 的模式，虽然有两次访问的开销，但是延迟并不会很大。
 
-	有两种情况不会涉及到两次访问的问题：
+ 有两种情况不会涉及到两次访问的问题：
 
-	- 索引中的列已经满足了查询需求。比如 Table t 上面的列 c 有索引，查询是 `select c from t where c > 10;`，这个时候，只需要访问索引，就可以拿到所需要的全部数据。这种情况我们称之为覆盖索引(Covering Index)。所以如果很关注查询性能，可以将部分不需要过滤但是需要在查询结果中返回的列放入索引中，构造成组合索引，比如这个例子： `select c1, c2 from t where c1 > 10;`，要优化这个查询可以创建组合索引 `Index c12 (c1, c2)`。
-	- 表的 Primary Key 是整数类型。在这种情况下，TiDB 会将 Primary Key 的值当做行 ID，所以如果查询条件是在 PK 上面，那么可以直接构造出行 ID 的范围，直接扫描 Table 数据，获取结果。
++ 索引中的列已经满足了查询需求。比如 Table t 上面的列 c 有索引，查询是 `select c from t where c > 10;`，这个时候，只需要访问索引，就可以拿到所需要的全部数据。这种情况我们称之为覆盖索引(Covering Index)。所以如果很关注查询性能，可以将部分不需要过滤但是需要在查询结果中返回的列放入索引中，构造成组合索引，比如这个例子： `select c1, c2 from t where c1 > 10;`，要优化这个查询可以创建组合索引 `Index c12 (c1, c2)`。
++ 表的 Primary Key 是整数类型。在这种情况下，TiDB 会将 Primary Key 的值当做行 ID，所以如果查询条件是在 PK 上面，那么可以直接构造出行 ID 的范围，直接扫描 Table 数据，获取结果。
 
 + 查询并发度
 
-	数据分散在很多 Region 上，所以 TiDB 在做查询的时候会并发进行，默认的并发度比较保守，因为过高的并发度会消耗大量的系统资源，且对于 OLTP 类型的查询，往往不会涉及到大量的数据，较低的并发度已经可以满足需求。对于 OLAP 类型的 Query，往往需要较高的并发度。所以 TiDB 支持通过 System Variable 来调整查询并发度。
-	- [tidb_distsql_scan_concurrency](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables/#tidb-distsql-scan-concurrency)
+ 数据分散在很多 Region 上，所以 TiDB 在做查询的时候会并发进行，默认的并发度比较保守，因为过高的并发度会消耗大量的系统资源，且对于 OLTP 类型的查询，往往不会涉及到大量的数据，较低的并发度已经可以满足需求。对于 OLAP 类型的 Query，往往需要较高的并发度。所以 TiDB 支持通过 System Variable 来调整查询并发度。
 
-		在进行扫描数据的时候的并发度，这里包括扫描 Table 以及索引数据。
++ [tidb_distsql_scan_concurrency](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables/#tidb-distsql-scan-concurrency)
 
-	- [tidb_index_lookup_size](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables/#tidb-index-lookup-size)
+  在进行扫描数据的时候的并发度，这里包括扫描 Table 以及索引数据。
 
-		如果是需要访问索引获取行 ID 之后再访问 Table 数据，那么每次会把一批行 ID 作为一次请求去访问 Table 数据，这个参数可以设置 Batch 的大小，较大的 Batch 会使得延迟增加，较小的 Batch 可能会造成更多的查询次数。这个参数的合适大小与查询涉及的数据量有关。一般不需要调整。
++ [tidb_index_lookup_size](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables/#tidb-index-lookup-size)
 
-	- [tidb_index_lookup_concurrency](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables/#tidb-index-lookup-concurrency)
+  如果是需要访问索引获取行 ID 之后再访问 Table 数据，那么每次会把一批行 ID 作为一次请求去访问 Table 数据，这个参数可以设置 Batch 的大小，较大的 Batch 会使得延迟增加，较小的 Batch 可能会造成更多的查询次数。这个参数的合适大小与查询涉及的数据量有关。一般不需要调整。
 
-		如果是需要访问索引获取行 ID 之后再访问 Table 数据，每次通过行 ID 获取数据时候的并发度通过这个参数调节。
++ [tidb_index_lookup_concurrency](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables/#tidb-index-lookup-concurrency)
+
+  如果是需要访问索引获取行 ID 之后再访问 Table 数据，每次通过行 ID 获取数据时候的并发度通过这个参数调节。
 
 + 通过索引保证结果顺序
 
-	索引除了可以用来过滤数据之外，还能用来对数据排序，首先按照索引的顺序获取行 ID，然后再按照行 ID 的返回顺序返回行的内容，这样可以保证返回结果按照索引列有序。前面提到了扫索引和获取 Row 之间是并行 + Pipeline 模式，如果要求按照索引的顺序返回 Row，那么这两次查询之间的并发度设置的太高并不会降低延迟，所以默认的并发度比较保守。可以通过 [tidb_index_serial_scan_concurrency](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables/#tidb-index-serial-scan-concurrency) 变量进行并发度调整。
+ 索引除了可以用来过滤数据之外，还能用来对数据排序，首先按照索引的顺序获取行 ID，然后再按照行 ID 的返回顺序返回行的内容，这样可以保证返回结果按照索引列有序。前面提到了扫索引和获取 Row 之间是并行 + Pipeline 模式，如果要求按照索引的顺序返回 Row，那么这两次查询之间的并发度设置的太高并不会降低延迟，所以默认的并发度比较保守。可以通过 [tidb_index_serial_scan_concurrency](https://pingcap.com/docs-cn/dev/reference/configuration/tidb-server/tidb-specific-variables/#tidb-index-serial-scan-concurrency) 变量进行并发度调整。
 
 + 逆序索引
 
-	目前 TiDB 支持对索引进行逆序 Scan，但是速度要比顺序 Scan 慢 5 倍左右，所以尽量避免对索引的逆序 Scan。
-
+ 目前 TiDB 支持对索引进行逆序 Scan，但是速度要比顺序 Scan 慢 5 倍左右，所以尽量避免对索引的逆序 Scan。
 
 ## 场景与实践
 

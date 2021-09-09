@@ -34,15 +34,15 @@ SELECT name FROM t WHERE age > 10;
 
 1. 需要经过 Optimize
 
-	Insert 是比较简单语句，在查询计划这块并不能做什么事情（对于 Insert into Select 语句这种，实际上只对 Select 进行优化），而 Select 语句可能会无比复杂，不同的查询计划之间性能天差地别，需要非常仔细的进行优化。
+ Insert 是比较简单语句，在查询计划这块并不能做什么事情（对于 Insert into Select 语句这种，实际上只对 Select 进行优化），而 Select 语句可能会无比复杂，不同的查询计划之间性能天差地别，需要非常仔细的进行优化。
 
 2. 需要和存储引擎中的计算模块交互
 
-	Insert 语句只涉及对 Key-Value 的 Set 操作，Select 语句可能要查询大量的数据，如果通过 KV 接口操作存储引擎，会过于低效，必须要通过计算下推的方式，将计算逻辑发送到存储节点，就近进行处理。
+ Insert 语句只涉及对 Key-Value 的 Set 操作，Select 语句可能要查询大量的数据，如果通过 KV 接口操作存储引擎，会过于低效，必须要通过计算下推的方式，将计算逻辑发送到存储节点，就近进行处理。
 
 3. 需要对客户端返回结果集数据
 
-	Insert 语句只需要返回是否成功以及插入了多少行即可，而 Select 语句需要返回结果集。
+ Insert 语句只需要返回是否成功以及插入了多少行即可，而 Select 语句需要返回结果集。
 
 本篇文章会重点说明这些不同的地方，而相同的步骤会尽量化简。
 
@@ -81,7 +81,7 @@ type SelectStmt struct {
 }
 ```
 
-对于本文所提到的语句 `SELECT name FROM t WHERE age > 10; ` name 会被解析为 Fields，`WHERE age > 10` 被解析为 Where 字段，`FROM t` 被解析为 From 字段。
+对于本文所提到的语句 `SELECT name FROM t WHERE age > 10;` name 会被解析为 Fields，`WHERE age > 10` 被解析为 Where 字段，`FROM t` 被解析为 From 字段。
 
 ## Planning
 
@@ -101,12 +101,12 @@ type SelectStmt struct {
 ```go
 // LogicalSelection represents a where or having predicate.
 type LogicalSelection struct {
-	baseLogicalPlan
+ baseLogicalPlan
 
-	// Originally the WHERE or ON condition is parsed into a single expression,
-	// but after we converted to CNF(Conjunctive normal form), it can be
-	// split into a list of AND conditions.
-	Conditions []expression.Expression
+ // Originally the WHERE or ON condition is parsed into a single expression,
+ // but after we converted to CNF(Conjunctive normal form), it can be
+ // split into a list of AND conditions.
+ Conditions []expression.Expression
 }
 ```
 
@@ -120,19 +120,19 @@ type LogicalSelection struct {
 
 ```go
 func doOptimize(flag uint64, logic LogicalPlan) (PhysicalPlan, error) {
-	logic, err := logicalOptimize(flag, logic)
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
-	if !AllowCartesianProduct && existsCartesianProduct(logic) {
-		return nil, errors.Trace(ErrCartesianProductUnsupported)
-	}
-	physical, err := dagPhysicalOptimize(logic)
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
-	finalPlan := eliminatePhysicalProjection(physical)
-	return finalPlan, nil
+ logic, err := logicalOptimize(flag, logic)
+ if err != nil {
+  return nil, errors.Trace(err)
+ }
+ if !AllowCartesianProduct && existsCartesianProduct(logic) {
+  return nil, errors.Trace(ErrCartesianProductUnsupported)
+ }
+ physical, err := dagPhysicalOptimize(logic)
+ if err != nil {
+  return nil, errors.Trace(err)
+ }
+ finalPlan := eliminatePhysicalProjection(physical)
+ return finalPlan, nil
 }
 ```
 
@@ -144,20 +144,20 @@ func doOptimize(flag uint64, logic LogicalPlan) (PhysicalPlan, error) {
 
 ```go
 func logicalOptimize(flag uint64, logic LogicalPlan) (LogicalPlan, error) {
-	var err error
-	for i, rule := range optRuleList {
-		// The order of flags is same as the order of optRule in the list.
-		// We use a bitmask to record which opt rules should be used. If the i-th bit is 1, it means we should
-		// apply i-th optimizing rule.
-		if flag&(1<<uint(i)) == 0 {
-			continue
-		}
-		logic, err = rule.optimize(logic)
-		if err != nil {
-			return nil, errors.Trace(err)
-		}
-	}
-	return logic, errors.Trace(err)
+ var err error
+ for i, rule := range optRuleList {
+  // The order of flags is same as the order of optRule in the list.
+  // We use a bitmask to record which opt rules should be used. If the i-th bit is 1, it means we should
+  // apply i-th optimizing rule.
+  if flag&(1<<uint(i)) == 0 {
+   continue
+  }
+  logic, err = rule.optimize(logic)
+  if err != nil {
+   return nil, errors.Trace(err)
+  }
+ }
+ return logic, errors.Trace(err)
 }
 ```
 
@@ -165,14 +165,14 @@ func logicalOptimize(flag uint64, logic LogicalPlan) (LogicalPlan, error) {
 
 ```go
 var optRuleList = []logicalOptRule{
-	&columnPruner{}, 
-	&maxMinEliminator{},
-	&projectionEliminater{},
-	&buildKeySolver{},
-	&decorrelateSolver{},
-	&ppdSolver{},
-	&aggregationOptimizer{},
-	&pushDownTopNOptimizer{},
+ &columnPruner{}, 
+ &maxMinEliminator{},
+ &projectionEliminater{},
+ &buildKeySolver{},
+ &decorrelateSolver{},
+ &ppdSolver{},
+ &aggregationOptimizer{},
+ &pushDownTopNOptimizer{},
 }
 ```
 
@@ -196,15 +196,15 @@ columnPruner（列裁剪） 规则，会将不需要的列裁剪掉，考虑这�
 
 ```go
 func dagPhysicalOptimize(logic LogicalPlan) (PhysicalPlan, error) {
-	logic.preparePossibleProperties()
-	logic.deriveStats()
-	t, err := logic.convert2PhysicalPlan(&requiredProp{taskTp: rootTaskType, expectedCnt: math.MaxFloat64})
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
-	p := t.plan()
-	p.ResolveIndices()
-	return p, nil
+ logic.preparePossibleProperties()
+ logic.deriveStats()
+ t, err := logic.convert2PhysicalPlan(&requiredProp{taskTp: rootTaskType, expectedCnt: math.MaxFloat64})
+ if err != nil {
+  return nil, errors.Trace(err)
+ }
+ p := t.plan()
+ p.ResolveIndices()
+ return p, nil
 }
 ```
 
@@ -213,42 +213,42 @@ func dagPhysicalOptimize(logic LogicalPlan) (PhysicalPlan, error) {
 ```go
 // convert2PhysicalPlan implements LogicalPlan interface.
 func (p *baseLogicalPlan) convert2PhysicalPlan(prop *requiredProp) (t task, err error) {
-	// Look up the task with this prop in the task map.
-	// It's used to reduce double counting.
-	t = p.getTask(prop)
-	if t != nil {
-		return t, nil
-	}
-	t = invalidTask
-	if prop.taskTp != rootTaskType {
-		// Currently all plan cannot totally push down.
-		p.storeTask(prop, t)
-		return t, nil
-	}
-	for _, pp := range p.self.genPhysPlansByReqProp(prop) {
-		t, err = p.getBestTask(t, pp)
-		if err != nil {
-			return nil, errors.Trace(err)
-		}
-	}
-	p.storeTask(prop, t)
-	return t, nil
+ // Look up the task with this prop in the task map.
+ // It's used to reduce double counting.
+ t = p.getTask(prop)
+ if t != nil {
+  return t, nil
+ }
+ t = invalidTask
+ if prop.taskTp != rootTaskType {
+  // Currently all plan cannot totally push down.
+  p.storeTask(prop, t)
+  return t, nil
+ }
+ for _, pp := range p.self.genPhysPlansByReqProp(prop) {
+  t, err = p.getBestTask(t, pp)
+  if err != nil {
+   return nil, errors.Trace(err)
+  }
+ }
+ p.storeTask(prop, t)
+ return t, nil
 }
 
 func (p *baseLogicalPlan) getBestTask(bestTask task, pp PhysicalPlan) (task, error) {
-	tasks := make([]task, 0, len(p.children))
-	for i, child := range p.children {
-		childTask, err := child.convert2PhysicalPlan(pp.getChildReqProps(i))
-		if err != nil {
-			return nil, errors.Trace(err)
-		}
-		tasks = append(tasks, childTask)
-	}
-	resultTask := pp.attach2Task(tasks...)
-	if resultTask.cost() < bestTask.cost() {
-		bestTask = resultTask
-	}
-	return bestTask, nil
+ tasks := make([]task, 0, len(p.children))
+ for i, child := range p.children {
+  childTask, err := child.convert2PhysicalPlan(pp.getChildReqProps(i))
+  if err != nil {
+   return nil, errors.Trace(err)
+  }
+  tasks = append(tasks, childTask)
+ }
+ resultTask := pp.attach2Task(tasks...)
+ if resultTask.cost() < bestTask.cost() {
+  bestTask = resultTask
+ }
+ return bestTask, nil
 }
 ```
 
@@ -258,12 +258,12 @@ func (p *baseLogicalPlan) getBestTask(bestTask task, pp PhysicalPlan) (task, err
 // task is a new version of `PhysicalPlanInfo`. It stores cost information for a task.
 // A task may be CopTask, RootTask, MPPTask or a ParallelTask.
 type task interface {
-	count() float64
-	addCost(cost float64)
-	cost() float64
-	copy() task
-	plan() PhysicalPlan
-	invalid() bool
+ count() float64
+ addCost(cost float64)
+ cost() float64
+ copy() task
+ plan() PhysicalPlan
+ invalid() bool
 }
 ```
 
@@ -277,7 +277,6 @@ type task interface {
 
 ![explain](media/tidb-source-code-reading-6/2.jpg)
 
-
 整个流程是一个树形动态规划的算法，大家有兴趣可以跟一下相关的代码自行研究或者等待后续的文章。
 
 经过整个优化过程，我们已经得到一个物理查询计划，这个 `SELECT name FROM t WHERE age > 10;` 语句能够指定出来的查询计划大概是这样子的：
@@ -289,8 +288,8 @@ type task interface {
 ```go
 // PredicatePushDown implements LogicalPlan PredicatePushDown interface.
 func (ds *DataSource) PredicatePushDown(predicates []expression.Expression) ([]expression.Expression, LogicalPlan) {
-	_, ds.pushedDownConds, predicates = expression.ExpressionsToPB(ds.ctx.GetSessionVars().StmtCtx, predicates, ds.ctx.GetClient())
-	return predicates, ds
+ _, ds.pushedDownConds, predicates = expression.ExpressionsToPB(ds.ctx.GetSessionVars().StmtCtx, predicates, ds.ctx.GetClient())
+ return predicates, ds
 }
 ```
 
@@ -318,32 +317,32 @@ SQL 层会将多个 Region 返回的结果进行汇总，再经过所需的 Oper
 // SelectDAG sends a DAG request, returns SelectResult.
 // In kvReq, KeyRanges is required, Concurrency/KeepOrder/Desc/IsolationLevel/Priority are optional.
 func SelectDAG(goCtx goctx.Context, ctx context.Context, kvReq *kv.Request, fieldTypes []*types.FieldType) (SelectResult, error) {
-	// kvReq 中包含了计算所涉及的数据的 KeyRanges
-	// 这里通过 TiKV Client 向 TiKV 集群发送计算请求
-	resp := ctx.GetClient().Send(goCtx, kvReq)
-	if resp == nil {
-		err := errors.New("client returns nil response")
-		return nil, errors.Trace(err)
-	}
+ // kvReq 中包含了计算所涉及的数据的 KeyRanges
+ // 这里通过 TiKV Client 向 TiKV 集群发送计算请求
+ resp := ctx.GetClient().Send(goCtx, kvReq)
+ if resp == nil {
+  err := errors.New("client returns nil response")
+  return nil, errors.Trace(err)
+ }
 
-	if kvReq.Streaming {
-		return &streamResult{
-			resp:       resp,
-			rowLen:     len(fieldTypes),
-			fieldTypes: fieldTypes,
-			ctx:        ctx,
-		}, nil
-	}
-	// 这里将结果进行了封装
-	return &selectResult{
-		label:      "dag",
-		resp:       resp,
-		results:    make(chan newResultWithErr, kvReq.Concurrency),
-		closed:     make(chan struct{}),
-		rowLen:     len(fieldTypes),
-		fieldTypes: fieldTypes,
-		ctx:        ctx,
-	}, nil
+ if kvReq.Streaming {
+  return &streamResult{
+   resp:       resp,
+   rowLen:     len(fieldTypes),
+   fieldTypes: fieldTypes,
+   ctx:        ctx,
+  }, nil
+ }
+ // 这里将结果进行了封装
+ return &selectResult{
+  label:      "dag",
+  resp:       resp,
+  results:    make(chan newResultWithErr, kvReq.Concurrency),
+  closed:     make(chan struct{}),
+  rowLen:     len(fieldTypes),
+  fieldTypes: fieldTypes,
+  ctx:        ctx,
+ }, nil
 }
 ```
 
@@ -352,25 +351,24 @@ TiKV Client 中的具体逻辑我们暂时跳过，这里只关注 SQL 层拿到
 ```go
 // SelectResult is an iterator of coprocessor partial results.
 type SelectResult interface {
-	// NextRaw gets the next raw result.
-	NextRaw(goctx.Context) ([]byte, error)
-	// NextChunk reads the data into chunk.
-	NextChunk(goctx.Context, *chunk.Chunk) error
-	// Close closes the iterator.
-	Close() error
-	// Fetch fetches partial results from client.
-	// The caller should call SetFields() before call Fetch().
-	Fetch(goctx.Context)
-	// ScanKeys gets the total scan row count.
-	ScanKeys() int64
+ // NextRaw gets the next raw result.
+ NextRaw(goctx.Context) ([]byte, error)
+ // NextChunk reads the data into chunk.
+ NextChunk(goctx.Context, *chunk.Chunk) error
+ // Close closes the iterator.
+ Close() error
+ // Fetch fetches partial results from client.
+ // The caller should call SetFields() before call Fetch().
+ Fetch(goctx.Context)
+ // ScanKeys gets the total scan row count.
+ ScanKeys() int64
 ```
 
 selectResult 实现了 SelectResult 这个接口，代表了一次查询的所有结果的抽象，计算是以 Region 为单位进行，所以这里全部结果会包含所有涉及到的 Region 的结果。调用 Chunk 方法可以读到一个 Chunk 的数据，通过不断调用 NextChunk 方法，直到 Chunk 的 NumRows 返回 0 就能拿到所有结果。NextChunk 的实现会不断获取每个 Region 返回的 SelectResponse，把结果写入 Chunk。
 
 #### Root Executor
 
-能推送到 TiKV 上的计算请求目前有 TableScan、IndexScan、Selection、TopN、Limit、PartialAggregation 这样几个，其他更复杂的算子，还是需要在单个 tidb-server 上进行处理。所以整个计算是一个多 tikv-server 并行处理 + 单个 tidb-server 进行汇总的模式。 
-
+能推送到 TiKV 上的计算请求目前有 TableScan、IndexScan、Selection、TopN、Limit、PartialAggregation 这样几个，其他更复杂的算子，还是需要在单个 tidb-server 上进行处理。所以整个计算是一个多 tikv-server 并行处理 + 单个 tidb-server 进行汇总的模式。
 
 ## 总结
 

@@ -32,16 +32,16 @@ Simulate the following errors:
 
 **Cloudera: Simulate the following errors:**
 
-+ Packets loss/corrupt/reorder/duplicate/delay
-+ Bandwidth limit: Limit the network bandwidth for the specified address and port.
-+ DNSFail: Apply an injection to let the DNS fail.
-+ FLOOD: Starts a DoS attack on the specified port.
-+ BLOCK: Blocks all the packets directed to 10.0.0.0/8 (used internally by EC2).
-+ SIGSTOP: Pause a given process in its current state.
-+ BurnCPU/BurnIO/FillDISK/RONLY/FIllMEM/CorruptHDFS
-+ HANG: Hang a host running a fork bomb.
-+ PANIC: Force a kernel panic.
-+ Suicide: Shut down the machine.
+- Packets loss/corrupt/reorder/duplicate/delay
+- Bandwidth limit: Limit the network bandwidth for the specified address and port.
+- DNSFail: Apply an injection to let the DNS fail.
+- FLOOD: Starts a DoS attack on the specified port.
+- BLOCK: Blocks all the packets directed to 10.0.0.0/8 (used internally by EC2).
+- SIGSTOP: Pause a given process in its current state.
+- BurnCPU/BurnIO/FillDISK/RONLY/FIllMEM/CorruptHDFS
+- HANG: Hang a host running a fork bomb.
+- PANIC: Force a kernel panic.
+- Suicide: Shut down the machine.
 
 数据包是可以丢的，可以坏的，可以 reorder 的，比如说你发一个 A，再发一个 B，它可以给你 reorder，变成先发了 B 再发了 A，然后看你应用程序有没有正确的处理这种行为。接着发完一次后面再给你重发，然后可以延迟，这个就比较简单。目前这个里面的大部分，TiKV 都有实现，还有带宽的限制，就比如说把你带宽压缩成 1M。以前我们遇到一个问题很有意思，发现有人把文件存到 Redis 里面，但 Redis 是带多个用户共享的，一个用户就能把整个 Redis 带宽给打满了，这样其他人的带宽就很卡，那这种很卡的时候 Redis 可能出现的行为是什么呢？我们并不需要一个用户真的去把它打满，只要用这种工具，瞬间就能出现我把你的带宽限制到原来的 1%，假设别人在跟你抢带宽，你的程序行为是什么？马上就能出来，也不需要配很复杂的环境。这极大的提高了测试效率，同时能测试到很多 corner case。
 
@@ -53,23 +53,23 @@ Simulate the following errors:
 
 **Distributed testing**
 
-+ Namazu
-	+ ZooKeeper:
-		- Found ZOOKEEPER-2212, ZOOKEEPER-2080 (race): (blog article)
-	+ Etcd:
-		- Found etcdctl bug #3517 (timing specification), fixed in #3530. The fix also resulted a hint of #3611， Reproduced flaky tests {#4006, #4039}
-	+ YARN: Found YARN-4301 (fault tolerance)， Reproduced flaky tests{1978, 4168, 4543, 4548, 4556}
+- Namazu
+  - ZooKeeper:
+    - Found ZOOKEEPER-2212, ZOOKEEPER-2080 (race): (blog article)
+  - Etcd:
+    - Found etcdctl bug #3517 (timing specification), fixed in #3530. The fix also resulted a hint of #3611， Reproduced flaky tests {#4006, #4039}
+  - YARN: Found YARN-4301 (fault tolerance)， Reproduced flaky tests{1978, 4168, 4543, 4548, 4556}
 
 然后 Namazu。大家肯定觉得 ZooKeeper 很稳定呀， Facebook 在用、阿里在用、京东在用。大家都觉得这个东西也是很稳定的，直到这个工具出现了，然后轻轻松松就找到 bug 了，所有的大家认为的这种特别稳定的系统，其实 bug 都还挺多的，这是一个毁三观的事情，就是你觉得东西都很稳定，都很 stable，其实不是的。从上面，我们能看到 Namazu 找到的 Etcd 的几个 bug，然后 YARN 的几个 bug，其实还有一些别的。
 
 **How TiKV use namazu**
 
-+ Use nmz container / non-container mode to disturb cluster.
-	- Run container mode in CI for each commit. (1 hour)
-	- Run non-container mode for a stable version. (1 week+)
-+ Use `extreme` policy for process inspector
-	- Pick up some processes and execute them with SCHED_RR scheduler. others are executed with SCHED_BATCH scheduler
-+ Use [0, 30s] delay for filesystem inspector
+- Use nmz container / non-container mode to disturb cluster.
+  - Run container mode in CI for each commit. (1 hour)
+  - Run non-container mode for a stable version. (1 week+)
+- Use `extreme` policy for process inspector
+  - Pick up some processes and execute them with SCHED_RR scheduler. others are executed with SCHED_BATCH scheduler
+- Use [0, 30s] delay for filesystem inspector
 
 接下来说一下 TiKV 用 Namazu 的一些经验。因为我们曾经在系统上、在云上面出现过一次写入磁盘花了五十几秒才完成的情况，所以我们需要专门的工具模拟这个磁盘的抖动。有时候一次写入可能确实耗时比较久，那这种时候是不是 OK 的。大家如果能把这种东西统统用上，我觉得还能为很多开源系统找出一堆 bug。
 
@@ -77,24 +77,24 @@ Simulate the following errors:
 
 **How TiKV simulate network transport**
 
-+ Drop/Delay messages randomly
-+ Isolate Node
-+ Partition [1, 2, 3, 4, 5] -> [1, 2, 3]  +  [4, 5]
-+ Out of order messages
-+ Filter messages
-+ Duplicate and send redundant messages
+- Drop/Delay messages randomly
+- Isolate Node
+- Partition [1, 2, 3, 4, 5] -> [1, 2, 3]  +  [4, 5]
+- Out of order messages
+- Filter messages
+- Duplicate and send redundant messages
 
 怎么模拟网络呢？假设你有网络，里面有五台机器，那我现在想做一个脑裂怎么做？不能靠拔网线对吧？比如在 TiKV 的测试框架中，我们就可以直接通过 API 把 5 个节点脑裂成两部分，让 1, 2, 3 号节点互相联通，4, 5 号节点也能联通，这两个分区彼此是隔离的，非常的方便。其实原理很简单，这种情况是用程序自己去模拟，假如是你发的包，自动给你丢掉，或者直接告诉你 unreachable，那这个时候你就知道这个网络就脑裂了，然后你怎么做？就是只允许特定类型的消息进来，把其他的都丢掉，这样一来你可以保证有些 bug 是必然重现的。这个框架给了我们极大的信心用来模拟并重现各种 corner case，确保这些 corner case 在单元测试中每次都能被覆盖到。
 
 **How to test Rocksdb**
 
-+ Treat storage as a black box.
-+ Three steps(7*24):
-	- Fill data, Random kill -9
-	- Restart
-	- Consistent check.
-+ Results:
-	- Found 2 bugs. Both fixed
+- Treat storage as a black box.
+- Three steps(7*24):
+  - Fill data, Random kill -9
+  - Restart
+  - Consistent check.
+- Results:
+  - Found 2 bugs. Both fixed
 
 然后说说我们怎么测 RocksDB。 RocksDB 在大家印象中是很稳定的，但我们最近发现了两个 bug。测的方法是这样的：我们往 RocksDB 里面填数据，然后随机的一段时间去把它 kill 掉，kill 掉之后我们重启，重新启动之后去检测我们刚才 fail 的 data 是不是一致的，然后我们发现两个可能造成数据丢失的 bug，但是官方的响应速度非常快，几天就都 fix 了。可是大家普遍运行的是这么 stable 的系统，为什么还会这么容易找到 bug？就说这个测试，如果是一直有这个测试的 cover，那么这两个 bug 可能很快就能够被发现。
 
@@ -102,10 +102,9 @@ Simulate the following errors:
 
 **More tools**
 
-+ american fuzzy lop
+- american fuzzy lop
 
 ![american fuzzy lop](media/distributed-system-test-3/2.png)
-
 
 其实还有一些更加先进的工具，大家平时觉得特别稳定的东西，都被摧残的不行。Nginx 、NGPD、tcpdump 、LibreOffice ，如果有用 Linux 的同学可能知道，还有 Flash、sqlite。这个东西一出来，当时大家很兴奋，说怎么一下子找了这么多 bug，为什么以前那么稳定的系统这么不堪一击，会觉得这个东西它还挺智能的。就比如说你程序里面有个 if 分支，它是这样的，假如你程序有一百条指令，它先从前面一直走，走到某条分支指令的时候，它是一直持续探索，一个分支走不下去，它会一直在这儿持续探索，再给你随机的输入，直到我探索进去了，我记下来了下次我知道我用这个输入可以进去特定的分支。那我可以再往下走，比如说你 if 分支进去之后里面还有 if ，那你传统手段可能探测不进去了但它可以，它记录一下，我这个可以进去，然后我重来，反正我继续输入这个，我再往里面走，一旦我探测到一个新的分支，我再记住，我再往里面走。所以它一出来的时候大家都说这个真厉害，一下发现这么多 bug。但最激动的不是这些人，最激动的是黑客，为什么？因为突然有很多栈溢出、堆溢出漏洞被发现了，然后就可以写一堆工具去攻击线上的这么多系统。所以很多的技术的推进在早期的时候是黑客做出来，但是他们的目的当然不一定是为了测试 bug，而是为了怎么黑一个系统进去，这是他们当时做的，所以这个工具也是非常强大、非常有意思的，大家可以拿去研究一下自己的系统。
 
@@ -115,8 +114,8 @@ Simulate the following errors:
 
 再来说说 Google，Google 怎么做测试对外讲的不多，最近 Chrome team 开源了他们的 Fuzz 测试工具 OSS-Fuzz，这个工具强大的地方在于自动化做的极好：
 
-+ 发现 bug 后自动创建 issue
-+ bug 解决后自动 verify
+- 发现 bug 后自动创建 issue
+- bug 解决后自动 verify
 
 更惊人的是 OSS-Fuzz 集群一周可以跑 ~4 trillion test cases 更多细节大家可以看这篇文章：[Announcing OSS-Fuzz: Continuous Fuzzing for Open Source Software](https://opensource.googleblog.com/2016/12/announcing-oss-fuzz-continuous-fuzzing.html)
 
@@ -124,14 +123,13 @@ Simulate the following errors:
 
 **Tracing tools may help you**
 
-+ Google Dapper
-+ Zipkin
-+ OpenTracing
+- Google Dapper
+- Zipkin
+- OpenTracing
 
 还有 Tracing，比如说我一个 query 过来，然后经过这么多层，经过这么多机器，然后在不同的地方，不同环节耗时多久，实际上这个在分布式系统里面，有个专门的东西做 Tracing ，就是 distribute tracing tools。它可以用一条线来表达你的请求在各个阶段耗时多长，如果有几段，那么分到几个机器，分别并行的时候好了多长时间。大体的结构是这样的：
 
 ![distribute tracing tools](media/distributed-system-test-3/4.png)
-
 
 这里是一个具体的例子：
 

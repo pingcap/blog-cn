@@ -14,7 +14,7 @@ TiDB Operator 是 TiDB 在 Kubernetes 平台上的自动化部署运维工具。
 
 ## TiDB 和 Kubernetes 简介
 
-TiDB 作为一个开源的分布式数据库产品，具有多副本强一致性的同时能够根据业务需求非常方便的进行弹性伸缩，并且扩缩容期间对上层业务无感知。TiDB 包括三大核心组件：TiDB/TiKV/PD。 
+TiDB 作为一个开源的分布式数据库产品，具有多副本强一致性的同时能够根据业务需求非常方便的进行弹性伸缩，并且扩缩容期间对上层业务无感知。TiDB 包括三大核心组件：TiDB/TiKV/PD。
 
 * TiDB Server：主要负责 SQL 的解析器和优化器，它相当于计算执行层，同时也负责客户端接入和交互。
 
@@ -28,7 +28,7 @@ TiDB 作为一个开源的分布式数据库产品，具有多副本强一致性
 
 <div class="caption-center">TiDB 架构</div>
 
-Kubernetes 最早是作为一个纯粹的容器编排系统而诞生的，用户部署好 Kubernetes 集群之后，直接使用其内置的各种功能部署应用服务。 
+Kubernetes 最早是作为一个纯粹的容器编排系统而诞生的，用户部署好 Kubernetes 集群之后，直接使用其内置的各种功能部署应用服务。
 
 由于这个 PaaS 平台使用起来非常便利，吸引了很多用户，不同用户也提出了各种不同的需求。有些特性需求 Kubernetes 直接在其核心代码里面实现了，但是有些特性并不适合合并到主干分支。
 
@@ -42,7 +42,7 @@ Kubernetes 最早是作为一个纯粹的容器编排系统而诞生的，用户
 
 第二，在云时代，容器成为应用分发部署的基本单位，而谷歌基于内部使用数十年的容器编排系统 Borg 经验推出的开源容器编排系统 Kubernetes 成为当前容器编排技术事实上的标准。如今各大云厂商都开始提供托管的 Kubernetes 集群，部署在 Kubernetes 平台的应用可以不用绑定在特定云平台，轻松实现在各种云平台之间的迁移，其容器化打包和发布方式也解决了对操作系统环境的依赖。
 
-Kubernetes 项目最早期只支持无状态服务（Stateless Service）的管理。无状态服务通过 ReplicationController 定义多个副本，由 Kubernetes 调度器来决定在不同节点上启动多个 Pod，实现负载均衡和故障转移。对于无状态服务，多个副本对应的 Pod 是等价的，所以在节点出现故障时，在新节点上启动一个 Pod 与失效的 Pod 是等价的，不会涉及状态迁移问题，因而管理非常简单。 
+Kubernetes 项目最早期只支持无状态服务（Stateless Service）的管理。无状态服务通过 ReplicationController 定义多个副本，由 Kubernetes 调度器来决定在不同节点上启动多个 Pod，实现负载均衡和故障转移。对于无状态服务，多个副本对应的 Pod 是等价的，所以在节点出现故障时，在新节点上启动一个 Pod 与失效的 Pod 是等价的，不会涉及状态迁移问题，因而管理非常简单。
 
 但是对于有状态服务（Stateful Service），由于需要将数据持久化到磁盘，使得不同 Pod 之间不能再认为成等价，也就不能再像无状态服务那样随意进行调度迁移。
 
@@ -76,14 +76,12 @@ Operator 本质上是 Kubernetes 的控制器（Controller），其核心思想�
 
 ## 快速体验 TiDB Operator
 
-TiDB Operator 需要运行在 Kubernetes v1.10 及以上版本。TiDB Operator 和 TiDB 集群的部署和管理是通过 Kubernetes 平台上的包管理工具 Helm 实现的。运行 TiDB Operator 前请确保 Helm 已经正确安装在 Kubernetes 集群里。 
+TiDB Operator 需要运行在 Kubernetes v1.10 及以上版本。TiDB Operator 和 TiDB 集群的部署和管理是通过 Kubernetes 平台上的包管理工具 Helm 实现的。运行 TiDB Operator 前请确保 Helm 已经正确安装在 Kubernetes 集群里。
 
 如果没有 Kubernetes 集群，可以通过 TiDB Operator 提供的[脚本和文档](https://docs.pingcap.com/zh/tidb-in-kubernetes/v1.1/deploy-tidb-from-kubernetes-kind)快速在本地启动一个多节点的 Kubernetes 集群并在上面部署 TiDB Operator 和 TiDB 集群。
 
 ## 参与 TiDB Operator
 
-TiDB Operator 让 TiDB 成为真正意义上的 Cloud-Native 数据库，开源只是一个起点，需要 TiDB 社区和 Kubernetes 社区的共同参与。 
+TiDB Operator 让 TiDB 成为真正意义上的 Cloud-Native 数据库，开源只是一个起点，需要 TiDB 社区和 Kubernetes 社区的共同参与。
 
 大家在使用过程发现 bug 或缺失什么功能，都可以直接在 GitHub 上面提 issue 或 PR，一起参与讨论。要想成为 Contributor 具体可以参考 [Building TiDB Operator from Source Code](https://github.com/pingcap/tidb-operator/blob/master/docs/CONTRIBUTING.md) 这个文档。
-
-

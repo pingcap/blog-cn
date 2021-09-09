@@ -77,7 +77,6 @@ customerCategory: 电商
 
 * 停止双写：迁移过程至此结束。
 
-
 ![图 3 迁移过程图：保持双写，逐步从读 MySQL 改为读 TiDB](media/user-case-shopee/3.png)
 
 <div class="caption-center">图 3 迁移过程图：保持双写，逐步从读 MySQL 改为读 TiDB</div>
@@ -91,15 +90,15 @@ customerCategory: 电商
 上线之初我们一共从 MySQL 迁移了大约 4TB 数据到 TiDB 上。当时 TiDB 由 14 个节点构成，包括 3 个 PD 节点，3 个 SQL 节点和 8 个 TiKV 节点。服务器硬件配置如下：
 
 * TiKV 节点
-    * CPU: 2 * Intel(R) Xeon(R) CPU E5-2640 v4 @ 2.40GHz, 40 cores
-    * 内存: 192GB
-    * 磁盘: 4 * 960GB Read Intensive SAS SSD Raid 5
-    * 网卡: 2 * 10gbps NIC Bonding
+  * CPU: 2 * Intel(R) Xeon(R) CPU E5-2640 v4 @ 2.40GHz, 40 cores
+  * 内存: 192GB
+  * 磁盘: 4 * 960GB Read Intensive SAS SSD Raid 5
+  * 网卡: 2 * 10gbps NIC Bonding
 * PD 节点和 SQL 节点
-    * CPU: 2 * Intel(R) Xeon(R) CPU E5-2640 v4 @ 2.40GHz, 40 cores
-    * 内存: 64GB
-    * 磁盘: 2 * 960GB Read Intensive SAS SSD Raid 1
-    * 网卡: 2 * 10gbps NIC Bonding
+  * CPU: 2 * Intel(R) Xeon(R) CPU E5-2640 v4 @ 2.40GHz, 40 cores
+  * 内存: 64GB
+  * 磁盘: 2 * 960GB Read Intensive SAS SSD Raid 1
+  * 网卡: 2 * 10gbps NIC Bonding
 
 **截至目前，系统已经平稳运行了六个多月，数据量增长至 35TB（如图 4 所示），经历了两次扩容后现在集群共包含 42 个节点。**
 

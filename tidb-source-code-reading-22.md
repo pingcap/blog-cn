@@ -32,7 +32,6 @@ SQL: `select avg(b) from t group by a`, 要求将表 `t` 的数据按照 `a` 的
 
 计算过程中，只需要根据每行输入数据计算出键，在 Hash 表中找到对应值进行更新即可。对本例的执行过程模拟如下。
 
-
 | 输入数据 `a` `b` | Hash 表 `[key] (sum, count)` |
 |:---------------|:--------------------|
 | 1 9 | `[1] (9, 1)` |
@@ -123,15 +122,15 @@ Stream Aggregate 的计算需要保证输入数据**按照 `Group-By` 列有序*
 TiDB 的并行 Hash Aggregation 算子执行过程中的主要线程有：Main Thead，Data Fetcher，Partial Worker，和 Final Worker：
 
 * Main Thread 一个：
-    * 启动 Input Reader，Partial Workers 及 Final Workers
-    * 等待 Final Worker 的执行结果并返回
+  * 启动 Input Reader，Partial Workers 及 Final Workers
+  * 等待 Final Worker 的执行结果并返回
 * Data Fetcher 一个：
-    * 按 batch 读取子节点数据并分发给 Partial Worker
+  * 按 batch 读取子节点数据并分发给 Partial Worker
 * Partial Worker 多个：
-    * 读取 Data Fetcher 发送来的数据，并做预聚合
-    * 将预聚合结果根据 Group 值 shuffle 给对应的 Final Worker
+  * 读取 Data Fetcher 发送来的数据，并做预聚合
+  * 将预聚合结果根据 Group 值 shuffle 给对应的 Final Worker
 * Final Worker 多个：
-    * 读取 PartialWorker 发送来的数据，计算最终结果，发送给 Main Thread
+  * 读取 PartialWorker 发送来的数据，计算最终结果，发送给 Main Thread
 
 Hash Aggregation 的执行阶段可分为如下图所示的 5 步：
 

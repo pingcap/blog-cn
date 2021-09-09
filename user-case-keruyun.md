@@ -12,7 +12,7 @@ customer: 客如云
 customerCategory: 电商
 ---
 
->作者：客如云 BigData Infra Team 
+>作者：客如云 BigData Infra Team
 
 ## 公司介绍
 
@@ -30,9 +30,9 @@ customerCategory: 电商
 
 ## 业务描述
 
-大数据的 ODS（Operational Data Store）以前选型的是 MongoDB，ODS 与支持 SaaS 服务的 RDS 进行数据同步。初期的设想是线上的复杂 SQL、分析 SQL，非核心业务 SQL 迁移到大数据的 ODS 层。同时 ODS 也作为大数据的数据源，可以进行增量和全量的数据处理需求。但是由于使用的 MongoDB，对业务有一定侵入，需要业务线修改相应查询语句，而这点基本上遭到业务线的同学不同程度的抵制。同时目前大数据使用的是 Hadoop + Hive 存储和访问方案，业务线需要把历史明细查询迁移到 Hadoop ，然后通过 Impala、Spark SQL、Hive SQL 进行查询，而这三个产品在并发度稍微高的情况下，响应时间都会很慢，所以大数据组在提供明细查询上就比较麻烦。 
+大数据的 ODS（Operational Data Store）以前选型的是 MongoDB，ODS 与支持 SaaS 服务的 RDS 进行数据同步。初期的设想是线上的复杂 SQL、分析 SQL，非核心业务 SQL 迁移到大数据的 ODS 层。同时 ODS 也作为大数据的数据源，可以进行增量和全量的数据处理需求。但是由于使用的 MongoDB，对业务有一定侵入，需要业务线修改相应查询语句，而这点基本上遭到业务线的同学不同程度的抵制。同时目前大数据使用的是 Hadoop + Hive 存储和访问方案，业务线需要把历史明细查询迁移到 Hadoop ，然后通过 Impala、Spark SQL、Hive SQL 进行查询，而这三个产品在并发度稍微高的情况下，响应时间都会很慢，所以大数据组在提供明细查询上就比较麻烦。
 
-同时更为棘手的是，面对客户查询服务（历史细则、报表等），这类查询的并发会更高，而且客户对响应时间也更为敏感，我们首先将处理后的数据（历史细则等）放在了 MongoDB 上（当时 TiDB 1.0 还没有 GA，不然就使用 TiDB 了），然后针对 OLAP 查询使用了 Kylin ，先解决了明细查询的问题。 但是由于业务很复杂, 数据变更非常频繁，一条数据最少也会经过五六次变更操作。报表展现的不仅是当天数据，涉及到挂账、跨天营业、不结账、预定等复杂状况，生产数据的生命周期往往会超过一个月以上。所以当前的 OLAP 解决方案还有痛点，所以后续我们要把 OLAP 查询移植一部分到 TiDB 上面去，来减轻 Kylin 的压力并且支持更加灵活的查询需求，这个目前还在论证当中。 
+同时更为棘手的是，面对客户查询服务（历史细则、报表等），这类查询的并发会更高，而且客户对响应时间也更为敏感，我们首先将处理后的数据（历史细则等）放在了 MongoDB 上（当时 TiDB 1.0 还没有 GA，不然就使用 TiDB 了），然后针对 OLAP 查询使用了 Kylin ，先解决了明细查询的问题。 但是由于业务很复杂, 数据变更非常频繁，一条数据最少也会经过五六次变更操作。报表展现的不仅是当天数据，涉及到挂账、跨天营业、不结账、预定等复杂状况，生产数据的生命周期往往会超过一个月以上。所以当前的 OLAP 解决方案还有痛点，所以后续我们要把 OLAP 查询移植一部分到 TiDB 上面去，来减轻 Kylin 的压力并且支持更加灵活的查询需求，这个目前还在论证当中。
 
 同时，我们发现 TiDB 有一个子项目 TiSpark， TiSpark 是建立在 Spark 引擎之上，Spark 在机器学习领域里有诸如 MLlib 等诸多成熟的项目，算法工程师们使用 TiSpark 去操作 TiDB 的门槛非常低，同时也会大大提升算法工程师们的效率。我们可以使用 TiSpark 做 ETL，这样我们就能做到批处理和实时数仓，再结合 CarbonData 可以做到非常灵活的业务分析和数据支持，后期根据情况来决定是否可以把一部分 Hive 的数据放在 TiDB 上。
 
@@ -52,16 +52,15 @@ customerCategory: 电商
 
 阿里云服务器：
 
-*   TiDB / PD：3 台 i1 型 机器，16c 64g ；
+* TiDB / PD：3 台 i1 型 机器，16c 64g ；
 
-*   TiKV ：5 台 i2 型机器，16c 128g， 1.8T*2 每台机器部署两个 KV；
+* TiKV ：5 台 i2 型机器，16c 128g， 1.8T*2 每台机器部署两个 KV；
 
-*   监控机一台。
+* 监控机一台。
 
 目前我们将线上 RDS 中三个库的数据通过 Binlog 同步到 TiDB ，高峰期 QPS 23k 左右，接入了业务端部分查询服务；未来我们会将更多 RDS 库数据同步过来，并交付给更多业务组使用。因为 TiDB 是新上项目，之前的业务线也没有线上 SQL 迁移的经历，所以在写入性能上也没有历史数据对比。
 
 ![](media/user-case-keruyun/3.png)
-
 
 ### 2. 性能对比
 
@@ -69,11 +68,9 @@ customerCategory: 电商
 
 ![](media/user-case-keruyun/4.png)
 
-
 （2）查询两个索引后的数字列，返回 10 条记录（每条记录只返回 10 字节左右的 2 个小字段）的性能，这个测的是返回小数据量以及多一个查询条件对性能的影响。
 
 ![](media/user-case-keruyun/5.png)
-
 
 （3）查询一个索引后的数字列，按照另一个索引的日期字段排序（索引建立的时候是倒序，排序也是倒序），并且 Skip 100 条记录后返回 10 条记录的性能，这个测的是 Skip 和 Order 对性能的影响。
 
@@ -85,11 +82,11 @@ customerCategory: 电商
 
 （5）TiDB 对比 MySQL 复杂 SQL 执行速率：
 
-*   Table 1  TiDB 数据量 5 千万，MySQL数据量 2.5 千万；
+* Table 1  TiDB 数据量 5 千万，MySQL数据量 2.5 千万；
 
-*   Table 2  TiDB 数据量 5 千万，MySQL数据量 2.5 千万；
+* Table 2  TiDB 数据量 5 千万，MySQL数据量 2.5 千万；
 
-*   Table 3  TiDB 数据量 5 千万，MySQL数据量 2.5 千万。
+* Table 3  TiDB 数据量 5 千万，MySQL数据量 2.5 千万。
 
 **a. 对应 SQL：**
 
@@ -123,7 +120,6 @@ AND c.delivery_type in(1,2,3,4,15)
 ```
 
 ![](media/user-case-keruyun/8.png)
-
 
  **b. 对应 SQL：**
 
@@ -166,7 +162,6 @@ GROUP BY p.relate_id  ) c
 
 ![](media/user-case-keruyun/9.png)
 
-
  **c. 对应 SQL：**
 
 ```
@@ -208,7 +203,6 @@ AND c.delivery_type in(1,2,3,4,15)
 
 ![](media/user-case-keruyun/10.png)
 
-
 **d. 对应 SQL：**
 
 ```
@@ -233,7 +227,6 @@ GROUP BY t.id
 ```
 
 ![](media/user-case-keruyun/11.png)
-
 
 **e. 对应 SQL：**
 
@@ -262,7 +255,6 @@ group by t.id ;
 
 ![](media/user-case-keruyun/12.png)
 
-
 （6）OLTP 对比测试结果：
 
 ![](media/user-case-keruyun/13.png)
@@ -270,7 +262,6 @@ group by t.id ;
 ![](media/user-case-keruyun/14.png)
 
 ![](media/user-case-keruyun/15.png)
-
 
 （7）简单测试结论：
 
@@ -293,5 +284,3 @@ group by t.id ;
 ## 致谢
 
 感谢 TiDB 的厂商的人员给予了我们巨大的支持，希望我们能够提供给 TiDB 一些有意义的信息和建议，在 TiDB 成长的路上添砖加瓦。
-
-

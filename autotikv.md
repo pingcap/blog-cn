@@ -10,15 +10,15 @@ tags: ['TiKV','调优','机器学习']
 
 常用的 Automated Hyper-parameter Tuning 方式大体上有以下三种：
 
-1.  随机搜索，或者说叫启发式搜索。包括 GridSearch 和 RandomSearch。这种方法的改进空间主要体现在使用不同的采样方法生成配置，但本质上仍然是随机试验不同的配置，没有根据跑出来的结果来反馈指导采样过程，效率比较低。
+1. 随机搜索，或者说叫启发式搜索。包括 GridSearch 和 RandomSearch。这种方法的改进空间主要体现在使用不同的采样方法生成配置，但本质上仍然是随机试验不同的配置，没有根据跑出来的结果来反馈指导采样过程，效率比较低。
 
-2.  Multi-armed Bandit。这种方法综合考虑了“探索”和“利用”两个问题，既可以配置更多资源（也就是采样机会）给搜索空间中效果更优的一部分，也会考虑尝试尽量多的可能性。Bandit 结合贝叶斯优化，就构成了传统的 AutoML 的核心。
+2. Multi-armed Bandit。这种方法综合考虑了“探索”和“利用”两个问题，既可以配置更多资源（也就是采样机会）给搜索空间中效果更优的一部分，也会考虑尝试尽量多的可能性。Bandit 结合贝叶斯优化，就构成了传统的 AutoML 的核心。
 
-3.  深度强化学习。强化学习在 AutoML 中最著名的应用就是 [NAS](https://arxiv.org/pdf/1611.01578.pdf)，用于自动生成神经网络结构。另外它在 [深度学习参数调优](https://arxiv.org/pdf/1709.07417.pdf) 中也有应用。它的优点是从“从数据中学习”转变为“从动作中学习”（比如 knob 中的 cache size 从小调到大），既可以从性能好的样本中学习，也可以从性能坏的样本中学习。但强化学习的坑也比较多，体现在训练可能比较困难，有时结果比较难复现。
+3. 深度强化学习。强化学习在 AutoML 中最著名的应用就是 [NAS](https://arxiv.org/pdf/1611.01578.pdf)，用于自动生成神经网络结构。另外它在 [深度学习参数调优](https://arxiv.org/pdf/1709.07417.pdf) 中也有应用。它的优点是从“从数据中学习”转变为“从动作中学习”（比如 knob 中的 cache size 从小调到大），既可以从性能好的样本中学习，也可以从性能坏的样本中学习。但强化学习的坑也比较多，体现在训练可能比较困难，有时结果比较难复现。
 
 目前学术界针对 auto-tune 数据库的研究也有很多，采用的方法大多集中在后面两种。其中一个比较有名的研究是 [OtterTune](https://www.cs.cmu.edu/~ggordon/van-aken-etal-parameters.pdf) 。**我们受 OtterTune 的启发，开发了 AutoTiKV，一个用于对 TiKV 数据库进行自动调优的工具。项目启动三个月以来，AutoTiKV 在 TiKV 内部测试和调参的环节起到了较好的效果，有了一个很好的开始。后续我们还会针对生产环境上的一些特点，对它进行继续探索和完善。**
 
-项目地址：[https://github.com/tikv/auto-tikv](https://github.com/tikv/auto-tikv) 
+项目地址：[https://github.com/tikv/auto-tikv](https://github.com/tikv/auto-tikv)
 
 ## 设计目标
 
@@ -89,7 +89,7 @@ AutoTiKV 使用了和 [OtterTune](https://mp.weixin.qq.com/s/y8VIieK0LO37SjRRyPh
 
 这些参数的含义如下：
 
-* `block-size`：RocksDB 会将数据存放在 data block 里面，block-size 设置这些 block 的大小，当需要访问某一个 key 的时候，RocksDB 需要读取这个 key 所在的整个 block。对于点查，更大的 block 会增加读放大，影响性能，但是对于范围查询，更大的 block 能够更有效的利用磁盘带宽。 
+* `block-size`：RocksDB 会将数据存放在 data block 里面，block-size 设置这些 block 的大小，当需要访问某一个 key 的时候，RocksDB 需要读取这个 key 所在的整个 block。对于点查，更大的 block 会增加读放大，影响性能，但是对于范围查询，更大的 block 能够更有效的利用磁盘带宽。
 
 * `disable-auto-compactions`：定义是否关闭 compaction。compaction 会占用磁盘带宽，影响写入速度。但如果 LSM 得不到 compact， level0 文件会累积，影响读性能。其实本身 [compaction 也是一个有趣的 auto-tuning 的方向](https://www.jianshu.com/p/0fdeed70b36a)。
 
@@ -133,7 +133,6 @@ workload=writeheavy  knobs={disable-auto-compactions, block-size}  metric=write_
 
 ![](media/autotikv/2.png)
 
-
 这个实验中推荐结果是启用 compaction、同时 block size 设为 4KB。
 
 虽然一般来说写入时需要关闭 compaction 以提升性能，但分析后发现由于 TiKV 使用了 Percolator 进行分布式事务，写流程也涉及读操作（写冲突检测），所以关闭 compaction 也导致写入性能下降。同理更小的 block size 提高点查性能，对 TiKV 的写流程性能也有提升。
@@ -143,6 +142,7 @@ workload=writeheavy  knobs={disable-auto-compactions, block-size}  metric=write_
 ```
 workload=pntlookup80  knobs={'bloom-filter-bits-per-key', 'optimize-filters-for-hits', 'block-size', 'disable-auto-compactions'}  metric=get_latency
 ```
+
 实验效果如下：
 
 ![](media/autotikv/3.png)
@@ -164,27 +164,27 @@ workload=pntlookup80  knobs={rocksdb.writecf.bloom-filter-bits-per-key,  rocksd
 测出来发现推荐配置基本集中在以下两种：
 
 * {3,1,1,0,0}
-  
-  rocksdb.writecf.bloom-filter-bits-per-key ['rocksdb', 'writecf'] bloom-filter-bits-per-key **20**  
-  
-  rocksdb.defaultcf.bloom-filter-bits-per-key ['rocksdb', 'defaultcf'] bloom-filter-bits-per-key **10** 
-  
-  rocksdb.writecf.optimize-filters-for-hits ['rocksdb', 'writecf'] optimize-filters-for-hits **True**  
-  
-  rocksdb.defaultcf.block-size ['rocksdb', 'defaultcf'] block-size **4KB**  
-  
+
+  rocksdb.writecf.bloom-filter-bits-per-key ['rocksdb', 'writecf'] bloom-filter-bits-per-key **20**
+
+  rocksdb.defaultcf.bloom-filter-bits-per-key ['rocksdb', 'defaultcf'] bloom-filter-bits-per-key **10**
+
+  rocksdb.writecf.optimize-filters-for-hits ['rocksdb', 'writecf'] optimize-filters-for-hits **True**
+
+  rocksdb.defaultcf.block-size ['rocksdb', 'defaultcf'] block-size **4KB**
+
   rocksdb.defaultcf.disable-auto-compactions ['rocksdb', 'defaultcf'] disable-auto-compactions **False**
 
 * {2,2,0,0,0}
 
-  rocksdb.writecf.bloom-filter-bits-per-key ['rocksdb', 'writecf'] bloom-filter-bits-per-key **15**  
-  
-  rocksdb.defaultcf.bloom-filter-bits-per-key ['rocksdb', 'defaultcf'] bloom-filter-bits-per-key **15**  
-  
-  rocksdb.writecf.optimize-filters-for-hits ['rocksdb', 'writecf'] optimize-filters-for-hits **False**  
-  
-  rocksdb.defaultcf.block-size ['rocksdb', 'defaultcf'] block-size **4KB**  
-  
+  rocksdb.writecf.bloom-filter-bits-per-key ['rocksdb', 'writecf'] bloom-filter-bits-per-key **15**
+
+  rocksdb.defaultcf.bloom-filter-bits-per-key ['rocksdb', 'defaultcf'] bloom-filter-bits-per-key **15**
+
+  rocksdb.writecf.optimize-filters-for-hits ['rocksdb', 'writecf'] optimize-filters-for-hits **False**
+
+  rocksdb.defaultcf.block-size ['rocksdb', 'defaultcf'] block-size **4KB**
+
   rocksdb.defaultcf.disable-auto-compactions ['rocksdb', 'defaultcf'] disable-auto-compactions **False**
 
 分析了一下，感觉是因为 write CF 比较小，当 block cache size 足够大时，bloom filter 的效果可能就不很明显了。

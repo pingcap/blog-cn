@@ -52,7 +52,7 @@ tags: ['TiKV', 'Raft', '性能']
 
 使用 asychronous apply 的好处在于我们现在可以完全的并行处理 append log 和 apply log，虽然对于一个 client 来说，它的一次 request 仍然要走完完整的 Raft 流程，但对于多个 clients 来说，整体的并发和吞吐量是上去了。
 
-##  Now Doing…
+## Now Doing…
 
 ### SST Snapshot
 

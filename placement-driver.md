@@ -45,14 +45,15 @@ PD 集成了 etcd，所以通常，我们需要启动至少三个副本，才能
     ```go
     // Create a lessor.
     ctx, cancel := context.WithTimeout(s.client.Ctx(), requestTimeout)
-	leaseResp, err := lessor.Grant(ctx, s.cfg.LeaderLease)
-	cancel()
+
+ leaseResp, err := lessor.Grant(ctx, s.cfg.LeaderLease)
+ cancel()
 
     // The leader key must not exist, so the CreateRevision is 0.
-	resp, err := s.txn().
-		If(clientv3.Compare(clientv3.CreateRevision(leaderKey), "=", 0)).
-		Then(clientv3.OpPut(leaderKey, s.leaderValue, clientv3.WithLease(clientv3.LeaseID(leaseResp.ID)))).
-		Commit()
+ resp, err := s.txn().
+  If(clientv3.Compare(clientv3.CreateRevision(leaderKey), "=", 0)).
+  Then(clientv3.OpPut(leaderKey, s.leaderValue, clientv3.WithLease(clientv3.LeaseID(leaseResp.ID)))).
+  Commit()
     ```
 
     如果 leader key 的 CreateRevision 为 0，表明其他 PD 还没有写入，那么我就可以将我自己的 leader 相关信息写入，同时会带上一个 Lease。如果事务执行失败，表明其他的 PD 已经成为了 leader，那么就重新回到 1。
@@ -61,10 +62,11 @@ PD 集成了 etcd，所以通常，我们需要启动至少三个副本，才能
 
     ```go
     // Make the leader keepalived.
-	ch, err := lessor.KeepAlive(s.client.Ctx(), clientv3.LeaseID(leaseResp.ID))
-	if err != nil {
-		return errors.Trace(err)
-	}
+
+ ch, err := lessor.KeepAlive(s.client.Ctx(), clientv3.LeaseID(leaseResp.ID))
+ if err != nil {
+  return errors.Trace(err)
+ }
     ```
 
     当 PD 崩溃，原先写入的 leader key 会因为 lease 到期而自动删除，这样其他的 PD 就能 watch 到，重新开始选举。
@@ -73,35 +75,37 @@ PD 集成了 etcd，所以通常，我们需要启动至少三个副本，才能
 
     ```go
     // Try to create raft cluster.
-	err = s.createRaftCluster()
-	if err != nil {
-		return errors.Trace(err)
-	}
 
-	log.Debug("sync timestamp for tso")
-	if err = s.syncTimestamp(); err != nil {
-		return errors.Trace(err)
-	}
+ err = s.createRaftCluster()
+ if err != nil {
+  return errors.Trace(err)
+ }
+
+ log.Debug("sync timestamp for tso")
+ if err = s.syncTimestamp(); err != nil {
+  return errors.Trace(err)
+ }
     ```
 
 5. 所有做完之后，开始定期更新 TSO，监听 lessor 是否过期，以及外面是否主动退出：
 
     ```go
     for {
-		select {
-		case _, ok := <-ch:
-			if !ok {
-				log.Info("keep alive channel is closed")
-				return nil
-			}
-		case <-tsTicker.C:
-			if err = s.updateTimestamp(); err != nil {
-				return errors.Trace(err)
-			}
-		case <-s.client.Ctx().Done():
-			return errors.New("server closed")
-		}
-	}
+
+  select {
+  case _, ok := <-ch:
+   if !ok {
+    log.Info("keep alive channel is closed")
+    return nil
+   }
+  case <-tsTicker.C:
+   if err = s.updateTimestamp(); err != nil {
+    return errors.Trace(err)
+   }
+  case <-s.client.Ctx().Done():
+   return errors.New("server closed")
+  }
+ }
     ```
 
 ### TSO
@@ -117,19 +121,19 @@ TSO 是一个 int64 的整形，它由 physical time + logical time 两个部分
     ```go
     last, err := s.loadTimestamp()
     if err != nil {
-    	return errors.Trace(err)
+     return errors.Trace(err)
     }
 
     var now time.Time
 
     for {
-    	now = time.Now()
-    	if wait := last.Sub(now) + updateTimestampGuard; wait > 0 {
-    		log.Warnf("wait %v to guarantee valid generated timestamp", wait)
-    		time.Sleep(wait)
-    		continue
-    	}
-    	break
+     now = time.Now()
+     if wait := last.Sub(now) + updateTimestampGuard; wait > 0 {
+      log.Warnf("wait %v to guarantee valid generated timestamp", wait)
+      time.Sleep(wait)
+      continue
+     }
+     break
     }
     ```
 
@@ -137,11 +141,11 @@ TSO 是一个 int64 的整形，它由 physical time + logical time 两个部分
 
     ```go
     if now.Sub(s.lastSavedTime) >= 0 {
-    	last := s.lastSavedTime
-    	save := now.Add(s.cfg.TsoSaveInterval.Duration)
-    	if err := s.saveTimestamp(save); err != nil {
-    		return errors.Trace(err)
-    	}
+     last := s.lastSavedTime
+     save := now.Add(s.cfg.TsoSaveInterval.Duration)
+     if err := s.saveTimestamp(save); err != nil {
+      return errors.Trace(err)
+     }
     }
     ```
 
@@ -152,21 +156,21 @@ TSO 是一个 int64 的整形，它由 physical time + logical time 两个部分
     ```go
     resp := pdpb.Timestamp{}
     for i := 0; i < maxRetryCount; i++ {
-    	current, ok := s.ts.Load().(*atomicObject)
-    	if !ok {
-    		log.Errorf("we haven't synced timestamp ok, wait and retry, retry count %d", i)
-    		time.Sleep(200 * time.Millisecond)
-    		continue
-    	}
+     current, ok := s.ts.Load().(*atomicObject)
+     if !ok {
+      log.Errorf("we haven't synced timestamp ok, wait and retry, retry count %d", i)
+      time.Sleep(200 * time.Millisecond)
+      continue
+     }
 
-    	resp.Physical = current.physical.UnixNano() / int64(time.Millisecond)
-    	resp.Logical = atomic.AddInt64(&current.logical, int64(count))
-    	if resp.Logical >= maxLogical {
+     resp.Physical = current.physical.UnixNano() / int64(time.Millisecond)
+     resp.Logical = atomic.AddInt64(&current.logical, int64(count))
+     if resp.Logical >= maxLogical {
 
-    		time.Sleep(updateTimestampStep)
-    		continue
-    	}
-    	return resp, nil
+      time.Sleep(updateTimestampStep)
+      continue
+     }
+     return resp, nil
     }
     ```
 
@@ -185,7 +189,6 @@ TSO 是一个 int64 的整形，它由 physical time + logical time 两个部分
 这里再说一下 region 的 epoch，在 region 的 epoch 里面，有 `conf_ver` 和 `version`，分别表示这个 region 不同的版本状态。如果一个 region 发生了 membership changes，也就是新增或者删除了 peer，`conf_ver` 会加 1，如果 region 发生了 `split` 或者 `merge`，则 `version` 加 1。
 
 无论是 PD 还是在 TiKV，我们都是通过 epoch 来判断 region 是否发生了变化，从而拒绝掉一些危险的操作。譬如 region 已经发生了分裂，`version` 变成了 2，那么如果这时候有一个写请求带上的 `version` 是 1， 我们就会认为这个请求是 stale，会直接拒绝掉。因为 `version` 变化表明 region 的范围已经发生了变化，很有可能这个 stale 的请求需要操作的 key 是在之前的 region range 里面而没在新的 range 里面。
-
 
 ## Split / Merge
 

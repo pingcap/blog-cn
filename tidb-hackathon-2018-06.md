@@ -11,7 +11,6 @@ tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 >
 >TiDB Batch and Streaming SQL（简称 TBSSQL）扩展了 TiDB 的 SQL 引擎，支持用户以类似 StreamSQL 的语法将 Kafka、Pulsar 等外部数据源以流式表的方式接入 TiDB。通过简单的 SQL 语句，用户可以实现对流式数据的过滤，流式表与普通表的 Join（比如流式事实表与多个普通维度表），甚至通过 CREATE TABLE AS SELECT 语法将处理过的流式数据写入普通表中。此外，针对流式数据的时间属性，我们实现了基于时间窗口的聚合/排序算子，使得我们可以对流式数据进行时间维度的聚合/排序。
 
- 
 ## 序
 
 算起来这应该是第三次参加的 Hackathon 了，第一次参加的时候还是在小西天的豌豆荚，和东旭一起，做跨平台数据传输的工具，两天一夜；第二次和奇叔一起在 3W 咖啡，又是两天一夜；这次在自己家举办 Hackathon 比赛，下定决心一定要佛性一些，本着能抱大腿就不单干的心态，迅速决定拉唐长老（唐刘）下水。接下来就计划着折腾点啥，因为我们两个前端都不怎么样，所以只能硬核一些，于是拍了两个方案。
@@ -43,7 +42,7 @@ tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 业界 Streaming 相关的系统很多，前期我这边快速地看了下能不能站在巨人的肩膀上做事情，有没有可借鉴或者可借用的开源项目。
 
 1. Apache Beam
-    
+
     本质上 Apache Beam 还是一个批处理和流处理融合的 SDK Model，用户可以在应用层使用更简单通用的函数接口实现业务的处理，如果使用 Beam 的话，还需要实现自定义的 Runner，因为 TiDB 本身主要的架构设计非常偏重于数据库方向，内部并没有特别明确的通用型计算引擎，所以现阶段基本上没有太大的可行性。当然也可以选择用 Flink 作为 Runner 连接 TiDB 数据源，但是这就变成了 Flink&TiDB 的事情了，和 Beam 本身关系其实就不大了。
 
 2. Apache Flink / Spark Streaming
@@ -142,12 +141,9 @@ GZY 和 WPH 把今天安排的工作完成的差不多了，而且第二天还�
 
 ![3.png](https://upload-images.jianshu.io/upload_images/542677-8b194db181aea031.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-
-
 最后大家补了一张合照，算是为这次 Hackathon 画下一个句号。
 
 ![4.png](https://upload-images.jianshu.io/upload_images/542677-b6e77839a58a4ea9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
 
 **至此，基本上 Hackathon 的流水账就记录完了，整个项目地址在 [https://github.com/qiuyesuifeng/tidb](https://github.com/qiuyesuifeng/tidb) 欢迎大家关注和讨论。**
 
@@ -158,7 +154,6 @@ GZY 和 WPH 把今天安排的工作完成的差不多了，而且第二天还�
 在前期分析和准备之后，基本上就只有在 TiDB 上做 SQL Streaming 引擎一条路可选了，细化了下要实现的功能以及简单的系统架构，感觉工作量还是非常大的。
 
 ![5.png](https://upload-images.jianshu.io/upload_images/542677-6d2f8a3e9c5603d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
 
 下面简单介绍下系统架构和各个模块的功能：
 

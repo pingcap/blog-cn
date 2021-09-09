@@ -30,17 +30,17 @@ TiDB 和 MySQL 有非常多的内置函数，但 TiKV 目前只实现了一部�
 
 综上，TiDB 内置函数在 TiKV 侧有几种实现状态：
 
-1.  完全没有实现，如 `FromDays` 函数。
+1. 完全没有实现，如 `FromDays` 函数。
 
-2.  已有火山模型的实现，没有向量化模型的实现，如 `BitLength` 函数。
+2. 已有火山模型的实现，没有向量化模型的实现，如 `BitLength` 函数。
 
-3.  火山模型和向量化都已实现，如 `LTReal` 函数。
+3. 火山模型和向量化都已实现，如 `LTReal` 函数。
 
 [PCP: Migrate functions from TiDB](https://github.com/tikv/tikv/issues/5751) 这个任务就是希望大家能帮助我们在 TiKV 侧实现更多 TiDB 所支持的内置函数，并支持向量化计算。这个 issue 中 Non-Vectorize 打钩意味着函数已有火山模型的实现，Vectorized 打钩意味着函数已有向量化模型的实现。因此你可以：
 
-*   选择一个完全没有实现的函数，如 `FromDays`，从 TiDB 侧迁移它的代码到 TiKV 并实现在火山模型（Non-Vectorize）上，提个 PR +50 积分，再迁移到向量化模型（Vectorize）上，从而再提个 PR +50 积分。
+* 选择一个完全没有实现的函数，如 `FromDays`，从 TiDB 侧迁移它的代码到 TiKV 并实现在火山模型（Non-Vectorize）上，提个 PR +50 积分，再迁移到向量化模型（Vectorize）上，从而再提个 PR +50 积分。
 
-*   或选择一个已有火山模型但没有向量化实现的函数，如 `BitLength` 函数，为它适配向量化模型（Vectorize）接口，提个 PR +50 积分。
+* 或选择一个已有火山模型但没有向量化实现的函数，如 `BitLength` 函数，为它适配向量化模型（Vectorize）接口，提个 PR +50 积分。
 
 **实现一个完全没有在 TiKV 侧实现的内置函数一般来说具有更高难度，因此能获得更高回报！**
 
@@ -78,7 +78,6 @@ pub fn logical_xor(&self, ctx: &mut EvalContext, row: &[Datum]) -> Result<Option
 
 阅读理解上面的代码，可知 `LogicalXor` 是一个二元内置函数。其中，第一个参数 `children[0]` 和第二个参数 `children[1]` 都是通过 `eval_int` 方式访问的，因此 `LogicalXor` 接受的两个参数都是 int 类型。最后，这个函数返回值是 `Result<Option<i64>>` 代表它计算结果也是 int 类型。可以由这些信息翻译为以下向量化计算代码，实现在 `components/tidb_query/src/rpn_expr/impl_op.rs` 文件中：
 
- 
 ```rust
 #[rpn_fn]
 #[inline]
@@ -87,18 +86,17 @@ pub fn logical_xor(arg0: &Option<Int>, arg1: &Option<Int>) -> Result<Option<Int>
 }
 ```
 
-
 > 注：`Int` 是 `i64` 的 Type Alias。你既可以写 `Int` 也可以写 `i64`，不过更推荐 `Int` 一些。你可以从[这里](https://github.com/tikv/tikv/blob/d019ccecefc260ff760a53b7b8742fb84ffca9b5/components/tidb_query/src/codec/data_type/mod.rs#L10)找到所有的 Type Alias。`eval_xxx` 函数与类型的对应关系如下表所示。
 
 | 火山模型函数名 | 对应参数类型 | 参数类型别名 |
-|:-- |:-- |:----- | 
+|:-- |:-- |:----- |
 | `eval_int` | `Int` | `i64`|
 | `eval_real` | `Real` | `ordered_float::NotNan<f64>`|
-|`eval_decimal` | `Decimal` |  
+|`eval_decimal` | `Decimal` |
 |`eval_bytes` | `Bytes` | `Vec<u8>`|
-|`eval_time` | `DateTime` |  
-|`eval_duration` | `Duration` |  
-|`eval_json` | `Json` |  
+|`eval_time` | `DateTime` |
+|`eval_duration` | `Duration` |
+|`eval_json` | `Json` |
 
 换句话说就是：向量化版本的 `logical_xor` 是一个接受两个参数且两个参数都是 Int 类型的函数，返回 Int，是不是非常直观呢？另外我们使用 `None` 来代表 SQL 中的 `NULL` 值，因此函数参数及返回值都是 `Option<Int>` 类型。
 
@@ -125,7 +123,7 @@ fn logical_xor_vector_scalar(arg0: []Int, arg1: Int) -> []Int {
   }
   return r;
 }
- 
+
 fn logical_xor_scalar_vector(arg0: Int, arg1: []Int) -> []Int {
   let r = vec![];
   for i in 0..n {
@@ -133,7 +131,7 @@ fn logical_xor_scalar_vector(arg0: Int, arg1: []Int) -> []Int {
   }
   return r;
 }
- 
+
 fn logical_xor_vector_vector(arg0: []Int, arg1: []Int) -> []Int {
   let r = vec![];
   for i in 0..n {
@@ -141,7 +139,7 @@ fn logical_xor_vector_vector(arg0: []Int, arg1: []Int) -> []Int {
   }
   return r;
 }
- 
+
 fn logical_xor_scalar_scalar(arg0: Int, arg1: Int) -> []Int {
   let r = vec![];
   for i in 0..n {
@@ -151,7 +149,6 @@ fn logical_xor_scalar_scalar(arg0: Int, arg1: Int) -> []Int {
 }
 ```
 
-
 你只需要关注内置函数本身的逻辑实现，其他的全部自动搞定！这些所有的奥秘都隐藏在了 `#[rpn_fn]` 过程宏中。
 
 当然，上面的伪代码只是便于你进行理解。这个过程宏的实际实现并不是像上面这样粗暴地组装代码。它巧妙地利用了 Rust 的泛型机制，让编译器去生成不同个数参数情况下的最优实现。这里有点偏题就不继续展开细说了，我们后续的源码阅读文章对这个机制会有进一步分析，感兴趣的同学可以阅读代码自行学习。
@@ -159,18 +156,17 @@ fn logical_xor_scalar_scalar(arg0: Int, arg1: Int) -> []Int {
 ### 3. 增加函数入口
 
 目前只是提供了向量化版本的函数实现，但还需要告诉向量化计算框架，在遇到 LogicalXor 这个内置函数的时候，使用上向量化版本 `logical_xor` 的实现。这一步很简单，修改 `components/tidb_query/src/rpn_expr/mod.rs` 文件中的 `map_expr_node_to_rpn_func` 函数，增加一个对应关系即可：
- 
+
 ```rust
 ScalarFuncSig::LogicalXor => logical_xor_fn_meta(),
 ```
 
-注意，此处要为函数名加上 `_fn_meta` 后缀，从而用上 `#[rpn_fn]` 过程宏自动生成的向量化版本函数实现。不要问为什么，问就是约定 :D 
+注意，此处要为函数名加上 `_fn_meta` 后缀，从而用上 `#[rpn_fn]` 过程宏自动生成的向量化版本函数实现。不要问为什么，问就是约定 :D
 
 ### 4. 撰写单元测试
 
 搜索 `ScalarFuncSig::LogicalXor` 可以找到火山模型下的该函数单元测试：
 
- 
 ```rust
 #[test]
 fn test_logic_op() {
@@ -212,10 +208,8 @@ fn test_logic_op() {
 }
 ```
 
-
 这个测试覆盖挺完备的，因此可以直接拿样例来复用，作为向量化版本的单元测试。向量化版本单元测试中不再使用 Datum 等结构，而是可以直接用最原始的基础数据结构 `Option<Int>`，配上 `RpnFnScalarEvaluator` 进行执行，代码如下：
 
- 
 ```rust
 #[test]
 fn test_logical_xor() {
@@ -262,9 +256,9 @@ EXTRA_CARGO_ARGS="test_logical_xor" make dev
 
 众所周知，手工编写的测试样例往往会遗漏一些考虑欠缺的边缘情况，并且可能由于犯了一些错误，测试的预期输出实际与 TiDB 不一致。为了能覆盖这些边缘情况，进一步确保 TiKV 中的内置函数实现与 TiDB 的实现一致，我们有一批使用 [randgen](https://github.com/MariaDB/randgen) 自动生成的下推测试，位于 [https://github.com/tikv/copr-test](https://github.com/tikv/copr-test)。不管你是在 TiKV 中引入一个新的函数实现，还是迁移一个现有实现，都需要确保能跑过这个测试。流程如下：
 
-1.  需要确保你新实现的函数在 [copr-test](https://github.com/tikv/copr-test) 项目的 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt) 文件中，如果没有的话需要往 [copr-test](https://github.com/tikv/copr-test) 项目提 PR 将函数加入测试列表中。你需要将 SQL 里的函数名追加在文件中，或者可以参考 [all_functions_reference.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/all_functions_reference.txt) 文件，这个文件里列出了所有可以写的函数名，从中挑出你的那个函数名，加入 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt)。
+1. 需要确保你新实现的函数在 [copr-test](https://github.com/tikv/copr-test) 项目的 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt) 文件中，如果没有的话需要往 [copr-test](https://github.com/tikv/copr-test) 项目提 PR 将函数加入测试列表中。你需要将 SQL 里的函数名追加在文件中，或者可以参考 [all_functions_reference.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/all_functions_reference.txt) 文件，这个文件里列出了所有可以写的函数名，从中挑出你的那个函数名，加入 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt)。
 
-2.  假设 [copr-test](https://github.com/tikv/copr-test) 中提的 PR 是 #10，则在你之前提的 TiKV PR 中回复 `@sre-bot /run-integration-copr-test copr-test=pr/10` 运行下推测试。如果你的函数之前已经在 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt) 列表中了，可以直接回复 `@sre-bot /run-integration-copr-test` 运行下推测试。
+2. 假设 [copr-test](https://github.com/tikv/copr-test) 中提的 PR 是 #10，则在你之前提的 TiKV PR 中回复 `@sre-bot /run-integration-copr-test copr-test=pr/10` 运行下推测试。如果你的函数之前已经在 [push-down-test/functions.txt](https://github.com/tikv/copr-test/blob/master/push-down-test/functions.txt) 列表中了，可以直接回复 `@sre-bot /run-integration-copr-test` 运行下推测试。
 
 当然，我们更推荐你能直接往 [copr-test](https://github.com/tikv/copr-test) 中添加人工编写的测试，更准确地覆盖边缘情况，具体方式参见 [copr-test](https://github.com/tikv/copr-test) 的 README。
 
@@ -272,7 +266,7 @@ EXTRA_CARGO_ARGS="test_logical_xor" make dev
 
 如果上一步 copr-test 的测试挂了，一般来说有两种情况，一种情况是内置函数的实现有问题，被 copr-test 测了出来，另一种情况是你新实现的内置函数在 TiDB 侧还未建立函数签名与下推枚举签名 `ScalarFuncSig` 之间的映射关系。后者会在测试中产生 “unspecified PbCode” 错误，非常容易辨别。如果出现了这种情况，大家可以参考 [https://github.com/pingcap/tidb/pull/12864](https://github.com/pingcap/tidb/pull/12864) 的做法，为 TiDB 提 PR 增添相应内置函数的 PbCode 映射。添加完毕之后，可以在 TiKV PR 中回复 `@sre-bot /run-integration-copr-test copr-test=pr/X tidb=pr/Y`（其中 `X` 是你提的 copr-test PR 号，`Y` 是你提的 TiDB PR 号）进行联合测试。
 
-## 完成！
+## 完成
 
 至此，你新实现的内置函数有了单元测试，也有了与 TiDB 的集成下推测试，是一个合格的 PR 了，可以接受我们的 review。在 merge 后，你就能拿到相应的积分，积分可以在赛季结束后兑换 [TiDB 限量周边礼品](https://pingcap.com/community-cn/tidb-performance-challenge/)！
 

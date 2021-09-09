@@ -120,7 +120,6 @@ RocksDB 支持 Column Family，所以能直接跟 Percolator 里面的 CF 对应
 
 TiKV 会将自己所有的 Region 信息汇报给 PD，这样 PD 就有了整个集群的 Region 信息，当然就有了一张 Region 的路由表，如下：
 
-
 ![Region 路由表](media/how-tikv-store-get-data/3.png)
 
 当 Client 需要操作某一个 key 的数据的时候，它首先会向 PD 问一下这个 key 属于哪一个 Region，譬如对于 key a 来说，PD 知道它属于 Region 1，就会给 Client 返回 Region 1 的相关信息，包括有多少个副本，现在 Leader 是哪一个副本，这个 Leader 副本在哪一个 TiKV 上面。
@@ -128,7 +127,6 @@ TiKV 会将自己所有的 Region 信息汇报给 PD，这样 PD 就有了整个
 Client 会将相关的 Region 信息缓存到本地，加速后续的操作，但有可能 Region 的 Raft Leader 变更，或者 Region 出现了分裂，合并，Client 会知道缓存失效，然后重新去 PD 获取最新的信息。
 
 PD 同时也提供全局的授时服务，在 Percolator 事务模型里面，我们知道事务开始以及提交都需要有一个时间戳，这个就是 PD 统一分配的。
-
 
 ## RawKV
 
@@ -140,15 +138,15 @@ PD 同时也提供全局的授时服务，在 Percolator 事务模型里面，�
 
 当进行写入，譬如 Write a = 1，会进行如下步骤：
 
-1.  Client 找 PD 问 a 所在的 Region
+1. Client 找 PD 问 a 所在的 Region
 
-2.  PD 告诉 Region 相关信息，主要是 Leader 所在的 TiKV
+2. PD 告诉 Region 相关信息，主要是 Leader 所在的 TiKV
 
-3.  Client 将命令发送给 Leader 所在的 TiKV
+3. Client 将命令发送给 Leader 所在的 TiKV
 
-4.  Leader 接受请求之后执行 Raft 流程
+4. Leader 接受请求之后执行 Raft 流程
 
-5.  Leader 将 a = 1 Apply 到 KV RocksDB 然后给 Client 返回写入成功
+5. Leader 将 a = 1 Apply 到 KV RocksDB 然后给 Client 返回写入成功
 
 ### Read
 
@@ -206,12 +204,12 @@ Read 的流程之前的 Percolator 已经有说明了，这里就不详细解释
 
 ```
 CREATE TABLE t1 {
-	id BIGINT PRIMARY KEY,
-	name VARCHAR(1024),
-	age BIGINT,
-	content BLOB,
-	UNIQUE(name),
-	INDEX(age),
+ id BIGINT PRIMARY KEY,
+ name VARCHAR(1024),
+ age BIGINT,
+ content BLOB,
+ UNIQUE(name),
+ INDEX(age),
 }
 ```
 

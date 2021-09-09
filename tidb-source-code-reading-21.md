@@ -55,8 +55,8 @@ select if(isnull(a), 0, 1) from t;
 
 * 条件 1 : `LogicalJoin` 的父亲算子只会用到 `LogicalJoin` 的 outer plan 所输出的列
 * 条件 2 :
-    * 条件 2.1 : `LogicalJoin` 中的 join key 在 inner plan 的输出结果中满足唯一性属性
-    * 条件 2.2 : `LogicalJoin` 的父亲算子会对输入的记录去重
+  * 条件 2.1 : `LogicalJoin` 中的 join key 在 inner plan 的输出结果中满足唯一性属性
+  * 条件 2.2 : `LogicalJoin` 的父亲算子会对输入的记录去重
 
 条件 1 和条件 2 必须同时满足，但条件 2.1 和条件 2.2 只需满足一条即可。
 
@@ -102,7 +102,7 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
 对于非相关子查询， TiDB 会在 `expressionRewriter` 的逻辑中做两类操作：
 
 * **子查询展开**
-    
+
     即直接执行子查询获得结果，再利用这个结果改写原本包含子查询的表达式；比如上述的非相关子查询，如果其返回的结果为一行记录 “1” ，那么整个查询会被改写为：
 
     ```sql
@@ -120,7 +120,7 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
     ```
 
     会被改写成：
-    
+
     ```sql
     select t1.* from t1 inner join (select distinct(t2.a) as a from t2) as sub on t1.a = sub.a;
     ```
@@ -201,7 +201,7 @@ select * from t1 where t1.a > (select t2.a from t2 where t2.b > t1.b limit 1);
 
     * `LogicalApply` 本身不能包含 join condition 。以上面给出的查询为例，可以看到聚合提升后会将子查询中包含相关列的过滤条件 (`t2.a = t1.pk`) 添加到 `LogicalApply` 的 join condition 中，如果 `LogicalApply` 本身存在 join condition ，那么聚合提升后聚合算子的输入（连接算子的输出）就会和在子查询中时聚合算子的输入不同，导致聚合算子结果不正确。
 
-    * 子查询中用到的相关列在 outer plan 输出里具有唯一性属性。以上面查询为例，如果 `t1.pk` 不满足唯一性，假设 `t1` 有两条记录满足 `t1.pk = 1`，`t2` 只有一条记录 `{ (t2.a: 1, t2.b: 2) } `，那么该查询会输出两行结果 `{ (sum(t2.b): 2), (sum(t2.b): 2) } `；但对于聚合提升后的执行计划，则会生成错误的一行结果` { (sum(t2.b): 4) } `。当 `t1.pk` 满足唯一性后，每一行 outer plan 的记录都对应连接结果中的一个分组，所以其聚合结果会和在子查询中的聚合结果一致，这也解释了为什么聚合提升后需要按照 `t1.pk` 做分组。
+    * 子查询中用到的相关列在 outer plan 输出里具有唯一性属性。以上面查询为例，如果 `t1.pk` 不满足唯一性，假设 `t1` 有两条记录满足 `t1.pk = 1`，`t2` 只有一条记录 `{ (t2.a: 1, t2.b: 2) }`，那么该查询会输出两行结果 `{ (sum(t2.b): 2), (sum(t2.b): 2) }`；但对于聚合提升后的执行计划，则会生成错误的一行结果` { (sum(t2.b): 4) } `。当 `t1.pk` 满足唯一性后，每一行 outer plan 的记录都对应连接结果中的一个分组，所以其聚合结果会和在子查询中的聚合结果一致，这也解释了为什么聚合提升后需要按照 `t1.pk` 做分组。
 
     * 聚合函数必须满足当输入为 `null` 时输出结果也一定是 `null` 。这是为了在子查询中没有匹配的特殊情况下保证结果的正确性，以上面查询为例，当 `t2` 表没有任何记录满足 `t2.a = t1.pk` 时，子查询中不管是什么聚合函数都会返回 `null` 结果，为了保留这种特殊情况，在聚合提升的同时， `LogicalApply` 的连接类型会被强制改为 left join（改之前可能是 inner join ），所以在这种没有匹配的情况下，`LogicalApply` 输出结果中 inner plan 部分会是 `null` ，而这个 `null` 会作为新添加的聚合算子的输入，为了和提升前结果一致，其结果也必须是 `null` 。
 

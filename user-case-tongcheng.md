@@ -34,11 +34,9 @@ customerCategory: 电商
 
 在该项目实施成功后，我们加深了对于 TiDB 的使用。并根据 PingCAP 的建议和协助部署了各类监控。
 
-
 ![2-grafana-tidb](media/user-case-tongcheng/2.png)
 
 ![3-grafana-tikv](media/user-case-tongcheng/3.png)
-
 
 同时，为了更好的关注数据库的情况，第一时间发现异常，我们将 TiDB 的异常报警接入了公司的监控系统和自愈系统。当发生异常的时候，监控系统会第一时间发现，然后自愈系统会依据提前制定的愈合逻辑处理对应异常，在第一时间恢复应用的可用。
 
@@ -54,11 +52,8 @@ customerCategory: 电商
 
 可以预见，随着项目继续以及新项目建设，TiDB 的实例数和机器数又会继续以较快的速度增长，目前线上用的版本还不是最新的版本，正在做升级到 1.05 的准备工作。我们预计 2018 年底，TiDB 的集群数很快就会有 20 套，机器数数百台，这给开发和运维都带来了一定的挑战。如果我们仍然按照目前的方式建设和运维 TiDB 集群，可能就要面临增加相关人力的处境。我们一直在寻找多 TiDB 集群的便捷管理方案，这时一篇文章引起了我们的注意——[《Cloud+TiDB 技术解读》](https://mp.weixin.qq.com/s/znT1jIbMhBcWldlBIkrkpQ)。我们迅速和 TiDB 工程师取得联系，了解到 TiDB 最新的 DBaaS 方案基于 K8S 来自动管理和调度多个 TiDB 实例，这和我们目前大量 docker 化业务和数据库的战略方向是一致的。通过 TiDB-Operator 使可以自动化部署和管理 TiDB 及周边工具，自动化部署这些应用以及使后端获得故障转移能力，这样可以大大降低运维成本，同时提供丰富的接口方便后续对其进行扩展。
 
-
 ![4-tidb-dbaas](media/user-case-tongcheng/4.png)
 
 我们计划 2018 年开始和 PingCAP 合作尝试引入 TiDB DBaaS 方案。
 
 另外，我们通过同 PingCAP 工程师的深度交流，了解到了 TiDB 的子项目 [TiSpark](https://github.com/pingcap/tispark)，后续计划引入 TiSpark 来对数据进行实时分析、实时数仓等工作的尝试，让技术对业务产生更大的价值。
-
-

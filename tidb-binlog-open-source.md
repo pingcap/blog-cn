@@ -29,9 +29,9 @@ image: /images/blog-cn/tidb-binlog-open-source/tidb-binlog-open-source.jpg
 + 分布式架构设计，支持水平弹性扩容和服务高可用。
 + 数据高可靠，系统实时将数据持久化到本地磁盘。
 + 支持多种输出方式，如下：
-    - 文件：系统准实时将 binlog 写入文件系统作为增量备份，利用此增量备份文件可将数据恢复到任意时间点。
-    - 消息队列：按照 [binlog slave protocol](https://pingcap.com/docs-cn/tools/binlog/binlog-slave-client/) 输出到 Kafka。
-    - 下游目标数据库：TiDB/MySQL/MariaDB。
+  + 文件：系统准实时将 binlog 写入文件系统作为增量备份，利用此增量备份文件可将数据恢复到任意时间点。
+  + 消息队列：按照 [binlog slave protocol](https://pingcap.com/docs-cn/tools/binlog/binlog-slave-client/) 输出到 Kafka。
+  + 下游目标数据库：TiDB/MySQL/MariaDB。
 
 ## TiDB Binlog 代码及文档资源
 

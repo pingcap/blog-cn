@@ -72,7 +72,7 @@ TiDB Dashboard 在 TiDB 4.0 集群的 PD 组件中直接内置，无需额外部
 使用 TiUP 可以一键在本地启动 nightly 版本的测试集群，支持 Mac 和 Linux：
 
 ```
-$ tiup playground nightly --monitor
+tiup playground nightly --monitor
 ```
 
 启动测试集群后，访问以下地址即可体验 TiDB Dashboard：
@@ -84,4 +84,3 @@ http://127.0.0.1:2379/dashboard
 对于极端关注集群稳定性的用户，也可以选择独立部署 TiDB Dashboard，本文限于篇幅就不进行详细介绍，可以阅读 TiDB 电子书《TiDB in Action》的 [TiDB Dashboard 章节](https://book.tidb.io/session3/chapter2/key-vis.html) 了解详情（后续会持续更新），**也欢迎大家反馈意见，扫描下方二维码，添加 TiDB Robot 为好友并回复“新特性”即可入群交流：**
 
 ![qr-code](media/tidb-4.0-tidb-dashboard/10-tidb-robot-qr-code.jpg)
-

@@ -35,7 +35,7 @@ tags: ['TiDB 4.0 新特性','备份恢复','BR']
 图片说明：
 
 - 我们恢复了之前备份下来的两张表，同样的，绿线是整体速度，其他线条为各个 TiKV 节点恢复速度。
-- 恢复期间的毛刺是因为我们将恢复任务拆分成一个个小任务，各个小任务之间串行执行（潜在优化点）。1:00 和 1:15 恢复速度下降同样也是由于索引内容较短导致。 
+- 恢复期间的毛刺是因为我们将恢复任务拆分成一个个小任务，各个小任务之间串行执行（潜在优化点）。1:00 和 1:15 恢复速度下降同样也是由于索引内容较短导致。
 
 ## 分布式数据库备份恢复的难点
 
@@ -71,11 +71,11 @@ BR 和 mydumper 最大的不同点在于，**它直接从 TiKV（存储层）入
 
 - **BR 使用手册：**
 
-	<https://pingcap.com/docs-cn/v3.1/reference/tools/br/br/>
+ <https://pingcap.com/docs-cn/v3.1/reference/tools/br/br/>
 
 - **BR 备份与恢复场景示例：**
 
-	<https://pingcap.com/docs-cn/v3.1/reference/tools/br/use-cases/>
+ <https://pingcap.com/docs-cn/v3.1/reference/tools/br/use-cases/>
 
 BR 目前还处于 beta 阶段，如果在使用过程中发现了任何问题，欢迎反馈到 ：
 
@@ -87,24 +87,24 @@ BR 目前还处于 beta 阶段，如果在使用过程中发现了任何问题�
 
 - **[RawKV backup restore](https://github.com/pingcap/br/issues/86)**
 
-	没错，BR 除了支持备份恢复 TiDB 集群之外，还能支持使用 RawKV 的 TiKV 集群，其中 TiKV 这边的 PR 由一位社区小伙伴贡献——感谢来自一点资讯的 **xinhua5**！
-	
+ 没错，BR 除了支持备份恢复 TiDB 集群之外，还能支持使用 RawKV 的 TiKV 集群，其中 TiKV 这边的 PR 由一位社区小伙伴贡献——感谢来自一点资讯的 **xinhua5**！
+
 - **[Incremental backup restore](https://github.com/pingcap/br/issues/90)**
 
-	增量备份不仅解决了全量备份空间占用的大的问题，也能解决了 [TiDB Binlog](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/) 损坏期间快速恢复的难题！
+ 增量备份不仅解决了全量备份空间占用的大的问题，也能解决了 [TiDB Binlog](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/) 损坏期间快速恢复的难题！
 
 - **[Backup to common cloud storage](https://github.com/pingcap/br/issues/89)**
 
-	在云的时代，怎么能缺少对云存储的支持？BR 已经支持将备份保存到 AWS S3 上，不久也将支持备份到 Google Cloud Storage。
+ 在云的时代，怎么能缺少对云存储的支持？BR 已经支持将备份保存到 AWS S3 上，不久也将支持备份到 Google Cloud Storage。
 
 - **[Online restore](https://github.com/pingcap/br/issues/87)**
-	
-	最初，BR 恢复的定位和 [TiDB Lightning](https://pingcap.com/blog-cn/tidb-ecosystem-tools-2/) 一样，只支持离线恢复到全新的集群。通过这个功能，BR 即将支持在线恢复，这对 OLAP 场景中的导入数据阶段非常有帮助。
-	
+
+ 最初，BR 恢复的定位和 [TiDB Lightning](https://pingcap.com/blog-cn/tidb-ecosystem-tools-2/) 一样，只支持离线恢复到全新的集群。通过这个功能，BR 即将支持在线恢复，这对 OLAP 场景中的导入数据阶段非常有帮助。
+
 **以上新功能还在加速实现过程中，非常欢迎感兴趣的小伙伴们能够参与进来，一起玩转 BR 这个炫酷的分布式备份恢复工具，大家有任何新鲜的点子都可以开 Issue 讨论！**
 
 另外，我们也很重视 TiDB 用户的需求，希望能优先交付用户最需要的功能，**欢迎参与 AskTUG 发起的“ [我最期待 BR 的新功能](https://asktug.com/t/topic/32822) ”投票（投票开放 1 周），我们将根据大家的呼声调整开发优先级～**
 
->附：  
->[1] 五台 Intel® E5-2630v4, Intel® SSD P4510 4TB 物理机，每台部署一个 TiKV，使用本地模式进行备份恢复。备份数据库逻辑大小 3.34T，三副本物理大小 10.1T。备份并发参数 16，恢复并发参数 128。恢复速度受 Region 调度影响比较大，不包含调度，速度为 279MB/s。  
+>附：
+>[1] 五台 Intel® E5-2630v4, Intel® SSD P4510 4TB 物理机，每台部署一个 TiKV，使用本地模式进行备份恢复。备份数据库逻辑大小 3.34T，三副本物理大小 10.1T。备份并发参数 16，恢复并发参数 128。恢复速度受 Region 调度影响比较大，不包含调度，速度为 279MB/s。
 >[2] [loader 工具的 load 模块性能测试数据。](https://docs.pingcap.com/zh/tidb-data-migration/v1.0/benchmark-v1.0-ga#%E5%9C%A8-load-%E5%A4%84%E7%90%86%E5%8D%95%E5%85%83%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C-pool-size-%E7%9A%84%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%AF%B9%E6%AF%94)

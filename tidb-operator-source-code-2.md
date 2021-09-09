@@ -31,7 +31,7 @@ controllers := []Controller{
 ```
 
 在 Controller 的初始化函数过程中，会初始化一系列 Informer，这些 Informer 主要用来和 kube-apiserver 交互获取 CRD 和相关资源的变更。以 TiDBCluster 为例，在初始化函数 NewController 中，会初始化 Informer 对象：
- 
+
 ```go
 tidbClusterInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
         AddFunc: c.enqueueTidbCluster,
@@ -49,11 +49,11 @@ statefulsetInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
     })
  
 ```
- 
+
 Informer 中添加了处理添加，更新，删除事件的 EventHandler，把监听到的事件涉及到的 CR 的 Key 加入队列。
- 
+
 初始化完成后启动 InformerFactory 并等待 cache 同步完成。
- 
+
 ```go
 informerFactories := []InformerFactory{
             deps.InformerFactory,
@@ -69,9 +69,9 @@ informerFactories := []InformerFactory{
             }
         }
 ```
- 
+
 随后 tidb-controller-manager 会调用各个 Controller 的 Run 函数，开始循环执行 Controller 的内部逻辑。
- 
+
 ```go
 // Start syncLoop for all controllers
 for _,controller := range controllers {
@@ -79,9 +79,9 @@ for _,controller := range controllers {
     go wait.Forever(func() { c.Run(cliCfg.Workers,ctx.Done()) },cliCfg.WaitDuration)
 }
 ```
- 
+
 以 TiDBCluster Controller 为例，Run 函数会启动 worker 处理工作队列。
- 
+
 ```go
 // Run runs the tidbcluster controller.
 func (c *Controller) Run(workers int, stopCh <-chan struct{}) {
@@ -98,9 +98,9 @@ func (c *Controller) Run(workers int, stopCh <-chan struct{}) {
     <-stopCh
 }
 ```
- 
+
 Worker 会调用 processNextWorkItem 函数，弹出队列的元素，然后调用 sync 函数进行同步：
- 
+
 ```go
 // worker runs a worker goroutine that invokes processNextWorkItem until the the controller's queue is closed
 func (c *Controller) worker() {
@@ -129,9 +129,9 @@ func (c *Controller) processNextWorkItem() bool {
     return true
 }
 ```
- 
+
 Sync 函数会根据 Key 获取对应的 CR 对象，例如这里的 TiDBCluster 对象，然后对这个 TiDBCluster 对象进行同步。
- 
+
 ```go
 // sync syncs the given tidbcluster.
 func (c *Controller) sync(key string) error {
@@ -160,9 +160,9 @@ func (c *Controller) syncTidbCluster(tc *v1alpha1.TidbCluster) error {
     return c.control.UpdateTidbCluster(tc)
 }
 ```
- 
+
 syncTidbCluster 函数调用 updateTidbCluster 函数，进而调用一系列组件的 Sync 函数实现 TiDB 集群管理的相关工作。在 pkg/controller/tidbcluster/tidb_cluster_control.go 的 updateTidbCluster 函数实现中，我们可以看到各个组件的 Sync 函数在这里调用，在相关调用代码注释里描述着每个 Sync 函数执行的生命周期操作事件，可以帮助理解每个组件的 Reconcile 需要完成哪些工作，例如 PD 组件:
- 
+
 ```go
 // works that should do to making the pd cluster current state match the desired state:
 //   - create or update the pd service
@@ -176,7 +176,7 @@ if err := c.pdMemberManager.Sync(tc); err != nil {
     return err
 }
 ```
- 
+
 我们将在下篇文章中介绍组件的 Sync 函数完成了哪些工作，TiDBCluster Controller 是怎样完成各个组件的生命周期管理。
 
 ## 小结

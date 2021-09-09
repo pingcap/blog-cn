@@ -6,7 +6,7 @@ summary: 本篇文章介绍了 DM 的定制化数据同步功能中库表路由�
 tags: ['DM 源码阅读','社区']
 ---
 
-本文为 TiDB Data Migration 源码阅读系列文章的第七篇，在 [《DM 源码阅读系列文章（六）relay log 的实现》](https://pingcap.com/blog-cn/dm-source-code-reading-6/) 中我们介绍了 relay log 的实现，主要包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。**本篇文章我们将会对 DM 的定制化数据同步功能进行详细的讲解。** 
+本文为 TiDB Data Migration 源码阅读系列文章的第七篇，在 [《DM 源码阅读系列文章（六）relay log 的实现》](https://pingcap.com/blog-cn/dm-source-code-reading-6/) 中我们介绍了 relay log 的实现，主要包括 relay log 目录结构定义、relay log 数据的处理流程、主从切换支持、relay log 的读取等逻辑。**本篇文章我们将会对 DM 的定制化数据同步功能进行详细的讲解。**
 
 在一般的数据同步中，上下游的数据是一一对应的，即上下游的库名、表名、列名以及每一列的值都是相同的，但是很多用户因为业务的原因希望 DM 在同步数据到 TiDB 时进行一些定制化的转化。下面我们将主要介绍数据同步定制化中的库表路由（Table routing）、黑白名单（Black & white table lists）、列值转化（Column mapping）、binlog 过滤（Binlog event filter）四个主要功能的实现。值得注意的是，由于其他一些工具（例如 TiDB Lightning 和 TiDB Binlog）也需要类似的功能，所以这四个功能都以 package 的形式维护在 [tidb-tools](https://github.com/pingcap/tidb-tools/tree/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg) 项目下，这样方便使用和维护。
 
@@ -19,7 +19,6 @@ tags: ['DM 源码阅读','社区']
 该功能实现在 [`pkg/table-router`](https://github.com/pingcap/tidb-tools/tree/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router) 中，库表路由的规则定义在结构 [`TableRule`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L25) 中，其中的属性 [`SchemaPattern`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L26) 和 [`TablePattern`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L27) 用于配置原库名和表名的模式，[`TargetSchema`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L28) 和 [`TargetTable`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L29) 用于配置目标库和表名，即符合指定 pattern 的库和表名都将转化成目标库名和表名。
 
 使用结构 [Table](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L52) 对路由规则进行维护，Table 提供了如下方法：
-
 
 | 方法 | 说明 |
 |:-------------|:--------|
@@ -46,21 +45,22 @@ Selector 的底层实现是 [`trieSelector`](https://github.com/pingcap/tidb-too
 黑白名单规则配置在 [`Rules`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/filter/filter.go#L66) 结构中，该结构包括 [`DoTables`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/filter/filter.go#L67)、[`DoDBs`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/filter/filter.go#L68)、[`IgnoreTables`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/filter/filter.go#L70) 和 [`IgnoreDBs`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/filter/filter.go#L71) 四个属性，下面以判断表 `test.t` 是否应该被过滤的例子说明配置的作用：
 
 1. 首先 schema 过滤判断。
-	+ 如果 `do-dbs` 不为空，则判断 `do-dbs` 中是否存在一个匹配的 schema。
-	    - 如果存在，则进入 table 过滤判断。
-	    - 如果不存在，则过滤 `test.t`。
-   + 如果 `do-dbs` 为空并且 `ignore-dbs` 不为空，则判断 `ignore-dbs` 中是否存在一个匹配的 schema。
-       - 如果存在，则过滤 `test.t`。
-       - 如果不存在，则进入 table 过滤判断。
-    + 如果 `do-dbs` 和 `ignore-dbs` 都为空，则进入 table 过滤判断。
+
++ 如果 `do-dbs` 不为空，则判断 `do-dbs` 中是否存在一个匹配的 schema。
+  + 如果存在，则进入 table 过滤判断。
+  + 如果不存在，则过滤 `test.t`。
+  + 如果 `do-dbs` 为空并且 `ignore-dbs` 不为空，则判断 `ignore-dbs` 中是否存在一个匹配的 schema。
+    + 如果存在，则过滤 `test.t`。
+    + 如果不存在，则进入 table 过滤判断。
+  + 如果 `do-dbs` 和 `ignore-dbs` 都为空，则进入 table 过滤判断。
 
 2. 进行 table 过滤判断。
     + 如果 `do-tables` 不为空，则判断 `do-tables` 中是否存在一个匹配的 table。
-        - 如果存在，则同步 `test.t`。
-        - 如果不存在，则过滤 `test.t`。
+        + 如果存在，则同步 `test.t`。
+        + 如果不存在，则过滤 `test.t`。
     + 如果 `ignore-tables` 不为空，则判断 `ignore-tables` 中是否存在一个匹配的 table。
-        - 如果存在，则过滤 `test.t`。
-        - 如果不存在，则同步 `test.t`。
+        + 如果存在，则过滤 `test.t`。
+        + 如果不存在，则同步 `test.t`。
     + 如果 `do-tables` 和 `ignore-tables` 都为空，则同步 `test.t`。
 
 使用 [Filter](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/filter/filter.go#L97) 对黑白名单进行管理，Filter 提供了 [`ApplyOn`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/filter/filter.go#L164) 方法来判断一组 table 中哪些表可以同步。
@@ -133,7 +133,6 @@ filter-partition-rule:
 ```
 
 代码中通过 [`BinlogEvent`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/binlog-filter/filter.go#L120) 结构对 binlog event 过滤规则做统一的管理，`BinlogEvent` 提供了如下的方法：
-
 
 | 方法 | 说明 |
 |:--------------|:--------|

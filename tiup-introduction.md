@@ -34,6 +34,7 @@ $ bin/pd-server --name=pd-2
 --data-dir=data/Rt1J27k/pd-2/data
 --peer-urls=http://127.0.0.1:2383 --advertise-peer-urls=http://127.0.0.1:2383 --client-urls=http://127.0.0.1:2384 --advertise-client-urls=http://127.0.0.1:2384 --log-file=data/Rt1J27k/pd-2/pd.log --initial-cluster=pd-0=http://127.0.0.1:2380,pd-1=http://127.0.0.1:2381,pd-2=http://127.0.0.1:2383
 ```
+
 >注：以 $ 开头的表示在命令行执行的命令
 
 以上仅仅是启动 PD 就可以发现这种方式显然太复杂、使用门槛太高。尽管我们可以通过把这些东西脚本化，在脚本构建好这些内容，每次执行对应脚本来简化这个过程，但是对于第一次构建脚本的用户来说，也是不小的挑战。
@@ -45,13 +46,13 @@ $ bin/pd-server --name=pd-2
 第二代方案 [TiDB Ansible](https://github.com/pingcap/tidb-ansible) 基于 [Ansible](https://www.ansible.com/) playbook 功能编写的集群部署工具，简化之后，只需要用户提供拓扑文件，即可提供集群部署和运维功能（启动、关闭、升级、重启、扩容、缩容）。但是 TiDB Ansible 的使用依然非常繁琐，提供的错误消息也不友好，同时只能串行处理，对于大集群的运维和管理尤其不方便。
 
 ```
-$ vim hosts.ini                                                
-$ ansible-playbook -i hosts.ini create_users.yml -u root -k   
-$ vim inventory.ini                                        
-$ ansible-playbook local_prepare.yml 
-$ ansible-playbook bootstrap.yml
-$ ansible-playbook deploy.yml
-$ ansible-playbook start.yml
+vim hosts.ini                                                
+ansible-playbook -i hosts.ini create_users.yml -u root -k   
+vim inventory.ini                                        
+ansible-playbook local_prepare.yml 
+ansible-playbook bootstrap.yml
+ansible-playbook deploy.yml
+ansible-playbook start.yml
 ```
 
 以上是部署启动一个集群，扩缩容操作更加繁琐。并且由于 Ansible 自身命令执行的特点，整个部署过程的时间较长。
@@ -63,16 +64,16 @@ TiUP 在 TiDB Ansible 的基础上进一步对整个集群的部署和运维操�
 利用 TiUP 部署集群通过简单的命令即可完成，且执行速度较 TiDB Ansible 大幅提高：
 
 ```
-$ tiup cluster deploy <cluster-name> <version> <topology.yaml> [flags]   # 部署集群
-$ tiup cluster start prod-cluster                                        # 启动集群
+tiup cluster deploy <cluster-name> <version> <topology.yaml> [flags]   # 部署集群
+tiup cluster start prod-cluster                                        # 启动集群
 ```
 
 其他常用的运维操作也同样可以通过一个命令完成：
 
 ```
-$ tiup cluster scale-in prod-cluster -N 172.16.5.140:20160               # 缩容节点
-$ tiup cluster scale-out tidb-test scale.yaml                            # 扩容节点
-$ tiup cluster upgrade tidb-test v4.0.0-rc                               # 升级集群
+tiup cluster scale-in prod-cluster -N 172.16.5.140:20160               # 缩容节点
+tiup cluster scale-out tidb-test scale.yaml                            # 扩容节点
+tiup cluster upgrade tidb-test v4.0.0-rc                               # 升级集群
 ```
 
 ## 深入 TiUP
@@ -80,7 +81,7 @@ $ tiup cluster upgrade tidb-test v4.0.0-rc                               # 升�
 首先使用下面这行脚本安装 TiUP：
 
 ```
-$ curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
+curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
 ```
 
 **你会发现，使用 tiup help 命令时，我们并没有 tiup cluster 这个子命令，这是怎么回事儿呢？这就要从 TiUP 的设计理念聊起。**
@@ -101,7 +102,7 @@ TiUP 本身只包含很少几个命令，几乎不用专门学习、记忆，完
 |`tiup uninstall <component>`  | 卸载一个组件|
 |  `tiup update` | 更新组件 |
 | `tiup list` | 显示组件列表 |
-| `tiup status` | 运行的组件状态 | 
+| `tiup status` | 运行的组件状态 |
 | `tiup clean` | 清理组件运行数据 |
 
 ### 可扩展
@@ -111,20 +112,20 @@ TiUP 最核心之处就是高度可扩展、可定制，除了自带的几个命
 1\. TiUP-Playground 组件，可以一条命令直接运行一个本地 TiDB 集群：
 
 ```
-$ tiup playground                  # 运行最新稳定版 TiDB 集群
-$ tiup playground v3.0.15          # 运行版本为 v3.0.15 TiDB 集群
-$ tiup playground --kv 3           # 启动三个 TiKV 节点
-$ tiup playground --monitor        # 启动 Prometheus 监控
-$ ...
+tiup playground                  # 运行最新稳定版 TiDB 集群
+tiup playground v3.0.15          # 运行版本为 v3.0.15 TiDB 集群
+tiup playground --kv 3           # 启动三个 TiKV 节点
+tiup playground --monitor        # 启动 Prometheus 监控
+...
 
 ```
 
 2\. TiUP-Bench 组件，可以快速进行基准测试：
 
 ```
-$ tiup bench tpcc                         # 进行 TPC-C 性能基准测试
-$ tiup bench tpch prepare
-$ tiup bench tpch run                     # 进行 TPC-H 性能基准测试
+tiup bench tpcc                         # 进行 TPC-C 性能基准测试
+tiup bench tpch prepare
+tiup bench tpch run                     # 进行 TPC-H 性能基准测试
 ```
 
 ### 开放
@@ -163,33 +164,33 @@ Global Flags:
 
 以下是对软件分发过程一个简要的描述（如何在各个环节防范不同类型的攻击，可以参考 TUF 规范和 TiUP 设计文档）：
 
-1.  元信息分级：
+1. 元信息分级：
 
-	a. root 保存对元信息签名的公钥信息；
-	
-	b. index 保存各个组件信息和组件 Owner 的公钥信息；
-	
-	c. component 保存组件的版本信息；
+ a. root 保存对元信息签名的公钥信息；
 
-	d. snapshot 保存其他元信息的最新版本号和 Hash 值；
+ b. index 保存各个组件信息和组件 Owner 的公钥信息；
 
-	e. timestamp 保存最新 snapshot 的版本号和 Hash 值。
+ c. component 保存组件的版本信息；
 
-2.  所有的元信息和组件包在 CDN 是不可变的，不同版本的元信息使用 `${version}.${name}.json` 的文件名保存。
+ d. snapshot 保存其他元信息的最新版本号和 Hash 值；
 
-3.  所有组件包的的 Hash 值保存在组件的元信息文件中 `（sha256/sha512）`。
+ e. timestamp 保存最新 snapshot 的版本号和 Hash 值。
 
-4.  所有的元信息文件都包含该被签名内容和签名信息。
+2. 所有的元信息和组件包在 CDN 是不可变的，不同版本的元信息使用 `${version}.${name}.json` 的文件名保存。
 
-5.  根证书使用 5 个密钥签名，5 个密钥分别由 5 位不同的 TiDB 开发者离线保存。
+3. 所有组件包的的 Hash 值保存在组件的元信息文件中 `（sha256/sha512）`。
 
-6.  初始分发的 TiUP 中包含一份由 5 位 TiDB 开发者签名的 `root.json`，后续信息校验会保证 root.json 中至少有三个签名是正确的。
+4. 所有的元信息文件都包含该被签名内容和签名信息。
 
-7.  `index/snashot/timestamp` 的不可篡改性由 `root.json` 中的对应的密钥信息保证。
+5. 根证书使用 5 个密钥签名，5 个密钥分别由 5 位不同的 TiDB 开发者离线保存。
 
-8.  component 的不可篡改性由 `index.json` 中对应的 Owner 密钥保证（社区通过 tiup mirror publish 发布的组件，只有作者拥有私钥）。
+6. 初始分发的 TiUP 中包含一份由 5 位 TiDB 开发者签名的 `root.json`，后续信息校验会保证 root.json 中至少有三个签名是正确的。
 
-9.  各个组件包的不可篡改性由元信息中的 sha256/sha512 Hash 值保证（目前的算力情况下是安全的）。
+7. `index/snashot/timestamp` 的不可篡改性由 `root.json` 中的对应的密钥信息保证。
+
+8. component 的不可篡改性由 `index.json` 中对应的 Owner 密钥保证（社区通过 tiup mirror publish 发布的组件，只有作者拥有私钥）。
+
+9. 各个组件包的不可篡改性由元信息中的 sha256/sha512 Hash 值保证（目前的算力情况下是安全的）。
 
 通过上面的机制，我们能保证用户下载的组件不会经过任何中间环节篡改，从而提供安全的组件分发机制。
 

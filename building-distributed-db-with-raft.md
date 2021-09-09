@@ -75,8 +75,8 @@ a, b 两个节点，a 是 leader, 发起一个分裂 region 1 [a, d) -> region 1
 
 在这方面，raft 做得比 paxos 好，raft 很清晰的提供了 configuration change 的流程，configuration change 流程用于应对 raft gourp 安全的动态添加节点和移除节点，有了这个算法，在数据库中 rebalance 的流程其实能很好的总结为：
 
-- 对一个 region: add replica 
-- transfer leadership 
+- 对一个 region: add replica
+- transfer leadership
 - remove local replica
 
 这三个流程都是标准的 raft 的 configuration change 的流程，TiKV 的实现和 raft 的 paper 的实现有点不一样的是：
@@ -112,5 +112,3 @@ Spanner 的论文中并没有过多的介绍 pd 的设计，但是设计一个�
 但是这里有一个问题，细心的朋友也可能注意到了，如果集群出现局部分区，可能某些 node 的信息是错误的，比如一些 region 在分区之后重新发起了选举和分裂，但是被隔离的另外一批 node 还将老的信息通过心跳传递给 pd，可能对于某个 region 两个 node 都说自己是 leader 到底该信谁的？
 
 在这里，TiKV 使用了一个 epoch 的机制，用两个逻辑时钟来标记，一个是 raft 的 config change version，另一个是 region version，每次 config change 都会自增 config version，每次 region change（比如split、merge）都会更新 region version. pd 比较的 epoch 的策略是取这两个的最大值，先比较 region version, 如果 region version 相等则比较 config version 拥有更大 version 的节点，一定拥有更新的信息。
-
-  

@@ -49,19 +49,19 @@ PD 使用了这个规则去判断范围重叠的不同 Region 的新旧。
 
 Split 触发的条件大体分两种：
 
-1.  PD 触发
+1. PD 触发
 
-2.  TiKV 每个 Region 自行定时检查触发
+2. TiKV 每个 Region 自行定时检查触发
 
 PD 触发主要是指定哪些 key 去 Split，[Split Region 使用文档](https://docs.pingcap.com/zh/tidb/dev/sql-statement-split-region) 中的功能就是利用 PD 触发实现的。
 
 每个 Region 每隔 `split-region-check-tick-interval`（默认 10s）就会触发一次 Split 检查，代码见 `PeerFsmDelegate::on_split_region_check_tick`，以下几个情况不触发检查
 
-*   有检查任务正在进行；
+* 有检查任务正在进行；
 
-*   数据增量小于阈值；
+* 数据增量小于阈值；
 
-*   当前正在生成 snapshot 中并且触发次数小于定值。如果频繁 Split，会导致生成的 snapshot 可能因为 `version` 与当前不一致被丢弃，但是也不能一直不 Split，故设置了触发上限。
+* 当前正在生成 snapshot 中并且触发次数小于定值。如果频繁 Split，会导致生成的 snapshot 可能因为 `version` 与当前不一致被丢弃，但是也不能一直不 Split，故设置了触发上限。
 
 触发检查后，会发送任务至 `split_checker_worker`，任务运行时调用 `split_checker.rs` 中函数 `Runner::check_split`。
 
@@ -71,9 +71,9 @@ PD 触发主要是指定哪些 key 去 Split，[Split Region 使用文档](https
 
 3. 获取 Split key。
 
-	a.  若 `policy` 为扫描，调用 `scan_split_keys`，扫描读出该 Region 范围大 Column Family 的所有数据，对于每一对 KV，调用每个 `split_checker` 的 `on_kv` 计算 Split key，扫描完成后遍历 `split_checker` 的 `split_keys` 返回第一个不为空的结果。由于需要扫描存储的数据，这个策略会引入额外的 I/O。
+ a.  若 `policy` 为扫描，调用 `scan_split_keys`，扫描读出该 Region 范围大 Column Family 的所有数据，对于每一对 KV，调用每个 `split_checker` 的 `on_kv` 计算 Split key，扫描完成后遍历 `split_checker` 的 `split_keys` 返回第一个不为空的结果。由于需要扫描存储的数据，这个策略会引入额外的 I/O。
 
-	b.  若为取近似，调用 `approximate_split_keys`，遍历 `split_checker` 的 `approximate_split_keys`，返回第一个不为空的结果。这是通过 RocksDB 的 property 来实现的，几乎没有额外的 I/O 被引入，因而性能上是更优的策略。
+ b.  若为取近似，调用 `approximate_split_keys`，遍历 `split_checker` 的 `approximate_split_keys`，返回第一个不为空的结果。这是通过 RocksDB 的 property 来实现的，几乎没有额外的 I/O 被引入，因而性能上是更优的策略。
 
 4. 发送 `CasualMessage::SplitRegion` 给这个 Region。
 
@@ -103,13 +103,13 @@ pub trait SplitChecker<E> {
 
 `split_check` 有以下几种：
 
-1.  检查 Region 的总或者近似 Size，代码位于 `size.rs`。
+1. 检查 Region 的总或者近似 Size，代码位于 `size.rs`。
 
-2.  检查 Region 的总或者近似 Key 数量是否超过阈值，代码位于 `key.rs`。
+2. 检查 Region 的总或者近似 Key 数量是否超过阈值，代码位于 `key.rs`。
 
-3.  根据 Key 范围二分 Split，代码位于 `half.rs`，除了上文讲的 PD 指定 key 来 Split，这种方式也是由 PD 触发的，目前只有通过 `pd-ctl` 和 `tikv-ctl` 的命令来手动触发。
+3. 根据 Key 范围二分 Split，代码位于 `half.rs`，除了上文讲的 PD 指定 key 来 Split，这种方式也是由 PD 触发的，目前只有通过 `pd-ctl` 和 `tikv-ctl` 的命令来手动触发。
 
-4.  根据  Key 所属 Table 前缀 Split，代码位于 `table.rs`，配置默认关闭。
+4. 根据  Key 所属 Table 前缀 Split，代码位于 `table.rs`，配置默认关闭。
 
 由于篇幅所限，具体的实现细节可参阅代码。
 
@@ -125,19 +125,19 @@ Split 的实现相对简单，总的来说，Split 这个操作被当做一条 P
 
 之后的流程就如 [Raft Propose 的 Commit 和 Apply 情景分析](https://pingcap.com/blog-cn/tikv-source-code-reading-18/) 所描述的那样，如上文所述，在应用前会判断 Region epoch 的合法性，如果不合法就需要跳过。假设它没有被跳过，接下来看这条 Proposal 应用的地方 `ApplyDelegate::exec_batch_split`。
 
-1.  更新原 Region 的 `version`，新 Region 的 epoch 继承原 Region 的 epoch。
+1. 更新原 Region 的 `version`，新 Region 的 epoch 继承原 Region 的 epoch。
 
-2.  `right_derive` 为 true 的，原 Region 要分裂到右侧，为 false 则反之，依次设置每个 Region 的 start key 与 end key。
+2. `right_derive` 为 true 的，原 Region 要分裂到右侧，为 false 则反之，依次设置每个 Region 的 start key 与 end key。
 
-3.  对每个 Split 出来的新 Region 调用 `write_peer_state` 与 `write_initial_apply_state` 创建元数据。
+3. 对每个 Split 出来的新 Region 调用 `write_peer_state` 与 `write_initial_apply_state` 创建元数据。
 
 在应用完成之后，ApplyFsm 会发送 `PeerMsg::ApplyRes` 给 PeerFsm, PeerFsm 处理的代码在 `PeerFsmDelegate::on_ready_split_region`
 
-1.  如果是 leader，上报 PD 自己以及新 Region 的 meta 信息（包含范围，Region epoch 等等一系列信息）。
+1. 如果是 leader，上报 PD 自己以及新 Region 的 meta 信息（包含范围，Region epoch 等等一系列信息）。
 
-2.  依次创建新 Region 的 PeerFsm 和 ApplyFsm，做一些注册的工作。
+2. 依次创建新 Region 的 PeerFsm 和 ApplyFsm，做一些注册的工作。
 
-3.  更新 PeerFsm 的 Region epoch。
+3. 更新 PeerFsm 的 Region epoch。
 
 需要注意的是，如果在应用完成落盘后宕机，这部分的工作能在重启后恢复。其实所有日志应用的设计都需要满足这个原则。
 

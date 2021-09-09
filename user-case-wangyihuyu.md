@@ -39,30 +39,28 @@ customerCategory: 游戏
 
 随着业务的发展，部门内各应用服务产生的数据量也在快速增长。业务落地数据量不断激增，导致单机 MySQL 不可避免地会出现性能瓶颈。主要体现在以下几个方面：
 
-+ 容量
-    - 单机 MySQL 实例存储空间有限，想要维持现有架构就得删除和轮转旧数据，达到释放空间的目的；
-    - 网易互娱某些场景单表容量达到 700GB 以上，订单数据需永久保存，同时也需要保持在线实时查询，按照之前的存储设计会出现明显的瓶颈。
+* 容量
+  * 单机 MySQL 实例存储空间有限，想要维持现有架构就得删除和轮转旧数据，达到释放空间的目的；
+  * 网易互娱某些场景单表容量达到 700GB 以上，订单数据需永久保存，同时也需要保持在线实时查询，按照之前的存储设计会出现明显的瓶颈。
 
-+ 性能
-    - 最大单表 15 亿行，行数过大，导致读写性能受到影响。
+* 性能
+  * 最大单表 15 亿行，行数过大，导致读写性能受到影响。
 
-+ 扩展性
-    - MySQL 无法在线灵活扩展，无法解决存储瓶颈。
+* 扩展性
+  * MySQL 无法在线灵活扩展，无法解决存储瓶颈。
 
-+ SQL 复杂
-    - 大表轮转后出现多个分表，联合查询时需要 join 多个分表，SQL 非常复杂并难以维护；
-    - 单机 MySQL 缺乏大规模数据分析的能力。
+* SQL 复杂
+  * 大表轮转后出现多个分表，联合查询时需要 join 多个分表，SQL 非常复杂并难以维护；
+  * 单机 MySQL 缺乏大规模数据分析的能力。
 
-+ 数据壁垒
-    - 不同产品的数据库独立部署；
-    - 数据不互通，导致数据相关隔离，形成数据壁垒；
-    - 当进行跨产品计算时，需要维护多个异构数据源，访问方式复杂。数据分散在不同的数据孤岛上会增加数据分析难度，不利于共性价值的挖掘。如下图：
+* 数据壁垒
+  * 不同产品的数据库独立部署；
+  * 数据不互通，导致数据相关隔离，形成数据壁垒；
+  * 当进行跨产品计算时，需要维护多个异构数据源，访问方式复杂。数据分散在不同的数据孤岛上会增加数据分析难度，不利于共性价值的挖掘。如下图：
 
     ![图 2 现状之数据孤岛](media/user-case-wangyihuyu/2.png)
 
     <div class="caption-center">图 2 现状之数据孤岛</div>
-
-
 
 ## 二、数据库选型
 
@@ -70,16 +68,16 @@ customerCategory: 游戏
 
 针对目前存储架构存在的问题，有需要使用其他存储方案的可能。考虑到目前的业务与 MySQL 高度耦合，对数据库选型的主要要求有：
 
-+ 必须兼容 MySQL 协议；
-+ 支持事务，保证任务以事务为维度来执行或遇错回滚；
-+ 支持索引，尤其是二级索引；
-+ 扩展性，支持灵活在线扩展能力，包括性能扩展和容量扩展。
+* 必须兼容 MySQL 协议；
+* 支持事务，保证任务以事务为维度来执行或遇错回滚；
+* 支持索引，尤其是二级索引；
+* 扩展性，支持灵活在线扩展能力，包括性能扩展和容量扩展。
 
 其他要求：
 
-+ 稳定性和可靠性；
-+ 备份和恢复；
-+ 容灾等。
+* 稳定性和可靠性；
+* 备份和恢复；
+* 容灾等。
 
 ### 2.2 可选方案
 
@@ -108,8 +106,8 @@ customerCategory: 游戏
 
 因此我们得出了基于 MySQL InnoDB Cluster 或 MySQL + 中间件的方案的不满足我们的业务场景的结论。总结来说，我们不使用 MySQL 分库分表、中间件或 MySQL 集群，原因主要是以下两点：
 
-+ 方案过于复杂
-+ 需要改业务代码
+* 方案过于复杂
+* 需要改业务代码
 
 **仔细分析来看，其实基于 MySQL InnoDB Cluster 或 MySQL + 中间件的方案，本质上是 MySQL 主从结构的延伸，并非真正的分布式拓展，像是以打“补丁”的方式来实现横向扩展，很多功能特性自然也难以让人满意。**
 
@@ -117,8 +115,8 @@ customerCategory: 游戏
 
 在开源的分布式 NewSQL 领域，知名的有 TiDB 和 CockroachDB（简称 CRDB），二者都是基于 Google Spanner 论文的开源实现。我们对这两种数据库的功能和性能做了大量的调研和测试。
 
-+ TiDB 天然兼容 MySQL 协议，而 CRDB 兼容 PostgreSQL ；
-+ 如果业务以 MySQL 为主，那 TiDB 可能是比较好的选择；如果是 PostgreSQL，那CRDB 可能是优先的选择。
+* TiDB 天然兼容 MySQL 协议，而 CRDB 兼容 PostgreSQL ；
+* 如果业务以 MySQL 为主，那 TiDB 可能是比较好的选择；如果是 PostgreSQL，那CRDB 可能是优先的选择。
 
 测试方面，我们也进行了全面地对比和测试。这里说其中一个测试案例：10 台机器 5 存储节点，160 并发访问单表 2 亿行，我们于 2018 年 7 月，对 CRDB-v2.1.0 版本和 TiDB-v2.0.5 版本进行了读写测试（CRDB 和 TiDB 集群均使用默认配置，未进行调优）。
 
@@ -134,40 +132,40 @@ customerCategory: 游戏
 
 **测试语句**
 
-+ 范围查询：
+* 范围查询：
 
-	```
-	SELECT c FROM sbtest%u WHERE id BETWEEN ? AND ?
-	SELECT SUM(k) FROM sbtest%u WHERE id BETWEEN ? AND ?
-	SELECT c FROM sbtest WHERE id BETWEEN ? AND ? ORDER BY c
-	SELECT DISTINCT c FROM sbtest%u WHERE id BETWEEN ? AND ? ORDER BY c
-	```
+ ```
+ SELECT c FROM sbtest%u WHERE id BETWEEN ? AND ?
+ SELECT SUM(k) FROM sbtest%u WHERE id BETWEEN ? AND ?
+ SELECT c FROM sbtest WHERE id BETWEEN ? AND ? ORDER BY c
+ SELECT DISTINCT c FROM sbtest%u WHERE id BETWEEN ? AND ? ORDER BY c
+ ```
 
-+ 随机 IN 查询：
+* 随机 IN 查询：
 
-	```
-	SELECT id, k, c, pad FROM sbtest1 WHERE k IN (?)
-	```
+ ```
+ SELECT id, k, c, pad FROM sbtest1 WHERE k IN (?)
+ ```
 
-+ 随机范围查询：
+* 随机范围查询：
 
-	```
-	SELECT count(k) FROM sbtest1 WHERE k BETWEEN ? AND ? OR k BETWEEN ? AND ?
-	```
+ ```
+ SELECT count(k) FROM sbtest1 WHERE k BETWEEN ? AND ? OR k BETWEEN ? AND ?
+ ```
 
-+ 更新索引列：
+* 更新索引列：
 
-	```
-	UPDATE sbtest%u SET k=k+1 WHERE id=?
-	```
+ ```
+ UPDATE sbtest%u SET k=k+1 WHERE id=?
+ ```
 
-+ 更新非索引列：
+* 更新非索引列：
 
-	```
-	UPDATE sbtest%u SET c=? WHERE id=?
-	```
+ ```
+ UPDATE sbtest%u SET c=? WHERE id=?
+ ```
 
-+ 读写混合：范围查询 + 更删改混合
+* 读写混合：范围查询 + 更删改混合
 
 其中一个重要的测试结果如下：
 
@@ -179,15 +177,15 @@ customerCategory: 游戏
 
 1. CRDB 和 TiDB 在性能表现上不相上下；
 
-	>注：上面是 2018 年 7 月的基于 TiDB 2.0.5 版本的测试结果，现在 [TiDB 已发布 3.0 GA 版本，在性能上有了质的提升](https://pingcap.com/docs-cn/v3.0/releases/3.0-ga/)，我们在近期进行了补充测试，大多数场景下 3.0 版本较 2.1 版本有数倍的性能提升，最新的测试结果图如下：
-	>
-	>![图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较](media/user-case-wangyihuyu/7.png)
-	>
-	><div class="caption-center">图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较</div>
-	>
-	>![图 8 TiDB 2.1.15 vs 3.0.3：TPC-C](media/user-case-wangyihuyu/8.png)
-	>
-	><div class="caption-center">图 8 TiDB 2.1.15 vs 3.0.3：TPC-C</div>
+ >注：上面是 2018 年 7 月的基于 TiDB 2.0.5 版本的测试结果，现在 [TiDB 已发布 3.0 GA 版本，在性能上有了质的提升](https://pingcap.com/docs-cn/v3.0/releases/3.0-ga/)，我们在近期进行了补充测试，大多数场景下 3.0 版本较 2.1 版本有数倍的性能提升，最新的测试结果图如下：
+ >
+ >![图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较](media/user-case-wangyihuyu/7.png)
+ >
+ ><div class="caption-center">图 7 TiDB 2.1.15 vs 3.0.3：OLTP 峰值比较</div>
+ >
+ >![图 8 TiDB 2.1.15 vs 3.0.3：TPC-C](media/user-case-wangyihuyu/8.png)
+ >
+ ><div class="caption-center">图 8 TiDB 2.1.15 vs 3.0.3：TPC-C</div>
 
 2. CRDB 兼容 PostgreSQL，如果需要迁移则需要转协议，需 MySQL → PostgreSQL  → CRDB。迁移过程复杂，成本高；
 
@@ -222,8 +220,8 @@ customerCategory: 游戏
 
 <div class="caption-center">图 10 基于 TiDB 的架构设计</div>
 
-+ 整个集群分为 TiDB、TiKV 和 PD 3 个模块分层部署；
-+ 使用 Nginx 作为前端负载均衡。
+* 整个集群分为 TiDB、TiKV 和 PD 3 个模块分层部署；
+* 使用 Nginx 作为前端负载均衡。
 
 ### 3.2 TiDB 解决了哪些需求
 
@@ -238,35 +236,35 @@ customerCategory: 游戏
 
 ### 3.3 TiDB 使用现状
 
-+ 业务
-    - TiDB 作为线上 MySQL 数据镜像，负责线上数据的收集和集中管理，形成数据湖泊；
-    - 应用于数据平台服务，包括报表、监控、运营、用户画像、大数据计算等场景；
-    - HTAP：OLTP + OLAP。
+* 业务
+  * TiDB 作为线上 MySQL 数据镜像，负责线上数据的收集和集中管理，形成数据湖泊；
+  * 应用于数据平台服务，包括报表、监控、运营、用户画像、大数据计算等场景；
+  * HTAP：OLTP + OLAP。
 
-+ 集群
-    - 测试集群：v2.1.15，用于功能测试、特性尝鲜；
-    - 线上集群：v2.1.15，80% 离线大数据计算任务 + 20% 线上业务。
+* 集群
+  * 测试集群：v2.1.15，用于功能测试、特性尝鲜；
+  * 线上集群：v2.1.15，80% 离线大数据计算任务 + 20% 线上业务。
 
-+ 规模
-    - 41 台服务器，88 个实例节点，38 个 Syncer 实时同步流（将升级为 DM）；
-    - 存储：20TB/总 50TB，230 万个 Region；
-    - QPS 均值 4k/s，高峰期万级 QPS，读写比约 1:5；
-    - 延迟时间：80% 在 8ms 以内，95% 在 125ms 以下，99.9% 在 500ms 以下。
+* 规模
+  * 41 台服务器，88 个实例节点，38 个 Syncer 实时同步流（将升级为 DM）；
+  * 存储：20TB/总 50TB，230 万个 Region；
+  * QPS 均值 4k/s，高峰期万级 QPS，读写比约 1:5；
+  * 延迟时间：80% 在 8ms 以内，95% 在 125ms 以下，99.9% 在 500ms 以下。
 
 ## 四、最佳实践分享
 
 ### 4.1 集群管理
 
-+  Ansible（推荐）
-    - 一键部署；
-    - 弹性伸缩，可在线灵活扩缩容；
-    - 升级，单节点轮转平滑升级；
-    - 集群启停和下线；
-    - Prometheus 监控。
+* Ansible（推荐）
+  * 一键部署；
+  * 弹性伸缩，可在线灵活扩缩容；
+  * 升级，单节点轮转平滑升级；
+  * 集群启停和下线；
+  * Prometheus 监控。
 
-+ Docker
-+ K8s
-    - 使用 [TiDB Operator](https://github.com/pingcap/tidb-operator) 可以在私有云和公有云上一键管理。
+* Docker
+* K8s
+  * 使用 [TiDB Operator](https://github.com/pingcap/tidb-operator) 可以在私有云和公有云上一键管理。
 
 ### 4.2 运维实践
 
@@ -274,9 +272,9 @@ customerCategory: 游戏
 
 官方集成了 Prometheus + Grafana 的实时监控平台，从集群的各个方面进行了完善的监控，包括：
 
-+ 服务器基础资源的监控：内存、CPU、存储空间、IO 等；
-+ 集群组件的监控：TiDB、PD、TiKV 等；
-+ 数据监控：实时同步流、上下游数据一致性检验等。
+* 服务器基础资源的监控：内存、CPU、存储空间、IO 等；
+* 集群组件的监控：TiDB、PD、TiKV 等；
+* 数据监控：实时同步流、上下游数据一致性检验等。
 
 PD 监控示意图如下，集群管理员可以很方便地掌握集群的最新状态，包括集群的空间 Region 等所有情况。
 
@@ -292,11 +290,11 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 
 应用访问 TiDB 写入数据时发现特别慢，读请求正常。排查后，根据 TiKV 面板发现 Raft Store CPU 这项指标异常。深入了解原因是因为数据库副本复制是单线程操作，目前已经到了集群的瓶颈。解决办法有以下两点：
 
-+ Region 数量过多，Raft Store 还要处理 heartbeat message。
+* Region 数量过多，Raft Store 还要处理 heartbeat message。
 
   解决方法：删除过期数据。
 
-+ Raft Store 单线程处理速度跟不上集群写入速度。
+* Raft Store 单线程处理速度跟不上集群写入速度。
 
   解决方法：从 2.1.5 升级到 2.1.15，开启自动 Region Merge 功能。
 
@@ -331,14 +329,14 @@ PD 监控示意图如下，集群管理员可以很方便地掌握集群的最�
 
 MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
-+ 全量
-    - 使用工具 （Mydumper 或 MySQL Dump 等）从 MySQL 导出数据，并且记录当前数据的 binlog 位置；
-    - 使用工具（Loader 或 Lightning 等）将数据导入到 TiDB 集群；
-    - 可以用作数据的备份和恢复操作。
+* 全量
+  * 使用工具 （Mydumper 或 MySQL Dump 等）从 MySQL 导出数据，并且记录当前数据的 binlog 位置；
+  * 使用工具（Loader 或 Lightning 等）将数据导入到 TiDB 集群；
+  * 可以用作数据的备份和恢复操作。
 
-+ 增量
-    - TiDB 伪装成为上游 MySQL 的一个 Slave，通过工具（Syncer 或 DM）实时同步 binlog 到 TiDB 集群；
-    - 通常情况上游一旦有数据更新，下游就会实时同步过来。同步速度受网络和数据量大小的影响。
+* 增量
+  * TiDB 伪装成为上游 MySQL 的一个 Slave，通过工具（Syncer 或 DM）实时同步 binlog 到 TiDB 集群；
+  * 通常情况上游一旦有数据更新，下游就会实时同步过来。同步速度受网络和数据量大小的影响。
 
 #### 4.4.2 数据迁出 TiDB
 
@@ -348,13 +346,13 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 如果数据需要反向导入或同步，可以利用 [TiDB Binlog](https://pingcap.com/blog-cn/tidb-ecosystem-tools-1/) 工具将 TiDB 集群的 binlog 同步到 MySQL。TiDB Binlog 支持以下功能场景：
 
-+ **数据同步**：同步 TiDB 集群数据到其他数据库；
-+ **实时备份和恢复**：备份 TiDB 集群数据，同时可以用于 TiDB 集群故障时恢复。
+* **数据同步**：同步 TiDB 集群数据到其他数据库；
+* **实时备份和恢复**：备份 TiDB 集群数据，同时可以用于 TiDB 集群故障时恢复。
 
 导入的方式：
 
-+ 全量：TiDB 兼容 MySQL 协议，在 MySQL 容量足够大的情况下，也可用工具将数据从 TiDB 导出后再导入 MySQL。
-+ 增量：打开 TiDB 的 binlog 开关，部署 binlog 收集组件（Pump+Drainer），可以将 binlog 数据同步到下游存储架构（MySQL、TiDB、Kafka、S3 等）。
+* 全量：TiDB 兼容 MySQL 协议，在 MySQL 容量足够大的情况下，也可用工具将数据从 TiDB 导出后再导入 MySQL。
+* 增量：打开 TiDB 的 binlog 开关，部署 binlog 收集组件（Pump+Drainer），可以将 binlog 数据同步到下游存储架构（MySQL、TiDB、Kafka、S3 等）。
 
 ### 4.5 优雅地「去分库分表」
 
@@ -364,21 +362,21 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 举例：一个超级大表按天分表，现在打算查询某个账号一年间的信息。
 
-+ 上游 MySQL
+* 上游 MySQL
 
-	```
-	SELECT xx FROM HFeeall join HFee20190101 join ... join ...join ... join HFee20190917 WHERE xx;
-	```
+ ```
+ SELECT xx FROM HFeeall join HFee20190101 join ... join ...join ... join HFee20190917 WHERE xx;
+ ```
 
-	需要连接 N 个 join 条件，查询需要等待较长时间。
+ 需要连接 N 个 join 条件，查询需要等待较长时间。
 
-+ 下游 TiDB
+* 下游 TiDB
 
-	```
-	SELECT xx  FROM SuperHfeeall WHERE xx ;
-	```
+ ```
+ SELECT xx  FROM SuperHfeeall WHERE xx ;
+ ```
 
-	应用此方案，最大单表 700+GB，13+ 亿行，索引查询秒返回。
+ 应用此方案，最大单表 700+GB，13+ 亿行，索引查询秒返回。
 
 ### 4.6  业务迁移
 
@@ -386,9 +384,9 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 **迁移原则**：
 
-+ 数据完整和准确：数据很重要，保证数据不错、不丢；
-+ 迁移平滑和迅速：服务敏感度高，停服时间要短；
-+ 可回滚：遇到问题可随时切回到 MySQL。
+* 数据完整和准确：数据很重要，保证数据不错、不丢；
+* 迁移平滑和迅速：服务敏感度高，停服时间要短；
+* 可回滚：遇到问题可随时切回到 MySQL。
 
 **1）数据同步**
 
@@ -432,10 +430,10 @@ MySQL 数据库迁移到 TiDB 分为两个部分：全量和增量。
 
 TiDB 兼容 MySQL 协议，支持 TP/AP 事务且扩展性好，能很好地解决网易互娱计费组业务大容量、高可用等问题。目前我们的业务在不断深入和扩大规模使用 TiDB，因为看好它，所以这里提出一些使用中的问题以帮助原厂持续打磨产品：
 
-+ 集群数据备份：希望提供集群更高效地备份和恢复 SST 文件的方式；
-+ 事务限制：希望可以放宽大事务的限制，现在仍需要人工切分大事务，比较复杂；
-+ 同步：希望 DM 支持上下游表结构不一致的同步；
-+ 数据热点问题：建议加强自动检测和清除热点功能；
-+ 客户端重试：目前客户端代码需要封装重试逻辑，对用户不友好，希望可以改进。
+* 集群数据备份：希望提供集群更高效地备份和恢复 SST 文件的方式；
+* 事务限制：希望可以放宽大事务的限制，现在仍需要人工切分大事务，比较复杂；
+* 同步：希望 DM 支持上下游表结构不一致的同步；
+* 数据热点问题：建议加强自动检测和清除热点功能；
+* 客户端重试：目前客户端代码需要封装重试逻辑，对用户不友好，希望可以改进。
 
 最后，根据网易互娱计费组已有的使用情况，我们计划继续加大、加深 TiDB 的使用场景，丰富业务类型和使用规模，期待 TiDB 给我们的业务带来更多便利。

@@ -14,7 +14,6 @@ customerCategory: 电商
 
 >作者：陈维，转转优品技术部 RD。
 
-
 ## 开篇
 
 世界级的开源分布式数据库 TiDB 自 2016 年 12 月正式发布第一个版本以来，业内诸多公司逐步引入使用，并取得广泛认可。
@@ -69,7 +68,6 @@ customerCategory: 电商
 
 在业务层，可以借助分布式锁，实现串行化处理，如下：
 
-
 ![](media/user-case-zhuanzhuan-2/3.png)
 
 #### 基于 Spring 和分布式锁的事务管理器拓展
@@ -92,7 +90,6 @@ customerCategory: 电商
 
 ![](media/user-case-zhuanzhuan-2/6.png)
 
-
 ## TiDB 查询和 MySQL 的差异
 
 在 TiDB 使用过程中，偶尔会有这样的情况，某几个字段建立了索引，但是查询过程还是很慢，甚至不经过索引检索。
@@ -103,14 +100,14 @@ customerCategory: 电商
 
 ```
 CREATE TABLE `t_test` (
-	  `id` bigint(20) NOT NULL DEFAULT '0' COMMENT '主键id',
-	  `a` int(11) NOT NULL DEFAULT '0' COMMENT 'a',
-	  `b` int(11) NOT NULL DEFAULT '0' COMMENT 'b',
-	  `c` int(11) NOT NULL DEFAULT '0' COMMENT 'c',
-	  PRIMARY KEY (`id`),
-	  KEY `idx_a_b` (`a`,`b`),
-	  KEY `idx_c` (`c`)
-	) ENGINE=InnoDB;
+   `id` bigint(20) NOT NULL DEFAULT '0' COMMENT '主键id',
+   `a` int(11) NOT NULL DEFAULT '0' COMMENT 'a',
+   `b` int(11) NOT NULL DEFAULT '0' COMMENT 'b',
+   `c` int(11) NOT NULL DEFAULT '0' COMMENT 'c',
+   PRIMARY KEY (`id`),
+   KEY `idx_a_b` (`a`,`b`),
+   KEY `idx_c` (`c`)
+ ) ENGINE=InnoDB;
 ```
 
 **查询**：如果需要查询 (a=1 且 b=1）或 c=2 的数据，在 MySQL 中，sql 可以写为：`SELECT id from t_test where (a=1 and b=1) or (c=2);`，MySQL 做查询优化时，会检索到 `idx_a_b` 和 `idx_c` 两个索引；但是在 TiDB（v2.0.8-9）中，这个 sql 会成为一个慢 SQL，需要改写为：
@@ -127,17 +124,16 @@ SELECT id from t_test where (a=1 and b=1) UNION SELECT id from t_test where (c=2
 
 ```
 CREATE TABLE `t_job_record` (
-	  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-	  `job_code` varchar(255) NOT NULL DEFAULT '' COMMENT '任务code',
-	  `record_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '记录id',
-	  `status` tinyint(3) NOT NULL DEFAULT '0' COMMENT '执行状态:0 待处理',
-	  `execute_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '执行时间（毫秒）',
-	  PRIMARY KEY (`id`),
-	  KEY `idx_status_execute_time` (`status`,`execute_time`),
-	  KEY `idx_record_id` (`record_id`)
-	) ENGINE=InnoDB COMMENT='异步任务job'
+   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+   `job_code` varchar(255) NOT NULL DEFAULT '' COMMENT '任务code',
+   `record_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '记录id',
+   `status` tinyint(3) NOT NULL DEFAULT '0' COMMENT '执行状态:0 待处理',
+   `execute_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '执行时间（毫秒）',
+   PRIMARY KEY (`id`),
+   KEY `idx_status_execute_time` (`status`,`execute_time`),
+   KEY `idx_record_id` (`record_id`)
+ ) ENGINE=InnoDB COMMENT='异步任务job'
 ```
-
 
 **数据说明**：
 
@@ -194,4 +190,3 @@ mysql-jdbc 源码中，实现了标准的 `Statement` 和 `PreparedStatement` �
 ![](media/user-case-zhuanzhuan-2/9.png)
 
 经业务中实践，使用批处理方式的写入（或更新），比常规 `insert … values(…),(…)`（或 `update … case … when… then… end`）性能更稳定，耗时也更低。
-

@@ -1,5 +1,5 @@
 ---
-title: 拥抱 Elasticsearch：给 TiDB 插上全文检索的翅膀 
+title: 拥抱 Elasticsearch：给 TiDB 插上全文检索的翅膀
 author: ['孙晓光']
 date: 2019-12-10
 summary: 我们尝试为 TiDB 引入“全文检索”功能，为存储在 TiDB 中的文本数据提供随时随地搜索的能力。
@@ -31,7 +31,6 @@ tags: ['TiDB','Elasticsearch','全文检索']
 考虑到工作量，对于全文索引的数据同步方案我们没有采用 TiKV [Raft Learner](https://github.com/tikv/tikv/issues/2475) 机制，也没有使用 [TiDB Binlog](https://github.com/pingcap/tidb-binlog) 的方式进行同步，而是采用了最保守的双写机制直接在 TiDB 的写入流程中增加了全文索引更新的流程。
 
 ![4-架构图](media/fulltext-search-with-tidb-and-elasticsearch/4-架构图.png)
-
 
 架构如上图所示，TiDB 作为 ES 和 TiKV 之间的桥梁，所有同 ES 的交互操作都嵌入在 TiDB 内部直接完成。
 

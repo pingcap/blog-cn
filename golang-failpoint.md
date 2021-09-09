@@ -25,52 +25,52 @@ etcd 团队在 2016 年开发了 [gofail](https://github.com/etcd-io/gofail/) �
 
 * 使用注释在程序中注入一个 failpoint：
 
-	```go
-	// gofail: var FailIfImportedChunk int
-	// if merger, ok := scp.merger.(*ChunkCheckpointMerger); ok && merger.Checksum.SumKVS() >= uint64(FailIfImportedChunk) {
-	// rc.checkpointsWg.Done()
-	// rc.checkpointsWg.Wait()
-	// panic("forcing failure due to FailIfImportedChunk")
-	// }
-	// goto RETURN1
-	
-	// gofail: RETURN1:
-	
-	// gofail: var FailIfStatusBecomes int
-	// if merger, ok := scp.merger.(*StatusCheckpointMerger); ok && merger.EngineID >= 0 && int(merger.Status) == FailIfStatusBecomes {
-	// rc.checkpointsWg.Done()
-	// rc.checkpointsWg.Wait()
-	// panic("forcing failure due to FailIfStatusBecomes")
-	// }
-	// goto RETURN2
-	
-	// gofail: RETURN2:
-	```
+ ```go
+ // gofail: var FailIfImportedChunk int
+ // if merger, ok := scp.merger.(*ChunkCheckpointMerger); ok && merger.Checksum.SumKVS() >= uint64(FailIfImportedChunk) {
+ // rc.checkpointsWg.Done()
+ // rc.checkpointsWg.Wait()
+ // panic("forcing failure due to FailIfImportedChunk")
+ // }
+ // goto RETURN1
+
+ // gofail: RETURN1:
+
+ // gofail: var FailIfStatusBecomes int
+ // if merger, ok := scp.merger.(*StatusCheckpointMerger); ok && merger.EngineID >= 0 && int(merger.Status) == FailIfStatusBecomes {
+ // rc.checkpointsWg.Done()
+ // rc.checkpointsWg.Wait()
+ // panic("forcing failure due to FailIfStatusBecomes")
+ // }
+ // goto RETURN2
+
+ // gofail: RETURN2:
+ ```
 
 * 使用 `gofail enable` 命令将注释转换为代码：
 
-	```go
-	if vFailIfImportedChunk, __fpErr := __fp_FailIfImportedChunk.Acquire(); __fpErr == nil { defer __fp_FailIfImportedChunk.Release(); FailIfImportedChunk, __fpTypeOK := vFailIfImportedChunk.(int); if !__fpTypeOK { goto __badTypeFailIfImportedChunk} 
-	    if merger, ok := scp.merger.(*ChunkCheckpointMerger); ok && merger.Checksum.SumKVS() >= uint64(FailIfImportedChunk) {
-	        rc.checkpointsWg.Done()
-	        rc.checkpointsWg.Wait()
-	        panic("forcing failure due to FailIfImportedChunk")
-	    }
-	    goto RETURN1; __badTypeFailIfImportedChunk: __fp_FailIfImportedChunk.BadType(vFailIfImportedChunk, "int"); };
-	
-	/* gofail-label */ RETURN1:
-	
-	if vFailIfStatusBecomes, __fpErr := __fp_FailIfStatusBecomes.Acquire(); __fpErr == nil { defer __fp_FailIfStatusBecomes.Release(); FailIfStatusBecomes, __fpTypeOK := vFailIfStatusBecomes.(int); if !__fpTypeOK { goto __badTypeFailIfStatusBecomes} 
-	    if merger, ok := scp.merger.(*StatusCheckpointMerger); ok && merger.EngineID >= 0 && int(merger.Status) == FailIfStatusBecomes {
-	        rc.checkpointsWg.Done()
-	        rc.checkpointsWg.Wait()
-	        panic("forcing failure due to FailIfStatusBecomes")
-	    }
-	    goto RETURN2; __badTypeFailIfStatusBecomes: __fp_FailIfStatusBecomes.BadType(vFailIfStatusBecomes, "int"); };
-	
-	/* gofail-label */ RETURN2:
-	```
- 
+ ```go
+ if vFailIfImportedChunk, __fpErr := __fp_FailIfImportedChunk.Acquire(); __fpErr == nil { defer __fp_FailIfImportedChunk.Release(); FailIfImportedChunk, __fpTypeOK := vFailIfImportedChunk.(int); if !__fpTypeOK { goto __badTypeFailIfImportedChunk}
+     if merger, ok := scp.merger.(*ChunkCheckpointMerger); ok && merger.Checksum.SumKVS() >= uint64(FailIfImportedChunk) {
+         rc.checkpointsWg.Done()
+         rc.checkpointsWg.Wait()
+         panic("forcing failure due to FailIfImportedChunk")
+     }
+     goto RETURN1; __badTypeFailIfImportedChunk: __fp_FailIfImportedChunk.BadType(vFailIfImportedChunk, "int"); };
+
+ /* gofail-label */ RETURN1:
+
+ if vFailIfStatusBecomes, __fpErr := __fp_FailIfStatusBecomes.Acquire(); __fpErr == nil { defer __fp_FailIfStatusBecomes.Release(); FailIfStatusBecomes, __fpTypeOK := vFailIfStatusBecomes.(int); if !__fpTypeOK { goto __badTypeFailIfStatusBecomes}
+     if merger, ok := scp.merger.(*StatusCheckpointMerger); ok && merger.EngineID >= 0 && int(merger.Status) == FailIfStatusBecomes {
+         rc.checkpointsWg.Done()
+         rc.checkpointsWg.Wait()
+         panic("forcing failure due to FailIfStatusBecomes")
+     }
+     goto RETURN2; __badTypeFailIfStatusBecomes: __fp_FailIfStatusBecomes.BadType(vFailIfStatusBecomes, "int"); };
+
+ /* gofail-label */ RETURN2:
+ ```
+
 ### gofail 使用中遇到的问题
 
 * 使用注释的方式在代码中注入 failpoint，代码容易出错，并且没有编译器检测。
@@ -102,9 +102,9 @@ fail_point!("transport_on_send_store", |sid| if let Some(sid) = sid {
 
 * 使用 Golang 代码定义 failpoint，而不是注释或其他形式。
 * Failpoint 代码不应该有任何额外开销：
-    * 不能影响正常功能逻辑，不能对功能代码有任何侵入。
-    * 注入 failpoint 代码之后不能导致性能回退。
-    * Failpoint 代码最终不能出现在最终发行的二进制文件中。
+  * 不能影响正常功能逻辑，不能对功能代码有任何侵入。
+  * 注入 failpoint 代码之后不能导致性能回退。
+  * Failpoint 代码最终不能出现在最终发行的二进制文件中。
 * Failpoint 代码必须是易读、易写并且能引入编译器检测。
 * 最终生成的代码必须具有可读性。
 * 生成代码中，功能逻辑代码的行号不能发生变化（便于调试）。
@@ -140,9 +140,9 @@ func saveTo(path string) error {
 AST 重写阶段标记需要被重写的部分，主要有以下功能：
 
 * 提示 Rewriter 重写为一个相等的 IF 语句。
-    * 标记函数的参数是重写过程中需要用到的参数。
-    * 标记函数是一个空函数，编译过程会被 inline，进一步被消除。
-    * 标记函数中注入的 failpoint 是一个闭包，如果闭包访问外部作用域变量，闭包语法允许捕获外部作用域变量，则不会出现编译错误，同时转换后的的代码是一个 IF 语句，IF 语句访问外部作用域变量不会产生任何问题，所以闭包捕获只是为了语法合法，最终不会有任何额外开销。
+  * 标记函数的参数是重写过程中需要用到的参数。
+  * 标记函数是一个空函数，编译过程会被 inline，进一步被消除。
+  * 标记函数中注入的 failpoint 是一个闭包，如果闭包访问外部作用域变量，闭包语法允许捕获外部作用域变量，则不会出现编译错误，同时转换后的的代码是一个 IF 语句，IF 语句访问外部作用域变量不会产生任何问题，所以闭包捕获只是为了语法合法，最终不会有任何额外开销。
 * 简单、易读、易写。
 * 引入编译器检测，如果 Marker 函数的参数不正确，程序不能通过编译的，进而保证转换后的代码正确性。
 
@@ -250,7 +250,7 @@ func (s *dmlSuite) TestCRUDParallel() {
         "fetch-tso-timeout": {},
     }
     dctx := failpoint.WithHook(context.Backgroud(), func(ctx context.Context, fpname string) bool {
-        _, found := deleteFailpoints[fpname] // Only disables failpoints. 
+        _, found := deleteFailpoints[fpname] // Only disables failpoints.
         return !found
     })
     // other DML parallel test cases.
@@ -325,16 +325,17 @@ outer:
 
 * Golang 中如果某个变量或则标签未使用，是不能通过编译的。
 
-	```go
-	label1: // compiler error: unused label1
-	    failpoint.Inject("failpoint-name", func(val failpoint.Value) {
-	        if val.(int) == 1000 {
-	            goto label1 // illegal to use goto here
-	        }
-	        fmt.Println("unit-test", val)
-	    })
-	
-	```
+ ```go
+ label1: // compiler error: unused label1
+     failpoint.Inject("failpoint-name", func(val failpoint.Value) {
+         if val.(int) == 1000 {
+             goto label1 // illegal to use goto here
+         }
+         fmt.Println("unit-test", val)
+     })
+
+ ```
+
 * `break` 和 `continue` 只能在循环上下文中使用，在闭包中使用。
 
 ### 一些复杂的注入示例
@@ -504,8 +505,8 @@ default:
 package ddl // ddl’s parent package is `github.com/pingcap/tidb`
 
 func demo() {
-	// _curpkg_("the-original-failpoint-name") will be expanded as `github.com/pingcap/tidb/ddl/the-original-failpoint-name`
-	if ok, val := failpoint.Eval(_curpkg_("the-original-failpoint-name")); ok {...}
+ // _curpkg_("the-original-failpoint-name") will be expanded as `github.com/pingcap/tidb/ddl/the-original-failpoint-name`
+ if ok, val := failpoint.Eval(_curpkg_("the-original-failpoint-name")); ok {...}
 }
 ```
 
@@ -515,8 +516,8 @@ func demo() {
 * 使用一个自解释的名字。
 
 可以通过环境变量来激活 failpoint：
-    
-```    
+
+```
 GO_FAILPOINTS="github.com/pingcap/tidb/ddl/renameTableErr=return(100);github.com/pingcap/tidb/planner/core/illegalPushDown=return(true);github.com/pingcap/pd/server/schedulers/balanceLeaderFailed=return(true)"
 ```
 

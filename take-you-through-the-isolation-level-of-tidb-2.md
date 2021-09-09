@@ -7,6 +7,7 @@ tags: ['TiDB', '事务']
 ---
 
 ## 绪论
+
 在上篇，我们分析了 ANSI SQL-92 和「A Critique of ANSI SQL Isolation Levels」对隔离级别做出的定义，并且指出了在现今的认知中，其中的一些缺陷。本篇将继续讨论隔离级别的问题，讲述实现无关的隔离级别定义和 TiDB 的表现和隔离级别。
 
 ## Generalized Isolation Level Definitions
@@ -36,6 +37,7 @@ tags: ['TiDB', '事务']
 「Generalized Isolation Level Definitions」提出了与实现无关的隔离级别定义，并且更清晰的解释了 predicate 和 item 现象所带来的异常区别，提出了对标 ANSI SQL-92 的隔离级别。
 
 ### 依赖图
+
 Adya 首先引入了三类依赖，可以简单的概括为写读(WR)，读写(RW)和写写(WW)。含有读的依赖按照读操作的 item 和 predicate 查询类别被细分为两种类型，item 指的是在一个 key 之上产生的依赖；而 predicate 则是指改变了一个 predicate 结果集，包括改变其中某个 item 的值和改变某个 item 在 predicate 下的命中状态。
 
 两个事务间存在依赖则一定程度上代表了两个事务在现实时间中的先后关系，如果两个依赖中分别出现了 T1 先于 T2 和 T2 先于 T1 的现象，那么就证明出现了事务在现实事件中交叉出现的现象，破坏了 Serializable，这是本篇论文的核心观点。
@@ -45,7 +47,6 @@ Adya 首先引入了三类依赖，可以简单的概括为写读(WR)，读写(R
 WR 依赖指的是为 T2 读到了 T1 写入的值。
 
 例 2 是针对单个 key 的 WR 依赖，T2 读到了 T1 写入的值，称为 Directly item-read-depends。
-
 
 |Txn1|Txn2|
 |-|-|
@@ -179,7 +180,6 @@ G1a (Aborted  Reads) 指读到了中断事务的内容，例 8 是 G1a 现象的
 
 <div class="caption-center">例 8-a - G1a 现象</div>
 
-
 |Txn1|Txn2|
 |-|-|
 | `r(x, 1)` ||
@@ -218,7 +218,6 @@ G1c (Circular Information Flow) 指 WW 依赖和 WR 依赖组成的 DSG 中存�
 ![8](media/take-you-through-the-isolation-level-of-tidb-2/8.png)
 
 <div class="caption-center">图 2 - G1c 现象</div>
-
 
 如果不会出现 G0 和 G1 的三个子现象，则达到了 PL-2 的隔离级别。
 
@@ -349,6 +348,7 @@ RC 有两种理解，一种是 ANSI SQL-92 中的 Read Committed，另一种是 
 TiDB 的 RC 实现了语句级别的读一致性，并且保证每次读取都能够读到最新提交的数据，从而实现了 Read Committed 的隔离级别。
 
 ### 异常分析
+
 快照隔离级别通过多版本的方式来防止了 P0 可能会带来的异常现象，Fuzzy Read 会因为两个情况发生：
 
 - 乐观事务模型下不加读锁的当前读

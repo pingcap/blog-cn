@@ -111,7 +111,7 @@ mapping-rule-of-instance-1:
     source-column: "id"
     target-column: "id"
     arguments: ["1", "schema_", "table_"]  
-```   
+```
 
 * `mapping-rule-of-instance-1`：规则名，用户指定。由于不同的上游 MySQL 实例需要转换得到不同的值，因此通常每个 MySQL 实例使用一条专有的规则。
 
@@ -236,7 +236,7 @@ mapping-rule-of-instance-1:
 
 但 DM-worker 内协调处理 sharding group 的同步不能完全与 DM-master 处理时一致，主要原因包括：
 
-* 当收到 `table_1` 的 DDL 时，同步不能暂停，需要继续解析 binlog 才能获得后续 `table_2 `的 DDL，即需要从 t2 时刻继续向前解析直到 t3 时刻。
+* 当收到 `table_1` 的 DDL 时，同步不能暂停，需要继续解析 binlog 才能获得后续 `table_2`的 DDL，即需要从 t2 时刻继续向前解析直到 t3 时刻。
 
 * 在继续解析 t2 时刻到 t3 时刻的 binlog 的过程中，`table_1` 的 `schema V2` 的 DML 不能向下游同步；但在 sharding DDL 同步并执行成功后，这些 DML 需要同步到下游。
 
@@ -310,7 +310,7 @@ name-of-bwl-rule:
       tbl-name: "t1"
     - db-name: "test"
       tbl-name: "t2"
-```      
+```
 
 示例中只使用了该规则的部分配置项，完整的配置项及各配置项的含义，可阅读该功能对应的用户文档。DM 中该规则与 MySQL 的主从同步过滤规则类似，因此也可参考 [Evaluation of Database-Level Replication and Binary Logging Options](https://dev.mysql.com/doc/refman/5.7/en/replication-rules-db-options.html) 与 [Evaluation of Table-Level Replication Options](https://dev.mysql.com/doc/refman/5.7/en/replication-rules-table-options.html)。
 

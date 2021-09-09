@@ -33,7 +33,7 @@ tags: ['Key Visualizer','TiDB 4.0 新特性']
 如果你看懂了上面两个小例子，下面是一个小作业：这是我们模拟的一个实际用户的生产环境的照片，**这个用户的系统遇到了一些瓶颈，你能看出问题吗？**
 
 ![bottleneck](media/observability-of-distributed-system/4-bottleneck.png)
-  
+
 上面几个小例子是让大家对 KeyViz 有个感性的认识，在介绍这个东西背后的意义之前，我想先介绍一下 TiDB 这类典型的分布式数据库的系统架构，方便大家更好的理解。
 
 ![一个典型的分布式数据库的数据分布策略](media/observability-of-distributed-system/5-data-distribution-strategy.png)

@@ -384,6 +384,7 @@ max-sub-compactions: 1-2
 ![](media/user-case-360-cloud/16-qps.png)
 
 #### 9. DM Debug 相关
+
 DM 还有个注意点就是 dm-worker.toml 配置文件里的配置 log-level=“debug” 是不生效的，启动的时候默认有个 -L=info 选项，会覆盖掉配置文件里的，默认 -L 优先级高于配置文件，人工排查时自行启动。
 
 也就是说当需要对 dm-worker 开启 debug 模式，要人工拉起进程并指定 -L 选项=debug。

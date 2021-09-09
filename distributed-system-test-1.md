@@ -45,7 +45,7 @@ We should walk through all of the bugs in:
 + Quality comes from solid engineering.
 + Stop talking and go build things.
 + Don’t hire too many testers.
-	- Testing is owned by the entire team.  It is a culture, not a process.
+  + Testing is owned by the entire team.  It is a culture, not a process.
 + Are testers software engineers? Yes.
 + Hiring good people is the first step.  And then keep them challenged.
 
@@ -104,7 +104,7 @@ The entire team.
 ### Profiling
 
 + Profile everything, even on production
-	- once-in-a-lifetime chance
+  + once-in-a-lifetime chance
 + Bench testing
 
 另外，在 Profile 这个事情上面，我们强调一个，即使是在线上，也需要能做  Profile，其实  Profile 的开销是很小的。然后很有可能是这样的，有一次线上系统特别卡，如果你把那个重启了，你可能再也没有机会复现它了，那么对于这些情况它很可能是一辈子发生一次的，那一次你没有抓住它，你可能再也没有机会抓住它了。当然我们后面会介绍一些方法，可以让这个能复现，但是有一些确实是和业务相关性极强的，那么可能刚好又碰到一个特别的环境才能让它出现，那真的可能是一辈子就那么一次的，你一定要这次抓住它，这次抓不住，你可能永远就抓不住了。因为有些犯罪它一辈子只犯一次，它犯完之后你再也没有机会抓住它了。
@@ -116,4 +116,4 @@ The entire team.
 
 再说测试和设计的关系。测试是一定要融入到你的设计里面，就是在你设计的时候就一定要想这个东西到底应该怎么去测。如果在设计的时候想不到这个东西应该怎么测，那这个东西就是正确性实际上是没法验证的，这是非常恐怖的一件事情。我们把测试的重要程度看成这样的：你要么就设计好的测试，要么就挂了，就没什么其它的容你选择。就是说在这一块我们把它的重要性放到一个最高的程度。
 
-##### 未完待续...
+##### 未完待续

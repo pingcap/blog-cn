@@ -16,18 +16,18 @@ tags: ['TiDB Binlog 源码阅读','社区']
 
 ```
 type Loader interface {
-	// SetSafeMode 设置 SafeMode 状态
-	SetSafeMode(bool)
-	// GetSafeMode 获取 SafeMode 状态
-	GetSafeMode() bool
-	// Input 返回一个用于输入事务的 Channel
-	Input() chan<- *Txn
-	// Successes 事务执行成功后，将输出到 Successes
-	Successes() <-chan *Txn
-	// Close 安全关闭 Loader
-	Close()
-	// Run 运行 Loader 相关流程
-	Run() error
+ // SetSafeMode 设置 SafeMode 状态
+ SetSafeMode(bool)
+ // GetSafeMode 获取 SafeMode 状态
+ GetSafeMode() bool
+ // Input 返回一个用于输入事务的 Channel
+ Input() chan<- *Txn
+ // Successes 事务执行成功后，将输出到 Successes
+ Successes() <-chan *Txn
+ // Close 安全关闭 Loader
+ Close()
+ // Run 运行 Loader 相关流程
+ Run() error
 }
 ```
 
@@ -41,17 +41,17 @@ Loader 将处理调用者传入的 Txn Cahnnel，[Txn 的结构](https://github.
 
 ```
 func (s *loaderImpl) SetSafeMode(safe bool) {
-	if safe {
-		atomic.StoreInt32(&s.safeMode, 1)
-	} else {
-		atomic.StoreInt32(&s.safeMode, 0)
-	}
+ if safe {
+  atomic.StoreInt32(&s.safeMode, 1)
+ } else {
+  atomic.StoreInt32(&s.safeMode, 0)
+ }
 }
  
 func (s *loaderImpl) GetSafeMode() bool {
-	v := atomic.LoadInt32(&s.safeMode)
+ v := atomic.LoadInt32(&s.safeMode)
  
-	return v != 0
+ return v != 0
 }
 ```
 
@@ -59,41 +59,41 @@ func (s *loaderImpl) GetSafeMode() bool {
 
 ```
 func (e *executor) singleExec(dmls []*DML, safeMode bool) error {
-	tx, err := e.begin()
-	if err != nil {
-		return errors.Trace(err)
-	}
+ tx, err := e.begin()
+ if err != nil {
+  return errors.Trace(err)
+ }
  
-	for _, dml := range dmls {
-		if safeMode && dml.Tp == UpdateDMLType {
-			sql, args := dml.deleteSQL()
-			_, err := tx.autoRollbackExec(sql, args...)
-			if err != nil {
-				return errors.Trace(err)
-			}
+ for _, dml := range dmls {
+  if safeMode && dml.Tp == UpdateDMLType {
+   sql, args := dml.deleteSQL()
+   _, err := tx.autoRollbackExec(sql, args...)
+   if err != nil {
+    return errors.Trace(err)
+   }
  
-			sql, args = dml.replaceSQL()
-			_, err = tx.autoRollbackExec(sql, args...)
-			if err != nil {
-				return errors.Trace(err)
-			}
-		} else if safeMode && dml.Tp == InsertDMLType {
-			sql, args := dml.replaceSQL()
-			_, err := tx.autoRollbackExec(sql, args...)
-			if err != nil {
-				return errors.Trace(err)
-			}
-		} else {
-			sql, args := dml.sql()
-			_, err := tx.autoRollbackExec(sql, args...)
-			if err != nil {
-				return errors.Trace(err)
-			}
-		}
-	}
+   sql, args = dml.replaceSQL()
+   _, err = tx.autoRollbackExec(sql, args...)
+   if err != nil {
+    return errors.Trace(err)
+   }
+  } else if safeMode && dml.Tp == InsertDMLType {
+   sql, args := dml.replaceSQL()
+   _, err := tx.autoRollbackExec(sql, args...)
+   if err != nil {
+    return errors.Trace(err)
+   }
+  } else {
+   sql, args := dml.sql()
+   _, err := tx.autoRollbackExec(sql, args...)
+   if err != nil {
+    return errors.Trace(err)
+   }
+  }
+ }
  
-	err = tx.commit()
-	return errors.Trace(err)
+ err = tx.commit()
+ return errors.Trace(err)
 }
 ```
 
@@ -108,29 +108,29 @@ func (e *executor) singleExec(dmls []*DML, safeMode bool) error {
 ```
 // 省略了次要逻辑
 for {
-	select {
-	case txn, ok := <-input:
-		if !ok {
-			if err := batch.execAccumulatedDMLs(); err != nil {
-				return errors.Trace(err)
-			}
-			return nil
-		}
+ select {
+ case txn, ok := <-input:
+  if !ok {
+   if err := batch.execAccumulatedDMLs(); err != nil {
+    return errors.Trace(err)
+   }
+   return nil
+  }
  
-		s.metricsInputTxn(txn)
-		txnManager.pop(txn)
-		if err := batch.put(txn); err != nil {
-			return errors.Trace(err)
-		}
+  s.metricsInputTxn(txn)
+  txnManager.pop(txn)
+  if err := batch.put(txn); err != nil {
+   return errors.Trace(err)
+  }
  
-	default:
-		if len(batch.dmls) > 0 {
-			if err := batch.execAccumulatedDMLs(); err != nil {
-				return errors.Trace(err)
-			}
-			continue
-		}
-	}
+ default:
+  if len(batch.dmls) > 0 {
+   if err := batch.execAccumulatedDMLs(); err != nil {
+    return errors.Trace(err)
+   }
+   continue
+  }
+ }
 }
 ```
 

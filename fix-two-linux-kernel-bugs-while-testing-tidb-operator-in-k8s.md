@@ -42,7 +42,6 @@ tags: ['K8s', 'TiDB Operator','Linux']
 
 <div class="caption-center">内核路径信息-2</div>
 
-
 从上图的信息中可以看到 I/O 抖动和文件系统执行 writepage 有关。同时捕获到性能抖动的前后，在 node 内存资源充足的情况下，`dmesg` 返回的结果也会出现大量 “SLUB: Unable to allocate memory on node -1” 的信息。
 
 从 `hung_task` 输出的 call stack 信息结合内核代码发现，内核在执行 `bvec_alloc` 函数分配 `bio_vec` 对象时，会先尝试通过 `kmem_cache_alloc` 进行分配，`kmem_cache_alloc` 失败后，再进行 fallback 尝试从 mempool 中进行分配，而在 mempool 内部会先尝试执行 `pool->alloc` 回调进行分配，`pool->alloc` 分配失败后，内核会将进程设置为不可中断状态并放入等待队列中进行等待，当其他进程向 mempool 归还内存或定时器超时（5s） 后，进程调度器会唤醒该进程进行重试 ，这个等待时间和我们业务监控的抖动延迟相符。
@@ -69,44 +68,44 @@ tags: ['K8s', 'TiDB Operator','Linux']
 
 1. kubelet 需要重新编译，不同的版本有不同的方式。
 
-	如果 kubelet 版本是 v1.14 及以上，则可以通过在编译 kubelet 的时候加上 [Build Tags](https://github.com/kubernetes/kubernetes/blob/release-1.14/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/kmem_disabled.go#L1) 来关闭 kmem account：
-	
-	```
-	$ git clone --branch v1.14.1 --single-branch --depth 1 [https://github.com/kubernetes/kubernetes](https://github.com/kubernetes/kubernetes) 
-	$ cd kubernetes
-	
-	$ KUBE_GIT_VERSION=v1.14.1 ./build/run.sh make kubelet GOFLAGS="-tags=nokmem"
-	```
-	
-	但如果 kubelet 版本是 v1.13 及以下，则无法通过在编译 kubelet 的时候加 Build Tags 来关闭，需要重新编译 kubelet，步骤如下。
-	
-	首先下载 Kubernetes 代码：
-	
-	```
-	$ git clone --branch v1.12.8 --single-branch --depth 1 https://github.com/kubernetes/kubernetes
-	$ cd kubernetes
-	```
-	
-	然后手动将开启 kmem account 功能的 [两个函数](https://github.com/kubernetes/kubernetes/blob/release-1.12/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/memory.go#L70-L106) 替换成 [下面这样](https://github.com/kubernetes/kubernetes/blob/release-1.14/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/kmem_disabled.go#L5-L11)：
-	
-	```
-	func EnableKernelMemoryAccounting(path string) error {
-		return nil
-	}
-	
-	func setKernelMemory(path string, kernelMemoryLimit int64) error {
-		return nil
-	}
-	
-	```
-	
-	之后重新编译 kubelet：
-	
-	```
-	$ KUBE_GIT_VERSION=v1.12.8 ./build/run.sh make kubelet
-	```
-	
-	编译好的 kubelet 在 `./_output/dockerized/bin/$GOOS/$GOARCH/kubelet` 中。
+ 如果 kubelet 版本是 v1.14 及以上，则可以通过在编译 kubelet 的时候加上 [Build Tags](https://github.com/kubernetes/kubernetes/blob/release-1.14/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/kmem_disabled.go#L1) 来关闭 kmem account：
+
+ ```
+ git clone --branch v1.14.1 --single-branch --depth 1 [https://github.com/kubernetes/kubernetes](https://github.com/kubernetes/kubernetes)
+ cd kubernetes
+
+ KUBE_GIT_VERSION=v1.14.1 ./build/run.sh make kubelet GOFLAGS="-tags=nokmem"
+ ```
+
+ 但如果 kubelet 版本是 v1.13 及以下，则无法通过在编译 kubelet 的时候加 Build Tags 来关闭，需要重新编译 kubelet，步骤如下。
+
+ 首先下载 Kubernetes 代码：
+
+ ```
+ git clone --branch v1.12.8 --single-branch --depth 1 https://github.com/kubernetes/kubernetes
+ cd kubernetes
+ ```
+
+ 然后手动将开启 kmem account 功能的 [两个函数](https://github.com/kubernetes/kubernetes/blob/release-1.12/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/memory.go#L70-L106) 替换成 [下面这样](https://github.com/kubernetes/kubernetes/blob/release-1.14/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs/kmem_disabled.go#L5-L11)：
+
+ ```
+ func EnableKernelMemoryAccounting(path string) error {
+  return nil
+ }
+
+ func setKernelMemory(path string, kernelMemoryLimit int64) error {
+  return nil
+ }
+
+ ```
+
+ 之后重新编译 kubelet：
+
+ ```
+ KUBE_GIT_VERSION=v1.12.8 ./build/run.sh make kubelet
+ ```
+
+ 编译好的 kubelet 在 `./_output/dockerized/bin/$GOOS/$GOARCH/kubelet` 中。
 
 2. 同时需要升级 docker-ce 到 18.09.1 以上，此版本 docker 已经将 runc 的 kmem account 功能关闭。
 
@@ -155,46 +154,46 @@ cat: memory.kmem.slabinfo: Input/output error
 
 推荐内核版本 Centos 7.6 kernel-3.10.0-957 及以上。
 
-1.  安装 [kpatch](https://github.com/dynup/kpatch) 及 kpatch-build 依赖：
+1. 安装 [kpatch](https://github.com/dynup/kpatch) 及 kpatch-build 依赖：
 
-	```
-	UNAME=$(uname -r)
-	sudo yum install gcc kernel-devel-${UNAME%.*} elfutils elfutils-devel
-	sudo yum install pesign yum-utils zlib-devel \
-	  binutils-devel newt-devel python-devel perl-ExtUtils-Embed \
-	  audit-libs audit-libs-devel numactl-devel pciutils-devel bison
-	
-	# enable CentOS 7 debug repo
-	sudo yum-config-manager --enable debug
-	
-	sudo yum-builddep kernel-${UNAME%.*}
-	sudo debuginfo-install kernel-${UNAME%.*}
-	
-	# optional, but highly recommended - enable EPEL 7
-	sudo yum install ccache
-	ccache --max-size=5G
-	
-	```
+ ```
+ UNAME=$(uname -r)
+ sudo yum install gcc kernel-devel-${UNAME%.*} elfutils elfutils-devel
+ sudo yum install pesign yum-utils zlib-devel \
+   binutils-devel newt-devel python-devel perl-ExtUtils-Embed \
+   audit-libs audit-libs-devel numactl-devel pciutils-devel bison
+
+ # enable CentOS 7 debug repo
+ sudo yum-config-manager --enable debug
+
+ sudo yum-builddep kernel-${UNAME%.*}
+ sudo debuginfo-install kernel-${UNAME%.*}
+
+ # optional, but highly recommended - enable EPEL 7
+ sudo yum install ccache
+ ccache --max-size=5G
+
+ ```
 
 2. 安装 [kpatch](https://github.com/dynup/kpatch) 及 kpatch-build：
 
-	```
-	git clone https://github.com/dynup/kpatch && cd kpatch
-	make 
-	sudo make install
-	systemctl enable kpatch
-	```
+ ```
+ git clone https://github.com/dynup/kpatch && cd kpatch
+ make
+ sudo make install
+ systemctl enable kpatch
+ ```
 
-3.  下载并构建热补丁内核模块：
+3. 下载并构建热补丁内核模块：
 
-	```
-	curl -SOL  https://raw.githubusercontent.com/pingcap/kdt/master/kpatchs/route.patch
-	kpatch-build -t vmlinux route.patch （编译生成内核模块）
-	mkdir -p /var/lib/kpatch/${UNAME} 
-	cp -a livepatch-route.ko /var/lib/kpatch/${UNAME}
-	systemctl restart kpatch (Loads the kernel module)
-	kpatch list (Checks the loaded module)
-	```
+ ```
+ curl -SOL  https://raw.githubusercontent.com/pingcap/kdt/master/kpatchs/route.patch
+ kpatch-build -t vmlinux route.patch （编译生成内核模块）
+ mkdir -p /var/lib/kpatch/${UNAME}
+ cp -a livepatch-route.ko /var/lib/kpatch/${UNAME}
+ systemctl restart kpatch (Loads the kernel module)
+ kpatch list (Checks the loaded module)
+ ```
 
 ## 总结
 

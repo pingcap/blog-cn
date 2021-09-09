@@ -84,8 +84,8 @@ TiKV 利用 Raft 来做数据复制，每个数据变更都会落地为一条 Ra
 **注意，这里的 Region 还是和 SQL 中的表没什么关系！** 请各位继续忘记 SQL，只谈 KV。
 将数据划分成 Region 后，我们将会做 **两件重要的事情**：
 
-- 以 Region 为单位，将数据分散在集群中所有的节点上，并且尽量保证每个节点上服务的 Region 数量差不多
-- 以 Region 为单位做 Raft 的复制和成员管理
+* 以 Region 为单位，将数据分散在集群中所有的节点上，并且尽量保证每个节点上服务的 Region 数量差不多
+* 以 Region 为单位做 Raft 的复制和成员管理
 
 这两点非常重要，我们一点一点来说。
 
@@ -104,27 +104,27 @@ TiKV 利用 Raft 来做数据复制，每个数据变更都会落地为一条 Ra
 TiKV 的 MVCC 实现是通过在 Key 后面添加 Version 来实现，简单来说，没有 MVCC 之前，可以把 TiKV 看做这样的：
 
 ```
-	Key1 -> Value
-	Key2 -> Value
-	……
-	KeyN -> Value
+ Key1 -> Value
+ Key2 -> Value
+ ……
+ KeyN -> Value
 ```
 
 有了 MVCC 之后，TiKV 的 Key 排列是这样的：
 
 ```
-	Key1-Version3 -> Value
-	Key1-Version2 -> Value
-	Key1-Version1 -> Value
-	……
-	Key2-Version4 -> Value
-	Key2-Version3 -> Value
-	Key2-Version2 -> Value
-	Key2-Version1 -> Value
-	……
-	KeyN-Version2 -> Value
-	KeyN-Version1 -> Value
-	……
+ Key1-Version3 -> Value
+ Key1-Version2 -> Value
+ Key1-Version1 -> Value
+ ……
+ Key2-Version4 -> Value
+ Key2-Version3 -> Value
+ Key2-Version2 -> Value
+ Key2-Version1 -> Value
+ ……
+ KeyN-Version2 -> Value
+ KeyN-Version1 -> Value
+ ……
 ```
 
 注意，对于同一个 Key 的多个版本，我们把版本号较大的放在前面，版本号小的放在后面（回忆一下 Key-Value 一节我们介绍过的 Key 是有序的排列），这样当用户通过一个 Key + Version 来获取 Value 的时候，可以将 Key 和 Version 构造出 MVCC 的 Key，也就是 Key-Version。然后可以直接 Seek(Key-Version)，定位到第一个大于等于这个 Key-Version 的位置。
@@ -134,4 +134,5 @@ TiKV 的 MVCC 实现是通过在 Key 后面添加 Version 来实现，简单来�
 TiKV 的事务采用的是 [Percolator](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Peng.pdf) 模型，并且做了大量的优化。事务的细节这里不详述，大家可以参考论文以及我们的其他文章。这里只提一点，TiKV 的事务采用乐观锁，事务的执行过程中，不会检测写写冲突，只有在提交过程中，才会做冲突检测，冲突的双方中比较早完成提交的会写入成功，另一方会尝试重新执行整个事务。当业务的写入冲突不严重的情况下，这种模型性能会很好，比如随机更新表中某一行的数据，并且表很大。但是如果业务的写入冲突严重，性能就会很差，举一个极端的例子，就是计数器，多个客户端同时修改少量行，导致冲突严重的，造成大量的无效重试。
 
 ### 其他
+
 到这里，我们已经了解了 TiKV 的基本概念和一些细节，理解了这个分布式带事务的 KV 引擎的分层结构以及如何实现多副本容错。下一节会介绍如何在 KV 的存储模型之上，构建 SQL 层。

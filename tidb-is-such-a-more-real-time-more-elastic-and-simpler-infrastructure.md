@@ -79,18 +79,17 @@ tags: ['TiDB 4.0 新特性','TiFlash','Chaos Mesh']
 
 在 TiDB 4.0 中，我们专门写了一个工具，叫 TiUP，它是一个包管理器。通过 TiUP，大家可以在一分钟内本地把 TiDB 跑起来，一分钟就能够体验 TiDB。而部署 15 个节点的生产集群也只需要 45 秒，也就是完全做到 1 分钟内快速体验。TiUP 是一个巨大的易用性体验的提升，欢迎大家去体验。
 
-
 >TiUP: A component manager for the TiDB eco-system
 >
 >Try TiDB (playground) within 1 minute with 1 command
 >
->$ curl https://tiup-mirrors.pingcap.com/install.sh | sh  && tiup playground nightly --monitor
+>$ curl <https://tiup-mirrors.pingcap.com/install.sh> | sh  && tiup playground nightly --monitor
 >
 >Deploy a production cluster in 45 seconds
 
 **TiUP 对用户来说是一个巨大的易用性体验的提升，欢迎大家去体验。**
 
-## Security matters! 
+## Security matters
 
 ![10-security-matters](media/tidb-devcon2020-liuqi/10-security-matters.png)
 
@@ -132,9 +131,9 @@ tags: ['TiDB 4.0 新特性','TiFlash','Chaos Mesh']
 
 另外，不管你是谁，只要你想参与 TiDB 的打造或者想使用 TiDB，我们都为你准备好了：
 
-* 如果你在用 TiDB 过程中，遇到任何问题，你都可以去 AskTUG（https://asktug.com）提问，有超过 2700 个会员，他们都在 AskTUG 中分享实战经验或者踩过的坑，或许你遇到的问题，在这里搜索一下就能得到解答。
+* 如果你在用 TiDB 过程中，遇到任何问题，你都可以去 AskTUG（<https://asktug.com>）提问，有超过 2700 个会员，他们都在 AskTUG 中分享实战经验或者踩过的坑，或许你遇到的问题，在这里搜索一下就能得到解答。
 
-* 如果你还想进一步再深入的学习 TiDB，我们也推出了 PingCAP University（https://university.pingcap.com）线上及线下的培训课程。最后大家也可以验证一下自己的学习效果，也可以去参加认证考试（如下图所示）。
+* 如果你还想进一步再深入的学习 TiDB，我们也推出了 PingCAP University（<https://university.pingcap.com>）线上及线下的培训课程。最后大家也可以验证一下自己的学习效果，也可以去参加认证考试（如下图所示）。
 
 ![16-pu](media/tidb-devcon2020-liuqi/16-pu.png)
 
@@ -142,7 +141,7 @@ tags: ['TiDB 4.0 新特性','TiFlash','Chaos Mesh']
 
 如果看到这里，你雄心勃勃，还想再精进一步，想写一个属于自己的分布式数据库。没问题，我们还准备了 Talent Plan 课程，可以根据课程规划一步步 build 一个分布式数据库的计算层、存储层，这门课程还会有来自全球各地的导师帮你 Review 代码和作业，目前暂时支持中文和英文。
 
-## Bonus: Chaos Mesh™!
+## Bonus: Chaos Mesh™
 
 最后聊一聊我们在混沌工程方面的实践，在软件领域有一个常识是，“现实中所有可以预见的故障，最后都必然会发生”，系统的复杂性是无法逃避的、必须要面对的，也是我们必须要去解决的。**在今天，整个系统的复杂性已经不仅仅局限于数据库了，而是延展到了整个业务的全链路，最终落脚在系统为用户提供的服务质量。**
 

@@ -64,22 +64,22 @@ TiDB 的架构及原理在 [官网](https://pingcap.com/) 里有详细介绍，�
 
 二者简单对比如下几方面：
 
-+ 功能支持
-    - TiDB 尚不支持如下几项：
-        - 增加、删除主键
-        - 非 UTF8 字符集
-        - 视图（即将支持）、存储过程、触发器、部分内置函数
-        - Event
-        - 全文索引、空间索引
-+ 默认设置
-    - 字符集、排序规则、sql_mode、lower_case_table_names 几项默认值不同。
+* 功能支持
+  * TiDB 尚不支持如下几项：
+    * 增加、删除主键
+    * 非 UTF8 字符集
+    * 视图（即将支持）、存储过程、触发器、部分内置函数
+    * Event
+    * 全文索引、空间索引
+* 默认设置
+  * 字符集、排序规则、sql_mode、lower_case_table_names 几项默认值不同。
 
-+ 事务
-    - TiDB 使用乐观事务模型，提交后注意检查返回值。
-    - TiDB 限制单个事务大小，保持事务尽可能的小。
-+ TiDB 支持绝大多数的 Online DDL。
-+ 另，一些 MySQL 语法在 TiDB 中可以解析通过，不会产生任何作用，例如： create table 语句中 engine、partition 选项都是在解析后忽略。
-+ 详细信息可以访问官网：[与 MySQL 兼容性对比](https://pingcap.com/docs-cn/v3.0/reference/mysql-compatibility/)。
+* 事务
+  * TiDB 使用乐观事务模型，提交后注意检查返回值。
+  * TiDB 限制单个事务大小，保持事务尽可能的小。
+* TiDB 支持绝大多数的 Online DDL。
+* 另，一些 MySQL 语法在 TiDB 中可以解析通过，不会产生任何作用，例如： create table 语句中 engine、partition 选项都是在解析后忽略。
+* 详细信息可以访问官网：[与 MySQL 兼容性对比](https://pingcap.com/docs-cn/v3.0/reference/mysql-compatibility/)。
 
 ## 五、压测
 
@@ -94,7 +94,6 @@ TiDB 的架构及原理在 [官网](https://pingcap.com/) 里有详细介绍，�
 | TiDB | 3 | Intel(R) Xeon(R) CPU E5-2620 v3 @ 2.40GHz | 128G | SSD Raid 5 | 2.0.3 | CentOS Linux release 7.3.1611|
 | PD | 3 | Intel(R) Xeon(R) CPU E5-2620 v3 @ 2.40GHz | 128G | SSD Raid 5 | 2.0.3 | CentOS Linux release 7.3.1611 |
 | TiKV | 4 | Intel(R) Xeon(R) CPU E5-2620 v3 @ 2.40GHz | 128G | SSD Raid 5 | 2.0.3 | CentOS Linux release 7.3.1611 |
-
 
 ### 5.3 压测内容以及结果
 
@@ -189,9 +188,9 @@ Syncer 结构如图 6，主要依靠各种 Rule 来实现不同的过滤、合�
 
 ### 7.2 监控
 
-监控采用了 TiDB 的提供的监控方案，并且也接入了公司开源的 Falcon，目前整个集群运行比较稳定，监控如图 7。     
+监控采用了 TiDB 的提供的监控方案，并且也接入了公司开源的 Falcon，目前整个集群运行比较稳定，监控如图 7。
 
-![图 7  监控图](media/user-case-xiaomi/7.png) 
+![图 7  监控图](media/user-case-xiaomi/7.png)
 
 <div class="caption-center">图 7  监控图</div>
 

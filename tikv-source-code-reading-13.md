@@ -143,7 +143,7 @@ tags: ['TiKV 源码解析','社区']
 
 单次迭代的具体流程为：
 
-### 步骤 1.
+### 步骤 1
 
 首次迭代：将 Lock 及 Write CF Cursor Seek 到 `lower_bound` 处。此时它们各自指向了第一个 `>= lower_bound` 的 Key。
 
@@ -166,7 +166,7 @@ if !self.is_started {
 }
 ```
 
-### 步骤 2.
+### 步骤 2
 
 Lock Cursor 和 Write Cursor 分别指向的 Key 可能对应不同的 User Key（也可能指向空，代表该 CF 已没有更多数据）。比较 Lock Cursor 与 Write Cursor 可得出第一个遇到的 User Key：
 
@@ -185,7 +185,7 @@ let l_key = if self.lock_cursor.valid()? {
 match (w_key, l_key) { ... }
 ```
 
-#### 分支 2.1.
+#### 分支 2.1
 
 Write Cursor 指向空，Lock Cursor 指向空：说明两个 CF 都扫完了，该直接结束了。
 
@@ -203,7 +203,7 @@ Write Cursor 指向空，Lock Cursor 指向空：说明两个 CF 都扫完了，
 }
 ```
 
-#### 分支 2.2.
+#### 分支 2.2
 
 Write Cursor 指向某个值 `w_key`，Lock Cursor 指向空：说明存在一个 `User Key = w_key` 的 Write Info，且没有任何 `>= Start Key` 的 Lock Info。`w_key` 即为第一个遇到的 User Key。
 
@@ -219,7 +219,7 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向空：说明存在一�
 }
 ```
 
-#### 分支 2.3.
+#### 分支 2.3
 
 Write Cursor 指向空，Lock Cursor 指向某个值 `l_key`：说明存在一个 `User Key = l_key` 的 Lock Info。`l_key` 即是第一个遇到的 User Key。
 
@@ -236,7 +236,7 @@ Write Cursor 指向空，Lock Cursor 指向某个值 `l_key`：说明存在一�
 }
 ```
 
-#### 分支 2.4.
+#### 分支 2.4
 
 Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说明存在一个 `User Key = l_key` 的 Lock Info、存在一个 `User Key = w_key` 的 Write Info。`l_key` 与 `w_key` 中小的那个是第一个遇到的 User Key。
 
@@ -271,11 +271,11 @@ Write Cursor 指向某个值 `w_key`，Lock Cursor 指向某个值 `l_key`：说
 }
 ```
 
-### 步骤 3.
+### 步骤 3
 
 如果在步骤 2 中，第一个遇到的 User Key 来自于 Lock，则：
 
-#### 步骤 3.1.
+#### 步骤 3.1
 
 检查 Lock Info 是否有效，例如需要忽略 `start_ts > scan_ts` 的 lock。
 
@@ -293,15 +293,15 @@ match super::util::check_lock(&current_user_key, self.cfg.ts, &lock)? {
 
 > 我们一般以当前的时间构造 scan_ts，为什么实际看到的似乎是“未来”的 lock？原因是这个读请求可能来自于一个早期开始的事务，或这个请求被网络阻塞了一会儿，或者我们正在[读取历史数据](https://pingcap.com/docs-cn/v3.0/how-to/get-started/read-historical-data/)。
 
-#### 步骤 3.2.
+#### 步骤 3.2
 
 将 Lock Cursor 往后移动一个 Key，以便下次迭代可以直接从新的 Lock 继续。此时 Lock Cursor 指向下一个 Lock（也可能指向空）。
 
-#### 步骤 3.3.
+#### 步骤 3.3
 
 在 3.1 步骤中检查下来有效的话报错返回这个 Lock，TiDB 后续需要进行清锁操作。
 
-### 步骤 4.
+### 步骤 4
 
 如果在步骤 2 中，第一个遇到的 User Key 来自于 Write：
 
@@ -313,7 +313,7 @@ match super::util::check_lock(&current_user_key, self.cfg.ts, &lock)? {
 
 走到了目前这一步，说明我们需要从 Write Info 中读取 User Key 满足 `scan_ts` 的记录。需要注意，此时 User Key 可能是存在 Lock 的，但已被判定为应当忽略。
 
-#### 步骤 4.1.
+#### 步骤 4.1
 
 将 Write Cursor Seek 到 `{w_key}{!scan_ts}` 处（注：参见「事务样例」中区别 3，时间戳存储时取了反，因此这里及本文其余部分都以 `!` 标记取反操作）。如果版本数很少（同时这也符合绝大多数场景），那么这个要 Seek 的 Key 很可能非常靠近当前位置。在这个情况下为了避免较大的 Seek 开销，TiKV 采取先 `next` 若干次再 `seek` 的策略：
 
@@ -365,7 +365,7 @@ if needs_seek {
 }
 ```
 
-#### 步骤 4.2.
+#### 步骤 4.2
 
 `w_key` 可能没有任何 `commit_ts <= scan_ts` 的记录，因此 Seek `{w_key}{!scan_ts}` 时可能直接越过了当前 User Key 进入下一个 `w_key`，因此需要先判断一下现在 Write Cursor 对应的 User Key 是否仍然是 `w_key`。如果是的话，说明这是我们找到的最大符合 `scan_ts` 的版本（Write Info）了，我们就可以依据该版本直接确定数据内容。若版本中包含的类型是 `DELETE`，说明在这个版本下 `w_key` 或者说 User Key 已被删除，那么我们就当做它不存在；否则如果类型是 `PUT`，就可以按照版本中存储的 `start_ts` 在 Default CF 中直接取得 User Value：Get `{w_key}{!start_ts}`。
 
@@ -390,7 +390,7 @@ loop {
 }
 ```
 
-#### 步骤 4.3.
+#### 步骤 4.3
 
 此时我们已经知道了 `w_key`（即 User Key）符合 `scan_ts` 版本要求的 Value。为了能允许后续进一步迭代到下一个 `w_key`，我们需要移动 Write Cursor 跳过当前 `w_key` 剩余所有版本。跳过的方法是 Seek `{w_key}{\xFF..\xFF}`，此时 Write Cursor 指向第一个 `>= {w_key}{\xFF..\xFF}` 的 Key，也就是下一个 `w_key`。
 
@@ -424,11 +424,11 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 }
 ```
 
-#### 步骤 4.4.
+#### 步骤 4.4
 
 依据之前取得的 User Value 返回 (User Key, User Value)。
 
-### 步骤 5.
+### 步骤 5
 
 如果没有扫到值，回到 2。
 
@@ -448,7 +448,6 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   <div class="caption-center">图 6 执行完毕后各个 Cursor 位置示意</div>
 
-
 - 执行步骤 2：对比 Lock Cursor 与 Write Cursor，进入分支 2.4。
 
 - 执行分支 2.4：Write Cursor 指向 `bar`，Lock Cursor 指向 `box`，User Key 为 `bar`。
@@ -463,7 +462,6 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   <div class="caption-center">图 7 执行完毕后各个 Cursor 位置示意</div>
 
-
 - 执行步骤 4.2：此时 Write Key 指向 bar 与 User Key 相同，因此依据 `PUT (start_ts=1)` 从 Default CF 中获取到 `value = bar_value`。
 
 - 执行步骤 4.3：移动 Write Cursor 跳过当前 `bar` 剩余所有版本，即 Seek `bar......\xFF\xFF..\xFF`：
@@ -471,7 +469,6 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/8.png)
 
   <div class="caption-center">图 8 执行完毕后各个 Cursor 位置示意</div>
-
 
 - 执行步骤 4.4：对外返回 Key Value 对 `(bar, bar_value)`。
 

@@ -62,14 +62,14 @@ thread 'main' panicked at 'failpoint before_print panic' ...
 + pct：行为被执行时有百分之 pct 的机率触发
 + cnt：行为总共能被触发的次数
 + type：行为类型
-    - off：不做任何事
-    - return(arg)：提前返回，需要 fail point 定义时指定 expr，arg 会作为字符串传给 expr 计算返回值
-    - sleep(arg)：使当前线程睡眠 arg 毫秒
-    - panic(arg)：使当前线程崩溃，崩溃消息为 arg
-    - print(arg)：打印出 arg
-    - pause：暂停当前线程，直到该 fail point 设置为其他行为为止
-    - yield：使当前线程放弃剩余时间片
-    - delay(arg)：和 sleep 类似，但是让 CPU 空转 arg 毫秒
+  + off：不做任何事
+  + return(arg)：提前返回，需要 fail point 定义时指定 expr，arg 会作为字符串传给 expr 计算返回值
+  + sleep(arg)：使当前线程睡眠 arg 毫秒
+  + panic(arg)：使当前线程崩溃，崩溃消息为 arg
+  + print(arg)：打印出 arg
+  + pause：暂停当前线程，直到该 fail point 设置为其他行为为止
+  + yield：使当前线程放弃剩余时间片
+  + delay(arg)：和 sleep 类似，但是让 CPU 空转 arg 毫秒
 + args：行为的参数
 
 比如我们想在 `before_print` 处先 sleep 1s 然后有 1% 的机率 panic，那么就可以这么写：

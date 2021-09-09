@@ -48,20 +48,20 @@ BCC 是 BPF 的编译工具集合，前端提供 Python/Lua API，本身通过 C
 
 1. 使用 [./biolatency -d nvme0n1](https://github.com/iovisor/bcc/blob/master/libbpf-tools/biolatency.bpf.c) 确认 IO 请求的延迟分布情况：
 
-	![1-分析结果](media/libbpf-tools/1-分析结果.png)
-	
+ ![1-分析结果](media/libbpf-tools/1-分析结果.png)
+
 2. 使用 [./biopattern -T 1 -d 259:0](https://github.com/iovisor/bcc/blob/master/libbpf-tools/biopattern.bpf.c) 分析 IO 模式：
 
-	![2-分析结果](media/libbpf-tools/2-分析结果.png)
-	
+ ![2-分析结果](media/libbpf-tools/2-分析结果.png)
+
 3. 使用 [./bitesize -c fio -T](https://github.com/iovisor/bcc/blob/master/libbpf-tools/bitesize.bpf.c) 确认 task 下发物理 IO 请求时的请求大小分布图：
 
-	![3-分析结果](media/libbpf-tools/3-分析结果.png)
-	
+ ![3-分析结果](media/libbpf-tools/3-分析结果.png)
+
 4. 使用 [./biosnoop -d nvme0n1](https://github.com/iovisor/bcc/blob/master/libbpf-tools/biosnoop.bpf.c) 对每次物理 IO 都进行详细都分析：
 
-	![4-分析结果](media/libbpf-tools/4-分析结果.png)
-	
+ ![4-分析结果](media/libbpf-tools/4-分析结果.png)
+
 这些分析结果为后续的 IO 优化提供指导建议。除此之外，我们也在探索调度器相关的 libbpf-tools 对 TiDB 数据库的调优是否有帮助。这些工具属于通用型工具，欢迎大家来使用！
 
 后续会将更多的工具基于 libbpf-tools 的方式来实现。期待大家的使用反馈！

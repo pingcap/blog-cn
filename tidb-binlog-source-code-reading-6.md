@@ -15,18 +15,17 @@ tags: ['TiDB Binlog 源码阅读','社区']
 
 `valueLog` 组件的代码位于 [pump/storage/vlog.go](https://github.com/pingcap/tidb-binlog/blob/9f3c81683bb3428c4940611a6203288474d4aff0/pump/storage/vlog.go#L156) 中，主要作用是管理磁盘中的所有存放 Binlog Event 的 logFile 文件。Pump 本地 GoLevelDB 中存储的 key value 中，key 用 Binlog 的 `StartTs/CommitTs` 拼成，value 则只是一个索引，指向 `valueLog` 中的一条 Binlog 记录。`valueLog` 的结构体定义如下所示：
 
-
 ```
 type valueLog struct {
-	buf *bytes.Buffer // buf to write to the current log file
+ buf *bytes.Buffer // buf to write to the current log file
 
-	dirPath   string
-	sync      bool
-	maxFid    uint32
-	filesLock sync.RWMutex
-	filesMap  map[uint32]*logFile
+ dirPath   string
+ sync      bool
+ maxFid    uint32
+ filesLock sync.RWMutex
+ filesMap  map[uint32]*logFile
 
-	opt *Options
+ opt *Options
 }
 ```
 
@@ -83,13 +82,13 @@ footer :=
 
 ```
 type slowChaser struct {
-	on                 int32
-	vlog               valLogScanner
-	lastUnreadPtr      *valuePointer
-	recoveryTimeout    time.Duration
-	lastRecoverAttempt time.Time
-	output             chan *request
-	WriteLock          sync.Mutex
+ on                 int32
+ vlog               valLogScanner
+ lastUnreadPtr      *valuePointer
+ recoveryTimeout    time.Duration
+ lastRecoverAttempt time.Time
+ output             chan *request
+ WriteLock          sync.Mutex
 }
 ```
 
@@ -109,7 +108,7 @@ type slowChaser struct {
 
 ### slowChaser 的扫描操作：catchUp
 
-`slowChaser` 在被启动后会使用 [`catchUp`](https://github.com/pingcap/tidb-binlog/blob/9f3c81683bb3428c4940611a6203288474d4aff0/pump/storage/chaser.go#L130) 函数去扫描磁盘目录，从 `lastUnreadPtr` 即第一个没有被写 kv 的 binlog 的 `valuePointer ` 开始。该值会在启动 `slowChaser` 时设置为当时的 binlog 对应的 `valuePointer`，之后会在每次成功写入 kv 后就更新。
+`slowChaser` 在被启动后会使用 [`catchUp`](https://github.com/pingcap/tidb-binlog/blob/9f3c81683bb3428c4940611a6203288474d4aff0/pump/storage/chaser.go#L130) 函数去扫描磁盘目录，从 `lastUnreadPtr` 即第一个没有被写 kv 的 binlog 的 `valuePointer` 开始。该值会在启动 `slowChaser` 时设置为当时的 binlog 对应的 `valuePointer`，之后会在每次成功写入 kv 后就更新。
 
 有了起始 `valuePointer` 以后，`slowChaser` 会使用前文提到的 `valueLog` 的 `scanRequests` 方法进行一次扫描。扫描时 chaser 会把扫出的每条 binlog 逐一发给 toKV channel。
 
@@ -119,9 +118,9 @@ type slowChaser struct {
 
 `slowChaser` 在每轮运行时会进行至多两次 `catchUp` 操作：
 
-*   第一次 `catchUp` 操作不会使用写锁禁止 `valueLog` 组件写 logFile 到磁盘。在正常扫描完磁盘中的 binlog 后，chaser 会同时计算本次 `catchUp` 所花费的时间，如果花费时间较短，说明这可能是个恢复正常运转的好时机。这时 `slowChaser` 会进入第二次 `catchUp` 操作，尝试扫完所有 binlog 并关闭 `slowChaser`。如果本次 `catchUp` 花费时间过长或者在 1 分钟内进行过第二次的 `catchUp` 操作则会跳过第二次 `catchUp` 直接进入下一轮。
+* 第一次 `catchUp` 操作不会使用写锁禁止 `valueLog` 组件写 logFile 到磁盘。在正常扫描完磁盘中的 binlog 后，chaser 会同时计算本次 `catchUp` 所花费的时间，如果花费时间较短，说明这可能是个恢复正常运转的好时机。这时 `slowChaser` 会进入第二次 `catchUp` 操作，尝试扫完所有 binlog 并关闭 `slowChaser`。如果本次 `catchUp` 花费时间过长或者在 1 分钟内进行过第二次的 `catchUp` 操作则会跳过第二次 `catchUp` 直接进入下一轮。
 
-*   第二次 `catchUp` 会在操作开始前记录本次恢复开始的时间，同时上锁阻止 vlog 写 binlog 到磁盘。如果 `catchUp` 在 1 秒内完成，此时磁盘中所有 binlog 都已经写到 kv ， 则 `slowChaser` 可以安全地被关闭。如果 `catchUp` 超时，为避免长时间持锁阻止 vlog 写 binlog 影响性能，`slowChaser` 将继续进行下一轮的 `catchUp`。第二次 catchUp 操作结束时不论成败互斥锁都将被释放。
+* 第二次 `catchUp` 会在操作开始前记录本次恢复开始的时间，同时上锁阻止 vlog 写 binlog 到磁盘。如果 `catchUp` 在 1 秒内完成，此时磁盘中所有 binlog 都已经写到 kv ， 则 `slowChaser` 可以安全地被关闭。如果 `catchUp` 超时，为避免长时间持锁阻止 vlog 写 binlog 影响性能，`slowChaser` 将继续进行下一轮的 `catchUp`。第二次 catchUp 操作结束时不论成败互斥锁都将被释放。
 
 `slowChaser` 在成功 catch up 之后会被关闭，但不会完全停止运行，只是进入了 “睡眠” 状态，继续不断监视 Pump 写 kv 的速度。一旦 `writeValueLog` 中再次出现了写 kv 慢的现象，[`slowChaser.TurnOn`](https://github.com/pingcap/tidb-binlog/blob/9f3c81683bb3428c4940611a6203288474d4aff0/pump/storage/chaser.go#L58) 被调用，`slowChaser` 又会重新启动，开始新的轮次的 `catchUp` 操作。只有当 `writeValueLog` 函数退出时，`slowChaser` 才会真正随之退出并完全停止运行。
 

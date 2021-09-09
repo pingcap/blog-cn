@@ -61,7 +61,7 @@ message Region {
 }
 
 message RegionEpoch {
-    optional uint64 conf_ver	= 1 [(gogoproto.nullable) = false];
+    optional uint64 conf_ver = 1 [(gogoproto.nullable) = false];
     optional uint64 version     = 2 [(gogoproto.nullable) = false];
 }
 
@@ -70,6 +70,7 @@ message Peer {
     optional uint64 store_id    = 2 [(gogoproto.nullable) = false];
 }
 ```
+
 **id**：Region 的唯一表示，通过 PD 全局唯一分配。
 
 **start\_key, end\_key**：用来表示这个 Region 的范围 [start\_key, end\_key)，对于最开始的 region，start 和 end key 都是空，TiKV 内部会特殊处理。
@@ -90,15 +91,15 @@ message Peer {
 
 * 0x02：用来存储 Raft 一些信息，0x02 之后会紧跟该 Raft Region 的 ID（8字节大端序 ），然后在紧跟一个 Suffix 来标识不同的子类型：
 
-    + 0x01：用于存放 Raft Log，后面紧跟 Log Index（8字节大端序）
+  * 0x01：用于存放 Raft Log，后面紧跟 Log Index（8字节大端序）
 
-    + 0x02：用于存放 RaftLocalState
+  * 0x02：用于存放 RaftLocalState
 
-    + 0x03：用于存放 RaftApplyState
+  * 0x03：用于存放 RaftApplyState
 
 * 0x03：用来存储 Region 本地的一些元信息，0x03 之后紧跟 Raft Region ID，随后在紧跟一个 Suffix 来表示不同的子类型：
 
-    + 0x01：用于存放 RegionLocalState
+  * 0x01：用于存放 RegionLocalState
 
 对于上面提到的几个类型，都在 protobuf 里面定义：
 
@@ -124,6 +125,7 @@ message RegionLocalState {
     optional metapb.Region region   = 2;
 }
 ```
+
 **RaftLocalState**： 用于存放当前 Raft 的 HardState 以及最后一个 Log index。
 
 **RaftApplyState**： 用于存放当前 Raft 最后 apply 的 Log index 以及被 truncated 的 Log 信息。
@@ -158,6 +160,7 @@ pub enum SnapState {
     ApplyAborted,
 }
 ```
+
 这里注意 Generating 是一个 channel Receiver，当异步 snapshot 生成好之后，就会给这个 channel 发送消息，这样下一次 Raft 检查的时候，就能直接从这个 channel 得到 snapshot 了。Applying 是一个共享的原子整数，这样就能多线程去判断当前 applying 的状态，包括：
 
 ```
@@ -168,6 +171,7 @@ pub const JOB_STATUS_CANCELLED: usize = 3;
 pub const JOB_STATUS_FINISHED: usize = 4;
 pub const JOB_STATUS_FAILED: usize = 5;
 ```
+
 譬如，如果状态是 JOB\_STATUS\_RUNNING，那么表明当前正在进行 applying snapshot 的操作。现阶段，我们是不允许 FAILED 的，也就是如果 apply snapshot 失败，我们会 panic。
 
 ### Peer
@@ -197,6 +201,7 @@ pub trait Transport: Send + Clone {
     fn send(&self, msg: RaftMessage) -> Result<()>;
 }
 ```
+
 它就只有一个函数 send，TiKV 实现的 Transport 会将需要 send 的 message 发到 Server 层，由 Server 层发给其他的节点。
 
 ### Multi Raft
@@ -229,6 +234,7 @@ Server 层就是 TiKV 的网络层，现阶段，TiKV 使用 mio 来实现整个
 message = header + body
 header:  | 0xdaf4(2 bytes magic value) | 0x01(version 2 bytes) | msg_len(4 bytes) | msg_id(8 bytes) |
 ```
+
 任何一个 message，我们都使用 header + body 的方式，body 就是实际的 message 数据，使用 protobuf 编码，而 header，首先就是两个字节的 magic value，0xdaf4，然后就是版本号，再就是 message 的整个长度，以及 message 的唯一 ID。
 
 对于 mio，在 Linux 下面就是封装的 epoll，所以熟悉 epoll 的用户应该能非常方便的使用 mio 进行网络开发，简单流程如下：

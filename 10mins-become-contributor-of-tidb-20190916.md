@@ -10,19 +10,19 @@ tags: ['TiDB','社区','Contributor']
 
 TiDB 的向量化计算是在经典 Volcano 模型上的进行改进，尽可能利用 CPU Cache，SIMD Instructions，Pipeline，Branch Predicatation 等硬件特性提升计算性能，同时降低执行框架的迭代开销，这里提供一些参考文献，供感兴趣的同学阅读和研究：
 
-1.  [MonetDB/X100: Hyper-Pipelining Query Execution](http://cidrdb.org/cidr2005/papers/P19.pdf)
+1. [MonetDB/X100: Hyper-Pipelining Query Execution](http://cidrdb.org/cidr2005/papers/P19.pdf)
 
-2.  [Balancing Vectorized Query Execution with Bandwidth-Optimized Storage](https://dare.uva.nl/search?identifier=5ccbb60a-38b8-4eeb-858a-e7735dd37487)
+2. [Balancing Vectorized Query Execution with Bandwidth-Optimized Storage](https://dare.uva.nl/search?identifier=5ccbb60a-38b8-4eeb-858a-e7735dd37487)
 
-3.  [The Design and Implementation of Modern Column-Oriented Database Systems](https://www.nowpublishers.com/article/DownloadSummary/DBS-024)
+3. [The Design and Implementation of Modern Column-Oriented Database Systems](https://www.nowpublishers.com/article/DownloadSummary/DBS-024)
 
 在这篇文章中，我们将描述：
 
-1.  如何在计算框架下实现某个函数的向量化计算；
+1. 如何在计算框架下实现某个函数的向量化计算；
 
-2.  如何在测试框架下做正确性和性能测试；
+2. 如何在测试框架下做正确性和性能测试；
 
-3.  如何参与进来成为 TiDB Contributor。
+3. 如何参与进来成为 TiDB Contributor。
 
 ## 表达式向量化
 
@@ -32,15 +32,15 @@ TiDB 的向量化计算是在经典 Volcano 模型上的进行改进，尽可能
 
 我们把数据类型分为两种：
 
-1.  定长类型：`Int64`、`Uint64`、`Float32`、`Float64`、`Decimal`、`Time`、`Duration`；
+1. 定长类型：`Int64`、`Uint64`、`Float32`、`Float64`、`Decimal`、`Time`、`Duration`；
 
-2.  变长类型：`String`、`Bytes`、`JSON`、`Set`、`Enum`。
+2. 变长类型：`String`、`Bytes`、`JSON`、`Set`、`Enum`。
 
 定长类型和变长类型数据在 Column 中有不同的组织方式，这使得他们有如下的特点：
 
-1.  定长类型的 Column 可以随机读写任意元素；
+1. 定长类型的 Column 可以随机读写任意元素；
 
-2.  变长类型的 Column 可以随机读，但更改中间某元素后，可能需要移动该元素后续所有元素，导致随机写性能很差。
+2. 变长类型的 Column 可以随机读，但更改中间某元素后，可能需要移动该元素后续所有元素，导致随机写性能很差。
 
 对于定长类型（如 `int64`），我们在计算时会将其转成 Golang Slice（如 `[]int64`），然后直接读写这个 Slice。相比于调用 Column 的接口，需要的 CPU 指令更少，性能更好。同时，转换后的 Slice 仍然引用着 Column 中的内存，修改后不用将数据从 Slice 拷贝到 Column 中，开销降到了最低。
 
@@ -51,19 +51,19 @@ TiDB 的向量化计算是在经典 Volcano 模型上的进行改进，尽可能
 1. 定长类型（以 `int64` 为例)
 
     a. `ResizeInt64s(size, isNull)`：预分配 size 个元素的空间，并把所有位置的 `null` 标记都设置为 `isNull`；
-    
+
     b.  `Int64s()`：返回一个 `[]int64` 的 Slice，用于直接读写数据；
-    
+
     c.  `SetNull(rowID, isNull)`：标记第 `rowID` 行为 `isNull`。
 
 2. 变长类型（以 `string` 为例）
-    
+
     a. `ReserveString(size)`：预估 size 个元素的空间，并预先分配内存；
-    
+
     b. `AppendString(string)`: 追加一个 string 到向量末尾；
-    
+
     c.  `AppendNull()`：追加一个 `null` 到向量末尾；
-    
+
     d.  `GetString(rowID)`：读取下标为 `rowID` 的 string 数据。
 
 当然还有些其他的方法如 `IsNull(rowID)`，`MergeNulls(cols)` 等，就交给大家自己去探索了，后面会有这些方法的使用例子。
@@ -77,11 +77,11 @@ vectorized() bool
 vecEvalXType(input *Chunk, result *Column) error
 ```
 
-*   `XType` 可能表示 `Int`, `String` 等，不同的函数需要实现不同的接口；
+* `XType` 可能表示 `Int`, `String` 等，不同的函数需要实现不同的接口；
 
-*   `input` 表示输入数据，类型为 `*Chunk`；
+* `input` 表示输入数据，类型为 `*Chunk`；
 
-*   `result` 用来存放结果数据。
+* `result` 用来存放结果数据。
 
 外部执行算子（如 Projection，Selection 等算子），在调用表达式接口进行计算前，会通过 `vectorized()` 来判断此表达式是否支持向量化计算，如果支持，则调用向量化接口，否则就走行式接口。
 
@@ -103,11 +103,11 @@ vecEvalXType(input *Chunk, result *Column) error
 
 这里是一个简单的例子 [PR/12012](https://github.com/pingcap/tidb/pull/12012)，以 `builtinLog10Sig` 为例：
 
-1.  这个函数在 `expression/builtin_math.go` 文件中，则向量化实现需放到文件 `expression/builtin_math_vec.go` 中；
+1. 这个函数在 `expression/builtin_math.go` 文件中，则向量化实现需放到文件 `expression/builtin_math_vec.go` 中；
 
-2.  `builtinLog10Sig` 原始的非向量化计算接口为 `evalReal()`，那么我们需要为其实现对应的向量化接口为 `vecEvalReal()`；
+2. `builtinLog10Sig` 原始的非向量化计算接口为 `evalReal()`，那么我们需要为其实现对应的向量化接口为 `vecEvalReal()`；
 
-3.  实现完成后请根据后续的说明添加测试。
+3. 实现完成后请根据后续的说明添加测试。
 
 下面为大家介绍在实现向量化计算过程中需要注意的问题。
 
@@ -197,11 +197,11 @@ var vecBuiltinMathCases = map[string][]vecExprBenchCase {
 
 具体来说，上面结构体中的三个字段分别表示:
 
-1.  该函数的返回值类型；
+1. 该函数的返回值类型；
 
-2.  该函数所有参数的类型；
+2. 该函数所有参数的类型；
 
-3.  是否使用自定义的数据生成方法（dataGener），`nil` 表示使用默认的随机生成方法。
+3. 是否使用自定义的数据生成方法（dataGener），`nil` 表示使用默认的随机生成方法。
 
 对于某些复杂的函数，你可自己实现 dataGener 来生成数据。目前我们已经实现了几个简单的 dataGener，代码在 `expression/bench_test.go` 中，可直接使用。
 
@@ -223,15 +223,15 @@ go test -v -benchmem -bench=BenchmarkVectorizedBuiltinMathFunc -run=BenchmarkVec
 
 如何成为 Contributor：
 
-1.  在此 [issue](https://github.com/pingcap/tidb/issues/12058) 内选择感兴趣的函数并告诉大家你会完成它；
+1. 在此 [issue](https://github.com/pingcap/tidb/issues/12058) 内选择感兴趣的函数并告诉大家你会完成它；
 
-2.  为该函数实现 `vecEvalXType()` 和 `vectorized()` 的方法；
+2. 为该函数实现 `vecEvalXType()` 和 `vectorized()` 的方法；
 
-3.  在向量化测试框架内添加对该函数的测试；
+3. 在向量化测试框架内添加对该函数的测试；
 
-4.  运行 `make dev`，保证所有 test 都能通过；
+4. 运行 `make dev`，保证所有 test 都能通过；
 
-5.  发起 Pull Request 并完成 merge 到主分支。
+5. 发起 Pull Request 并完成 merge 到主分支。
 
 如果贡献突出，可能被提名为 reviewer，reviewer 的介绍请看 [这里](https://github.com/pingcap/community/blob/master/CONTRIBUTING.md#reviewer)。
 

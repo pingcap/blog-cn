@@ -13,11 +13,10 @@ Flink 是一个低延迟、高吞吐、流批统一的大数据计算引擎，�
 提起 TiFlink 项目的灵感，还得从队长张茄子去年在公司内部的尝试说起。他的公司有一些数据实时分析的需求，但原有的数据分析工具在单表查询时很快，一旦到 join 时就不是很好搞。当时这个项目最终没能在内部成功做出来，但想法一直都在，直到今年 Hackathon 期间，张茄子和队友们一起重新探讨了可能的方案。目前，TiDB/TiKV 提供的 Flink 集成和 Java 客户端具有如下缺陷：
 
 - Java 客户端不支持抓取 CDC 日志，使用 TiCDC 需要通过 Kafka 转发，比较笨重和繁琐，延迟较高；
-    
+
 - Flink 集成的 Source 只支持批量读入，不支持批流结合（即先批量读入，后拉取 CDC 日志进行增量更新）；
-    
+
 - Flink 集成的 Sink 尚不支持 TwoPhaseCommit 协议，正在开发中的版本只支持各个节点单独 TwoPhaseCommit ，不支持全局同步 TwoPhaseCommit 。
-    
 
 ![1](media/tikv-and-flink-is-best/1.png)
 
@@ -28,13 +27,12 @@ Flink 是一个低延迟、高吞吐、流批统一的大数据计算引擎，�
 在比赛中，为了将设想中的 TiFlink 流批一体库实现落地，队员们做出了一系列尝试：
 
 - 为 TiKV 的 Java 客户端添加直接拉取 CDC 日志的功能，从而为实现批流一体数据处理的 Flink Source 创造条件；
-    
+
 - 为 Flink 开发 TiKV 兼容批读取和增量读取的 DynamicTableSource ，实现不同隔离级别的读取功能；
-    
+
 - 为 Flink 开发兼容 TiKV 事务模型并支持 TwoPhaseCommit 接口的 DynamicTableSink ，实现跨节点（切片，Region）一致的数据写入；
-    
+
 - 在上述组件的基础上，尝试实现 TiDB 上基于 Flink 的物化视图功能。
-    
 
 ![2](media/tikv-and-flink-is-best/2.jpg)
 

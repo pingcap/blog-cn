@@ -11,16 +11,16 @@ tags: ['社区','社区动态']
 
 ![](media/tidb-bug-hunting-guide/1-tidb-bug-hunting-poster.jpeg)
 
-## Highlights!
+## Highlights
 
 **1.提交测试报告也可以获得积分**
 
 除了提交 bug 获得积分之外，我们也鼓励参赛选手提交测试报告，无论是哪一种贡献，都是可以获得相应积分奖励的哦。
-	
+
 **2.丰富奖品**
 
 TUG 卫衣、蓝宝书、PCTA 考试券等。
-	
+
 ![](media/tidb-bug-hunting-guide/2-list-of-prizes.jpeg)
 
 ![](media/tidb-bug-hunting-guide/3-list-of-prizes.png)
@@ -75,7 +75,7 @@ PingCAP QA 团队会根据 Bug 等级，为 Bug 打上 label（P0，P1，P2，P3
 
 * **积分兑换时间**：每个赛季结束后一年内。
 
-	例：第一赛季于 2020 年 4 月 30 日结束，兑换时间截止至 2021 年 4 月 30 日。
+ 例：第一赛季于 2020 年 4 月 30 日结束，兑换时间截止至 2021 年 4 月 30 日。
 
 * **兑换方式**：本赛季结束后填写礼品兑换表，工作人员将主动联系大家进行礼品兑换。
 

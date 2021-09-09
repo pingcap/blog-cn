@@ -23,45 +23,45 @@ SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST�
 // [RestoreNameDoubleQuotes, RestoreNameBackQuotes]
 // 靠前的 flag 拥有更高的优先级。
 const (
-	RestoreStringSingleQuotes RestoreFlags = 1 << iota
+ RestoreStringSingleQuotes RestoreFlags = 1 << iota
 
-	...
+ ...
 )
 
 // RestoreCtx is `Restore` context to hold flags and writer.
 type RestoreCtx struct {
-	Flags RestoreFlags
-	In    io.Writer
+ Flags RestoreFlags
+ In    io.Writer
 }
 
 // WriteKeyWord 用于向 `ctx` 中写入关键字（例如：SELECT）。
 // 它的大小写受 `RestoreKeyWordUppercase`，`RestoreKeyWordLowercase` 控制
 func (ctx *RestoreCtx) WriteKeyWord(keyWord string) {
-	...
+ ...
 }
 
 // WriteString 用于向 `ctx` 中写入字符串。
 // 它是否被引号包裹及转义规则受 `RestoreStringSingleQuotes`，`RestoreStringDoubleQuotes`，`RestoreStringEscapeBackslash` 控制。
 func (ctx *RestoreCtx) WriteString(str string) {
-	...
+ ...
 }
 
 // WriteName 用于向 `ctx` 中写入名称（库名，表名，列名等）。
 // 它是否被引号包裹及转义规则受 `RestoreNameUppercase`，`RestoreNameLowercase`，`RestoreNameDoubleQuotes`，`RestoreNameBackQuotes` 控制。
 func (ctx *RestoreCtx) WriteName(name string) {
-	...
+ ...
 }
 
 // WritePlain 用于向 `ctx` 中写入普通文本。
 // 它将被直接写入不受 flag 影响。
 func (ctx *RestoreCtx) WritePlain(plainText string) {
-	...
+ ...
 }
 
 // WritePlainf 用于向 `ctx` 中写入普通文本。
 // 它将被直接写入不受 flag 影响。
 func (ctx *RestoreCtx) WritePlainf(format string, a ...interface{}) {
-	...
+ ...
 }
 ```
 
@@ -71,7 +71,7 @@ func (ctx *RestoreCtx) WritePlainf(format string, a ...interface{}) {
 type Node interface {
     // Restore AST to SQL text and append them to `ctx`.
     // return error when the AST is invalid.
-	Restore(ctx *RestoreCtx) error
+ Restore(ctx *RestoreCtx) error
 
     ...
 }

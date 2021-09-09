@@ -52,20 +52,19 @@ tags: ['开源', '社区']
 - **Contributing**：项目以及项目的维护者各式各样，所以参与贡献的最佳方式也不尽相同。如果你想成为贡献者的话，那么你要先阅读那些有 CONTRIBUTING 标签的文档。Contributing 文档会详细介绍了项目的维护者希望得到哪些补丁或者是新增的特性。
 
   文件里也可以包含需要写哪些测试，代码风格，或者是哪些地方需要增加补丁之类的内容。
-  
+
   - [TiDB Contributing 文档](https://github.com/pingcap/tidb/blob/master/CONTRIBUTING.md)
 
 - **License**：LICENSE 文件就是这个开源项目的许可证。一个开源项目会告知用户他们可以做什么，不可做什么(比如：使用，修改，重新分发)，以及贡献者允许其他人做哪些事。开源许可证有多种，你可以在 [认识各种开源协议及其关系](http://www.ruanyifeng.com/blog/2011/05/how_to_choose_free_software_licenses.html) 了解更多关于开源许可证的信息。
   - TiDB 遵循 [Apache-2.0 License](https://github.com/pingcap/tidb/blob/master/LICENSE)
   - TiKV 遵循 [Apache-2.0 License](https://github.com/pingcap/tikv/blob/master/LICENSE)
 
--  **Documentation**：许多大型项目不会只通过自述文件去引导用户如何使用。在这些项目中你经常可以找到通往其他文件的超链接，或者是在仓库中找到一个叫做 docs 的文件夹.
-  - [TiDB Docs](https://github.com/pingcap/tidb/tree/master/docs)
- 
-  ![TiDB Docs](media/how-to-contribute/1.jpg)
-  
-  <div class="caption-center">TiDB Docs</div>
+- **Documentation**：许多大型项目不会只通过自述文件去引导用户如何使用。在这些项目中你经常可以找到通往其他文件的超链接，或者是在仓库中找到一个叫做 docs 的文件夹.
+- [TiDB Docs](https://github.com/pingcap/tidb/tree/master/docs)
 
+  ![TiDB Docs](media/how-to-contribute/1.jpg)
+
+  <div class="caption-center">TiDB Docs</div>
 
 ## 齐步走成为 Contributor
 
@@ -76,35 +75,34 @@ tags: ['开源', '社区']
 不管你有什么 bug，你提出 bug 后，会对那些和你有同样 bug 的人提供帮助。
 更多关于 issue 如何工作的信息，请点击 [Issues guide](http://guides.github.com/features/issues)。
 
-
 #### Issues Pro Tips
 
-* **检查你的问题是否已经存在**  重复的问题会浪费大家的时间，所以请先搜索打开和已经关闭的问题，来确认你的问题是否已经提交过了。
+- **检查你的问题是否已经存在**  重复的问题会浪费大家的时间，所以请先搜索打开和已经关闭的问题，来确认你的问题是否已经提交过了。
 
-* **清楚描述你的问题**
+- **清楚描述你的问题**
 
     TiDB Issue 模版如下：
 
     ![TiDB Issue 模版](media/how-to-contribute/2.png)
-    
+
     <div class="caption-center">TiDB Issue 模版</div>
 
     TiKV Issue 模版如下：
-    
+
     ![TiKV Issue 模版](media/how-to-contribute/3.png)
-    
+
     <div class="caption-center">TiKV Issue 模版</div>
 
-* **给出你的代码链接** 使用像 [JSFiddle](http://jsfiddle.net/) 或者 [CodePen](http://codepen.io/) 等工具，贴出你的代码，好帮助别人复现你的问题。
+- **给出你的代码链接** 使用像 [JSFiddle](http://jsfiddle.net/) 或者 [CodePen](http://codepen.io/) 等工具，贴出你的代码，好帮助别人复现你的问题。
 
-* **详细的系统环境介绍** 例如使用什么版本的浏览器，什么版本的库，什么版本的操作系统等其他你运行环境的介绍。
+- **详细的系统环境介绍** 例如使用什么版本的浏览器，什么版本的库，什么版本的操作系统等其他你运行环境的介绍。
 
   ```
   go 版本： go version
   Linux 版本： uname -a
   ```
 
-* **详细的错误输出或者日志** 使用 [Gist](http://gist.github.com/) 贴出你的错误日志。如果你在 issue 中附带错误日志，请使用 ``` 来标记你的日志。以便更好的显示。
+- **详细的错误输出或者日志** 使用 [Gist](http://gist.github.com/) 贴出你的错误日志。如果你在 issue 中附带错误日志，请使用 ``` 来标记你的日志。以便更好的显示。
 
 ### Pull Request
 
@@ -112,17 +110,17 @@ tags: ['开源', '社区']
 
 ### Pull Request Pro Tips
 
-* **[Fork](http://guides.github.com/activities/forking/) 代码并且 clone 到你本地** 通过将项目的地址添加为一个 remote，并且经常从 remote 合并更改来保持你的代码最新，以便在提交你的 pull 请求时，尽可能少的发生冲突。详情请参阅 [Syncing a fork](https://help.github.com/articles/syncing-a-fork)。
+- **[Fork](http://guides.github.com/activities/forking/) 代码并且 clone 到你本地** 通过将项目的地址添加为一个 remote，并且经常从 remote 合并更改来保持你的代码最新，以便在提交你的 pull 请求时，尽可能少的发生冲突。详情请参阅 [Syncing a fork](https://help.github.com/articles/syncing-a-fork)。
 
-* **创建 [branch](http://guides.github.com/introduction/flow/)** 来修改你的代码，目前 TiDB 相关的项目默认的 branch 命名规则是 user/name。例如 disksing/grpc，简单明确，一目了然。
+- **创建 [branch](http://guides.github.com/introduction/flow/)** 来修改你的代码，目前 TiDB 相关的项目默认的 branch 命名规则是 user/name。例如 disksing/grpc，简单明确，一目了然。
 
-* **描述清楚你的问题**方便其他人能够复现。或者说明你添加的功能有什么作用，并且清楚描述你做了哪些更改。
+- **描述清楚你的问题**方便其他人能够复现。或者说明你添加的功能有什么作用，并且清楚描述你做了哪些更改。
 
-* **注意测试** 如果项目中包含逻辑修改，那么必须包含相应的测试，在 CI 中会包含测试覆盖率的检测，如果测试覆盖率下降，那么是不可以合并到 master 的。
+- **注意测试** 如果项目中包含逻辑修改，那么必须包含相应的测试，在 CI 中会包含测试覆盖率的检测，如果测试覆盖率下降，那么是不可以合并到 master 的。
 
-* **包含截图** 如果您的更改包含 HTML/CSS 中的差异，请添加前后的屏幕截图。将图像拖放到您的 pull request 的正文中。
+- **包含截图** 如果您的更改包含 HTML/CSS 中的差异，请添加前后的屏幕截图。将图像拖放到您的 pull request 的正文中。
 
-* **保持良好的代码风格**这意味着使用与你自己的代码风格中不同的缩进，分号或注释，但是使维护者更容易合并，其他人将来更容易理解和维护。目前 TiDB 项目的 CI 检测包含代码风格的检查，如果代码风格不符合要求，那么是不可以合并到 master 的。
+- **保持良好的代码风格**这意味着使用与你自己的代码风格中不同的缩进，分号或注释，但是使维护者更容易合并，其他人将来更容易理解和维护。目前 TiDB 项目的 CI 检测包含代码风格的检查，如果代码风格不符合要求，那么是不可以合并到 master 的。
 
 ### Open Pull Requests
 

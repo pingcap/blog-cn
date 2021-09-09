@@ -89,12 +89,11 @@ RocksDB 允许我们使用自定义的 `TablePropertiesCollector` 来搜集 `SST
 
 ![6-EventListener.jpg](media/titan-design-and-implementation/6.jpg)
 
-
 > 图 6：inputs 代表参与 Compaction 的所有 `SST` 的 `BlobFileSizeProperties`，outputs 代表 Compaction 生成的所有 `SST` 的 `BlobFileSizeProperties`，discardable size 是通过计算 inputs 和 outputs 得出的每个 `BlobFile` 被丢弃的数据大小，第一列代表 `BlobFile` 的文件 ID，第二列代表被丢弃的数据大小。
 
 Titan 会为每个有效的 `BlobFile` 在内存中维护一个 discardable size 变量，每次 Compaction 结束之后都对相应的 `BlobFile` 的 discardable size 变量进行累加。每次 GC 开始时就可以通过挑选 discardable size 最大的 `BlobFile` 来作为作为候选的文件。
 
-#### Sample 
+#### Sample
 
 每次进行 GC 前我们都会挑选一系列 `BlobFile` 作为候选文件，挑选的方法如上一节所述。为了减小写放大，我们可以容忍一定的空间放大，所以我们只有在 `BlobFile` 可丢弃的数据达到一定比例之后才会对其进行 GC。我们使用 Sample 算法来获取每个候选文件中可丢弃数据的大致比例。Sample 算法的主要逻辑是随机取 `BlobFile` 中的一段数据 A，计其大小为 a，然后遍历 A 中的 key，累加过期的 key 所在的 blob record 的 size 计为 d，最后计算得出 d 占 a 比值 为 r，如果 r >= `discardable_ratio` 则对该 `BlobFile` 进行 GC，否则不对其进行 GC。上一节我们已经知道每个 `BlobFile` 都会在内存中维护一个 discardable size，如果这个 discardable size 占整个 `BlobFile` 数据大小的比值已经大于或等于 `discardable_ratio` 则不需要对其进行 Sample。
 
@@ -153,8 +152,8 @@ Titan 会为每个有效的 `BlobFile` 在内存中维护一个 discardable size
 
 一开始我们便将兼容 RocksDB 作为设计 Titan 的首要目标，因此我们保留了绝大部分 RocksDB 的 API。目前仅有两个 API 是我们明确不支持的：
 
-* `Merge`
-* `SingleDelete`
+- `Merge`
+- `SingleDelete`
 
 除了 `Open` 接口以外，其他 API 的参数和返回值都和 RocksDB 一致。已有的项目只需要很小的改动即可以将 `RocksDB` 实例平滑地升级到 Titan。值得注意的是 Titan 并不支持回退回 RocksDB。
 

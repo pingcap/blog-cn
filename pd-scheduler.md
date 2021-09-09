@@ -32,9 +32,9 @@ Scheduler 是用来调度资源的接口，定义如下：
 ```go
 // Scheduler is an interface to schedule resources.
 type Scheduler interface {
-	GetName() string
-	GetResourceKind() ResourceKind
-	Schedule(cluster *clusterInfo) Operator
+ GetName() string
+ GetResourceKind() ResourceKind
+ Schedule(cluster *clusterInfo) Operator
 }
 ```
 
@@ -48,9 +48,9 @@ type Scheduler interface {
 ```go
 // Operator is an interface to schedule region.
 type Operator interface {
-	GetRegionID() uint64
-	GetResourceKind() ResourceKind
-	Do(region *regionInfo) (*pdpb.RegionHeartbeatResponse, bool)
+ GetRegionID() uint64
+ GetResourceKind() ResourceKind
+ Do(region *regionInfo) (*pdpb.RegionHeartbeatResponse, bool)
 }
 ```
 
@@ -65,8 +65,8 @@ type Operator interface {
 ```go
 // Selector is an interface to select source and target store to schedule.
 type Selector interface {
-	SelectSource(stores []*storeInfo, filters ...Filter) *storeInfo
-	SelectTarget(stores []*storeInfo, filters ...Filter) *storeInfo
+ SelectSource(stores []*storeInfo, filters ...Filter) *storeInfo
+ SelectTarget(stores []*storeInfo, filters ...Filter) *storeInfo
 }
 ```
 
@@ -77,10 +77,10 @@ Filter 的定义如下：
 ```go
 // Filter is an interface to filter source and target store.
 type Filter interface {
-	// Return true if the store should not be used as a source store.
-	FilterSource(store *storeInfo) bool
-	// Return true if the store should not be used as a target store.
-	FilterTarget(store *storeInfo) bool
+ // Return true if the store should not be used as a source store.
+ FilterSource(store *storeInfo) bool
+ // Return true if the store should not be used as a target store.
+ FilterTarget(store *storeInfo) bool
 }
 ```
 
@@ -95,10 +95,10 @@ type Filter interface {
 ```go
 // Controller is an interface to control the speed of different schedulers.
 type Controller interface {
-	Ctx() context.Context
-	Stop()
-	GetInterval() time.Duration
-	AllowSchedule() bool
+ Ctx() context.Context
+ Stop()
+ GetInterval() time.Duration
+ AllowSchedule() bool
 }
 ```
 
@@ -111,8 +111,8 @@ PD 使用 Coodinator 来管理所有的 Scheduler 以及 Controlller。
 ```go
 // ScheduleController combines Scheduler with Controller.
 type ScheduleController struct {
-	Scheduler
-	Controller
+ Scheduler
+ Controller
 }
 ```
 
