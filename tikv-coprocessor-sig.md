@@ -1,5 +1,5 @@
 ---
-title: TiKV 项目首个 SIG 成立，一起走上 Contributor 进阶之路吧！ 
+title: TiKV 项目首个 SIG 成立，一起走上 Contributor 进阶之路吧！
 author: ['Long Heng']
 date: 2019-10-24
 summary: 今天是 1024 程序员节，我们正式成立 TiKV 项目的首个 SIG —— Coprocessor SIG，希望对 TiKV 项目感兴趣的小伙伴们都能加入进来，探索硬核的前沿技术，交流切磋，一起走上 Contributor 的进阶之路！
