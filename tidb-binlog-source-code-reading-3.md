@@ -85,7 +85,7 @@ TiDB 的事务采用 2-phase-commit 算法，一次事务提交会分为 Prewrit
 
 在 Prepare 的阶段，TiDB 会把 Prewrite 的数据发到 TiKV，同时并发写一条 P-binlog 到其中一个 Pump。 两个操作全部成功后才会进行 Commit 阶段，所以我们提交事务时就可以确定 P-binlog 已经成功保存。写 C-binlog 是在 TiKV 提交事务后异步发送的，告诉  Pump 这个事务提交了还是回滚了。
 
-###  写 binlog 对事务延迟的影响
+### 写 binlog 对事务延迟的影响
 
 * Prepare 阶段：并发写 P-binlog 到 Pump 和 Prewrite data 到 TiKV，如果请求 Pump 写 P-binlog 的速度快于写 TiKV 的速度，那么对延迟没有影响。一般而言写入 Pump 会比写入 TiKV 更快。
 

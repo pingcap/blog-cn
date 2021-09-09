@@ -136,7 +136,7 @@ mysql -h localhost -P 4000 -u root
 tiup client
 ```
 
-###  TiOps Quick Start
+### TiOps Quick Start
 
 下载安装 rpm 包
 

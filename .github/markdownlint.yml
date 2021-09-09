@@ -58,7 +58,7 @@ no-space-in-links: true
 no-empty-links: true
 
 # MD045
-no-alt-text: true
+no-alt-text: false
 
 # MD046
 code-block-style:

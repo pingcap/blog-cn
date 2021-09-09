@@ -90,7 +90,7 @@ PR review 的过程就是 reviewer 不断地提出 comment，PR 作者持续解�
 
 **每个 PR 在合并之前都需要至少得到两个 Committer/Maintainer 的 LGTM，一些重要的 PR 需要得到三个，比如对于 DDL 模块的修改，默认都需要得到三个 LGTM。**
 
-#### Tips
+### Tips
 
 * 提了PR 之后，可以 at 一下相关的同学来 review；
 
