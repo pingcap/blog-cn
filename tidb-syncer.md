@@ -276,7 +276,7 @@ XID_EVENT
 另外一个比较麻烦的问题就是 DDL 的操作，TiDB 的 DDL 实现是完全无阻塞的，所以根据 TiDB Lease 的大小不同，会执行比较长的时间，所以 DDL 操作是一个代价很高的操作，在 Syncer 的处理中通过获取 DDL 返回的标准 MySQL 错误来判断 DDL 是否需要重复执行。
 
 
-当然，在数据同步的过程中，我们也做了很多其他的工作，包括并发 sync 支持，MySQL 网络重连，基于 DB/Table 的规则定制等等，感兴趣的可以直接看我们 tidb-tools/syncer 的开源实现，这里就不展开介绍了。
+当然，在数据同步的过程中，我们也做了很多其他的工作，包括并发 sync 支持，MySQL 网络重连，基于 DB/Table 的规则定制等等，这里就不展开介绍了。
 
 
-欢迎对 Syncer 这个小项目感兴趣的小伙伴们在 Github 上面和我们讨论交流，当然更欢迎各种 PR：）
+Syncer 这个小项目已经被集成到 [TiDB Data Migration](https://github.com/pingcap/dm) (DM) 数据迁移工具，支持从 MySQL 协议兼容的数据库到 TiDB 的数据迁移， 感兴趣的小伙伴们在 Github 上面和我们讨论交流，当然更欢迎各种 PR：）
