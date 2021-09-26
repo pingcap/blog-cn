@@ -37,7 +37,6 @@ tags: ['Linux']
 |  2018-10-31  | [Fragmentation avoidance improvements](https://lwn.net/Articles/770235/)  |
 |  2020-04-21  | [Proactive compaction for the kernel](https://lwn.net/Articles/817905/)  |
 
-
 下面我们开始进入正题。
 
 ## Linux 伙伴分配器
@@ -96,5 +95,3 @@ echo 0 > /sys/kernel/debug/tracing/events/kmem/mm_page_alloc_extfrag/enable
 我们可以看到根据迁移类型进行分组只是延缓了内存碎片，而并不是从根本解决，所以随着时间的推移，当内存碎片过多，无法满足连续物理内存需求时，将会引起性能问题。因此仅仅依靠此功能是不够的，内核需要一些手段来整治内存碎片。
 
 **未完待续...** 
-
-

@@ -35,7 +35,6 @@ parser: goyacc
 
 ![图例](media/tidb-source-code-reading-5/2.png)
 
-
 上图描述了使用 `Lex & Yacc` 构建编译器的流程。`Lex` 根据用户定义的 `patterns` 生成词法分析器。词法分析器读取源代码，根据 `patterns` 将源代码转换成 `tokens` 输出。`Yacc` 根据用户定义的语法规则生成语法分析器。语法分析器以词法分析器输出的 `tokens` 作为输入，根据语法规则创建出语法树。最后对语法树遍历生成输出结果，结果可以是产生机器代码，或者是边遍历 `AST` 边解释执行。
 
 从上面的流程可以看出，用户需要分别为 `Lex` 提供 `patterns` 的定义，为 `Yacc` 提供语法规则文件，`Lex & Yacc` 根据用户提供的输入文件，生成符合他们需求的词法分析器和语法分析器。这两种配置都是文本文件，并且结构相同：
@@ -242,7 +241,6 @@ func (s *Scanner) Errors() []error {
 	return s.errs
 }
 ```
-
 
 另外 `lexer` 使用了 `字典树` 技术进行 `token` 识别，具体的实现代码在 [parser/misc.go](https://github.com/pingcap/tidb/blob/source-code/parser/misc.go)
 

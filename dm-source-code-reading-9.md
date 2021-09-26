@@ -22,9 +22,9 @@ DM 中通过 [库表路由与列值转换](https://pingcap.com/blog-cn/dm-source
 
 由 DM-worker 组成的 shard group 是由集群部署拓扑及同步任务配置决定的，即任务配置文件中定义的需要进行合表同步的所有上游 MySQL 实例对应的所有 DM-worker 实例即组成了一个 shard group。为了表示同步过程中的相关动态信息，DM-master 内部引入了两个概念：
 
-*   [Lock](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L24)：对于每组需要进行合并的表，其中每一条需要进行同步协调的 shard DDL，由一个 Lock 实例进行表示；每个 Lock 实例在有 shard DDL 需要协调同步时被创建、在协调同步完成后被销毁；在 dmctl 中使用 show-ddl-locks 命令查看到的每一个 Lock 信息即对应一个该实例
+* [Lock](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L24)：对于每组需要进行合并的表，其中每一条需要进行同步协调的 shard DDL，由一个 Lock 实例进行表示；每个 Lock 实例在有 shard DDL 需要协调同步时被创建、在协调同步完成后被销毁；在 dmctl 中使用 show-ddl-locks 命令查看到的每一个 Lock 信息即对应一个该实例
 
-*   [LockKeeper](https://github.com/pingcap/dm/blob/369933f31b/dm/master/ddl_lock.go#L91)：维护所有的 Lock 实例信息并提供相关的操作接口
+* [LockKeeper](https://github.com/pingcap/dm/blob/369933f31b/dm/master/ddl_lock.go#L91)：维护所有的 Lock 实例信息并提供相关的操作接口
 
 Lock 中各主要成员变量的作用如下：
 
@@ -41,9 +41,9 @@ Lock 中各主要成员变量的作用如下：
 
 每个 DM-worker 内的 shard group 是由对应上游 MySQL 实例内分表及同步任务配置决定的，即任务配置文件中定义的对应 MySQL 实例内需要进行合并同步到同一个下游目标表的所有分表组成一个 shard group。在 DM-worker 内部，我们维护了下面两个对象：
 
-*   [ShardingGroup](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L87)：对于每一组需要进行合并的表，由一个 ShardingGroup 实例进行表示；每个 ShardGroup 实例在同步任务启动阶段被创建，在任务停止时被销毁
+* [ShardingGroup](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L87)：对于每一组需要进行合并的表，由一个 ShardingGroup 实例进行表示；每个 ShardGroup 实例在同步任务启动阶段被创建，在任务停止时被销毁
 
-*   [ShardingGroupKeeper](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L395)：维护所有的 ShardingGroup 实例信息并提供相关的操作接口
+* [ShardingGroupKeeper](https://github.com/pingcap/dm/blob/369933f31b/syncer/sharding_group.go#L395)：维护所有的 ShardingGroup 实例信息并提供相关的操作接口
 
 ShardingGroup 中各主要成员变量的作用如下：
 
@@ -58,9 +58,9 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 对于两级 shard group，DM 内部在依次完成两个级别的 相应的 shard DDL 同步协调。
 
-1.  对于 DM-worker 内由各分表组成的 shard group，其 shard DDL 的同步在对应 DM-worker 内部进行协调
+1. 对于 DM-worker 内由各分表组成的 shard group，其 shard DDL 的同步在对应 DM-worker 内部进行协调
 
-2.  对于由各 DM-worker 组成的 shard group，其 shard DDL 的同步由 DM-master 进行协调
+2. 对于由各 DM-worker 组成的 shard group，其 shard DDL 的同步由 DM-master 进行协调
 
 #### DM-worker 间 shard DDL 协调流程
 
@@ -70,7 +70,7 @@ ShardingGroup 中各主要成员变量的作用如下：
 
 <div class="caption-center">shard DDL 协调流程示例</div>
 
-1.  DM-worker-1 将 shard DDL 信息发送给 DM-master
+1. DM-worker-1 将 shard DDL 信息发送给 DM-master
 
     a. 当 DM-worker-1 内部 shard DDL 协调完成时，[DM-worker-1 将对应的 shard DDL 信息保存在 channel 中](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1727)供 DM-master 通过 gRPC 获取
 
@@ -78,7 +78,7 @@ ShardingGroup 中各主要成员变量的作用如下：
 
     c. [DM-master 调用 ShardingGroupKeeper 的 TrySync 方法创建对应的 lock 信息](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1308)，[并在 lock 中标记已收到 DM-worker-1 的 shard DDL 信息](https://github.com/pingcap/dm/blob/369933f31b/dm/master/lock.go#L77)
 
-2.  DM-master 将 lock 信息发回给 DM-worker-1
+2. DM-master 将 lock 信息发回给 DM-worker-1
 
     a. [DM-master 以 gRPC streaming 的方式将 lock 信息发送给 DM-worker-1](https://github.com/pingcap/dm/blob/369933f31b/dm/master/server.go#L1319)
 
@@ -176,15 +176,15 @@ DM 中通过 checkpoint 机制来实现同步任务中断后恢复时的续传�
 
 DM 在 binlog replication 阶段以 binlog event 对应的 position 为 checkpoint，包括两类：
 
-1.  全局 checkpiont：对应已成功解析并同步到下游的 binlog event 的 position，同步任务中断恢复后将从该位置重新进行解析与同步
+1. 全局 checkpiont：对应已成功解析并同步到下游的 binlog event 的 position，同步任务中断恢复后将从该位置重新进行解析与同步
 
-2.  每个需要同步 table 的 checkpoint：对应该 table 已成功解析并同步到下游的 binlog event 的 position，主要用于在 re-sync 过程中避免对已同步的数据进行重复同步
+2. 每个需要同步 table 的 checkpoint：对应该 table 已成功解析并同步到下游的 binlog event 的 position，主要用于在 re-sync 过程中避免对已同步的数据进行重复同步
 
 DM 的 checkpoint 信息保存在下游数据库中，通过 [`RemoteCheckPoint`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L174) 对象进行读写，其主要成员变量包括：
 
-*   [`globalPoint`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L197)：用于保存全局 checkpoint
+* [`globalPoint`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L197)：用于保存全局 checkpoint
 
-*   [`points`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L189)：用于保存各 table 的 checkpoint
+* [`points`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L189)：用于保存各 table 的 checkpoint
 
 checkpoint 信息在下游数据库中对应的 schema 通过 [`createTable`](https://github.com/pingcap/dm/blob/369933f31b/syncer/checkpoint.go#L453) 方法进行创建，其中各主要字段的含义为：
 
@@ -199,23 +199,23 @@ checkpoint 信息在下游数据库中对应的 schema 通过 [`createTable`](ht
 
 对于全局 checkpoint，在以下情况下会更新内存中的信息：
 
-*   [收到 XID event 时](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L652)（表示一个 DML 事务的结束）
+* [收到 XID event 时](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L652)（表示一个 DML 事务的结束）
 
-*   [DDL 向下游同步成功后](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L696)
+* [DDL 向下游同步成功后](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L696)
 
 对于各 table checkpoint，在以下情况下会更新内存中的信息：
 
-*   [DML 向下游同步成功后](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L705)
+* [DML 向下游同步成功后](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L705)
 
-*   [DDL 向下游同步成功后](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L696)
+* [DDL 向下游同步成功后](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L696)
 
-*   [收到 shard DDL 且成功更新了 shard group，但未向下游同步 shard DDL 时](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1683)
+* [收到 shard DDL 且成功更新了 shard group，但未向下游同步 shard DDL 时](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1683)
 
 对于全局与 table 的 checkpoint，会在以下情况下 flush 到下游数据库中：
 
-*   [收到 flush 通知](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L663)（如同步任务将暂停或停止时）
+* [收到 flush 通知](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L663)（如同步任务将暂停或停止时）
 
-*   [已分发的任务成功同步到下游](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L710)（[DDL 同步到下游](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L635)，[超过指定时间阈值 flush](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L639)）
+* [已分发的任务成功同步到下游](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L710)（[DDL 同步到下游](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L635)，[超过指定时间阈值 flush](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L639)）
 
 值得注意的是，在 shard DDL 未同步到下游之前，为确保中断恢复后仍能继续整个 shard DDL 的协调过程，[DM 不会将全局 checkpoint 更新为比 shard DDL 起始 position 更大的 position](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L718)，[DM 也不会将 shard DDL 协调过程中对应 table 的 checkpoint flush 到下游](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L757)。
 
@@ -225,26 +225,20 @@ checkpoint 信息在下游数据库中对应的 schema 通过 [`createTable`](ht
 
 在 DM 的 binlog replication 阶段，通过增加 safe mode 机制确保了重复同步数据时的可重入，即：
 
-*   [将 `INSERT` 操作转为 `REPLACE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L132)
+* [将 `INSERT` 操作转为 `REPLACE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L132)
 
-*   [将 `UPDATE` 操作转为 `DELETE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L195)和 [`REPLACE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L200)
+* [将 `UPDATE` 操作转为 `DELETE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L195)和 [`REPLACE` 操作](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L200)
 
-*   [对 `DELETE` 操作不进行转换仍保持为 `DELETE`](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L265)
+* [对 `DELETE` 操作不进行转换仍保持为 `DELETE`](https://github.com/pingcap/dm/blob/369933f31b/syncer/dml.go#L265)
 
 目前，safe mode 会在以下情况时启用：
 
-*   [启动或恢复任务时的前 5 分钟](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1023)，确保从 checkpoint 位置开始被重复同步的部分数据最终一致
+* [启动或恢复任务时的前 5 分钟](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1023)，确保从 checkpoint 位置开始被重复同步的部分数据最终一致
 
-*   [DM-worker 内进行 shard DDL 同步协调时](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1675)（见前文 [DM-worker 内 shard DDL 同步流程](#dm-worker-内-shard-ddl-同步流程)），确保即使 shard DDL 协调过程中异常重启且 5 分钟内无法重复同步完之前已同步数据也能最终一致
+* [DM-worker 内进行 shard DDL 同步协调时](https://github.com/pingcap/dm/blob/369933f31b/syncer/syncer.go#L1675)（见前文 [DM-worker 内 shard DDL 同步流程](#dm-worker-内-shard-ddl-同步流程)），确保即使 shard DDL 协调过程中异常重启且 5 分钟内无法重复同步完之前已同步数据也能最终一致
 
-*   [用户在同步任务配置文件中指定了启用 safe mode](https://github.com/pingcap/dm/blob/369933f31b/syncer/mode.go#L33)，用于其他需要以 safe mode 同步超 5 分钟的场景
+* [用户在同步任务配置文件中指定了启用 safe mode](https://github.com/pingcap/dm/blob/369933f31b/syncer/mode.go#L33)，用于其他需要以 safe mode 同步超 5 分钟的场景
 
 ## 小结
 
 本篇文章详细地介绍了 shard DDL 机制与 checkpoint 机制的实现，内容包括了两级 shard group 的定义与 DM-worker 间及 DM-worker 内的 shard DDL 同步协调处理流程、checkpoint 机制及与之相关的 safe mode 机制。下一篇文章中，我们将介绍用于保证 DM 正确性与稳定性的测试框架的实现，敬请期待。
-
-
-
-
-
-

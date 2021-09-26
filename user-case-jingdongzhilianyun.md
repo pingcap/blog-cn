@@ -38,7 +38,6 @@ customerCategory: 高科技
 
 * 元数据管理是树状结构，它本身并不适合做分布式存储，并且目录结构需要多次访问，不适合把它放到 SSD 上，而更适合放在内存里，然后一般授权一个 master 节点 list。HDFS 基本也是这样。
 
-
 ![图 3 如何存储对象（数据量 100B）](media/user-case-jingdongzhilianyun/3.png)
 
 <div class="caption-center">图 3 如何存储对象（数据量 100B）</div>
@@ -51,13 +50,11 @@ customerCategory: 高科技
 
 ### 1. 元数据管理系统 v1.0
 
-
 ![图 4 元数据管理系统 v1.0（1/4）](media/user-case-jingdongzhilianyun/4.png)
 
 <div class="caption-center">图 4 元数据管理系统 v1.0（1/4）</div>
 
 上面是一个最简单、原始的方案，这里 Bucket 相当于名字空间（Namespace）。很多人最开始设计的结构也就是这样的，但后期数据量增长很快的时候会遇到一些问题，如下图。
-
 
 ![图 5 元数据管理系统 v1.0（2/4）](media/user-case-jingdongzhilianyun/5.png)
 
@@ -65,11 +62,9 @@ customerCategory: 高科技
 
 第一个问题是，在初期数据量比较小的时候，可能只分了 4 个 Bucket 存储，随着业务增长，需要重新拆分到 400 个 Bucket 中，数据迁移是一个 Rehash 过程，这是一件非常复杂且麻烦的事情。所以，我们在思考对象存储连续的、跨数量级的无限扩展要怎么做呢？下图是一个相对复杂的解决方案，核心思想是把绝大部分数据做静态处理，因为静态的存储，无论是做迁移还是做拆分，都比较简单。比如每天都把前一天写入的数据静态化，合到历史数据中去。
 
-
 ![图 6 元数据管理系统 v1.0（3/4）](media/user-case-jingdongzhilianyun/6.png)
 
 <div class="caption-center">图 6 元数据管理系统 v1.0（3/4）</div>
-
 
 针对第二个问题，如果单个 Bucket 数据量很大，那么在往 Stable Meta（上图中黄色部分）做静态化迁移时需要做深度拆分，单个 Bucket 的对象的数量非常多，在一个数据库里面存储不下来，需要存储在多个数据库里面，再建立一层索引，存储每个数据库里面存储那个区间的数据。同时，我们在运行的时候其实也会出现一个 Bucket 数量变多的情况，这种是属于非预期的变多，这种情况下我们的做法是弄了一大堆外部的监控程序，监控 Bucket 的量，在 Bucket 量过大的时候，会主动去触发表分裂、迁移等一系列流程。
 
@@ -82,7 +77,6 @@ customerCategory: 高科技
 ![图 8 元数据管理系统改进步目标](media/user-case-jingdongzhilianyun/8.png)
 
 <div class="caption-center">图 8 元数据管理系统改进目标</div>
-
 
 **所以，我们思考了这个事情本质其实是做一个全局有序 KV，并且需要“足够大”，能够弹性扩张。这样系统架构就会变得非常简单（如上图所示）。当然最终我们找到了分布式 KV 数据库—— TiKV。**
 
@@ -165,4 +159,3 @@ customerCategory: 高科技
 **第三点是 Region 调度优化**，目前 TiKV 的调度整体比较复杂，这对于存储密集型的业务来说就比较麻烦，尤其是数据量特别大的情况下，我们并不希望有一丝的波动就把数据迁移到其他机器上。
 
 >本文整理自崔灿老师在 TiDB TechDay 2019 杭州站上的演讲。
-

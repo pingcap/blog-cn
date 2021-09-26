@@ -26,7 +26,6 @@ tags: ['Horoscope','TiDB']
 
 <div class="caption-center">图 1 TPC-H(SF=50) 90 天曲线图</div>
 
-
 通过 daily benchmark，我们观测和定位到了若干次性能提升以及性能回退的情况。有些提升或者回退是优化器组件上的优化导致的，有些则是 TiDB 其他组件，或者存储层引发的。
 
 虽然 daily benchmark 能够观测到性能改进或者回退，但是对于以下几个问题它却束手无策：
@@ -100,7 +99,6 @@ TiDB(root@127.0.0.1:test) > explain select /*+ nth_plan(2) */ * from t where a =
 
 例如会生成如下的查询：
 
-
 ![3-生成的查询示例](media/use-horoscope-to-test-tidb-optimizer/3-生成的查询示例.png)
 
 <div class="caption-center">图 3 生成的查询示例</div>
@@ -120,7 +118,6 @@ $ ./bin/horo --round 4 -d root:@tcp(localhost:4000)/imdb?charset=utf8 bench -p -
 ![4-Horoscope的报告](media/use-horoscope-to-test-tidb-optimizer/4-Horoscope的报告.png)
 
 <div class="caption-center">图 4 Horoscope 的报告</div>
-
 
 `ID` 列标识查询的名称，`#PLAN SPACE` 是这条查询当前 TiDB 的搜索空间，`DEFAULT EXECUTION TIME` 记录了默认执行计划的执行时间（通过中值以及上下界偏差比例给出），`BEST PLAN EXECUTION TIME` 给出最优的执行计划的执行时间，`EFFECTIVENESS` 算出该条查询优化器的有效性，`BETTER OPTIMAL PLANS` 给出更优的执行计划的 ID 以及对应执行时间和默认执行计划执行时间的占比。
 
@@ -151,7 +148,6 @@ $ ./bin/horo --round 4 -d root:@tcp(localhost:4000)/imdb?charset=utf8 bench -p -
 ![5-IMDB数据集分批的大小分布](media/use-horoscope-to-test-tidb-optimizer/5-IMDB数据集分批的大小分布.png)
 
 <div class="caption-center">图 5 IMDB 数据集分批的大小分布</div>
-
 
 约有一半的数据集中在最后 20 份切片中，越往后导入数据的修改行增速越快，统计信息的过期速度也愈快。
 
@@ -194,7 +190,6 @@ LIMIT 100
 <div class="caption-center">图 8 打开 feedback 查询有效性的散点图</div>
 
 ## 后记
-
 
 Horoscope 还可以做更多的事情，例如当版本升级时，可以用 Horoscope 来测试执行计划会不会变化，如果变化了，是否发生了回退。
 

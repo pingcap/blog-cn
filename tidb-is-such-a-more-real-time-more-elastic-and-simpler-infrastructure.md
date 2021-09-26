@@ -79,12 +79,11 @@ tags: ['TiDB 4.0 新特性','TiFlash','Chaos Mesh']
 
 在 TiDB 4.0 中，我们专门写了一个工具，叫 TiUP，它是一个包管理器。通过 TiUP，大家可以在一分钟内本地把 TiDB 跑起来，一分钟就能够体验 TiDB。而部署 15 个节点的生产集群也只需要 45 秒，也就是完全做到 1 分钟内快速体验。TiUP 是一个巨大的易用性体验的提升，欢迎大家去体验。
 
-
 >TiUP: A component manager for the TiDB eco-system
 >
 >Try TiDB (playground) within 1 minute with 1 command
 >
->$ curl https://tiup-mirrors.pingcap.com/install.sh | sh  && tiup playground nightly --monitor
+>$ curl <https://tiup-mirrors.pingcap.com/install.sh> | sh  && tiup playground nightly --monitor
 >
 >Deploy a production cluster in 45 seconds
 
@@ -132,9 +131,9 @@ tags: ['TiDB 4.0 新特性','TiFlash','Chaos Mesh']
 
 另外，不管你是谁，只要你想参与 TiDB 的打造或者想使用 TiDB，我们都为你准备好了：
 
-* 如果你在用 TiDB 过程中，遇到任何问题，你都可以去 AskTUG（https://asktug.com）提问，有超过 2700 个会员，他们都在 AskTUG 中分享实战经验或者踩过的坑，或许你遇到的问题，在这里搜索一下就能得到解答。
+* 如果你在用 TiDB 过程中，遇到任何问题，你都可以去 AskTUG（<https://asktug.com>）提问，有超过 2700 个会员，他们都在 AskTUG 中分享实战经验或者踩过的坑，或许你遇到的问题，在这里搜索一下就能得到解答。
 
-* 如果你还想进一步再深入的学习 TiDB，我们也推出了 PingCAP University（https://university.pingcap.com）线上及线下的培训课程。最后大家也可以验证一下自己的学习效果，也可以去参加认证考试（如下图所示）。
+* 如果你还想进一步再深入的学习 TiDB，我们也推出了 PingCAP University（<https://university.pingcap.com>）线上及线下的培训课程。最后大家也可以验证一下自己的学习效果，也可以去参加认证考试（如下图所示）。
 
 ![16-pu](media/tidb-devcon2020-liuqi/16-pu.png)
 

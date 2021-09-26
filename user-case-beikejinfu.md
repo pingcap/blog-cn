@@ -28,7 +28,6 @@ TiDB 是一个分布式 NewSQL 数据库。它支持水平弹性扩展、ACID �
 
 <div class="caption-center">图 1 贝壳金服整体数据架构图</div>
 
-
 ## 三、业务类型
 
 由于原有 MySQL 数据库提供服务非常吃力，使用 100 多个 Syncer 同步上游的 MySQL 数据，而 TiDB 作为一个数据中台，主要使用 TiSpark 在做查询。

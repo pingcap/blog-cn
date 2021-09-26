@@ -70,14 +70,11 @@ TiDB 容灾的核心机制是我们的 Raft ，相信各位关注 TiDB 的朋友
 
 ![2-TiDB高性能分布式备份机制](media/tidb-financial-grade-backup-and-multi-center-disaster-recovery/2-TiDB高性能分布式备份机制.png)
 
-
 ## 最强的多中心：TiDB 多中心多活容灾方案
 
 在多中心里面，前面提到，我们通过 Multi Raft 的机制，以及相关的工程优化，实现了跨中心的容灾方案。比如说，对于长距离的异地中心，我们在同城设了两个中心，通过光纤连接，异地的话，通常租用比如运营商的 MSTP 类型的线路，构成一个三中心的结构，通过 TiDB 内置的容灾和灾备的相关的一系列的机制与手段，可以构建出非常强健的容灾的架构。**任何中心级失效，都会由另外两个中心来立刻进行故障的转移，以及对外继续提供正常的数据库服务。**
 
-
 ![3-TiDB多中心多活容灾方案](media/tidb-financial-grade-backup-and-multi-center-disaster-recovery/3-TiDB多中心多活容灾方案.png)
-
 
 ## 安全的两中心：TiDB 两中心容灾方案
 
@@ -87,12 +84,10 @@ TiDB 容灾的核心机制是我们的 Raft ，相信各位关注 TiDB 的朋友
 
 也有用户希望在两中心的方案里，需要有一个强一致保障的方案。所以我们研发了两中心的 **Raft based 容灾方案**，它可以在同城或者接近同城距离的两中心环境中，且中心间网络条件比较好的情况下，实现严格的强一致同步。**这个方案可以达到 RPO 等于 0 的保障要求，也就是数据不丢失前提下的一个高等级的容灾要求。**
 
-
 ![4-TiDB两中心容灾方案](media/tidb-financial-grade-backup-and-multi-center-disaster-recovery/4-TiDB两中心容灾方案.png)
 
 ## 结语
 
 最后，我们一直持续在花非常多的精力和投入，研究如何让 TiDB 变得更强，更安全，更可靠。能够达到更好的金融级的数据服务的支撑能力水平，依托于我们整个工程研发团队、 QA 测试团队，以及我们所打造和拥有的强大的测试体系、TiDB 产品的容灾灾备一系列高可用及灾备容灾机制，我们能够为银行、保险、证券等金融客户提供完善的、可靠的、放心的、金融级的分布式数据库服务。
-
 
 >本文整理自余军在 [TiDB DevCon 2020](https://pingcap.com/community-cn/devcon2020/) 上的演讲，大会相关视频回顾可以关注官方 Bilibli 账号 [TiDB_Robot](https://space.bilibili.com/86485707) 。

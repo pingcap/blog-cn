@@ -42,7 +42,6 @@ tags: ['K8s', 'TiDB Operator','Linux']
 
 <div class="caption-center">内核路径信息-2</div>
 
-
 从上图的信息中可以看到 I/O 抖动和文件系统执行 writepage 有关。同时捕获到性能抖动的前后，在 node 内存资源充足的情况下，`dmesg` 返回的结果也会出现大量 “SLUB: Unable to allocate memory on node -1” 的信息。
 
 从 `hung_task` 输出的 call stack 信息结合内核代码发现，内核在执行 `bvec_alloc` 函数分配 `bio_vec` 对象时，会先尝试通过 `kmem_cache_alloc` 进行分配，`kmem_cache_alloc` 失败后，再进行 fallback 尝试从 mempool 中进行分配，而在 mempool 内部会先尝试执行 `pool->alloc` 回调进行分配，`pool->alloc` 分配失败后，内核会将进程设置为不可中断状态并放入等待队列中进行等待，当其他进程向 mempool 归还内存或定时器超时（5s） 后，进程调度器会唤醒该进程进行重试 ，这个等待时间和我们业务监控的抖动延迟相符。
@@ -155,7 +154,7 @@ cat: memory.kmem.slabinfo: Input/output error
 
 推荐内核版本 Centos 7.6 kernel-3.10.0-957 及以上。
 
-1.  安装 [kpatch](https://github.com/dynup/kpatch) 及 kpatch-build 依赖：
+1. 安装 [kpatch](https://github.com/dynup/kpatch) 及 kpatch-build 依赖：
 
 	```
 	UNAME=$(uname -r)
@@ -185,7 +184,7 @@ cat: memory.kmem.slabinfo: Input/output error
 	systemctl enable kpatch
 	```
 
-3.  下载并构建热补丁内核模块：
+3. 下载并构建热补丁内核模块：
 
 	```
 	curl -SOL  https://raw.githubusercontent.com/pingcap/kdt/master/kpatchs/route.patch

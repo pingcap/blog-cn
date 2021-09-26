@@ -14,6 +14,7 @@ tags: ['TiDB', 'Jepsen']
 Jepsen 是由 [Kyle Kingsbury](https://aphyr.com/about) 采用函数式编程语言 Clojure 编写的验证分布式系统一致性的测试框架，作者使用它对许多著名的分布式系统（etcd, cockroachdb...）进行了“攻击”（一致性验证），并且帮助其中的部分系统找到了 bug。这里一系列的[博客](https://aphyr.com/tags/jepsen)展示了作者的验证过程以及对于一致性验证的许多思考。
 
 ## Jepsen 如何工作
+
 Jepsen 验证系统由 6 个节点组成，一个控制节点（control node），五个被控制节点（默认为 n1, n2, n3, n4, n5），控制节点将所有指令发送到某些或全部被控制节点，这些指令包括底层的 shell 命令到上层的 SQL 语句等等。Jepsen 提供了几个核心 API 用于验证分布式系统：
 
 + **DB**
@@ -53,7 +54,7 @@ Jepsen 验证系统由 6 个节点组成，一个控制节点（control node）�
 
 TiDB 中的 Jepsen 测试有 3 个，分别是 bank、set 和 register 测试。
 
-#### Bank Test
+### Bank Test
 
 银行测试用于验证快照隔离。这个测试模拟了一个银行系统中的各种转账，每个银行系统的初始可以是这样的：
 
@@ -83,7 +84,7 @@ TiDB 中的 Jepsen 测试有 3 个，分别是 bank、set 和 register 测试。
 
 在快照隔离下，所有的转账都必须保证每一时刻所有账户的总金额是相同的。TiDB 在即使引入了各种 nemesis 的情况下仍旧顺利地通过了测试。
 
-#### Set Test
+### Set Test
 
 这个测试从不同节点并发的将不同的数插入一张表中，并且进行一次最终的表读取操作，用于验证所有返回成功的插入值一定会出现在表中，然后所有返回失败的插入值一定不在表中，同时，因为 nemesis 的引入，对于那些返回 time-out 的插入值，它们可能出现也可能不会出现在表中，这属于正常情况。
 
@@ -93,15 +94,13 @@ TiDB 中的 Jepsen 测试有 3 个，分别是 bank、set 和 register 测试。
 
 同样，TiDB 通过了测试。
 
-#### Register Test
+### Register Test
 
 这个测试很好理解，建一个表，然后插入一条值，然后我们把这个值看做是一个寄存器，然后在测试中并发地从各个节点对其进行 read、write 和 cas 操作。
 
 ![截图 5](media/tidb-jepsen/5.png)
 
 然后利用 Jepsen 产生的一系列操作历史（如上图）进行 Linearizability 一致性验证。这个算法是 Jepsen 的核心，也是 Jepsen 被业界所熟知的原因之一，所以花时间去深入学习了下，我会在另一篇文章具体介绍这个算法。
-
-
 
 ### 写在最后
 

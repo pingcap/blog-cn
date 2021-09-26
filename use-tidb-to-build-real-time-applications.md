@@ -16,7 +16,6 @@ tags: ['TiDB']
     
 - 第四，TiDB HTAP 的未来。
     
-
 ## 数据管理技术的演进
 
 ![1](media/use-tidb-to-build-real-time-applications/1.png)

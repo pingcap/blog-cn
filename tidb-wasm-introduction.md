@@ -10,8 +10,6 @@ tags: ['Hackathon','社区','WebAssembly']
 >
 >本文由 Ti-Cool 队成员主笔，为大家详细介绍 TiDB-Wasm 设计与实现细节。
 
-
-
 10 月 27 日，为期两天的 Hackathon 落下帷幕，我们用一枚二等奖为此次上海之行画上了圆满的句号，不枉我们风尘仆仆跑去异地参赛（强烈期待明年杭州能作为赛场，主办方也该鼓励鼓励杭州当地的小伙伴呀 :D ）。
 
 我们几个 PingCAP 的小伙伴找到了 Tony 同学一起组队，组队之后找了一个周末进行了“秘密会晤”——Hackathon kick off。想了 N 个 idea，包括使用 unikernel 技术将 TiDB 直接跑在裸机上，或者将网络协议栈做到用户态以提升 TiDB 集群性能，亦或是使用异步 io 技术提升 TiKV 的读写能力，这些都被一一否决，原因是这些 idea 不是和 Tony 的工作内容相关，就是和我们 PingCAP 小伙伴的日常工作相关，做这些相当于我们在 Hackathon 加了两天班，这一点都不酷。本着「与工作无关」的标准，我们想了一个 idea：把 TiDB 编译成 Wasm 运行在浏览器里，让用户无需安装就可以使用 TiDB。我们一致认为这很酷，于是给队伍命名为 Ti-Cool（太酷了）。
@@ -24,9 +22,9 @@ WebAssembly 的 [官方介绍](https://webassembly.org/) 是这样的：WebAssem
 
 从上面一段话我们可以得出几个信息：
 
-1.  Wasm 是一种可执行的指令格式。
-2.  C/C++/Rust 等高级语言写的程序可以编译成 Wasm。
-3.  Wasm 可以在 web（浏览器）环境中运行。
+1. Wasm 是一种可执行的指令格式。
+2. C/C++/Rust 等高级语言写的程序可以编译成 Wasm。
+3. Wasm 可以在 web（浏览器）环境中运行。
 
 ### 可执行指令格式
 
@@ -86,7 +84,6 @@ Example or  Hello World？
     )
 )
 ```
-
 
 具体指令的解释可以参考 [这里](https://pengowray.github.io/wasm-ops/html/wasm-opcodes.html)。
 
@@ -156,7 +153,6 @@ func (tk *TestKit) Exec(sql string, args ...interface{}) (sqlexec.RecordSet, err
 }
 ```
 
-
 剩下的事情就非常简单了，写一个 Read-Eval-Print-Loop (REPL)  读取用户输入，将输入交给上面的 Exec，再将 Exec 的输出格式化到标准输出，然后循环继续读取用户输入。
 
 ### 编译问题
@@ -168,7 +164,6 @@ func (tk *TestKit) Exec(sql string, args ...interface{}) (sqlexec.RecordSet, err
 ![图 4 按照 Golang 官方文档编译（1/2）](media/tidb-wasm-introduction/4-按照-Golang-官方文档编译.png)
 
 <div class="caption-center">图 4 按照 Golang 官方文档编译（1/2）</div> 
-
 
 果然出师不利，查看 goleveldb 的代码发现，storage 包下面的代码针对不同平台有各自的实现，唯独没有 Wasm/js 的：
 
@@ -207,7 +202,6 @@ func syncDir(name string) error {
 }
 ```
 
-
 然后再次编译：
 
 ![图 6 再次编译的结果](media/tidb-wasm-introduction/6-再次编译的结果.png)
@@ -224,19 +218,19 @@ emm… 编译的时候没有函数可以说这个函数没有 Wasm/js 对应的�
 
 看起来还是和刚刚一样的情况，我们只需要为 Wasm 实现一套这些函数就可以了。但这里有个问题是，这是一个代码不受我们控制的第三方库，并且 TiDB 不直接依赖这个库，而是依赖了一个叫 `mathutil` 的库，然后 `mathutil` 依赖这个 `bigfft`。悲催的是，这个 `mathutil` 的代码也不受我们控制，因此很直观的想到了两种方案：
 
-1.  给这两个库的作者提 PR，让他们支持 Wasm。
+1. 给这两个库的作者提 PR，让他们支持 Wasm。
 
-2.  我们将这两个库 clone 过来改掉，然后把 TiDB 依赖改到我们 clone 过来的库上。
+2. 我们将这两个库 clone 过来改掉，然后把 TiDB 依赖改到我们 clone 过来的库上。
 
 方案一的问题很明显，整个周期较长，等作者接受 PR 了我们的 Hackathon 都凉凉了（而且还不一定会接受）；方案二的问题也不小，这会导致我们和上游脱钩。那么有没有第三种方案呢，即在编译 Wasm 的时候不依赖这两个库，在编译正常的二进制文件的时候又用这两个库？经过搜索发现，我们很多代码都用到了 `mathutil`，但是基本上只用了几个函数：`MinUint64`，`MaxUint64`，`MinInt32`，`MaxInt32` 等等，我们想到的方案是：
 
-1.  新建一个 `mathutil` 目录，在这个目录里建立 `mathutil_linux.go` 和 `mathutil_js.go`。
+1. 新建一个 `mathutil` 目录，在这个目录里建立 `mathutil_linux.go` 和 `mathutil_js.go`。
 
-2.  在 `mathutil_linux.go` 中 reexport 第三方包的几个函数。
+2. 在 `mathutil_linux.go` 中 reexport 第三方包的几个函数。
 
-3.  在 `mathutil_js.go` 中自己实现这几个函数，不依赖第三方包。
+3. 在 `mathutil_js.go` 中自己实现这几个函数，不依赖第三方包。
 
-4.  将所有对第三方的依赖改到 `mathutil` 目录上。
+4. 将所有对第三方的依赖改到 `mathutil` 目录上。
 
 这样，`mathutil` 目录对外提供了原来 `mathutil` 包的函数，同时整个项目只有 `mathutil` 目录引入了这个不兼容 Wasm 的第三方包，并且只在 `mathutil_linux.go` 中引入（`mathutil_js.go` 是自己实现的），因此编译 Wasm 的时候就不会再用到 `mathutil` 这个包。
 
@@ -302,9 +296,9 @@ go.run(result.instance);
 
 通过上面的工作，我们现在有了一个 Exec 函数，它接受 SQL 字符串，输出 SQL 执行结果，并且它可以在浏览器里运行，我们还需要一个浏览器版本 SQL 终端和这个函数交互，两种方案：
 
-1.  使用 Golang 直接操作 dom 来实现这个终端。
+1. 使用 Golang 直接操作 dom 来实现这个终端。
 
-2.  在 Golang 中把 Exec 暴露到全局，然后找一个现成的 js 版本的终端和这个全局的 Exec 对接。
+2. 在 Golang 中把 Exec 暴露到全局，然后找一个现成的 js 版本的终端和这个全局的 Exec 对接。
 
 对于前端小白的我们来说，第二种方式成本最低，我们很快找到了 jquery.console.js 这个库，它只需要传入一个 SQL 处理的 callback 即可运行，而我们的 Exec 简直就是为这个 callback 量身打造的。
 
@@ -395,17 +389,17 @@ source 命令执行之后弹出文件选择框：
 
 总的来说，这次 Hackathon 为了移植 TiDB 我们主要解决了几个问题：
 
-1.  浏览器中无法监听端口，我们给 TiDB 嵌入了一个 SQL 终端。
+1. 浏览器中无法监听端口，我们给 TiDB 嵌入了一个 SQL 终端。
 
-2.  goleveldb 对 Wasm 的兼容问题。
+2. goleveldb 对 Wasm 的兼容问题。
 
-3.  bigfft 的 Wasm 兼容问题。
+3. bigfft 的 Wasm 兼容问题。
 
-4.  Golang 自身对 WASI 支持不完善导致的 fs 相关函数缺失。
+4. Golang 自身对 WASI 支持不完善导致的 fs 相关函数缺失。
 
-5.  TiDB 对本地文件加载转换为浏览器上传文件方式加载。
+5. TiDB 对本地文件加载转换为浏览器上传文件方式加载。
 
-6.  支持 source 命令批量执行 SQL。
+6. 支持 source 命令批量执行 SQL。
 
 **目前而言我们已经将这个项目作为 TiDB Playground ([https://play.pingcap.com/](https://play.pingcap.com/)) 和 TiDB Tour ([https://tour.pingcap.com/](https://tour.pingcap.com/)) 开放给用户使用。由于它不需要用户安装配置就能让用户在阅读文档的同时进行尝试，很大程度上降低了用户学习使用 TiDB 的成本，社区有小伙伴已经基于这些自己做数据库教程了，譬如：[imiskolee/tidb-wasm-markdown](https://github.com/imiskolee/tidb-wasm-markdown)（[相关介绍文章](https://mp.weixin.qq.com/s/0Vo4apK4VdBfOs0-KyWXZA)）。**
 
@@ -415,10 +409,10 @@ source 命令执行之后弹出文件选择框：
 
 由于 Hackathon 时间比较紧张，其实很多想做的东西还没实现，比如：
 
-1.  使用 indexedDB 让数据持久化：需要针对 indexedDB 实现一套 Storage 的 interface。
+1. 使用 indexedDB 让数据持久化：需要针对 indexedDB 实现一套 Storage 的 interface。
 
-2.  使用 P2P 技术（如 webrtc）对其他浏览器提供服务：未来必定会有越来越多的应用迁移到 Wasm，而很多应用是需要数据库的，TiDB-Wasm 恰好可以扮演这样的角色。
+2. 使用 P2P 技术（如 webrtc）对其他浏览器提供服务：未来必定会有越来越多的应用迁移到 Wasm，而很多应用是需要数据库的，TiDB-Wasm 恰好可以扮演这样的角色。
 
-3.  给 TiDB 的 Wasm 二进制文件瘦身：目前编译出来的二进制文件有将近 80M，对浏览器不太友好，同时运行时占用内存也比较多。
+3. 给 TiDB 的 Wasm 二进制文件瘦身：目前编译出来的二进制文件有将近 80M，对浏览器不太友好，同时运行时占用内存也比较多。
 
 欢迎更多感兴趣的社区小伙伴们加入进来，一起在这个项目上愉快的玩耍（[github.com/pingcap/tidb/projects/27](https://github.com/pingcap/tidb/projects/27)），也可以通过 [info@pingcap.com](mailto:info@pingcap.com) 联系我们。

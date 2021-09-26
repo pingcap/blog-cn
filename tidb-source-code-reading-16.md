@@ -43,7 +43,6 @@ tags: ['TiDB 源码阅读','社区']
 
 由于 `INSERT IGNORE ON DUPLICATE KEY UPDATE` 是在 `INSERT ON DUPLICATE KEY UPDATE` 上做了些特殊处理，将不再单独详细介绍，而是放在同一小节中介绍；`LOAD DATA` 由于其自身的特殊性，将留到其他篇章介绍。
 
-
 # Basic INSERT 语句
 
 几种 INSERT 语句的最大不同在于执行层面，这里接着 [《TiDB 源码阅读系列文章（四）INSERT 语句概览》](https://pingcap.com/blog-cn/tidb-source-code-reading-4) 来讲语句执行过程。不记得前面内容的同学可以返回去看原文章。

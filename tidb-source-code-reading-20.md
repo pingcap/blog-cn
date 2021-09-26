@@ -17,24 +17,23 @@ TiDB 正在支持分区表这一特性。在 TiDB 中分区表是一个独立的
 
 ### 分区表有什么好处？
 
-1.  优化器可以使用分区信息做分区裁剪。在语句中包含分区条件时，可以只扫描一个或多个分区表来提高查询效率。
+1. 优化器可以使用分区信息做分区裁剪。在语句中包含分区条件时，可以只扫描一个或多个分区表来提高查询效率。
 
-2.  方便地进行数据生命周期管理。通过创建、删除分区、将过期的数据进行 高效的归档，比使用 Delete 语句删除数据更加优雅，打散写入热点，将一个表的写入分散到多个物理表，使得负载分散开，对于存在 Sequence 类型数据的表来说（比如 Auto Increament ID 或者是 create time 这类的索引）可以显著地提升写入吞吐。
+2. 方便地进行数据生命周期管理。通过创建、删除分区、将过期的数据进行 高效的归档，比使用 Delete 语句删除数据更加优雅，打散写入热点，将一个表的写入分散到多个物理表，使得负载分散开，对于存在 Sequence 类型数据的表来说（比如 Auto Increament ID 或者是 create time 这类的索引）可以显著地提升写入吞吐。
 
 ### 分区表的限制
 
-1.  TiDB 默认一个表最多只能有 1024 个分区 ，默认是不区分表名大小写的。
+1. TiDB 默认一个表最多只能有 1024 个分区 ，默认是不区分表名大小写的。
 
-2.  Range, List, Hash 分区要求分区键必须是 INT 类型，或者通过表达式返回 INT 类型。但 Key 分区的时候，可以使用其他类型的列（BLOB，TEXT 类型除外）作为分区键。
+2. Range, List, Hash 分区要求分区键必须是 INT 类型，或者通过表达式返回 INT 类型。但 Key 分区的时候，可以使用其他类型的列（BLOB，TEXT 类型除外）作为分区键。
 
-3.  如果分区字段中有主键或者唯一索引的列，那么有主键列和唯一索引的列都必须包含进来。
+3. 如果分区字段中有主键或者唯一索引的列，那么有主键列和唯一索引的列都必须包含进来。
 
-
-4.  TiDB 的分区适用于一个表的所有数据和索引。不能只对表数据分区而不对索引分区，也不能只对索引分区而不对表数据分区，也不能只对表的一部分数据分区。
+4. TiDB 的分区适用于一个表的所有数据和索引。不能只对表数据分区而不对索引分区，也不能只对索引分区而不对表数据分区，也不能只对表的一部分数据分区。
 
 ### 常见分区表的类型
 
-*   Range 分区：按照分区表达式的范围来划分分区。通常用于对分区键需要按照范围的查询，分区表达式可以为列名或者表达式 ，下面的 employees 表当中 p0, p1, p2, p3 表示 Range 的访问分别是  (min, 1991), [1991, 1996), [1996, 2001), [2001, max) 这样一个范围。
+* Range 分区：按照分区表达式的范围来划分分区。通常用于对分区键需要按照范围的查询，分区表达式可以为列名或者表达式 ，下面的 employees 表当中 p0, p1, p2, p3 表示 Range 的访问分别是  (min, 1991), [1991, 1996), [1996, 2001), [2001, max) 这样一个范围。
 
     ```sql
     CREATE  TABLE employees (
@@ -52,11 +51,11 @@ TiDB 正在支持分区表这一特性。在 TiDB 中分区表是一个独立的
     
     ```
 
-*   List 分区：按照 List 中的值分区，主要用于枚举类型，与 Range 分区的区别在于 Range 分区的区间范围值是连续的。
+* List 分区：按照 List 中的值分区，主要用于枚举类型，与 Range 分区的区别在于 Range 分区的区间范围值是连续的。
 
-*   Hash 分区：Hash 分区需要指定分区键和分区个数。通过 Hash 的分区表达式计算得到一个 INT 类型的结果，这个结果再跟分区个数取模得到具体这行数据属于那个分区。通常用于给定分区键的点查询，Hash 分区主要用来分散热点读，确保数据在预先确定个数的分区中尽可能平均分布。
+* Hash 分区：Hash 分区需要指定分区键和分区个数。通过 Hash 的分区表达式计算得到一个 INT 类型的结果，这个结果再跟分区个数取模得到具体这行数据属于那个分区。通常用于给定分区键的点查询，Hash 分区主要用来分散热点读，确保数据在预先确定个数的分区中尽可能平均分布。
 
-*   Key 分区：类似 Hash 分区，Hash 分区允许使用用户自定义的表达式，但 Key 分区不允许使用用户自定义的表达式。Hash 仅支持整数分区，而 Key 分区支持除了 Blob 和 Text 的其他类型的列作为分区键。
+* Key 分区：类似 Hash 分区，Hash 分区允许使用用户自定义的表达式，但 Key 分区不允许使用用户自定义的表达式。Hash 仅支持整数分区，而 Key 分区支持除了 Blob 和 Text 的其他类型的列作为分区键。
 
 ## TiDB Table Partition 的实现
 
@@ -143,8 +142,7 @@ drop partition 和 drop table 类似，只不过需要先找到对应的 Partiti
 
     endKey： `tablePrefix_rowPrefix_partitionID + 1`
 
-
-6.  删除了分区，同时也将删除该分区中的所有数据。如果删除了分区导致分区不能覆盖所有值，那么插入数据的时候会报错。
+6. 删除了分区，同时也将删除该分区中的所有数据。如果删除了分区导致分区不能覆盖所有值，那么插入数据的时候会报错。
 
 ### Select 语句
 
@@ -180,45 +178,45 @@ select * from p3 where id < MAXVALUE)
 
 其实解释这些问题就可以了：
 
-1.  普通表和分区表怎么区分？
+1. 普通表和分区表怎么区分？
 
-2.  插入数据应该插入哪个 Partition？
+2. 插入数据应该插入哪个 Partition？
 
-3.  每个 Partition 的 RowKey 怎么编码的和普通表的区别是什么？
+3. 每个 Partition 的 RowKey 怎么编码的和普通表的区别是什么？
 
-4.  怎么将数据插入到相应的 Partition 里面?
+4. 怎么将数据插入到相应的 Partition 里面?
 
 普通 Table 和 Table Partition 也是实现了 Table 的接口，load schema 在初始化 Table 数据结构的时候，如果发现 `tableInfo` 里面没有 Partition 信息，则生成一个普通的 `tables.Table`，普通的 Table 跟以前处理逻辑保持不变，如果 `tableInfo` 里面有 Partition 信息，则会生成一个 `tables.PartitionedTable`，它们的区别是 RowKey 的编码方式：
 
-*  每个分区有一个独立的 Partition ID，Partition ID 和 Table ID 地位平等，每个 Partition 的 Row 和 index 在编码的时候都使用这个 Partition 的 ID。
+* 每个分区有一个独立的 Partition ID，Partition ID 和 Table ID 地位平等，每个 Partition 的 Row 和 index 在编码的时候都使用这个 Partition 的 ID。
 
-*  下面是 [PartitionRecordKey](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/partition.go#L171) 和普通表 [RecordKey](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/tables.go#L261) 区别。
+* 下面是 [PartitionRecordKey](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/partition.go#L171) 和普通表 [RecordKey](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/tables.go#L261) 区别。
 
-    *  分区表按照规则编码成 Key-Value pair：
+    * 分区表按照规则编码成 Key-Value pair：
 
        Key: `tablePrefix_rowPrefix_partitionID_rowID`  
     
        Value: `[col1, col2, col3, col4]`
 
-    *  普通表按照规则编码成 Key-Value pair：
+    * 普通表按照规则编码成 Key-Value pair：
 
        Key: `tablePrefix_rowPrefix_tableID_rowID`  
     
        Value: `[col1, col2, col3, col4]`
 
-*  通过 [locatePartition](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/partition.go#L177) 操作查询到应该插入哪个 Partition，目前支持 RANGE 分区插入到那个分区主要是通过范围来判断，例如在 employees 表中插入下面的 sql，通过计算范围该条记录会插入到 p3 分区中，接着调用对应 Partition 上面的 [AddRecord](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/tables.go#L406) 方法，将数据插入到相应的 Partition 里面。
+* 通过 [locatePartition](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/partition.go#L177) 操作查询到应该插入哪个 Partition，目前支持 RANGE 分区插入到那个分区主要是通过范围来判断，例如在 employees 表中插入下面的 sql，通过计算范围该条记录会插入到 p3 分区中，接着调用对应 Partition 上面的 [AddRecord](https://github.com/pingcap/tidb/blob/release-2.1/table/tables/tables.go#L406) 方法，将数据插入到相应的 Partition 里面。
 
    `INSERT  INTO employees VALUES (1, 'PingCAP TiDB', '2003-10-15'),`
 
-*  插入数据时，如果某行数据不属于任何 Partition，则该事务失败，所有操作回滚。如果 Partition 的 Key 算出来是一个 `NULL`，对于不同的 Partition 类型有不同的处理方式：
+* 插入数据时，如果某行数据不属于任何 Partition，则该事务失败，所有操作回滚。如果 Partition 的 Key 算出来是一个 `NULL`，对于不同的 Partition 类型有不同的处理方式：
 
-    *  对于 Range Partition：该行数据被插入到最小的那个 Partition
+    * 对于 Range Partition：该行数据被插入到最小的那个 Partition
 
-    *  对于 List partition：如果某个 Partition 的 Value List 中有 `NULL`，该行数据被插入那个 Partition，否则插入失败
+    * 对于 List partition：如果某个 Partition 的 Value List 中有 `NULL`，该行数据被插入那个 Partition，否则插入失败
 
-    *  对于 Hash 和 Key Partition：`NULL` 值视为 0，计算 Partition ID 将数据插入到对应的 Partition
+    * 对于 Hash 和 Key Partition：`NULL` 值视为 0，计算 Partition ID 将数据插入到对应的 Partition
 
-*  在 TiDB 分区表中分区字段插入的值不能大于表中 Range 值最大的上界，否则会报错
+* 在 TiDB 分区表中分区字段插入的值不能大于表中 Range 值最大的上界，否则会报错
 
 ## End
 

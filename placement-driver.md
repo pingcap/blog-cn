@@ -186,7 +186,6 @@ TSO 是一个 int64 的整形，它由 physical time + logical time 两个部分
 
 无论是 PD 还是在 TiKV，我们都是通过 epoch 来判断 region 是否发生了变化，从而拒绝掉一些危险的操作。譬如 region 已经发生了分裂，`version` 变成了 2，那么如果这时候有一个写请求带上的 `version` 是 1， 我们就会认为这个请求是 stale，会直接拒绝掉。因为 `version` 变化表明 region 的范围已经发生了变化，很有可能这个 stale 的请求需要操作的 key 是在之前的 region range 里面而没在新的 range 里面。
 
-
 ## Split / Merge
 
 前面我们说了，PD 会在 region 的 heartbeat 里面对 region 进行调度，然后直接在 heartbeat 的返回值里面带上相关的调度信息，让 TiKV 自己去处理，TiKV 处理完成之后，通过下一个 heartbeat 重新上报，PD 就能知道是否调度成功了。

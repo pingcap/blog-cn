@@ -77,7 +77,6 @@ customerCategory: 电商
 
 * 停止双写：迁移过程至此结束。
 
-
 ![图 3 迁移过程图：保持双写，逐步从读 MySQL 改为读 TiDB](media/user-case-shopee/3.png)
 
 <div class="caption-center">图 3 迁移过程图：保持双写，逐步从读 MySQL 改为读 TiDB</div>

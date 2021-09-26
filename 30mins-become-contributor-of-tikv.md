@@ -80,13 +80,12 @@ SQL 语句发送到 TiDB 后经过 parser 生成 AST（抽象语法树），再�
 综上，`multiply_int_unsigned` 的下推函数定义为：
 
 ```
-    pub fn multiply_int_unsigned(
-       &self,
-       ctx: &mut EvalContext,
-       row: &[Datum],
-   ) -> Result<Option<i64>>
-```  
-
+pub fn multiply_int_unsigned(
+    &self,
+    ctx: &mut EvalContext,
+    row: &[Datum],
+) -> Result<Option<i64>>
+```
 
 ### Step 4：实现函数逻辑
 

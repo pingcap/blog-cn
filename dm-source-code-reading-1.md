@@ -16,11 +16,11 @@ tags: ['DM 源码阅读','社区']
 
 本系列文章会聚焦 DM 自身，读者需要有一些基本的知识，包括但不限于：
 
-*   Go 语言，DM 由 Go 语言实现，有一定的 Go 语言基础有助于快速理解代码。
+* Go 语言，DM 由 Go 语言实现，有一定的 Go 语言基础有助于快速理解代码。
 
-*   数据库基础知识，包括 MySQL、TiDB 的功能、配置和使用等；知道基本的 DDL、DML 语句和事务的基本常识；MySQL 数据备份、主从同步的原理等。
+* 数据库基础知识，包括 MySQL、TiDB 的功能、配置和使用等；知道基本的 DDL、DML 语句和事务的基本常识；MySQL 数据备份、主从同步的原理等。
 
-*   基本的后端服务知识，比如后台服务进程管理、RPC 工作原理等。
+* 基本的后端服务知识，比如后台服务进程管理、RPC 工作原理等。
 
 总体而言，读者需要有一定 MySQL/TiDB 的使用经验，了解 MySQL 数据备份和主从同步的原理，以及可以读懂 Go 语言程序。在阅读 DM 源码之前，可以先从阅读[《TiDB Data Migration 架构设计与实现原理》](https://pingcap.com/blog-cn/tidb-ecosystem-tools-3/)入手，并且参考 [使用文档](https://docs.pingcap.com/zh/tidb-data-migration/v1.0) 在本地搭建一个 DM 的测试环境，从基础原理和使用对 DM 有一个初步的认识，然后再进一步分析源码，深入理解代码的设计和实现。
 
@@ -28,23 +28,23 @@ tags: ['DM 源码阅读','社区']
 
 源码阅读系列将会从两条线进行展开，一条是围绕 DM 的系统架构和重要模块进行分析，另一条线围绕 DM 内部的同步机制展开分析。源码阅读不仅是对代码实现的分析，更重要的是深入的分析背后的设计思想，源码阅读和原理分析的覆盖范围包括但不限于以下列出的内容（因为目前 DM 仍处于快速迭代的阶段，会有新的功能和模块产生，部分模块在未来也会进行优化和重构，后续源码阅读的内容会随着 DM 的功能演进做适当的调整）：
 
-*   整体架构介绍，包括 DM 有哪些模块，分别实现什么功能，模块之间交互的数据模型和 RPC 实现。
+* 整体架构介绍，包括 DM 有哪些模块，分别实现什么功能，模块之间交互的数据模型和 RPC 实现。
 
-*   DM-worker 内部组件设计原理（relay-unit, dump-unit, load-unit, sync-unit）和数据同步的并发模型设计与实现。
+* DM-worker 内部组件设计原理（relay-unit, dump-unit, load-unit, sync-unit）和数据同步的并发模型设计与实现。
 
-*   基于 binlog 的数据同步模型设计和实现。
+* 基于 binlog 的数据同步模型设计和实现。
 
-*   relay log 的原理和实现。
+* relay log 的原理和实现。
 
-*   定制化数据同步功能的实现原理（包括库表路由，库表黑白名单，binlog event 过滤，列值转换）。
+* 定制化数据同步功能的实现原理（包括库表路由，库表黑白名单，binlog event 过滤，列值转换）。
 
-*   DM 如何支持上游 online DDL 工具（[pt-osc](https://www.percona.com/doc/percona-toolkit/LATEST/pt-online-schema-change.html), [gh-ost](https://github.com/github/gh-ost)）的 DDL 同步场景。
+* DM 如何支持上游 online DDL 工具（[pt-osc](https://www.percona.com/doc/percona-toolkit/LATEST/pt-online-schema-change.html), [gh-ost](https://github.com/github/gh-ost)）的 DDL 同步场景。
 
-*   sharding DDL 处理的具体实现。
+* sharding DDL 处理的具体实现。
 
-*   checkpoint 的设计原理和实现，深入介绍 DM 如何在各类异常情况下保证上下游数据同步的一致性。
+* checkpoint 的设计原理和实现，深入介绍 DM 如何在各类异常情况下保证上下游数据同步的一致性。
 
-*   DM 测试的架构和实现。
+* DM 测试的架构和实现。
 
 ## 代码简介
 
@@ -70,13 +70,13 @@ DM 源代码完全托管在 GitHub 上，从 [项目主页](https://github.com/p
 
 实际上 DM 代码中使用了很多优秀的第三方开源代码，包括但不仅限于：
 
-*   借助 [grpc](https://github.com/grpc/grpc-go) 实现各组件之间的 RPC 通信
+* 借助 [grpc](https://github.com/grpc/grpc-go) 实现各组件之间的 RPC 通信
 
-*   借助 [pingcap/parser](https://github.com/pingcap/parser) 进行 DDL 的语法解析和语句还原
+* 借助 [pingcap/parser](https://github.com/pingcap/parser) 进行 DDL 的语法解析和语句还原
 
-*   借助 [pingcap/tidb-tools](https://github.com/pingcap/tidb-tools) 提供的工具实现复杂的数据同步定制
+* 借助 [pingcap/tidb-tools](https://github.com/pingcap/tidb-tools) 提供的工具实现复杂的数据同步定制
 
-*   借助 [go-mysql](https://github.com/siddontang/go-mysql) 解析 MySQL/MariaDB binlog 等
+* 借助 [go-mysql](https://github.com/siddontang/go-mysql) 解析 MySQL/MariaDB binlog 等
 
 在源码阅读过程中对于比较重要的、与实现原理有很高相关度的第三方模块，我们会进行相应的扩展阅读。
 
@@ -84,17 +84,17 @@ DM 源代码完全托管在 GitHub 上，从 [项目主页](https://github.com/p
 
 工欲善其事，必先利其器，在阅读 DM 源码之前，我们先来介绍 DM 项目使用到的一些外部工具，这些工具通常用于 DM 的构建、部署、运行和测试，在逐步使用 DM，阅读代码、理解原理的过程中都会使用到这些工具。
 
-*   golang 工具链：构建 DM 需要 go >= 1.11.4，目前支持 Linux 和 MacOS 环境。
+* golang 工具链：构建 DM 需要 go >= 1.11.4，目前支持 Linux 和 MacOS 环境。
 
-*   [gogoprotobuf](https://github.com/gogo/protobuf/)：用于从 proto 描述文件生成 protobuf 代码，DM 代码仓库的 [generate-dm.sh](https://github.com/pingcap/dm/blob/master/generate-dm.sh) 文件封装了自动生成 DM 内部 protobuf 代码的脚本。
+* [gogoprotobuf](https://github.com/gogo/protobuf/)：用于从 proto 描述文件生成 protobuf 代码，DM 代码仓库的 [generate-dm.sh](https://github.com/pingcap/dm/blob/master/generate-dm.sh) 文件封装了自动生成 DM 内部 protobuf 代码的脚本。
 
-*   [Ansible](https://docs.ansible.com/)：DM 封装了 [DM-Ansible](https://docs.pingcap.com/zh/tidb-data-migration/v1.0/deploy-a-dm-cluster-using-ansible) 脚本用于 DM 集群的自动化部署，部署流程可以参考 [使用 ansible 部署 DM](https://pingcap.com/docs/tools/dm/deployment/)。
+* [Ansible](https://docs.ansible.com/)：DM 封装了 [DM-Ansible](https://docs.pingcap.com/zh/tidb-data-migration/v1.0/deploy-a-dm-cluster-using-ansible) 脚本用于 DM 集群的自动化部署，部署流程可以参考 [使用 ansible 部署 DM](https://pingcap.com/docs/tools/dm/deployment/)。
 
-*   [pt-osc](https://www.percona.com/doc/percona-toolkit/LATEST/pt-online-schema-change.html), [gh-ost](https://github.com/github/gh-ost)：用于上游 MySQL 进行 online-ddl 的同步场景。
+* [pt-osc](https://www.percona.com/doc/percona-toolkit/LATEST/pt-online-schema-change.html), [gh-ost](https://github.com/github/gh-ost)：用于上游 MySQL 进行 online-ddl 的同步场景。
 
-*   [mydumper](https://github.com/pingcap/mydumper)：DM 的全量数据 dump 阶段直接使用 mydumper 的 binary。
+* [mydumper](https://github.com/pingcap/mydumper)：DM 的全量数据 dump 阶段直接使用 mydumper 的 binary。
 
-*   MySQL, TiDB, sync_diff_inspector：这些主要用于单元测试和集成测试，可以参考 [tests#preparations](https://github.com/pingcap/dm/tree/master/tests#preparations) 这部分描述。
+* MySQL, TiDB, sync_diff_inspector：这些主要用于单元测试和集成测试，可以参考 [tests#preparations](https://github.com/pingcap/dm/tree/master/tests#preparations) 这部分描述。
 
 ## 小结
 

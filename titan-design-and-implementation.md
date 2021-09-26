@@ -89,7 +89,6 @@ RocksDB 允许我们使用自定义的 `TablePropertiesCollector` 来搜集 `SST
 
 ![6-EventListener.jpg](media/titan-design-and-implementation/6.jpg)
 
-
 > 图 6：inputs 代表参与 Compaction 的所有 `SST` 的 `BlobFileSizeProperties`，outputs 代表 Compaction 生成的所有 `SST` 的 `BlobFileSizeProperties`，discardable size 是通过计算 inputs 和 outputs 得出的每个 `BlobFile` 被丢弃的数据大小，第一列代表 `BlobFile` 的文件 ID，第二列代表被丢弃的数据大小。
 
 Titan 会为每个有效的 `BlobFile` 在内存中维护一个 discardable size 变量，每次 Compaction 结束之后都对相应的 `BlobFile` 的 discardable size 变量进行累加。每次 GC 开始时就可以通过挑选 discardable size 最大的 `BlobFile` 来作为作为候选的文件。

@@ -16,45 +16,45 @@ tags: ['大数据','数据库']
 
 上世纪 90 年代人们开始讨论「Big Data」。SGI 首席科学家 John Mashey 在一个名为「[Big Data… and the Next Wave of Infrastress](https://static.usenix.org/event/usenix99/invited_talks/mashey.pdf)」让这个词汇变得流行。那个时候，人们讨论着硬盘容量和网络带宽，在未来数据爆炸的阴影下瑟瑟发抖。那个时候，互联网公司是第一批真正尝试解决大数据问题的先行者。有别传统的运营方式让它们率先面对了大数据时代[著名的 3V 问题](https://blogs.gartner.com/doug-laney/files/2012/01/ad949-3D-Data-Management-Controlling-Data-Volume-Velocity-and-Variety.pdf)（By Gartner）。
 
-*   容量（Volumn）：爆炸性的交易量带来爆炸性的数据容量。
+* 容量（Volumn）：爆炸性的交易量带来爆炸性的数据容量。
 
-*   速度（Velocity）：和在这个规模下仍提供高速的数据应用。
+* 速度（Velocity）：和在这个规模下仍提供高速的数据应用。
 
-*   多样性（Variety）: 以及为了支持业务变更和复杂性所造成的数据多样性。
+* 多样性（Variety）: 以及为了支持业务变更和复杂性所造成的数据多样性。
 
 与传统公司不同，互联网公司的数据单位价值偏低，但数据量极其庞大。而且它们并不一定是结构化的，并非完全能用 SQL 来处理。简而言之，它们已经超出了当时数据库的能力边界。而当时的互联网公司巨头们如 Google 和 Amazon，纷纷选择抛弃了传统手段，重起炉灶，由此拉开了「大数据」时代的大幕。
 
 有兴趣的童鞋，可以翻翻下面的论文：
 
-*   [The Google File System](https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf) - 2003
+* [The Google File System](https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf) - 2003
 
-*   [MapReduce: Simplified Data Processing on Large Clusters](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf) - 2004
+* [MapReduce: Simplified Data Processing on Large Clusters](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf) - 2004
 
-*   [Bigtable: A Distributed Storage System for Structured Data](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf) - 2006
+* [Bigtable: A Distributed Storage System for Structured Data](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf) - 2006
 
-*   [Dynamo: Amazon’s Highly Available Key-value Store](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) - 2007
+* [Dynamo: Amazon’s Highly Available Key-value Store](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) - 2007
 
 也许你并不了解 GFS，Google 内的 MapReduce 或者 BigTable 具体是什么样子的。不过相信既然你看到了这里，你一定听说过 Apache Hadoop 和 NoSQL。Hadoop 加上属于 NoSQL 的 HBase，就是以上面 Google 的几篇论文为基础开发而成的。这是一个真正现象级的开源通用大规模分布式数据存储和处理套件。它的影响力是巨大的，稍具规模的互联网公司就不得不用，稍有经验的从业者就可以领取不菲的薪水，人人都以能向其提交一个补丁为荣，更不用提一个实打实的 Committer，你都可以从他脑后看到光环。不管现在多少人宣称 Hadoop 已死，XXX 是真理，但是以 Hadoop + NoSQL 为基础，所谓大数据基础架构所带来的想法变迁，一直延续到了今天，且并没有太大变化：
 
-*   选用白菜价的硬件组成集群，突出 Scale Out 而非 Scale Up。
+* 选用白菜价的硬件组成集群，突出 Scale Out 而非 Scale Up。
 
-*   极度简化和粗暴的计算模型。
+* 极度简化和粗暴的计算模型。
 
-*   几乎不经整理的存储格式，在多种引擎之间共享，所谓数据湖。
+* 几乎不经整理的存储格式，在多种引擎之间共享，所谓数据湖。
 
-*   忽略 / 弱化一致性，抛弃关系模型，简化甚至无视事务，所谓 NoSQL。
+* 忽略 / 弱化一致性，抛弃关系模型，简化甚至无视事务，所谓 NoSQL。
 
 你可以说这是开源社区的威力，但追根究底还是 Google，Amazon 这些先行者卓有远见的工作为大家铺平了道路。不过，有些反直觉的是：这些引用数几千几万的论文其实并没有提出巧夺天工的设计；相反，它们本质上是告诉了业界，把数据库换成设计如此粗糙狂野的架构，仍然可以解决问题：就算你没钱买超高端的软硬件，只要你放宽心，告诉自己，无视一致性，忘掉精巧的优化执行器和存储结构，忽略半结构化带来的混乱，干掉 SQL 语言，多雇几个码农，你仍然活的下去，而且可以活的还不错。
 
 这些到底为我们带来了什么？且看曾经非常著名的 Sort Benchmark。
 
-*   2004 年，NEC Express 5800 / 1320 Xd 单机，价格可能介于 200-600 万 USD 之间，1 分钟排序 34G。
+* 2004 年，NEC Express 5800 / 1320 Xd 单机，价格可能介于 200-600 万 USD 之间，1 分钟排序 34G。
 
-*   2006 年，Fujitsu PrimeQuest 480 单机，2 年将结果推高 6G，1 分钟排序 40G 数据；机器价格不可考。
+* 2006 年，Fujitsu PrimeQuest 480 单机，2 年将结果推高 6G，1 分钟排序 40G 数据；机器价格不可考。
 
-*   2007 年，麻省理工林肯国防实验室，Bradley C. Kuszmaul 使用 TX-2500 磁盘集群（550 万 + USD），440 节点用 Infiband 串联，使用了自制系统（文件系统，通信模块），在经历了无数硬件软件故障之后，一分钟内排序了 214GB 数据；该试验相比之前的超豪华服务器，已经开始使用「便宜硬件」，但是使用自制软件系统。
+* 2007 年，麻省理工林肯国防实验室，Bradley C. Kuszmaul 使用 TX-2500 磁盘集群（550 万 + USD），440 节点用 Infiband 串联，使用了自制系统（文件系统，通信模块），在经历了无数硬件软件故障之后，一分钟内排序了 214GB 数据；该试验相比之前的超豪华服务器，已经开始使用「便宜硬件」，但是使用自制软件系统。
 
-*   2009年，Yahoo! 使用 Hadoop 以近似的总价（500 万 USD，以单价反推）但近 1/3 的单价串联了 1400 个白菜价节点集群，得到了一倍多的速度，排序了 500G。而这里 1400 的节点数是为了凑整 500G / 1 分钟，而非只能这么多或者必须这么多。
+* 2009年，Yahoo! 使用 Hadoop 以近似的总价（500 万 USD，以单价反推）但近 1/3 的单价串联了 1400 个白菜价节点集群，得到了一倍多的速度，排序了 500G。而这里 1400 的节点数是为了凑整 500G / 1 分钟，而非只能这么多或者必须这么多。
 
 请允许我用一句诗来总结它的意义：「旧时王谢堂前燕，飞入寻常百姓家」。
 

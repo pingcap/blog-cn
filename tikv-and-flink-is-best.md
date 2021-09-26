@@ -18,7 +18,6 @@ Flink 是一个低延迟、高吞吐、流批统一的大数据计算引擎，�
     
 - Flink 集成的 Sink 尚不支持 TwoPhaseCommit 协议，正在开发中的版本只支持各个节点单独 TwoPhaseCommit ，不支持全局同步 TwoPhaseCommit 。
     
-
 ![1](media/tikv-and-flink-is-best/1.png)
 
 张茄子观察到 Flink 有着很完善的系统，在 Flink 里有一个 Flink CDC connector，但是只有 MySQL 的，没有 TiDB 的。所以队员们就想借助这次比赛做出一个 TiDB 的 CDC connector，将其贡献到 Flink 和 TiDB 社区，这样就可以打通 TiDB 社区和 Flink 社区的合作，借助 TiKV + Flink 打造出一个 TiDB 的批流一体库。**这就是 TiFlink 的由来，通过它可以实现更好的 Flink 集成（Connector）以及提供物化视图（Materialized View）功能，显著提高 TiDB/TiKV 生态环境的 OLAP 能力。**
@@ -35,7 +34,6 @@ Flink 是一个低延迟、高吞吐、流批统一的大数据计算引擎，�
     
 - 在上述组件的基础上，尝试实现 TiDB 上基于 Flink 的物化视图功能。
     
-
 ![2](media/tikv-and-flink-is-best/2.jpg)
 
 经过紧张的开发，在比赛答辩中 TiFlink 终于初见雏形，并顺利通过 DEMO 演示，TiFlink 团队为 TiKV 写了一个 DynamicTableSource，让 Flink 直接读取 TiKV snapshot 数据以及 CDC 流式变更数据，同时支持了 DynamicTableSink，能让 Flink 通过 TiKV 事务的方式将数据重新写回到 TiKV 里面。**通过这种方式，让大数据处理在 TiDB 以及 Flink 之间高效的流转。同时，TiFlink 也构建了一个 global snapshot coordinator，可以让分布式执行的 Flink 任务在以 snapshot isolation 的强一致方式来维护物化视图。**

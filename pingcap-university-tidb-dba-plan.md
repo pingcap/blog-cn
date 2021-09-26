@@ -15,25 +15,25 @@ PingCAP University 是 PingCAP 官方设立的对企业和个人进行 TiDB 全�
 
 通过该培训认证计划，大家可以：
 
-*  深度理解 TiDB 架构、原理及最佳实践，具备**独立**部署、运维和调优 TiDB 的能力
+* 深度理解 TiDB 架构、原理及最佳实践，具备**独立**部署、运维和调优 TiDB 的能力
 
 * 提升分布式计算和存储领域的技术前沿视野
 
-*  获得来自 PingCAP 官方的专业技术能力认可，提升个人技术竞争力
+* 获得来自 PingCAP 官方的专业技术能力认可，提升个人技术竞争力
 
 ![PingCAP University](media/pingcap-university-tidb-dba-plan/1.jpeg)
 
 ## 培训特色
 
-*  理论与实践结合，强调动手能力（实践超过 50%），提供累计 4 个半天实战
+* 理论与实践结合，强调动手能力（实践超过 50%），提供累计 4 个半天实战
 
-*  课程滚动更新，包含大量前沿技术解读及实践分享
+* 课程滚动更新，包含大量前沿技术解读及实践分享
 
 ## TiDB DBA 官方培训认证总览
 
-*   **初级 TiDB DBA**：PCTA（PingCAP Certified TiDB Associate）培训及认证
+* **初级 TiDB DBA**：PCTA（PingCAP Certified TiDB Associate）培训及认证
 
-*   **高级 TiDB DBA**：PCTP（PingCAP Certified TiDB Professional） 培训及认证
+* **高级 TiDB DBA**：PCTP（PingCAP Certified TiDB Professional） 培训及认证
 
 ![TiDB DBA 官方培训认证总览](media/pingcap-university-tidb-dba-plan/2.png)
 
@@ -45,11 +45,10 @@ PingCAP University 是 PingCAP 官方设立的对企业和个人进行 TiDB 全�
 
 ### 垂询及报名方式
 
-*  点击 TiDB DBA 官方培训认证 · 报名表单直接填写报名信息
+* 点击 TiDB DBA 官方培训认证 · 报名表单直接填写报名信息
 
-*  或联系您的客户总监
+* 或联系您的客户总监
 
-*  或发送邮件至 university-cn@pingcap.com 交流
+* 或发送邮件至 university-cn@pingcap.com 交流
 
 P.S. 2018 年 11 月 30 日前报名还有【官方技术支持服务礼包】赠送～
-

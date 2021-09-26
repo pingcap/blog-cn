@@ -16,8 +16,8 @@ tags: ['TiKV 源码解析','社区']
 
 首先需要肯定的是这种方式固然能解决问题，但是性能如何呢？我们来一起分析一下：
 
-1.  TiKV  将所有数据返回，网络开销太大。
-2.  TiDB 需要计算所有数据，CPU 消耗很大，相对的，TiKV 却并没有什么计算，很闲。
+1. TiKV  将所有数据返回，网络开销太大。
+2. TiDB 需要计算所有数据，CPU 消耗很大，相对的，TiKV 却并没有什么计算，很闲。
 
 看到以上问题后，聪明如你，可能很容易就想到，能不能让 TiKV 把自己负责的那部分数据做一次计算，再返回给 TiDB 呢？
 
@@ -31,10 +31,10 @@ TiKV 读取数据并计算的模块，我们定义为 Coprocessor，该概念灵
 
 如图，以上查询语句在 TiDB 中处理如下：
 
-1.  TiDB 收到查询语句，对语句进行分析，计算出物理执行计划，组织称 TiKV 的 Coprocessor 请求。
-2.  TiDB 将该 Coprocessor 请求根据数据的分布，分发到所有相关的 TiKV 上。
-3.  TiKV 在收到该 Coprocessor 请求后，根据请求算子对数据进行过滤聚合，然后返回给 TiDB。
-4.  TiDB 在收到所有数据的返回结果后，进行二次聚合，并将最终结果计算出来，返回给客户端。
+1. TiDB 收到查询语句，对语句进行分析，计算出物理执行计划，组织称 TiKV 的 Coprocessor 请求。
+2. TiDB 将该 Coprocessor 请求根据数据的分布，分发到所有相关的 TiKV 上。
+3. TiKV 在收到该 Coprocessor 请求后，根据请求算子对数据进行过滤聚合，然后返回给 TiDB。
+4. TiDB 在收到所有数据的返回结果后，进行二次聚合，并将最终结果计算出来，返回给客户端。
 
 ## 主要功能及处理概览
 
@@ -125,7 +125,6 @@ pub struct BatchExecuteResult {
 
 ![5-举例-1](media/tikv-source-code-reading-14/5-sample-1.png)
 
-
 ### Limit
 
 + 定义：从底层算子吐出的数据中，限定返回若干行。
@@ -135,7 +134,6 @@ pub struct BatchExecuteResult {
 + 案例：`select col from t limit 10`
 
 ![6-举例-2](media/tikv-source-code-reading-14/6-sample-2.png)
-
 
 ### TopN
 

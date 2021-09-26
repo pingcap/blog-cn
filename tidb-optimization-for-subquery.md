@@ -18,6 +18,7 @@ meetup_type: memoir
 SELECT * FROM SRC WHERE
 EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 ```
+
 对于非关联子查询，我们可以在 plan 阶段进行预处理，将其改写成一个常量。因此，本文只考虑关联子查询的优化。
 
 一般来说，子查询语句分为三种：
@@ -48,6 +49,7 @@ Apply 算子的语义是：
 SELECT * FROM SRC WHERE
 EXISTS(SELECT * FROM TMP WHERE TMP.id = SRC.id)
 ```
+
 它的 Apply 算子表示是：
 
 ![Apply 算子语义 2](media/tidb-optimization-for-subquery/2.png)

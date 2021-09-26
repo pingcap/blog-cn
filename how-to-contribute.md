@@ -59,13 +59,12 @@ tags: ['开源', '社区']
   - TiDB 遵循 [Apache-2.0 License](https://github.com/pingcap/tidb/blob/master/LICENSE)
   - TiKV 遵循 [Apache-2.0 License](https://github.com/pingcap/tikv/blob/master/LICENSE)
 
--  **Documentation**：许多大型项目不会只通过自述文件去引导用户如何使用。在这些项目中你经常可以找到通往其他文件的超链接，或者是在仓库中找到一个叫做 docs 的文件夹.
+- **Documentation**：许多大型项目不会只通过自述文件去引导用户如何使用。在这些项目中你经常可以找到通往其他文件的超链接，或者是在仓库中找到一个叫做 docs 的文件夹.
   - [TiDB Docs](https://github.com/pingcap/tidb/tree/master/docs)
  
   ![TiDB Docs](media/how-to-contribute/1.jpg)
   
   <div class="caption-center">TiDB Docs</div>
-
 
 ## 齐步走成为 Contributor
 
@@ -75,7 +74,6 @@ tags: ['开源', '社区']
 
 不管你有什么 bug，你提出 bug 后，会对那些和你有同样 bug 的人提供帮助。
 更多关于 issue 如何工作的信息，请点击 [Issues guide](http://guides.github.com/features/issues)。
-
 
 #### Issues Pro Tips
 

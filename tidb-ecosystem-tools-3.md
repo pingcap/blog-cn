@@ -236,7 +236,7 @@ mapping-rule-of-instance-1:
 
 但 DM-worker 内协调处理 sharding group 的同步不能完全与 DM-master 处理时一致，主要原因包括：
 
-* 当收到 `table_1` 的 DDL 时，同步不能暂停，需要继续解析 binlog 才能获得后续 `table_2 `的 DDL，即需要从 t2 时刻继续向前解析直到 t3 时刻。
+* 当收到 `table_1` 的 DDL 时，同步不能暂停，需要继续解析 binlog 才能获得后续 `table_2`的 DDL，即需要从 t2 时刻继续向前解析直到 t3 时刻。
 
 * 在继续解析 t2 时刻到 t3 时刻的 binlog 的过程中，`table_1` 的 `schema V2` 的 DML 不能向下游同步；但在 sharding DDL 同步并执行成功后，这些 DML 需要同步到下游。
 

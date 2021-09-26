@@ -51,25 +51,26 @@ switch it.meta.Name.O {
 ...
 }
 ```
+
 Bingo! 感觉就是我们需要的东西。
 
 **现在步骤就很清楚了：**
 
-1.  在 `infoschema/tables.go` 中添加一个新的字符串常量 `tableTiDBServersInfo` 用于定义表名；
+1. 在 `infoschema/tables.go` 中添加一个新的字符串常量 `tableTiDBServersInfo` 用于定义表名；
 
-2.  定义一个 `[]columnInfo：tableTiDBServersInfoCols`，用于定义这张系统表的结构；
+2. 定义一个 `[]columnInfo：tableTiDBServersInfoCols`，用于定义这张系统表的结构；
 
-3.  在 `tableNameToColumns` 这个 map 中添加一个新的映射关系 `tableTiDBServersInfo => tableTiDBServersInfoCols`；
+3. 在 `tableNameToColumns` 这个 map 中添加一个新的映射关系 `tableTiDBServersInfo => tableTiDBServersInfoCols`；
 
-4.  在 `infoschemaTable.getRows()` 方法中加入一个新的 `dataForTableTiDBServersInfo` 的 swtich case；
+4. 在 `infoschemaTable.getRows()` 方法中加入一个新的 `dataForTableTiDBServersInfo` 的 swtich case；
 
-5.  搞定。
+5. 搞定。
 
 下一个目标是实现 `dataForTableTiDBServersInfo`，很显然，大致的思路是：
 
-1.  找到这个集群的 PD，因为这些集群拓扑信息；
+1. 找到这个集群的 PD，因为这些集群拓扑信息；
 
-2.  将这些信息封装成 `tableTiDBServersInfoCols` 中定义的形式，返回给 `getRows` 方法。
+2. 将这些信息封装成 `tableTiDBServersInfoCols` 中定义的形式，返回给 `getRows` 方法。
 
 通过传入的 ctx 对象，获取到 Store 的信息，	`sessionctx.Context` 是 TiDB 中一个很重要的对象，也是 TiDB 贯穿整个 SQL 引擎的一个设计模式，这个 Context 中间存储在这个 session 生命周期中的一些重要信息，例如我们可以通过 `sessionctx.Context` 获取底层的 Storage 对象，拿到 Storage 对象后，能干的事情就很多了。
 

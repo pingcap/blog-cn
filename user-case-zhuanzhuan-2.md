@@ -14,7 +14,6 @@ customerCategory: 电商
 
 >作者：陈维，转转优品技术部 RD。
 
-
 ## 开篇
 
 世界级的开源分布式数据库 TiDB 自 2016 年 12 月正式发布第一个版本以来，业内诸多公司逐步引入使用，并取得广泛认可。
@@ -69,7 +68,6 @@ customerCategory: 电商
 
 在业务层，可以借助分布式锁，实现串行化处理，如下：
 
-
 ![](media/user-case-zhuanzhuan-2/3.png)
 
 #### 基于 Spring 和分布式锁的事务管理器拓展
@@ -91,7 +89,6 @@ customerCategory: 电商
 ![](media/user-case-zhuanzhuan-2/5.png)
 
 ![](media/user-case-zhuanzhuan-2/6.png)
-
 
 ## TiDB 查询和 MySQL 的差异
 
@@ -137,7 +134,6 @@ CREATE TABLE `t_job_record` (
 	  KEY `idx_record_id` (`record_id`)
 	) ENGINE=InnoDB COMMENT='异步任务job'
 ```
-
 
 **数据说明**：
 
@@ -194,4 +190,3 @@ mysql-jdbc 源码中，实现了标准的 `Statement` 和 `PreparedStatement` �
 ![](media/user-case-zhuanzhuan-2/9.png)
 
 经业务中实践，使用批处理方式的写入（或更新），比常规 `insert … values(…),(…)`（或 `update … case … when… then… end`）性能更稳定，耗时也更低。
-

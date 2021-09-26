@@ -31,9 +31,7 @@ tags: ['Raft','线性一致','TiKV']
 
 说了一堆不明所以的概念，现在来看如何用这些表示分布式系统的行为。
 
-
 ![图例 1](media/linearizability-and-raft/1.png)
-
 
 上图展示了 Client A 的一个请求从发起到结束的过程。变量 x 的初始值是 1，“x R() A” 是一个事件 Inv 意思是 A 发起了读请求，相应的 “x OK(1) A” 就是事件 Resp，意思是 A 读到了 x 且值为 1，Server 执行读操作（Operation）。
 
@@ -125,9 +123,9 @@ LeaseRead 与 ReadIndex 类似，但更进一步，不仅省去了 Log，还省�
 
    ![图例 5](media/linearizability-and-raft/5.png)
 
-3.  Leader 的状态机在什么时候没有最新状态？要线性一致性，Raft 该如何解决这问题？
+3. Leader 的状态机在什么时候没有最新状态？要线性一致性，Raft 该如何解决这问题？
 
-4.  FollowerRead 可以由 ReadIndex 实现，那么能由 LeaseRead 实现吗？
+4. FollowerRead 可以由 ReadIndex 实现，那么能由 LeaseRead 实现吗？
 
 如有疑问或想交流，欢迎联系我：shentaining@pingcap.com
 
@@ -140,4 +138,3 @@ LeaseRead 与 ReadIndex 类似，但更进一步，不仅省去了 Log，还省�
 [3].Lamport, Leslie. "Time, clocks, and the ordering of events in a distributed system." Communications of the ACM 21.7 (1978): 558-565.
 
 [4].[https://raft.github.io/](https://raft.github.io/)
-

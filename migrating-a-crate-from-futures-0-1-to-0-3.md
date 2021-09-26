@@ -66,11 +66,8 @@ futures 0.3 中， [`Pin`](https://doc.rust-lang.org/nightly/std/pin/index.html)
 
 0.1 版本的 futures 库包含了 `LoopFn` 这个 future 构造，用于处理多次执行某动作的 futures。`LoopFn` 在 0.3 版本中被移除，这样做的原因个人认为可能是 `for` 循环本身是 `async` 的函数，或者 streams 才是长远看来的更佳解决方案。为了让我们的迁移过程简单化，我为 futures 0.3 写了我们自己版本的 `LoopFn` future，其实大部分也都是复制粘贴的工作，加上一些调整（如处理指针定位投射）：[code](https://github.com/tikv/client-rust/pull/41/commits/6353dbcfe391d66714686aafab9a49e593259dfb#diff-eeffc045326f81d4c46c22f225d3df90R28)。后来我将几处 `LoopFn` 用法转换为 streams，对代码似乎有一定改进。
 
-
 ## Sink::send_all
 
 我们在项目中几个地方使用了 sink。我发现对于它们对迁移和 futures 相比要有难度不少，其中最麻烦的问题就是 `Sink::send_all` 结构变了。0.1 版本里，`Sink::send_all` 会获取 stream 的所有权，并在确定所有 future 都完成后返回 sink 以及 stream。0.3 版本里， `Sink::send_all` 会接受一个对 stream 的可变引用，不返回任何值。我自己写了一个 [兼容层](https://github.com/tikv/client-rust/pull/41/commits/6353dbcfe391d66714686aafab9a49e593259dfb#diff-eeffc045326f81d4c46c22f225d3df90R68) 在  futures 0.3  里模拟 0.1 版本的 sink。这不是很难，但也许有更好的方式来做这件事。
 
 大家可以在 [这个 PR](https://github.com/tikv/client-rust/pull/41) 里看到整个迁移的细节。本文最初发表在 [www.ncameron.org](https://www.ncameron.org/blog/migrating-a-crate-from-futures-0-1-to-0-3/)。
-
-

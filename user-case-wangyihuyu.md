@@ -62,8 +62,6 @@ customerCategory: 游戏
 
     <div class="caption-center">图 2 现状之数据孤岛</div>
 
-
-
 ## 二、数据库选型
 
 ### 2.1 调研目标
@@ -257,7 +255,7 @@ customerCategory: 游戏
 
 ### 4.1 集群管理
 
-+  Ansible（推荐）
++ Ansible（推荐）
     - 一键部署；
     - 弹性伸缩，可在线灵活扩缩容；
     - 升级，单节点轮转平滑升级；

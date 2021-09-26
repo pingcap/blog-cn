@@ -448,7 +448,6 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   <div class="caption-center">图 6 执行完毕后各个 Cursor 位置示意</div>
 
-
 - 执行步骤 2：对比 Lock Cursor 与 Write Cursor，进入分支 2.4。
 
 - 执行分支 2.4：Write Cursor 指向 `bar`，Lock Cursor 指向 `box`，User Key 为 `bar`。
@@ -463,7 +462,6 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
 
   <div class="caption-center">图 7 执行完毕后各个 Cursor 位置示意</div>
 
-
 - 执行步骤 4.2：此时 Write Key 指向 bar 与 User Key 相同，因此依据 `PUT (start_ts=1)` 从 Default CF 中获取到 `value = bar_value`。
 
 - 执行步骤 4.3：移动 Write Cursor 跳过当前 `bar` 剩余所有版本，即 Seek `bar......\xFF\xFF..\xFF`：
@@ -471,7 +469,6 @@ fn move_write_cursor_to_next_user_key(&mut self, current_user_key: &Key) -> Resu
   ![执行完毕后各个 Cursor 位置示意](media/tikv-source-code-reading-13/8.png)
 
   <div class="caption-center">图 8 执行完毕后各个 Cursor 位置示意</div>
-
 
 - 执行步骤 4.4：对外返回 Key Value 对 `(bar, bar_value)`。
 

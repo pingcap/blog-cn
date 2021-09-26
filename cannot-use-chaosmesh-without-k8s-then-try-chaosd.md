@@ -86,5 +86,3 @@ Recover c55a84c5-c181-426b-ae31-99c8d4615dbe successfully
 目前 Chaosd 提供了进程、网络、JVM、压力、磁盘、主机总共六大故障注入功能，但是仍然需要继续拓展。后续我们计划将 Chaos Mesh 在 K8s 环境支持的一些故障注入功能在 Chaosd 中实现，包括 HTTP、IO 等。
 
 大家可以通过 Chaosd 的[使用文档](https://chaos-mesh.org/website-zh/docs/chaosd-overview)，尝试创建一些混沌实验来体验一下。在使用过程中遇到什么问题，或者有新的需求，都可以提 [issue](https://github.com/chaos-mesh/chaosd/issues) 来反馈。
-
-

@@ -25,7 +25,6 @@ tags: ['TiDB 源码阅读','社区']
 
 我们接下来就对以上几个问题逐一解答，其中 5、6 会在下篇中介绍。
 
-
 ## 如何定位 key 所在的 tikv-server
 
 我们需要回顾一下之前 [《三篇文章了解 TiDB 技术内幕——说存储》](https://pingcap.com/blog-cn/tidb-internal-1/) 这篇文章中介绍过的一个重要的概念：Region。
@@ -50,7 +49,6 @@ TiDB 的数据分布是以 Region 为单位的，一个 Region 包含了一个�
 
 如果因为 Region 分裂，Region 迁移导致了 Region 信息变化，请求的 Region 信息就会过期，这时 tikv-server 就会返回 Region 错误。遇到了 Region 错误，我们就需要[清理 RegionCache](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/region_cache.go#L318)，重新[获取最新的 Region 信息](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/region_cache.go#L329)，并重新发送请求。
 
-
 ## 如何建立和维护和 tikv-server 之间的连接
 
 当 TiDB 定位到 key 所在的 tikv-server 以后，就需要建立和 TiKV 之间的连接，我们都知道， TCP 连接的建立和关闭有不小的开销，同时会增大延迟，使用连接池可以节省这部分开销，TiDB 和 tikv-server 之间也维护了一个连接池 [connArray](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/client.go#L83)。
@@ -58,7 +56,6 @@ TiDB 的数据分布是以 Region 为单位的，一个 Region 包含了一个�
 TiDB 和 TiKV 之间通过 gRPC 通信，而 gPRC 支持在单 TCP 连接上多路复用，所以多个并发的请求可以在单个连接上执行而不会相互阻塞。
 
 理论上一个 tidb-server 和一个 tikv-server 之间只需要维护一个连接，但是在性能测试的时候发现，单个连接在并发-高的时候，会成为性能瓶颈，所以实际实现的时候，tidb-server 对每一个 tikv-server 地址维护了多个连接，[并以 round-robin 算法选择连接](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/client.go#L159)发送请求。连接的个数可以在 [config](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/config/config.toml.example#L215) 文件里配置，默认是 16。
-
 
 ## 如何发送 RPC 请求
 
@@ -69,7 +66,6 @@ tikv-client 通过 [tikvStore](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/
 在 tikvStore 的实现里，并没有直接调用 RPC 方法，而是通过一个 [Client](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/client.go#L76) 接口调用，做这一层的抽象的主要目的是为了让下层可以有不同的实现。比如用来测试的 [mocktikv 就自己实现了 Client 接口](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/mockstore/mocktikv/rpc.go#L493)，通过本地调用实现，并不需要调用真正的 RPC。
 
 [rpcClient](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/client.go#L180) 是真正实现 RPC 请求的 Client 实现，通过调用 [tikvrpc.CallRPC](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/tikvrpc/tikvrpc.go#L419)，发送 RPC 请求。`tikvrpc.CallRPC` 再往下层走，就是调用具体[每个 RPC  生成的代码](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/vendor/github.com/pingcap/kvproto/pkg/tikvpb/tikvpb.pb.go#L152)了，到了生成的代码这一层，就已经是 gRPC 框架这一层的内容了，我们就不继续深入解析了，感兴趣的同学可以研究一下 gRPC 的实现。
-
 
 ## 如何处理各种错误
 
@@ -102,6 +98,5 @@ tikv-client 通过 [tikvStore](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/
 为了解决这个问题，`Backoffer` 实现了 [fork](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/backoff.go#L267) 功能， 在发送每一个子请求的时候，需要 fork 出一个 `child Backoffer`，`child Backoffer` 负责单个 RPC 请求的重试，它记录了 `parent Backoffer` 已经等待的时间，保证总的等待时间，不会超过 query 超时时间。
 
 对于不同错误，需要等待的时间是不一样的，每个 `Backoffer` 在创建时，会[根据不同类型，创建不同的 backoff 函数](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/backoff.go#L96)。
-
 
 **以上就是 tikv-client 上篇的内容，我们在下篇会详细介绍实现分布式计算相关的 [copIterator](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/coprocessor.go#L354) 和实现分布式事务的 [twoPCCommiter](https://github.com/pingcap/tidb/blob/v2.1.0-rc.1/store/tikv/2pc.go#L66)。**

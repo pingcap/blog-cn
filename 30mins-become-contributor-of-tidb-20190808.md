@@ -45,10 +45,10 @@ Contributor 修改文法规则。对于涉及到语义层面的规则变动，�
 parser 根目录下运行 `make test`，确保测试通过。
 
 ### 7. 提交 PR
-	
+
 提交 PR 之前请先阅读 [contributing 指南](https://github.com/pingcap/tidb/blob/master/CONTRIBUTING.md)。下面是 PR 的模板，逐项填写即可。
 
-```	
+```
 ### What problem does this PR solve?
 
 #### [ Put the subtask title here ]
@@ -64,11 +64,11 @@ Issue: [ put the subtask issue link here ]
 [ give a SQL statement example that passes MySQL but fails TiDB parser ]
 
 [ give a SQL statement example that passes MySQL but fails TiDB parser ]
-	
+
 ...
-	
+
 ### Check List
-	
+
 Tests
 
 - Unit test
@@ -329,11 +329,11 @@ Tests
 
 以下是在增加 remove partitioning 语法支持时遇到的问题和解决方法。
 
-**Q1. 为什么不在 `PartitionOpt` 中直接添加规则？** 
+**Q1. 为什么不在 `PartitionOpt` 中直接添加规则？**
 
 **A1**：`PartitionOpt` 用于匹配含有 `partition by` 的 SQL 语句，除了 `Alter Table` 语句以外，它还被 `Create Table` 使用，而 `remove partitioning` 只存在于 `alter table` 语句中，因此不能在 `PartitionOpt` 中添加规则。
 
-**Q2. 执行 make test 时报错：** 
+**Q2. 执行 make test 时报错：**
 
 ```
 parser.y:1100:1: undefined symbol "PARTITIONING"
@@ -351,7 +351,7 @@ Names representing tokens must be declared; this is most simply done by writing
 
 所以，修复方法是在 `parser.y` 的 `%token` 字段上添加 `PARTITIONING` 和 `REMOVE` 的声明。
 
-**Q3. 执行 make test 时报错：** 
+**Q3. 执行 make test 时报错：**
 
 ```
  c.Assert(len(tokenMap)-len(aliases), Equals, keywordCount-len(windowFuncTokenMap))
@@ -361,7 +361,7 @@ Names representing tokens must be declared; this is most simply done by writing
 
 **A3**：这是关键字的一致性检查出了问题，解决方案是补充 `tokenMap`（它是关键字到 `token ID` 的映射，被 scanner 用来判断某个字符串是否为关键字）。
 
-**Q4. 执行 make test 时报错：** 
+**Q4. 执行 make test 时报错：**
 
 ```
 FAIL: parser_test.go:1666: testParserSuite.TestDDL

@@ -60,7 +60,7 @@ customerCategory: 高科技
 
 **这块主要是由于我们使用 TiDB 的业务有两种：**
 
-#### 1. 老的 MySQL 业务
+### 1. 老的 MySQL 业务
 
 老得 MySQL 业务因单机磁盘受限，导致单实例磁盘无法支撑爆炸式增长的数据量，数据比较重要，需要备份和支持 7*24 小时的恢复。
 
@@ -72,7 +72,7 @@ Lightning 的实测导入速度，37 分钟，导完 2 张大表共计 54G 的�
 
 ![](media/user-case-360-cloud/2-lightning.png)
 
-#### 2. 全新的业务
+### 2. 全新的业务
 
 全新的业务，或者由业务自行导入到 TiDB 集群中，这种业务数据量一般都会比较大，也是看中了 TiDB 支持 ACID 和分布式的特点。
 
@@ -384,6 +384,7 @@ max-sub-compactions: 1-2
 ![](media/user-case-360-cloud/16-qps.png)
 
 #### 9. DM Debug 相关
+
 DM 还有个注意点就是 dm-worker.toml 配置文件里的配置 log-level=“debug” 是不生效的，启动的时候默认有个 -L=info 选项，会覆盖掉配置文件里的，默认 -L 优先级高于配置文件，人工排查时自行启动。
 
 也就是说当需要对 dm-worker 开启 debug 模式，要人工拉起进程并指定 -L 选项=debug。
