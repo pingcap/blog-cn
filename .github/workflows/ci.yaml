@@ -1,0 +1,20 @@
+name: ci
+
+on: [pull_request]
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+    - name: Markdown lint
+      uses: avto-dev/markdown-lint@v1
+      with:
+        config: './.github/markdownlint.yml'
+        args: '.'
+    - name: Verify internal links
+      run: ./hack/verify-links-doc.sh
