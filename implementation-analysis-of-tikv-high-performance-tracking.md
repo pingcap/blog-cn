@@ -20,8 +20,8 @@ tags: ['TiKV']
 
 TiKV 实现了完备的日志和指标系统，但缺失了追踪，导致在诊断 TiKV 和 TiDB 问题时会遇到以下困难：
 
-   - **观测数据之间的没有关联**：只有熟悉请求链路上每个操作对应什么监控指标的同学才能完整追溯和诊断问题。
-   - **请求抖动难以追溯**：TiKV 节点往往同时处理不同模式的业务，零星请求的性能抖动无法体现在 AVG / P99 / MAX 等监控指标中，从而无法诊断抖动原因。
+- **观测数据之间的没有关联**：只有熟悉请求链路上每个操作对应什么监控指标的同学才能完整追溯和诊断问题。
+- **请求抖动难以追溯**：TiKV 节点往往同时处理不同模式的业务，零星请求的性能抖动无法体现在 AVG / P99 / MAX 等监控指标中，从而无法诊断抖动原因。
 
 **追踪可以有效解决上述场景中遇到的问题**。以下详细介绍 TiKV 中高性能追踪的实现。追踪功能在 TiKV 中尚为实验性特性，需要特定代码分支开启，感兴趣的同学可以关注 GitHub issue [Introduce tracing framework (#8981)](https://github.com/tikv/tikv/pull/8981)。
 
@@ -152,10 +152,10 @@ x86 架构 CPU **没有提供 TSC 寄存器在所有核心上的一致性保证*
 fn set_affinity(cpuid: usize) -> Result<(), Error> {
    use libc::{cpu_set_t, sched_setaffinity, CPU_SET};
    use std::mem::{size_of, zeroed};
- 
+
    let mut set = unsafe { zeroed::<cpu_set_t>() };
    unsafe { CPU_SET(cpuid, &mut set) };
- 
+
    // Set the current thread's core affinity.
    if unsafe {
        sched_setaffinity(
@@ -181,11 +181,11 @@ fn tsc_with_cpuid() -> (u64, usize) {
    use core::arch::x86::__rdtscp;
    #[cfg(target_arch = "x86_64")]
    use core::arch::x86_64::__rdtscp;
- 
+
    let mut aux = std::mem::MaybeUninit::<u32>::uninit();
    let tsc = unsafe { __rdtscp(aux.as_mut_ptr()) };
    let aux = unsafe { aux.assume_init() };
- 
+
    // IA32_TSC_AUX are encoded by Linux kernel as follow format:
    //
    // 31       12 11      0
@@ -324,9 +324,9 @@ Span 基于 Guard 实现了自动在作用域结束后结束 Span，而无需手
 ```rust
 let (root_span, collector) = Span::root("http request");
 let guard = root_span.enter();
- 
+
 handle_http_request(req);
- 
+
 drop((guard, root_span));
 let spans = collector.collect();
 ```
@@ -348,7 +348,7 @@ fn foo() -> u32 {
    bar();
    42
 }
- 
+
 #[trace("bar")]
 fn bar() { }
 ```
@@ -365,7 +365,7 @@ async fn foo_aysnc() -> u32 {
    bar_async().await;
    42
 }
- 
+
 #[trace_async("bar async")]
 async fn bar_async() {
    yield_now().await;
@@ -396,4 +396,4 @@ executor::spawn(
 
 ## 结语
 
-TiKV 作为底层 KV 数据库，对其增加观测性功能天然有着与普通业务程序完全不一样的性能要求，非常具有挑战性。除了追踪以外，TiKV 及其上层 SQL 数据库 TiDB 也还有其他富有挑战性的观测性需求。PingCAP 的 Observability 团队专注于这类观测难题的解决与功能实现，感兴趣的同学可投递简历到 [hire@pingcap.com](hire@pingcap.com) 加入我们，或加入 Slack channel [#sig-diagnosis](https://slack.tidb.io/invite?team=tidb-community&channel=sig-diagnosis&ref=tracing) 参与技术讨论。
+TiKV 作为底层 KV 数据库，对其增加观测性功能天然有着与普通业务程序完全不一样的性能要求，非常具有挑战性。除了追踪以外，TiKV 及其上层 SQL 数据库 TiDB 也还有其他富有挑战性的观测性需求。PingCAP 的 Observability 团队专注于这类观测难题的解决与功能实现，感兴趣的同学可投递简历到 hire@pingcap.com 加入我们，或加入 Slack channel [#sig-diagnosis](https://slack.tidb.io/invite?team=tidb-community&channel=sig-diagnosis&ref=tracing) 参与技术讨论。
