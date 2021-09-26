@@ -18,7 +18,6 @@ TiDB 从 2017 年开始提供全量导入工具 [Loader](https://docs.pingcap.co
 
 ![Loader](media/tidb-ecosystem-tools-2/1.png)
 
-
 然而，当我们全新初始化一个 TiDB 集群时，Loader 这种逐条 INSERT 指令在线上执行的方式从根本上是无法尽用性能的。原因在于 SQL 层的操作有太强的保证了。在整个导入过程中，TiDB 需要：
 
 * 保证 ACID 特性，需要执行完整的事务流程。

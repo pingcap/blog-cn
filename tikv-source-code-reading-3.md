@@ -299,4 +299,3 @@ impl Drop for HistogramTimer {
 [`Histogram::local()`]: https://docs.rs/prometheus/0.5.0/prometheus/struct.Histogram.html#method.local
 [`LocalCounter`]: https://docs.rs/prometheus/0.5.0/prometheus/core/struct.GenericLocalCounter.html
 [`LocalHistogram`]: https://docs.rs/prometheus/0.5.0/prometheus/local/struct.LocalHistogram.html
-

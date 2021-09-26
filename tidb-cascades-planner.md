@@ -18,11 +18,11 @@ TiDB 中，一个 SQL 在进入到逻辑优化阶段之前，它的 AST（抽象
 
 随着 TiDB 中逻辑优化规则的不断增多，逐渐暴露了当前优化框架存在的几个问题：
 
-1.  优化器要求每个逻辑优化规则一定是有收益的，转换后得到的逻辑执行计划必须比转换前的更优（例如谓词下推），但是某些优化规则只在特定场景下有收益（例如聚合下推 Join），这种优化规则很难添加到目前的优化器中，导致优化器在那些特定场景下的执行计划不够优。
+1. 优化器要求每个逻辑优化规则一定是有收益的，转换后得到的逻辑执行计划必须比转换前的更优（例如谓词下推），但是某些优化规则只在特定场景下有收益（例如聚合下推 Join），这种优化规则很难添加到目前的优化器中，导致优化器在那些特定场景下的执行计划不够优。
 
-2.  不管什么样的 SQL，在逻辑优化阶段，所有的优化规则都按照同一个固定的顺序依次去看是否能够作用于当前的逻辑执行计划，例如最先执行的规则总是列剪裁。逻辑优化规则之间的顺序需要经过有经验的优化器老手精心的安排，例如分区表处理（PartitionProcess）要在谓词下推后进行。这就导致所有人在添加优化规则的时候都需要小心翼翼地安排这个顺序，添加一个优化规则需要了解其他所有优化规则，门槛较高。
+2. 不管什么样的 SQL，在逻辑优化阶段，所有的优化规则都按照同一个固定的顺序依次去看是否能够作用于当前的逻辑执行计划，例如最先执行的规则总是列剪裁。逻辑优化规则之间的顺序需要经过有经验的优化器老手精心的安排，例如分区表处理（PartitionProcess）要在谓词下推后进行。这就导致所有人在添加优化规则的时候都需要小心翼翼地安排这个顺序，添加一个优化规则需要了解其他所有优化规则，门槛较高。
 
-3.  逻辑优化阶段，每个规则至多只会在被顺序遍历到的时候执行一次，但实际场景中，往往存在之前某个已经执行过的优化规则可以再次被执行的情况。我们以一个例子来说明，对于这个简单的 SQL：`select b from t where a > 1`，其中 `a` 是 `int` 类型的主键，我们最终会产生这样一个物理执行计划：
+3. 逻辑优化阶段，每个规则至多只会在被顺序遍历到的时候执行一次，但实际场景中，往往存在之前某个已经执行过的优化规则可以再次被执行的情况。我们以一个例子来说明，对于这个简单的 SQL：`select b from t where a > 1`，其中 `a` 是 `int` 类型的主键，我们最终会产生这样一个物理执行计划：
 
 	```
 	TableScan(table: t, range:(1, inf]) -> TableReader(a, b) -> Projection(b)
@@ -66,13 +66,13 @@ Volcano/Cascades Optimizer 是经典的优化器框架，分别产自论文 [The
 
 Volcano Optimizer Generator 本身的定位是一个优化器的“生成器”，其核心贡献是提供了一个搜索引擎。作者提供了一个数据库查询优化器的基本框架，而数据库实现者要为自己的 Data Model 实现相应的接口后便可以生成一个查询优化器。我们下面抛开生成器的概念，只介绍其在“优化器”方向提出的一些方法：
 
-1.  Volcano Optimizer 使用两阶段的优化，使用 “Logical Algebra” 来表示各种关系代数算子，而使用 “Physical Algebra” 来表示各种关系代数算子的实现算法。Logical Algebra 之间使用 Transformation 来完成变换，而 Logical Algebra 到 Physical Algebra 之间的转换使用基于代价的（cost-based）选择。
+1. Volcano Optimizer 使用两阶段的优化，使用 “Logical Algebra” 来表示各种关系代数算子，而使用 “Physical Algebra” 来表示各种关系代数算子的实现算法。Logical Algebra 之间使用 Transformation 来完成变换，而 Logical Algebra 到 Physical Algebra 之间的转换使用基于代价的（cost-based）选择。
 
-2.  Volcano Optimizer 中的变化都使用 Rule 来描述。例如 Logical Algebra 之间的变化使用 Transformation Rule；而 Logical Algebra 到 Physical Algebra 之间的转换使用 Implementation Rule。
+2. Volcano Optimizer 中的变化都使用 Rule 来描述。例如 Logical Algebra 之间的变化使用 Transformation Rule；而 Logical Algebra 到 Physical Algebra 之间的转换使用 Implementation Rule。
 
-3.  Volcano Optimizer 中各个算子、表达式的结果使用 Property 来表示。Logical Propery 可以从 Logical Algebra 中提取，主要包括算子的 Schema、统计信息等；Physical Property 可以从 Physical Algebra 中提取，表示算子所产生的数的具有的物理属性，比如按照某个 Key 排序、按照某个 Key 分布在集群中等。
+3. Volcano Optimizer 中各个算子、表达式的结果使用 Property 来表示。Logical Propery 可以从 Logical Algebra 中提取，主要包括算子的 Schema、统计信息等；Physical Property 可以从 Physical Algebra 中提取，表示算子所产生的数的具有的物理属性，比如按照某个 Key 排序、按照某个 Key 分布在集群中等。
 
-4.  Volcano Optimizer 的搜索采用自顶向下的动态规划算法（记忆化搜索）。
+4. Volcano Optimizer 的搜索采用自顶向下的动态规划算法（记忆化搜索）。
 
 ### Cascades Optmizer
 
@@ -101,7 +101,6 @@ Pattern 用于描述 Group Expression 的局部特征。每个 Rule 都有自己
 ![4-Pattern](media/tidb-cascades-planner/4-Pattern.png)
 
 #### Searching Algorithm
-
 
 Cascades Optimizer 为 Rule 的应用顺序做了很细致的设计，例如每个 Rule 都有 promise 和 condition 两个方法，其中 promise 用来表示 Rule 在当前搜索过程中的重要性，promise 值越高，则该规则越可能有用，当 promise 值小于等于 0 时，这个 Rule 就不会被执行；而 condition 直接通过返回一个布尔值决定一个 Rule 是否可以在当前过程中被应用。当一个 Rule 被成功应用之后，会计算下一步有可能会被应用的 Rule 的集合。
 
@@ -183,11 +182,11 @@ type Pattern struct {
 
 Transformation 是一个接口类型，用来定义一个逻辑变换规则。
 
-*   `GetPattern()` 方法获取这个变换规则所需要匹配的一个 Pattern。
+* `GetPattern()` 方法获取这个变换规则所需要匹配的一个 Pattern。
 
-*   由于 Pattern 只能描述算子的类型，不能描述 LogicalPlan 内部的内容约束，因此通过 `Match()` 方法可以判断更细节的匹配条件。例如 Pattern 只能描述我们想要一个 Join 类型的算子，但是却没法描述这个 Join 应该是 InnerJoin 或者是 LeftOuterJoin，这类条件就需要在 `Match()` 中进行判断。
+* 由于 Pattern 只能描述算子的类型，不能描述 LogicalPlan 内部的内容约束，因此通过 `Match()` 方法可以判断更细节的匹配条件。例如 Pattern 只能描述我们想要一个 Join 类型的算子，但是却没法描述这个 Join 应该是 InnerJoin 或者是 LeftOuterJoin，这类条件就需要在 `Match()` 中进行判断。
 
-*   `OnTransform()` 方法中定义了变换规则的具体内容，返回的内容分别是新的 GroupExpr，是否删除旧的 `GroupExpr`，是否删除旧的 Group 中所有的 `GroupExpr`。
+* `OnTransform()` 方法中定义了变换规则的具体内容，返回的内容分别是新的 GroupExpr，是否删除旧的 `GroupExpr`，是否删除旧的 Group 中所有的 `GroupExpr`。
 
 ```golang
 type Transformation interface {
@@ -199,7 +198,6 @@ type Transformation interface {
 }
 ```
 
-
 下面我们以一个变换规则：[`PushSelDownAggregation`](https://github.com/pingcap/tidb/blob/6a5955750014f239a41362059ced6d8ab420f7b4/planner/cascades/transformation_rules.go#L394) 为例，具体介绍上面三个方法的使用方式。
 
 这个规则匹配的 Pattern 是 `Selection -> Aggregation`，作用则是将这个 Selection 下推到 Aggregation 下面，例如 SQL: `select a, sum(b) from t group by a having a > 10 and max(c) > 10` 中，having 条件里的 `a > 10` 可以下推到 Aggregation 的下方。更具体地来说，只要 Selection 当中的一个 Expression 里的所有列都出现在 group by 的分组列时，我们就可以把这个 Expression 进行下推。
@@ -208,12 +206,11 @@ type Transformation interface {
 
 ![5-sample](media/tidb-cascades-planner/5-sample.png)
 
-1.  在 Group0 中的 Selection 匹配到了 Pattern `Selection -> Aggregation`。
+1. 在 Group0 中的 Selection 匹配到了 Pattern `Selection -> Aggregation`。
 
-2.  执行了 `OnTransform()` 的转换，Selection 中的 `a > 10` 条件被下推到了新的 Aggregation 下方，并且保留的条件 `max(c) > 10` 成为了一个新的 Selection。
+2. 执行了 `OnTransform()` 的转换，Selection 中的 `a > 10` 条件被下推到了新的 Aggregation 下方，并且保留的条件 `max(c) > 10` 成为了一个新的 Selection。
 
-3.  由于 `OnTransform()` 的 `eraseOld` 返回了 `True`，因此最终把原来的 GroupExpr 从 Group 中删除。
-
+3. 由于 `OnTransform()` 的 `eraseOld` 返回了 `True`，因此最终把原来的 GroupExpr 从 Group 中删除。
 
 #### Implementation/Implementation Rule
 
@@ -233,9 +230,9 @@ type Implementation interface {
 
 `ImplementationRule` 是一个接口类型，用来定义一个逻辑算子的一种物理实现方式。
 
-*   `ImplementationRule` 只能通过 Operand 来匹配，因此也需要一个 `Match()` 方法来对算子内部的细节做更细粒度的匹配。
+* `ImplementationRule` 只能通过 Operand 来匹配，因此也需要一个 `Match()` 方法来对算子内部的细节做更细粒度的匹配。
 
-*   `OnImplement()` 方法用于为 GroupExpr 生成对应的 Implementation。
+* `OnImplement()` 方法用于为 GroupExpr 生成对应的 Implementation。
 
 ```golang
 type ImplementationRule interface {
@@ -243,7 +240,6 @@ type ImplementationRule interface {
   OnImplement(expr *memo.GroupExpr, reqProp *property.PhysicalProperty) (memo.Implementation, error)
 }
 ```
-
 
 下面我们仍旧以 Aggregation 为例，我们知道 Aggregation 有两种典型的物理执行方式，一个是 HashAggregation，一种是 StreamAggregation。
 
@@ -286,16 +282,15 @@ PhysicalProperty 中记录 OrderBy Items 以及 ExpectedCount，这两者与 [Ti
 
 ![6-Adapter-Model](media/tidb-cascades-planner/6-Adapter-Model.png)
 
-
 ### 优化过程
 
 TiDB Cascades Planner 在当前的设计中将搜索过程分为三个阶段：
 
-*   Preprocessing phase，预处理阶段。
+* Preprocessing phase，预处理阶段。
 
-*   Exploration phase，逻辑搜索阶段。
+* Exploration phase，逻辑搜索阶段。
 
-*   Implementation phase，物理实现阶段。
+* Implementation phase，物理实现阶段。
 
 这一部分的源码位于 [planner/cascades/optimize.go](https://github.com/pingcap/tidb/blob/9acb0a37f04aecdec2baa1d1e11731c33c2471e0/planner/cascades/optimize.go#L105)。
 
@@ -313,27 +308,27 @@ TiDB Cascades Planner 在当前的设计中将搜索过程分为三个阶段：
 
 `findMoreEquiv(group, groupExpr)` 是对一个 GroupExpr 应用所有的 Transformation 来搜索更多的逻辑等价的 GroupExpr，其过程如下：
 
-1.  首先根据 GroupExpr 中对应的 Operand 来获取有可能匹配的 Transformation rule，我们在这里为所有的 Transformation rule 根据其 Pattern 中的最顶部 Operand 进行了分组，例如当 GroupExpr 是 Selection 时，只会尝试匹配所有 Pattern 以 Selection 开头的 Transformation rule。
+1. 首先根据 GroupExpr 中对应的 Operand 来获取有可能匹配的 Transformation rule，我们在这里为所有的 Transformation rule 根据其 Pattern 中的最顶部 Operand 进行了分组，例如当 GroupExpr 是 Selection 时，只会尝试匹配所有 Pattern 以 Selection 开头的 Transformation rule。
 
-2.  寻找是否有以 GroupExpr 为根且与之对应 Pattern 匹配的结构。
+2. 寻找是否有以 GroupExpr 为根且与之对应 Pattern 匹配的结构。
 
-3.  如果找到这样的结构，则通过 `Match()` 方法进一步判断是否能够匹配相应的细节内容（例如 Join 的类型）。
+3. 如果找到这样的结构，则通过 `Match()` 方法进一步判断是否能够匹配相应的细节内容（例如 Join 的类型）。
 
-4.  最后如果 `Match()` 成功，则调用 `OnTransformation()` 方法来应用相应的变换规则。
+4. 最后如果 `Match()` 成功，则调用 `OnTransformation()` 方法来应用相应的变换规则。
 
-5.  如果 `OnTransformation` 返回了新的 `GroupExpr`，则将这个 GroupExpr 插入到 Group 中，并且将 Group 标记为 UnExplored，保证新生成的 GroupExpr 未来也可以被搜索到。
+5. 如果 `OnTransformation` 返回了新的 `GroupExpr`，则将这个 GroupExpr 插入到 Group 中，并且将 Group 标记为 UnExplored，保证新生成的 GroupExpr 未来也可以被搜索到。
 
-6.  如果 `OnTransformation` 返回的 `eraseOld` 为 `True`，那么在 `findMoreEquiv()` 结束后，会将当前的 GroupExpr 从 Group 中删除。
+6. 如果 `OnTransformation` 返回的 `eraseOld` 为 `True`，那么在 `findMoreEquiv()` 结束后，会将当前的 GroupExpr 从 Group 中删除。
 
-7.  如果 `OnTransformation` 返回的 `eraseAll` 为 `True`，那么可以删除当前 Group 中的所有 GroupExpr，插入新的 GroupExpr 并结束当前 Group 的搜索。
+7. 如果 `OnTransformation` 返回的 `eraseAll` 为 `True`，那么可以删除当前 Group 中的所有 GroupExpr，插入新的 GroupExpr 并结束当前 Group 的搜索。
 
 **2）exploreGroup(group)**
 
 `exploreGroup()` 方法自底向上递归地对整个 Group Tree 中的 GroupExpr 调用 `findMoreEquiv()`，主要过程如下：
 
-1.  遍历当前 Group 中所有的 GroupExpr，并先对这些 GroupExpr 的子 Group 递归调用 `exploreGroup()`，直至子 Group 中不再产生新的 GroupExpr 为止。
+1. 遍历当前 Group 中所有的 GroupExpr，并先对这些 GroupExpr 的子 Group 递归调用 `exploreGroup()`，直至子 Group 中不再产生新的 GroupExpr 为止。
 
-2.  当某个 GroupExpr 的子 Group 被搜索完全后，对当前 GroupExpr 调用 `findMoreEquiv()`，若返回的 `eraseCur` 为 `True`，则将这个 GroupExpr 从 Group 中删除。
+2. 当某个 GroupExpr 的子 Group 被搜索完全后，对当前 GroupExpr 调用 `findMoreEquiv()`，若返回的 `eraseCur` 为 `True`，则将这个 GroupExpr 从 Group 中删除。
 
 **3）OnPhaseExploration(group)**
 
@@ -369,12 +364,11 @@ func (opt *Optimizer) implGroupExpr(groupExpr *memo.GroupExpr, reqPhysProp *prop
 }
 ```
 
-
 **2）implGroup(group, reqPhysicalProp, costLimit)**
 
 `implGroup()` 根据上层传递下来的 PhysicalProperty 递归地为 Group 生成最优的 Implementation。
 
-*  Implementation Phase 实际上是一个记忆化搜索的过程，每个 Group 搜索到一个 PhysicalProperty 对应最优的 Implementation 后都会将其记录下来，因此在搜索之前可以先查看是否可以从历史结果中查询到 `reqPhysicalProp` 对应的最优 Implementation。
+* Implementation Phase 实际上是一个记忆化搜索的过程，每个 Group 搜索到一个 PhysicalProperty 对应最优的 Implementation 后都会将其记录下来，因此在搜索之前可以先查看是否可以从历史结果中查询到 `reqPhysicalProp` 对应的最优 Implementation。
 
 * CostLimit 是在搜索过程中用于预剪枝的 Cost 上界，要注意的是使用 CostLimit 的前提是：Cost 必须自底向上单调递增。我们以下图为例，Expr0 和 Expr1 是 Group0 中逻辑等价的 GroupExpr，Expr0 产生的最优的 Implementation 的 Cost 是 1000，此时我们会用 CostLimit = 1000 去搜索 Expr1，我们的目的是让 Expr1 产生更好的（Cost 更小的）Implementation，但是 Expr1 在向下搜索的过程中，Expr4 的最优 Implementation 的 Cost 是 1200，大于了 CostLimit，也就是说 Expr1 产生的 Implementation 的 Cost 一定是大于 1200 的，所以 Expr1 在这条路径上无论如何都不会比 Expr0 产生的 Implementation 更优，因此我们会将这条搜索路径剪枝，不对 Expr1、Expr3 再进行搜索。
 

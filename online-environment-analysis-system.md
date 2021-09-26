@@ -34,7 +34,6 @@ tags: ['Linux','TiDB']
 
    从输出中可以看到进程名称、pid ，超过 200 ms 的具体系统调用参数和返回值。
 
-
 3. 统计某个进程一段时间内系统调用的开销
 
     ```
@@ -44,7 +43,6 @@ tags: ['Linux','TiDB']
     ![3-输出图示](media/online-environment-analysis-system/3-输出图示.png)
 
     从输出中可以看到各系统调用的次数，返回错误次数，总延迟，平均延迟等信息。
-
 
 4. 我们也可以进一步分析高延迟的调用栈信息
 
@@ -89,7 +87,6 @@ sudo -E ./traceloop cgroups  --dump-on-exit /sys/fs/cgroup/system.slice/sshd.ser
 
 ![7-输出图示](media/online-environment-analysis-system/7-输出图示.png)
 
-
 从输出中可以看到，其输出和 strace/perf trace 类似，只是针对 cgroup 进行过滤。需要注意的是 Centos 8 没有像 Ubuntu 将 cgroup v2 挂载到 /sys/fs/cgroup/unified，而是直接挂载到 /sys/fs/cgroup 下，在使用前建议执行 `mount -t cgroup2` 来确定挂载信息。
 
 对于 K8s 平台，该团队将 traceloop 集成到 Inspektor Gadget 项目中，通过 kubectl 插件来运行，由于管网给出详细的 gif 示例，在这里就不做过多介绍了，对 cgroup v2 有需求的朋友可以试一试。
@@ -103,4 +100,3 @@ sudo -E ./traceloop cgroups  --dump-on-exit /sys/fs/cgroup/system.slice/sshd.ser
 ## 总结
 
 strace 依然是解决 “为什么这个软件无法在这台机器上运行？” 相关问题的利器，但对于分析系统调用延迟等问题，perf trace 是合适的选择，其也是基于 BPF 的实现，对于使用 cgroup v2 的容器、K8s 环境，traceloop 会更方便一些。
-

@@ -107,7 +107,7 @@ tiup cluster deploy test v4.0.0-rc topology.yaml  -i ~/.ssh/id_rsa
 
 ![4-tpc-h-100g](media/the-overview-of-tidb-4.0/4-tpc-h-100g.png)
 
-**Sysbench 16 table, 10000000 table size** *（注：测试使用 3 台 16 核 62G 虚拟机部署  3 * TiKV，1 台 40 核 189G 服务器部署 1 * TiDB）*
+**Sysbench 16 table, 10000000 table size** *（注：测试使用 3 台 16 核 62G 虚拟机部署  3* TiKV，1 台 40 核 189G 服务器部署 1 *TiDB）*
 
 ![5-read-write-threads](media/the-overview-of-tidb-4.0/5-read-write-threads.png)
 

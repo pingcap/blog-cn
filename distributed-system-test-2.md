@@ -98,7 +98,6 @@ InnoDB: Error number 5 means 'Input/output error'.
 
 举 Netflix 的一个例子，下图是 Netflix 的系统。
 
-
 ![Netflix](media/distributed-system-test-2/5.png)
 
 他们在 2014 年 10 月份的时候写了一篇博客，叫《 Failure Injection Testing 》，是讲他们整个系统怎么做错误注入，然后他们的这个说法是 Internet Scale，就是整个多数据中心互联网的这个级别。大家可能记得 Spanner 刚出来的时候他们叫做 Global Scale，然后这地方可以看到，蓝色是注射点，黑色的是网络调用，就是所有这些请求在这些情况下面，所有这些蓝色的框框都有可能出错。大家可以想一想，在 Microservice 系统上，一个业务调用可能涉及到几十个系统的调用，如果其中一个失败了会怎么样？如果是第一次第一个失败，第二次第二个失败，第三次第三个失败是怎么样的？有没有系统做过这样的测试？有没有系统在自己的程序里面去很好的验证过是不是每一个可以预期的错误都是可预测的，这个变得非常的重要。这里以 cache 为例，就说每一次访问  Cassandra 的时候可能出错，那么也就给了我们一个错误的注入点。
@@ -107,14 +106,13 @@ InnoDB: Error number 5 means 'Input/output error'.
 
 **OpenStack fault-injection library:**
 
-***https://pypi.org/project/os-faults/***
+***<https://pypi.org/project/os-faults/>***
 
 大名鼎鼎的 OpenStack 其实也有一个 Failure Injection Library，然后我把这个例子也贴到这里，大家有兴趣可以看一下这个 OpenStack 的 Failure Injection。这以前大家可能不太关注，其实大家在这一点上都很痛苦， OpenStack 现在还有一堆人在骂，说稳定性太差了，其实他们已经很努力了。但是整个系统确实是做的异乎寻常的复杂，因为组件太多。如果你出错的点特别多，那可能会带来另外一个问题，就是出错的点之间还能组合，就是先 A 出错，再 B 出错，或者 AB 都出错，这也就几种情况，还好。那你要是有十万个错误的点，这个组合怎么弄？当然现在还有新的论文在研究这个，2015 年的时候好像有一篇论文，讲的就是会探测你的程序的路径，然后在对应的路径下面去注入错误。
 
 再来说 Jepsen.
 
 **Jepsen: Distributed Systems Safety Analysis**
-
 
 ![图例 3](media/distributed-system-test-2/6.jpg)
 

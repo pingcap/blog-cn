@@ -20,7 +20,6 @@ tags: ['DM 源码阅读','社区']
 
 使用结构 [Table](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L52) 对路由规则进行维护，Table 提供了如下方法：
 
-
 | 方法 | 说明 |
 |:-------------|:--------|
 | [`AddRule`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/table-router/router.go#L75) | 增加规则 |
@@ -133,7 +132,6 @@ filter-partition-rule:
 ```
 
 代码中通过 [`BinlogEvent`](https://github.com/pingcap/tidb-tools/blob/f5fc4cb670ced38fb362eda0766a9db1c1856a0a/pkg/binlog-filter/filter.go#L120) 结构对 binlog event 过滤规则做统一的管理，`BinlogEvent` 提供了如下的方法：
-
 
 | 方法 | 说明 |
 |:--------------|:--------|

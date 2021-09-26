@@ -13,6 +13,7 @@ tags: ['TiDB', '查询优化', '应用场景']
 
 和 Spanner 一样，TiDB 中的一张表的行（Rows）是按照主键的字节序排序的（整数类型的主键我们会使用特定的编码使其字节序和按大小排序一致），即使在 CREATE TABLE 语句中不显式的创建主键，TiDB 也会分配一个隐式的。
 有四点需要记住：
+
 1. 按照字节序的顺序扫描的效率是比较高的；
 2. 连续的行大概率会存储在同一台机器的邻近位置，每次批量的读取和写入的效率会高；
 3. 索引是有序的（主键也是一种索引），一行的每一列的索引都会占用一个 KV Pair，比如，某个表除了主键有 3 个索引，那么在这个表中插入一行，对应在底层存储就是 4 个 KV Pairs 的写入：数据行以及 3 个索引行。
@@ -26,6 +27,7 @@ tags: ['TiDB', '查询优化', '应用场景']
 	3. 对于高并发且访问频繁的数据，尽可能一次访问只命中一个 Region，这个也很好理解，比如一个模糊查询或者一个没有索引的表扫描操作，可能会发生在多个物理节点上，一来会有更大的网络开销，二来访问的 Region 越多，遇到 stale region 然后重试的概率也越大（可以理解为 TiDB 会经常做 Region 的移动，客户端的路由信息可能更新不那么及时），这些可能会影响 .99 延迟；另一方面，小事务（在一个 Region 的范围内）的写入的延迟会更低，TiDB 针对同一个 Region 内的跨行事务是有优化的。另外 TiDB 对通过主键精准的点查询（结果集只有一条）效率更高。
 
 ## 关于索引
+
 除了使用主键查询外，TiDB 允许用户创建二级索引以加速访问，就像上面提到过的，在 TiKV 的层面，TiDB 这边的表里面的行数据和索引的数据看起来都是 TiKV 中的 KV Pair，所以很多适用于表数据的原则也适用于索引。和 Spanner 有点不一样的是，TiDB 只支持全局索引，也就是 Spanner 中默认的 Non-interleaved indexes。全局索引的好处是对使用者没有限制，可以 scale 到任意大小，不过这意味着，索引信息*不一定*和实际的数据在一个 Region 内。
 
 - 建议：
@@ -49,7 +51,6 @@ tags: ['TiDB', '查询优化', '应用场景']
 - 建议：
 因为不可避免的，很多用户在使用 TiDB 存储日志，毕竟 TiDB 的弹性伸缩能力和 MySQL 兼容的查询特性是很适合这类业务的。另一方面，如果发现写入的压力实在扛不住，但是又非常想用 TiDB 来存储这种类型的数据，可以像 Spanner 建议的那样做 Application 层面的 Sharding，以存储日志为例，原来的可能在 TiDB 上创建一个 log 表，更好的模式是可以创建多个 log 表，如：log_1, log_2 … log_N，然后业务层插入的时候根据时间戳进行 hash ，随机分配到 1..N 这几个分片表中的一个。
 
-
 相应的，查询的时候需要将查询请求分发到各个分片上，最后在业务层汇总结果。
 
 ## 查询优化
@@ -64,7 +65,7 @@ TiDB 的优化分为基于规则的优化（Rule Based Optimization）和基于�
 
 可以被 TiDB 自动改写成
 
-```select * from (select * from t where t.c1 < 10) as t join s on t.id = s.id```
+```select *from (select* from t where t.c1 < 10) as t join s on t.id = s.id```
 
 ***关联子查询消除***
 
@@ -105,14 +106,14 @@ TiDB 的优化分为基于规则的优化（Rule Based Optimization）和基于�
 
 读取表时，如果有多条索引可以选择，我们可以通过统计信息选择最优的索引。例如:
 
-```select * from t where age = 30 and name in ( ‘小明’, ‘小强’)```
+```select *from t where age = 30 and name in ( ‘小明’, ‘小强’)```
 对于包含 Join 的操作，我们可以区分大小表，TiDB 的对于一个大表和一个小表的 Join 会有特殊的优化。
 例如
-```select * from t join s on s.id = t.id```
+```select* from t join s on s.id = t.id```
 优化器会通过对表大小的估计来选择 Join 的算法：即选择把较小的表装入内存中。
 对于多种方案，利用动态规划算法选择最优者，例如:
 
-```(select * from t where c1 < 10) union all (select * from s where c2 < 10) order by c3 limit 10```
+```(select *from t where c1 < 10) union all (select* from s where c2 < 10) order by c3 limit 10```
 
 t 和 s 可以根据索引的数据分布来确定选择索引 c3 还是 c2。
 

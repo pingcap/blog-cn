@@ -38,11 +38,11 @@ TiDB 是由 PingCAP 开发的分布式关系型数据库，今天我们很高兴
 
 在 2.1 版本中，我们引入了 Raft PreVote、Raft Learner、Raft Region Merge 三个新特性：
 
-*   PreVote 是在 Raft Group Member 发起投票之前，预先检查是否能被其他成员所支持，以避免集群中被网络隔离的节点重新接入集群中的时候引发性能抖动，提升集群稳定性。2.1 版本已经支持 PreVote 功能，并默认打开。
+* PreVote 是在 Raft Group Member 发起投票之前，预先检查是否能被其他成员所支持，以避免集群中被网络隔离的节点重新接入集群中的时候引发性能抖动，提升集群稳定性。2.1 版本已经支持 PreVote 功能，并默认打开。
 
-*   Learner 是只同步数据不参与投票的 Raft Group Member。在新加副本的时候，首先增加 Learner 副本，以避免添加副本过程中，部分 TiKV 节点故障引发丢失多数副本的情况发生，以提升集群的安全性。2.1 版本已经支持 Learner 功能，并默认打开。
+* Learner 是只同步数据不参与投票的 Raft Group Member。在新加副本的时候，首先增加 Learner 副本，以避免添加副本过程中，部分 TiKV 节点故障引发丢失多数副本的情况发生，以提升集群的安全性。2.1 版本已经支持 Learner 功能，并默认打开。
 
-*   Region Merge 用于将多个过小的 Region 合并为一个大的 Region，降低集群的管理成本，对于长期运行的集群以及数据规模较大的集群的性能、稳定性有帮助。2.1 版本已经支持 Region Merge 功能，尚未默认打开。
+* Region Merge 用于将多个过小的 Region 合并为一个大的 Region，降低集群的管理成本，对于长期运行的集群以及数据规模较大的集群的性能、稳定性有帮助。2.1 版本已经支持 Region Merge 功能，尚未默认打开。
 
 这些新特性的引入，有助于提升存储集群尤其是大规模集群的稳定性和性能。
 
@@ -91,7 +91,6 @@ Explain 对于理解查询计划至关重要，2.1 之前的版本，TiDB 追随
 我们在相同的场景下，对 2.1 和 2.0 进行了 [对比测试](https://pingcap.com/docs-cn/v2.1/benchmark/v2.1-performance-benchmarking-with-tpch/)。从下图可以看到（纵坐标是 Query 的响应时间，越低越好），之前的两个慢 Query 的运行时间大幅缩短，其他的 Query 也有一定程度的提升。这些提升一方面得益于查询优化器以及执行引擎的改进，另一方面 得益于 TiKV 对连续数据扫描的性能优化。
 
 ![OLAP](media/tidb-21-battle-tested-for-an-unpredictable-world/2.png)
-
 
 ## 完善的生态工具
 

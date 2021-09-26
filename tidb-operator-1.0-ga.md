@@ -15,7 +15,6 @@ image: /images/blog-cn/tidb-operator-1.0-ga/tidb-operator-1.0-ga.jpg
 
 <div class="caption-center">TiDB Operator architecture</div>
 
-
 **TiDB Operator 是 Kubernetes 上的 TiDB 集群自动运维系统。提供包括部署、升级、扩缩容、备份恢复、配置变更的 TiDB 全生命周期管理。借助 TiDB Operator，TiDB 可以无缝运行在公有云或私有部署的 Kubernetes 集群上。**
 
 1.0 是 TiDB Operator 的首个 GA 版本，具备以下核心亮点。

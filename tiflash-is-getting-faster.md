@@ -99,4 +99,3 @@ tiup playgroud
 ```
 
 *注：部分上述优化还未包含在 4.0 RC，请与我们联系参与体验。另，TiFlash 部署暂时只支持 Linux 环境。*
-

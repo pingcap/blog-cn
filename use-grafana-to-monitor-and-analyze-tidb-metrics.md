@@ -153,7 +153,6 @@ PD 的 Dashboard，只展示当前 leader 的 metric 信息，有时候会想看
 
 通常默认图例中只有 `Max` 和 `Current`，但有时指标波动较大时，我们可以增加 `Avg` 等其他汇总函数的图例，可以看一段时间的整体趋势。
 
-
 ![图 14 增加 Avg 等汇总函数](media/use-grafana-to-monitor-and-analyze-tidb-metrics/14.png)
 
 <div class="caption-center">图 14 增加 Avg 等汇总函数</div>
@@ -161,7 +160,6 @@ PD 的 Dashboard，只展示当前 leader 的 metric 信息，有时候会想看
 ![图 15 增加 Avg 函数](media/use-grafana-to-monitor-and-analyze-tidb-metrics/15.png)
 
 <div class="caption-center">图 15 增加 Avg 函数</div>
-
 
 ### 技巧 7：使用 Prometheus 的 API 接口获得表达式的结果
 

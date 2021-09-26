@@ -92,7 +92,6 @@ TiFlash是一个列式存储引擎，相对来说对 AP 场景更友好一些，
 
 <div className="caption-center">TiKV</div>
 
-
 第二是成本的下降，我们原来有一套给 BI 用的集群，现在用新的 TiDB 4.0 的集群替换了，可以看一下下图左边的表格是新的 4.0 的集群各个组件资源分配比例，左边是新、老集群同样负载情况下的资源分配情况。可以看到，部署新集群让我们整体成本下降了 35%。
 
 ![11-成本对比](media/user-case-vipkid/11-成本对比.png)
@@ -128,7 +127,6 @@ TiFlash是一个列式存储引擎，相对来说对 AP 场景更友好一些，
 ![15-TiDB-Dashboard](media/user-case-vipkid/15-TiDB-Dashboard.png)
 
 ![16-TiDB-Dashboard-2](media/user-case-vipkid/16-TiDB-Dashboard-2.png)
-
 
 ### Backup & Restore 
 

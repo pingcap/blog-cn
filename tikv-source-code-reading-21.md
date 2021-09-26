@@ -218,7 +218,7 @@ Region A 要 Split，新 Region 为 C，但是在 TiKV 1 上的 Region A 因为�
 |  1 | A A * | A A *  |
 |  2  | A A B  | C A B  |
 |  3 | A A B  | C A B  |
-|  4  | *  * B  | *  * B  |
+|  4  | ** B  | ** B  |
 
 此时进行了 Conf Change。Region C 和 A 各自都移除了 TiKV 1 上的 Peer，也在 TiKV 4 上增加了 Peer。
 

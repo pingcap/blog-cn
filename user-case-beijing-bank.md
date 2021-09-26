@@ -17,9 +17,7 @@ showOnSwiper: 1
 
 ![](media/user-case-beijing-bank/于振华.jpg)
 
-
 >本文整理自于振华老师在 [TiDB DevCon 2019](http://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247487846&idx=1&sn=5d349facbf078b19b886ccfa16b152c4&chksm=eb16360cdc61bf1a29efb65e0413877e3cb31bf4e8a3e439c615ae03eeb94a937ccb23948942&scene=21#wechat_redirect) 上的演讲实录，演讲主题为《TiDB 在银行核心金融领域的研究与实践》。
-
 
 今天参加 TiDB DevCon 2019 能够和这么多各行各业的朋友一起来交流 TiDB 的实践情况，这个机会非常难得，因为平时都是我们技术团队和 TiDB 团队单向的交流，横向的这种客户之间交流的机会很少，像刚才几位老师讲的，我觉得都很有意思，也希望通过咱们这次大会，大家能擦出不一样的火花。
 
@@ -150,5 +148,3 @@ showOnSwiper: 1
 最后，我们也希望能够把北京银行的经验和大家多多分享，让大家不再遇到我们建设过程中遇到的问题和麻烦，更加顺畅的进行架构转型工作。
 
 以上就是我今天分享的内容，谢谢大家。
-
-

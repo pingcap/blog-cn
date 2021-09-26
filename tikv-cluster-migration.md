@@ -13,8 +13,6 @@ tags: ['TiKV','版本迁移']
 
 常见的当我们对引入新的 `RaftCommand` 的时候，旧版本的 TiKV 并不能识别新的添加的 `RaftCommand`，对于不能认知的 `RaftCommand` TiKV 有不同的处理，可能会报错退出或忽略。比如为了支持 Raft Learner, 在 raftpb 里对添加新的 ConfChange 类型。 当 PD 在进行 Region 调度时，会先发送 `AddLearner` 到 TiKV 上，接受到这个命令的肯定是这个 Region 的 Leader，在进行一系列检查后，会将该命令 Proposal, 而 Follwer 如果是旧版本的话，在 Apply 这条 Command 就会出错。而在滚动升级时，很有可能存在 Leader 是新版本，Follwer 是老版本的情况。
 
-
-
 ## 引入版本检查机制
 
 TiDB 的版本定义是遵循 Semver 的版本规则的。版本格式一般由主版本号（Major），次版本号（Minor），修订号（Patch），版本号递增规则如下：
@@ -26,7 +24,6 @@ TiDB 的版本定义是遵循 Semver 的版本规则的。版本格式一般由�
 先行版本号（PreRelase）及版本编译信息可以加到“主版本号.次版本号.修订号”的后面，作为延伸。比如 TiDB 目前的版本是 2.1.0-beta，先行版号为 beta 版。
 
 在此之前，集群并没有版本的概念，虽然每个组件都有各自的版本信息，但各个节点的各自组件的版本都可以任意的。没有一个管理机制可以管理或查看所有组件的版本信息。为了解决滚动升级过程中存在多个版本的兼容性问题，这里引入集群版本的概念，并由 TiDB 集群的中心节点 PD 来进行管理和检查。
-
 
 ## 具体实现
  
@@ -42,17 +39,12 @@ TiDB 的版本定义是遵循 Semver 的版本规则的。版本格式一般由�
 
 TiKV 很多功能是需要 PD 的参与，目前这些新功能的开启也是通过 PD 进行控制的。在 PD 中，会将每个版本新特性记录下来，在 TiKV 2.0 中，对应有 Raft Leaner， Region Merge。 TiKV 2.1 中有 Batch Split，Joint Consensus 等。这些特性都需要 PD 的参与与控制。比如说 Add Leaner，Region Merge，Joint Consensus 需要 PD 下发调度给 TiKV，Batch Split 则是 TiKV 主动发起并请求 PD 分配新的 Region ID。因此这些功能都是能通过 PD 进行控制的。PD 会通过比对当前的集群版本，选择开启当前集群版本所支持的新特性。从而保证版本的兼容性。
 
- 
 ### 3. 集群回滚
 
 当升级完成后，如果遇到问题需要进行集群进行回滚时， 需要手动修改集群版本后。PD 提供了 pdctl 可以通过命令手动修改集群的 `cluster_version`，这时旧版本的 TiKV 就能注册并启动，从而进行回滚。
 
 PD 对 `cluster_version` 是通过 etcd 进行了持久化，在每次 PD 启动的时候，leader 都会从 etcd kv 中加载出 `clustrer_version`，然后提供服务。从而保证在 PD leader 切换后 `cluster_version` 的一致性。另外 PD 本身的版本可能会小于当前 `cluster_version`。因此在滚动升级的时候，需要先升级 PD，如果只升级了 TiKV，虽然 `cluster_version` 已经更新到新的版本的，但 PD 并不能开启新的功能，因为对它来说是不支持的。如果出现这种情况，PD 的日志中会有报警。在升级的时候，最好按 PD，TiKV，TiDB 的顺序逐一对各个组件。
 
-
 ## 后续计划
 
 上面提到的新功能特性一般都是需要 PD 参与的。而有些特性不需要PD的参与，因此需要保证这种特性在 TiKV 之间是可以兼容的，实现的时候可以采用类是 `http2 <-> http` 的方式，对请求进行降级装发，保留两套接口等。另为 TiDB 目前是自身保证可以无缝兼容，但与 TiKV 可能存在兼容性问题，往后同样考虑让TiDB 也在 PD上进行注册。 
-
- 
-

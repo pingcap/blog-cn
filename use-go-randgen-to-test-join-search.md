@@ -86,6 +86,7 @@ data = {
 2.定义 join.yy 文件。该例中的 yy 文件，通过 hint 指定生成 inl_merge_join 和 inl_hash_join 算法查询语句。生成的 sql 语句中除指定字段外，查询条件中的表和字段将随机组合而成。
 
 生成的的 SQL 示例：
+
 ```
 SELECT /*+ inl_hash_join(t1) */ t1.pk, t2.pk from table_290_undef_undef_1 t1, table_400_undef_undef_1 t2 where t1. `col_enum_key_signed` = t2. `col_int_key_signed` and t1. `col_smallint_key_signed` < -5418830167423061551 order by t1.pk, t2.pk;
 ```

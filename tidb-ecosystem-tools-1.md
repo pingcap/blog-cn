@@ -299,7 +299,6 @@ SQL3：delete from itest where id = 3;                                key: 3
 
 Drainer 通过以上这些机制来高效地同步数据，并且保证数据的一致。
 
-
 ## 总结
 
 TiDB Binlog 是 TiDB 生态的重要工具，通过该工具来实现 TiDB 集群的主从复制、数据订阅。我们将持续提升该工具的稳定性、易用性、可靠性。

@@ -11,7 +11,6 @@ tags: ['TiDB','TiDB Hackathon','Streaming','Kafka','SQL']
 >
 >TiDB Batch and Streaming SQL（简称 TBSSQL）扩展了 TiDB 的 SQL 引擎，支持用户以类似 StreamSQL 的语法将 Kafka、Pulsar 等外部数据源以流式表的方式接入 TiDB。通过简单的 SQL 语句，用户可以实现对流式数据的过滤，流式表与普通表的 Join（比如流式事实表与多个普通维度表），甚至通过 CREATE TABLE AS SELECT 语法将处理过的流式数据写入普通表中。此外，针对流式数据的时间属性，我们实现了基于时间窗口的聚合/排序算子，使得我们可以对流式数据进行时间维度的聚合/排序。
 
- 
 ## 序
 
 算起来这应该是第三次参加的 Hackathon 了，第一次参加的时候还是在小西天的豌豆荚，和东旭一起，做跨平台数据传输的工具，两天一夜；第二次和奇叔一起在 3W 咖啡，又是两天一夜；这次在自己家举办 Hackathon 比赛，下定决心一定要佛性一些，本着能抱大腿就不单干的心态，迅速决定拉唐长老（唐刘）下水。接下来就计划着折腾点啥，因为我们两个前端都不怎么样，所以只能硬核一些，于是拍了两个方案。
@@ -142,12 +141,9 @@ GZY 和 WPH 把今天安排的工作完成的差不多了，而且第二天还�
 
 ![3.png](https://upload-images.jianshu.io/upload_images/542677-8b194db181aea031.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-
-
 最后大家补了一张合照，算是为这次 Hackathon 画下一个句号。
 
 ![4.png](https://upload-images.jianshu.io/upload_images/542677-b6e77839a58a4ea9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
 
 **至此，基本上 Hackathon 的流水账就记录完了，整个项目地址在 [https://github.com/qiuyesuifeng/tidb](https://github.com/qiuyesuifeng/tidb) 欢迎大家关注和讨论。**
 
@@ -158,7 +154,6 @@ GZY 和 WPH 把今天安排的工作完成的差不多了，而且第二天还�
 在前期分析和准备之后，基本上就只有在 TiDB 上做 SQL Streaming 引擎一条路可选了，细化了下要实现的功能以及简单的系统架构，感觉工作量还是非常大的。
 
 ![5.png](https://upload-images.jianshu.io/upload_images/542677-6d2f8a3e9c5603d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
 
 下面简单介绍下系统架构和各个模块的功能：
 

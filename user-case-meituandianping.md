@@ -163,7 +163,6 @@ TiKV 底层有 2 个 RocksDB 作为存储。新写的数据写入 L0 层，当 R
 * 写入量大，Compact 完不成。
 * Snapshot 一直创建不完，导致堆积的副本一下释放，rocksdb-raft 创建大量的 L0 文件，监控展示如图 6。
 
-
 ![图 6 TiKV 发生 Write Stall 监控展示图](media/user-case-meituandianping/6.png)
 
 <div class="caption-center">图 6 TiKV 发生 Write Stall 监控展示图</div>
@@ -190,7 +189,6 @@ TiKV 底层有 2 个 RocksDB 作为存储。新写的数据写入 L0 层，当 R
 
 * 临时解决
     * 增加 Heartbeat 的周期，从 1s 改为 2s，效果比较明显，监控展示如图 7。
-
 
 ![图 7 insert 响应时间优化前后对比图](media/user-case-meituandianping/7.png)
 
@@ -265,4 +263,3 @@ TiDB 的物理优化阶段需要依靠统计信息。在 2.0 版本统计信息�
 后续的物理备份方案，跨机房多写等也是我们接下来逐步推进的场景，总之我们坚信未来 TiDB 在美团的使用场景会越来越多，发展也会越来越好。
 
 TiDB 在业务层面、技术合作层面都已经在美团扬帆起航，美团点评将携手 PingCAP 开启新一代数据库深度实践、探索之旅。后续，还有美团点评架构存储团队针对 TiDB 源码研究和改进的系列文章，敬请期待！
-

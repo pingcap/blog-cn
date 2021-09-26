@@ -4,7 +4,7 @@ author: ['申砾']
 date: 2018-03-02
 summary: 本文为 TiDB 源码阅读系列文章的第二篇，第一篇文章介绍了 TiDB 整体的架构，本篇文章是一篇入门文档 enjoy~
 tags: ['TiDB 源码阅读','社区']
---- 
+---
 
 本文为 TiDB 源码阅读系列文章的第二篇，第一篇文章介绍了 TiDB 整体的架构，知道 TiDB 有哪些模块，分别是做什么的，从哪里入手比较好，哪些可以忽略，哪些需要仔细阅读。
 
@@ -29,6 +29,7 @@ TiDB 源码完全托管在 Github 上，从[项目主页](https://github.com/pin
 除了代码之外，还有很多测试用例，可以在 xx\_test.go 中找到。另外 `cmd` 目录下面还有几个工具包，用来做性能测试或者是构造测试数据。
 
 ## 模块介绍
+
 TiDB 的模块非常多，这里做一个整体介绍，大家可以看到每个模块大致是做什么用的，想看相关功能的代码是，可以直接找到对应的模块。
 
 | Package | Introduction |
@@ -137,9 +138,11 @@ TiDB 的模块非常多，这里做一个整体介绍，大家可以看到每个
 
 连接建立的逻辑在 server.go 的 [Run()](https://github.com/pingcap/tidb/blob/source-code/server/server.go#L236) 方法中，主要是下面两行：
 
-	236:         conn, err := s.listener.Accept()
-	
-	258:         go s.onConn(conn)
+```
+236:         conn, err := s.listener.Accept()
+
+258:         go s.onConn(conn)
+```
 
 单个 Session 处理命令的入口方法是调用 clientConn 类的 [dispatch 方法](https://github.com/pingcap/tidb/blob/source-code/server/conn.go#L465)，这里会解析协议并转给不同的处理函数。
 
@@ -157,6 +160,7 @@ TiDB 的模块非常多，这里做一个整体介绍，大家可以看到每个
 | store/tikv | TiKV Client |
 
 ### KV API Layer
+
 TiDB 依赖于底层的存储引擎提供数据的存取功能，但是并不是依赖于特定的存储引擎（比如 TiKV），而是对存储引擎提出一些要求，满足这些要求的引擎都能使用（其中 TiKV 是最合适的一款）。
 
 最基本的要求是『带事务的 Key-Value 引擎，且提供 Go 语言的 Driver』，再高级一点的要求是『支持分布式计算接口』，这样 TiDB 可以把一些计算请求下推到 存储引擎上进行。
@@ -167,7 +171,7 @@ TiDB 依赖于底层的存储引擎提供数据的存取功能，但是并不是
 
 * [Transaction](https://github.com/pingcap/tidb/blob/source-code/kv/kv.go#L121)：事务基本操作
 
-* [Retriever ](https://github.com/pingcap/tidb/blob/source-code/kv/kv.go#L75)：读取数据的接口
+* [Retriever](https://github.com/pingcap/tidb/blob/source-code/kv/kv.go#L75)：读取数据的接口
 
 * [Mutator](https://github.com/pingcap/tidb/blob/source-code/kv/kv.go#L91)：修改数据的接口
 
@@ -188,4 +192,3 @@ TiDB 依赖于底层的存储引擎提供数据的存取功能，但是并不是
 ## 小结
 
 至此，读者已经了解了 TiDB 的源码结构以及三个主要部分的架构，更详细的内容会在后面的章节中详细描述。
-

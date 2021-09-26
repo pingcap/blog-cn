@@ -69,19 +69,19 @@ TiDB Operator 的意义在于让 TiDB 能够无缝运行在 Kubernetes 上，而
 
 TiDB Operator 需要驱动集群向期望状态收敛，而最简单的驱动方式就是创建一组 Pod 来组成 TiDB 集群。通过直接操作 Pod，我们可以自由地控制所有编排细节。举例来说，我们可以：
 
-*   通过替换 Pod 中容器的 image 字段完成原地升级。
+* 通过替换 Pod 中容器的 image 字段完成原地升级。
 
-*   自由决定一组 Pod 的升级顺序。
+* 自由决定一组 Pod 的升级顺序。
 
-*   自由下线任意 Pod。
+* 自由下线任意 Pod。
 
 事实上我们也确实采用过完全操作 Pod 的方案，但是当真正推进该方案时我们才发现，这种完全“自己造轮子”的方案不仅开发复杂，而且验证成本非常高。试想，为什么大家对 Kubernetes 的接受度越来越高， 即使是传统上较为保守的公司现在也敢于拥抱 Kuberentes？除了 Kubernetes 本身项目素质过硬之外，更重要的是有整个社区为它背书。我们知道 Kubernetes 已经在各种场景下经受过大量的生产环境考验，这种信心是各类测试手段都没法给到我们的。回到 TiDB Operator 上，选择直接操作 Pod 就意味着我们抛弃了社区在 StatefulSet、Deployment 等对象中沉淀的编排经验，随之带来的巨大验证成本大大影响了整个项目的开发效率。
 
 因此，在目前的 TiDB Operator 项目中，大家可以看到控制器的主要操作对象是 StatefulSet。StatefulSet 能够满足有状态应用的大部分通用编排需求。当然，StatefulSet 为了做到通用化，做了很多不必要的假设，比如高序号的 Pod 是隐式依赖低序号 Pod 的，这会给我们带来一些额外的限制，比如：
 
-+  无法指定 Pod 进行下线缩容。
-+  滚动更新顺序固定。
-+  滚动更新需要后驱 Pod 全部 Ready。
++ 无法指定 Pod 进行下线缩容。
++ 滚动更新顺序固定。
++ 滚动更新需要后驱 Pod 全部 Ready。
 
 StatefulSet 和 Pod 的抉择，最终是灵活性和可靠性的权衡，而在 TiDB 面临的严苛场景下，我们只有先做到可靠，才能做开发、敢做开发。最后的选择自然就呼之欲出——StatefulSet。当然，这里并不是说，使用基于高级对象进行编排的方案要比基于 Pod 进行编排的方案更好，只是说我们在当时认为选择 StatefulSet 是一个更好的权衡。当然这个故事还没有结束，当我们基于 StatefulSet 把第一版 TiDB Operator 做稳定后，我们正在接下来的版本中开发一个新的对象来水平替换 StatefulSet，这个对象可以使用社区积累的 StatefulSet 测试用例进行验证，同时又可以解除上面提到的额外限制，给我们提供更好的灵活性。 假如你也在考虑从零开始搭建一个 Operator，或许也可以参考“先基于成熟的原生对象快速迭代，在验证了价值后再增强或替换原生对象来解决高级需求”这条落地路径。
 
@@ -98,7 +98,6 @@ StatefulSet 和 Pod 的抉择，最终是灵活性和可靠性的权衡，而在
 在伪代码中，每次我们因为要将所有 Pod 收敛到新版本而进入这段控制逻辑时，都会先检查下一个要待升级的 TiKV 实例上 leader 是否迁移完毕，直到迁移完毕才会继续往下走，调整 partition 参数，开始升级对应的 TiKV 实例。缩容也是类似的逻辑。但你可能已经意识到，缩容和滚动更新两个操作是有可能同时出现在状态收敛的过程中的，也就是同时修改 replicas 和 image 字段。这时候由于控制器需要区分缩容与滚动更新，诸如此类的边界条件会让控制器越来越复杂。
 
 第三种方案是使用 Kubernetes 的 Admission Webhook 将一部分协调逻辑从控制器中拆出来，放到更纯粹的切面当中。针对这个例子，我们可以拦截 Pod 的 Delete 请求和针对上层对象的 Update 请求，检查缩容或滚动升级的前置条件，假如不满足，则拒绝请求并触发指令进行协调，比如驱逐 leader，假如满足，那么就放行请求。控制循环会不断下发指令直到状态收敛，因此 webhook 就相应地会不断进行检查直到条件满足，如下图所示：
-
 
 ![图 6 在 Webhook 中协调状态](media/efficiently-arranging-stateful-application/6.png)
 
@@ -148,7 +147,6 @@ Local PV 并非免费的午餐，所有的文档都会告诉我们 Local PV 有�
 
 我们先看一看为什么 TiDB 的存储层不能像无状态应用或者使用远程存储的 Pod 那样自动进行故障转移。假设下图中的节点发生了故障，由于 TiKV-1 绑定了节点上的 PV，只能运行在该节点上，因此 在节点恢复前，TiKV-1 将一直处于 Pending 状态：
 
-
 ![图 8 节点故障](media/efficiently-arranging-stateful-application/8.png)
 
 <div class="caption-center">图 8 节点故障</div>
@@ -180,6 +178,5 @@ Local PV 并非免费的午餐，所有的文档都会告诉我们 Local PV 有�
 最后，言语的描述总是不如代码本身来得简洁有力，TiDB Operator 是一个完全开源的项目，眼见为实，大家可以尽情到 [项目仓库](https://github.com/pingcap/tidb-operator) 中拍砖，也欢迎大家加入社区一起玩起来，期待你的 issue 和 PR！
 
 假如你对于文章有任何问题或建议，或是想直接加入 PingCAP 鼓捣相关项目，欢迎通过我的邮箱 wuyelei@pingcap.com 联系我。
-
 
 >本文为吴叶磊在 2019 QCon 全球软件开发大会（上海）上的专题演讲实录，Slides [下载地址](https://github.com/pingcap/presentations/blob/master/conference/%E5%90%B4%E5%8F%B6%E7%A3%8A-QCon-2019-%E9%AB%98%E6%95%88%E7%BC%96%E6%8E%92%E6%9C%89%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8-TiDB%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%80%9D%E8%80%83.pdf)。

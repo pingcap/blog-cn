@@ -34,7 +34,6 @@ TiDB 的实现代码在 [tidb/executor/merge_join.go](https://github.com/pingcap
 
 <div class="caption-center">SMJ 过程</div>
 
-
 ### 读取内表 / 外表数据
 
 我们分别通过 `fetchNextInnerRows` 或者 `fetchNextOuterRows` 读取内表和外表的数据。这两个函数实现的功能类似，这里只详述函数 `fetchNextInnerRows` 的实现。

@@ -24,7 +24,6 @@ service Pump {
 }
 ```
 
-
 本文我们主要介绍 RPC `WriteBinlog` 这个接口，Pump client 会通过这个接口写 binlog 到 Pump。
 
 `WriteBinlogReq` 里面包含的 [binlog event](https://github.com/pingcap/tipb/blob/87cb1e27ab4a86efc534fd4c5b62fda621e38465/proto/binlog/binlog.proto#L57)：

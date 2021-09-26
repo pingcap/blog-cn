@@ -43,7 +43,6 @@ customerCategory: 高科技
 
 ![图 1 数据库发展史](media/user-case-telaidian/1.png)
 
-
 <div class="caption-center">图 1 数据库发展史</div>
 
 如图 1 所示，数据库的发展经历了 RDBMS、NoSQL 以及现在的 NewSQL，每种不同的技术都有对应的产品，每种数据库的技术背后，都有典型的理论支撑。2003 年 Google GFS 开创了分布式文件系统、2006 年的 BigTable 论文催生了 Hadoop 生态，在 2012 年的 Spanner 和 2013 年的 F1 论文发表后，被业界认为指明了未来关系型数据库的发展。
@@ -92,13 +91,11 @@ TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的�
 
 **1\. 目前的集群配置**
 
-
 ![图 4 集群配置清单](media/user-case-telaidian/4.png)
 
 <div class="caption-center">图 4 集群配置清单</div>
 
 **2\. 规划的应用架构**
-
 
 ![图 5 引入 TiDB 以后的应用架构图](media/user-case-telaidian/5.png)
 
@@ -111,7 +108,6 @@ TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的�
 **a. 充电功率的分时统计**
 
 每个用户使用特来电的充电桩进行充电时，车辆的 BMS 数据、充电桩数据、环境温度等数据是实时的保存到大数据库中。我们基于采集的用户充电数据，需要按照一定的时间展示全国的充电功率 比如展示过去一天，全国的充电功率变化曲线，每隔 15 分钟或者 30 分钟进行一次汇总。随着我们业务规模的增加，此场景的计算也逐步进行了更新换代。
-
 
 ![图 6 充电功率的分时统计](media/user-case-telaidian/6.png)
 
@@ -150,5 +146,3 @@ TiSpark 深度整合了 Spark Catalyst 引擎，可以对计算提供精确的�
 **2\. 目前的定位**
 
 结合我们的实际现状，现阶段我们主要用于进行离线计算和部分即席查询的场景，后期随着应用的深入，我们逐步考虑增加更多的应用以及部分 OLTP 场景。
-
-

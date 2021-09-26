@@ -16,7 +16,6 @@ tags: ['TiDB']
 
 ### 配置信息
 
-
 |  组件名称 |  配置信息  | 数量 |
 |  ----  | ----  | ----  |
 |  PD | m5.xlarge (AWS) | 3  |
@@ -67,7 +66,7 @@ Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz  40Core 189GB Memory  3TB SSD
 
 ### 更全面的 SQL 调优
 
-TiDB 5.0 支持[不可见索引 ](https://docs.pingcap.com/zh/tidb/v5.0/sql-statement-create-index#%E4%B8%8D%E5%8F%AF%E8%A7%81%E7%B4%A2%E5%BC%95)(Invisible Indexes)，DBA 在调试和选择相对最优的索引时，可以通过 SQL 语句将某个索引设置成 `Visible` 或者 `Invisible`，避免执行消耗资源较多的操作，例如：`DROP INDEX` 或 `ADD INDEX`。
+TiDB 5.0 支持[不可见索引](https://docs.pingcap.com/zh/tidb/v5.0/sql-statement-create-index#%E4%B8%8D%E5%8F%AF%E8%A7%81%E7%B4%A2%E5%BC%95)(Invisible Indexes)，DBA 在调试和选择相对最优的索引时，可以通过 SQL 语句将某个索引设置成 `Visible` 或者 `Invisible`，避免执行消耗资源较多的操作，例如：`DROP INDEX` 或 `ADD INDEX`。
 
 在 TiDB 5.0 性能调优或者运维过程中，用户可以根据实际需要或者基于 [EXPLAIN ANALYZE](https://docs.pingcap.com/zh/tidb/v5.0/sql-statement-explain-analyze#explain-analyze) 测试选择优化过的 SQL 语句，通过 [SQL BINDING](https://docs.pingcap.com/zh/tidb/v5.0/sql-plan-management) 将优化过的 SQL 语句与业务代码执行的 SQL 语句绑定，确保稳定性。
 

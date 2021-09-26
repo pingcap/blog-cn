@@ -49,7 +49,6 @@ message TableMutation {
 }
 ```
 
-
 这个结构体保存于跟每个 Session 链接相关的事务上下文结构体中 `TxnState.mutations`。 一张表对应一个 `TableMutation` 对象，`TableMutation` 里面保存了这个事务对这张表的所有变更数据。Insert 会把当前语句插入的行，根据 `RowID` + `Row-value` 的格式编码之后，追加到 `TableMutation.InsertedRows` 中：
 
 ```
@@ -205,7 +204,6 @@ type Binlog struct {
 	DdlJobId         int64
 }
 ```
-
 
 `DdlQuery` 会设置为原始的 DDL 语句，`DdlJobId` 会设置为 DDL 的任务 ID。
 

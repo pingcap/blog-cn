@@ -111,9 +111,9 @@ SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST�
         c.Assert(crypt.IsNull(), IsTrue)
     }
     ```
-    
+
     > **注意**：除了正常 case 之外，最好能添加一些异常的case，如输入值为 nil，或者是多种类型的参数
-    
+
 3. 最后还需要添加类型推导信息以及 test case，参见 `plan/typeinferer.go`，`plan/typeinferer_test.go`：
 
     ```
@@ -122,12 +122,11 @@ SQL 语句发送到 TiDB 后首先会经过 parser，从文本 parse 成为 AST�
             chs = v.defaultCharset
             tp.Flen = 40
     ```
-    
+
     ```
             {`sha1(123)`, mysql.TypeVarString, "utf8"},
             {`sha(123)`, mysql.TypeVarString, "utf8"},
     ```
-
 
 编辑按：添加 TiDB Robot 微信，加入 TiDB Contributor Club，无门槛参与开源项目，改变世界从这里开始吧（萌萌哒）。
 

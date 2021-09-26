@@ -49,6 +49,7 @@ Span 之间有层级，可以构成父子关系或先后关系，如下图所示
 ## 实现
 
 >本文所有性能测试结果，若特别说明测试环境，均在以下平台完成：
+>
 >- CPU: Intel Core i7-8700
 >- Linux distros: Ubuntu 20.04
 >- Linux kernel: 5.4
@@ -396,5 +397,3 @@ executor::spawn(
 ## 结语
 
 TiKV 作为底层 KV 数据库，对其增加观测性功能天然有着与普通业务程序完全不一样的性能要求，非常具有挑战性。除了追踪以外，TiKV 及其上层 SQL 数据库 TiDB 也还有其他富有挑战性的观测性需求。PingCAP 的 Observability 团队专注于这类观测难题的解决与功能实现，感兴趣的同学可投递简历到 [hire@pingcap.com](hire@pingcap.com) 加入我们，或加入 Slack channel [#sig-diagnosis](https://slack.tidb.io/invite?team=tidb-community&channel=sig-diagnosis&ref=tracing) 参与技术讨论。
-
-

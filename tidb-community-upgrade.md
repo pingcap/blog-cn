@@ -63,16 +63,16 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
 
 另外这张图也反映了社区角色和专项兴趣小组的关系，我们来仔细看看 SIG 中的社区角色：
 
-1.  Active Contributor
+1. Active Contributor
     + 即一年贡献超过 8 个 PR 的 Contributor。
     + 如果要加入某个 SIG，某个 Contributor 需要在 1 年内为该 SIG 所负责的模块贡献超过 8 个以上的 PR，这样即可获得邀请，加入该 SIG 进行针对性的学习和贡献。
 
-2.  Reviewer
+2. Reviewer
     + 隶属于某个 SIG，具有 Review PR 的义务。
     + Reviewer 从 Active Contributor 中诞生，当 Active Contributor 对该模块拥有比较深度的贡献，并且得到 2 个或 2 个以上 Committer 的提名时，将被邀请成为该模块的 Reviewer。
     + Reviewer 对该模块代码的点赞（LGTM）有效（注：TiDB 要求每个 PR 至少拥有 2 个 LGTM 后才能够合并到开发分支）。
 
-3.  Tech Lead
+3. Tech Lead
     + 即 SIG 的组织者，负责 SIG 的日常运营，包括组织会议，解答疑问等。
     + Tech Lead 需要为 SIG 的管理和成长负责，责任重大。目前暂时由 PingCAP 内部同事担任，将来可由社区开发者一起担任，和 PingCAP 同事一起为 SIG 的进步而努力。
 
@@ -88,7 +88,6 @@ Active Contributor 是一年贡献超过 8 个 PR 的 Contributor。Reviewer 从
 >以上社区角色的详细的定义和权责内容可以在 [这里](https://pingcap.com/community-cn/developer-group/) 查看。
 
 ### 变化 4：Working Group
-
 
 ![图 5 新社区架构之 Working Group](media/tidb-community-upgrade/5.png)
 

@@ -7,6 +7,7 @@ tags: ['Ansible', 'TiDB']
 ---
 
 ## 背景知识
+
 TiDB 作为一个分布式数据库，在多个节点分别配置安装服务会相当繁琐，为了简化操作以及方便管理，使用自动化工具来批量部署成为了一个很好的选择。
 
 Ansible 是基于 Python 研发的自动化运维工具，糅合了众多老牌运维工具的优点实现了批量操作系统配置、批量程序的部署、批量运行命令等功能，而且使用简单，仅需在管理工作站上安装 Ansible 程序配置被管控主机的 IP 信息，被管控的主机无客户端。基于以上原因，我们选用自动化工具 Ansible 来批量的安装配置以及部署 TiDB。
@@ -14,6 +15,7 @@ Ansible 是基于 Python 研发的自动化运维工具，糅合了众多老牌�
 下面我们来介绍如何使用 Ansible 来部署 TiDB。
 
 ## TiDB 安装环境配置如下
+
 操作系统使用 CentOS7.2 或者更高版本，文件系统使用 EXT4。
 
 > 说明：低版本的操作系统(例如 CentOS6.6 )和 XFS 文件系统会有一些内核 Bug，会影响性能，我们不推荐使用。
@@ -72,6 +74,7 @@ unsafe_cleanup.yml: 销毁集群
 ```
 
 ## 修改配置文件
+
 主要配置集群节点的分布情况，以及安装路径。
 
 会在 tidb\_servers 组中的机器上安装 TiDB 服务(其他类似)，默认会将所有服务安装到变量 deploy_dir 路径下。
@@ -142,7 +145,8 @@ enable_binlog = False
 但是有些环境不会直接给 root 权限，这种场景就需要通过普通用户来安装。为了配置简便，我们建议所有节点都使用相同的普通用户；为了满足权限要求，我们还需要给这个普通用户 sudo 权限。
 **下面介绍两种安装方式的详细过程，安装完成之后需要手动启动服务。**
 
-#### 1. 使用 root 用户安装
+### 1. 使用 root 用户安装
+
 + 下载 Binary 包到 downloads 目录下，并解压拷贝到 resources/bin 下，之后的安装过程就是使用的 resources/bin 下的二进制程序
 
 ```
@@ -189,7 +193,8 @@ ansible-playbook -i inventory.ini local_prepare.yml
     ansible-playbook -i inventory.ini deploy.yml -k
     ```
 
-#### 2. 使用普通用户安装
+### 2. 使用普通用户安装
+
 + 下载 Binary 包到中控机
 
 ```
@@ -223,6 +228,7 @@ ansible-playbook -i inventory.ini deploy.yml -k -K
 ```
 
 ## 启停服务
+
 + 启动所有服务
 
 ```
@@ -239,6 +245,6 @@ ansible-playbook -i inventory.ini stop.yml
 
 > **ansible-playbook -i inventory.ini xxx.yml -k -K**
 >
->   -k 执行之后需要输入 ssh 连接用户的密码，如果做了中控机到所有节点的互信，则不需要此参数
+> -k 执行之后需要输入 ssh 连接用户的密码，如果做了中控机到所有节点的互信，则不需要此参数
 >
->   -K 执行之后需要输入 sudo 所需的密码，如果使用 root 用户或者 sudo 无需密码，则不需要此参数
+> -K 执行之后需要输入 sudo 所需的密码，如果使用 root 用户或者 sudo 无需密码，则不需要此参数

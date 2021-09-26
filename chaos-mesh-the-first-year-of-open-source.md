@@ -11,6 +11,7 @@ Chaos Mesh 开源刚刚一周年，这一年来，Chaos Mesh 产品不断迭代�
 在这篇文章中，笔者会从多个方面和大家一起回顾 Chaos Mesh 在这一年中的变化与成长，畅谈一些 Chaos Mesh 未来的目标与计划。
 
 ## 产品：明确目标，茁壮成长
+
 这一年里， Chaos Mesh 在大家共同的努力下在以肉眼可见的速度成长着。从第一个版本，到最近我们刚刚发布的 [1.1](](https://github.com/chaos-mesh/chaos-mesh/releases/tag/v1.1.0)
 ) 版本，无论是功能上，还是易用性，安全性等方面，Chaos Mesh 都有了很大的提升。
 
@@ -61,6 +62,7 @@ Chaos Mesh 为了进一步提高混沌实验的可观测性，单独开发了 [G
 ### Github Action 
 
 为了帮助用户在开发阶段就运行混沌实验，我们开发了 [chaos-mesh-action](https://github.com/chaos-mesh/chaos-mesh-action) 这个项目，让 Chaos Mesh 运行在 GitHub Actions 的 workflow 中，让 Chaos Mesh 可以更方便地集成到系统的日常开发、测试中，为 GitHub 上每一次代码的提交保驾护航。
+
 ### TiPocket 
 
 TiPocket 是一个同时集成 Chaos Mesh 和 Argo 的自动化测试平台，实现完全自动化的混沌实验。通常我们进行混沌实验的时候，存在很多步骤，比如部署待测试应用，运行 workload，以及注入异常，业务检查等等，为了让这些步骤完全的自动化起来，TiPocket 在 Chaos Mesh 的基础上引入了 Argo 工具，一方面 Chaos Mesh 提供丰富的故障注入能力，另一方面 Argo 提供灵活的编排和调度能力。

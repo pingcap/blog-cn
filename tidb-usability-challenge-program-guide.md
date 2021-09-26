@@ -39,21 +39,21 @@ TiDB 挑战赛第二季之 [易用性挑战赛](https://mp.weixin.qq.com/s/VNtLh
 
 相比第一季，这次易用性挑战赛除了 TiDB、TiKV、PD 之外，有更多代码仓库释放了任务：
 
-1.  [chaos-mesh](https://github.com/pingcap/chaos-mesh/projects/14)
+1. [chaos-mesh](https://github.com/pingcap/chaos-mesh/projects/14)
 
-2.  [Data Migration](https://github.com/pingcap/dm/projects/1)
+2. [Data Migration](https://github.com/pingcap/dm/projects/1)
 
-3.  [Backup & Restore](https://github.com/pingcap/br/projects/1)
+3. [Backup & Restore](https://github.com/pingcap/br/projects/1)
 
-4.  [client-rust](https://github.com/tikv/client-rust/projects/3)
+4. [client-rust](https://github.com/tikv/client-rust/projects/3)
 
-5.  [TiDB Dashboard](https://github.com/pingcap-incubator/tidb-dashboard/projects/17)
+5. [TiDB Dashboard](https://github.com/pingcap-incubator/tidb-dashboard/projects/17)
 
-6.  [cherry-bot](https://github.com/pingcap-incubator/cherry-bot/projects/1)
+6. [cherry-bot](https://github.com/pingcap-incubator/cherry-bot/projects/1)
 
-7.  [TiDB Operator](https://github.com/pingcap/tidb-operator/projects/4)
+7. [TiDB Operator](https://github.com/pingcap/tidb-operator/projects/4)
 
-8.  [TiUP](https://github.com/pingcap-incubator/tiup)
+8. [TiUP](https://github.com/pingcap-incubator/tiup)
 
 算上 TiDB、TiKV、PD 等总共有十多个代码仓库参赛。按照本次比赛规则，选手在每个仓库可以通过刷 Easy 难度的任务，获得最高 200 积分。那么 10 个代码仓库就是 2000 分，积少成多，收获非常可观哦！多多练手之后再挑战 Medium 难度的任务，也会更加轻松。
 
@@ -124,4 +124,3 @@ Client-rust:
 >不知道看完以上“捞分技巧”，大家有没有摩拳擦掌、准备上阵抢积分了？
 >
 >报名方式、参赛细则请看 [这篇文章](https://pingcap.com/blog-cn/TiDB-usability-challenge-program/)，同时也欢迎大家加入 [TiDB Community Slack Workspace](https://tidbcommunity.slack.com/join/shared_invite/enQtNzc0MzI4ODExMDc4LWYwYmIzMjZkYzJiNDUxMmZlN2FiMGJkZjAyMzQ5NGU0NGY0NzI3NTYwMjAyNGQ1N2I2ZjAxNzc1OGUwYWM0NzE)，在参赛过程中遇到任何问题，都可以直接通过 #tidb-challenge-program channel 与我们取得联系哦～
-

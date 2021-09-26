@@ -32,7 +32,6 @@ tags: ['TiDB','Elasticsearch','全文检索']
 
 ![4-架构图](media/fulltext-search-with-tidb-and-elasticsearch/4-架构图.png)
 
-
 架构如上图所示，TiDB 作为 ES 和 TiKV 之间的桥梁，所有同 ES 的交互操作都嵌入在 TiDB 内部直接完成。
 
 在 TiDB 内部，我们将表额外增加了支持 FULLTEXT 索引的元数据记录，并且在 ES 上面创建了对应的索引和 [Mapping](https://www.elastic.co/cn/blog/found-elasticsearch-mapping-introduction)，对于 FULLTEXT 索引中的每一个文本列，我们都将它添加到 Mapping 中并指定好需要的 [Analyzer](https://www.elastic.co/cn/blog/found-text-analysis-part-1)，这样就可以在索引上对这些文本列进行全文检索了。

@@ -75,7 +75,6 @@ perf script > out.perf
 /opt/FlameGraph/flamegraph.pl  --colors=mem out.folded > mem.svg
 ```
 
-
 ![malloc 火焰图](media/flame-graph/2.png)
 
 <div class="caption-center">malloc 火焰图</div>

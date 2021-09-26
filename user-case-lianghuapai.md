@@ -102,7 +102,6 @@ customerCategory: 高科技
 
 ![2-explain 示意图](media/user-case-lianghuapai/2.png)
 
-
 <div class="caption-center">图 2  explain 示意图</div>
 
 同时 TiDB 技术人员也收集相关信息反馈给了研发人员。在整个问题的处理过程中，TiDB 的技术人员给予了高度的配合和及时的反馈，同时也表现出了很强的专业性，大大减少了问题排查的时间，我们非常感谢。

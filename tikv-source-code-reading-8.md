@@ -14,7 +14,6 @@ gRPC 包括了一系列复杂的协议和流控机制，如果要为每个语言
 
 要说明 grpc-rs 的实现，需要先介绍 gRPC C Core 的运行方式。gRPC C Core 有三个很关键的概念 `grpc_channel`、`grpc_completion_queue`、`grpc_call`。`grpc_channel` 在 RPC 里就是底层的连接，`grpc_completion_queue` 就是一个处理完成事件的队列。`grpc_call` 代表的是一个 RPC。要进行一次 RPC，首先从 `grpc_channel` 创建一个 grpc_call，然后再给这个 `grpc_call` 发送请求，收取响应。而这个过程都是异步，所以需要调用 `grpc_completion_queue` 的接口去驱动消息处理。整个过程可以通过以下代码来解释（为了让代码更可读一些，以下代码和实际可编译运行的代码有一些出入）。
 
-
 ```rust
 grpc_completion_queue* queue = grpc_completion_queue_create_for_next(NULL);
 grpc_channel* ch = grpc_insecure_channel_create("example.com", NULL);

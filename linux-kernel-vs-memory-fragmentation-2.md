@@ -85,5 +85,3 @@ tags: ['Linux']
 对于如何减少直接内存回收出现的频率以及出现碎片问题后如何缓解，我的想法是对于需要大量操作 IO 的 workload 场景，由于内核在设计上照顾慢速后端设备，比如在 lru 算法的基础上实现二次机会法、Refault Distance 等，且没有提供限制 page cache 占比的能力 （一些公司为自己的内核定制了此功能并尝试过提交给上游内核社区，但上游社区一直没有接受，个人觉得可能存在导致 workingset refault 等问题）。所以对于超过百 G 大内存机器的场景，提高 vm.min_free_kbytes 变相限制 page cache 占比是个比较好的选择 （最高不要超过总内存的 5%）。虽然调大 vm.min_free_kbytes 确实会导致一些内存浪费，不过对于 256G 内存的服务器来说，我们设置成 4G，也只占了 1.5%。社区显然也注意到了这点，在 4.6 版本的内核合并了 [mm: scale kswapd watermarks in proportion to memory](http://lkml.iu.edu/hypermail/linux/kernel/1602.3/02009.html) 对此进行了优化。另外一个方法是在适当的时机执行 drop cache，但可能会给业务带来较大的抖动。
 
 期待大家的交流与反馈！
-
-

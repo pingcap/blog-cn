@@ -37,7 +37,6 @@ customerCategory: 电商
 
 根据以上期望进行分析，我们分析了目前市面上存在的 NewSQL 分布式数据库，列表如下：
 
-
 ![](media/user-case-fengchao/1.jpg)
 
 **在综合考虑了开源协议，成熟度，可控度，性能，服务支撑等综合因素之后，我们选择了 TiDB，它主要优势如下：**
@@ -68,9 +67,7 @@ TiDB 的基准测试，使用的工具是 sysbanch 进行测试，使用了 8 �
 
 核心服务器配置：
 
-
 ![](media/user-case-fengchao/2.jpg)
-
 
 测试结果：
 
@@ -126,12 +123,9 @@ TiDB 拥有很完善的监控平台，可以直观的看到容量，以及节点
 
 ![](media/user-case-fengchao/8.png)
 
-
 当然还能了解所在机器上的位置，CPU 内存等负载情况：
 
-
 ![](media/user-case-fengchao/9.png)
-
 
 网络状态也能清晰的监控到：
 

@@ -16,35 +16,35 @@ Chaos Mesh 1.0 是一个里程碑，不仅支持更多混沌注入的类型，�
 
 混沌实验的核心是注入故障，Chaos Mesh 从分布式系统的出发，充分考虑分布式系统可能出现的故障，提供更加全面、细粒度的故障类型，能全方位的帮用户对网络、磁盘、文件系统、操作系统等进行故障注入。同时，使用 Chaos Mesh，不需要应用做任何修改，做到真正的被测试系统无感知。Chaos Mesh 目前支持的故障注入有：
 
-*   pod-kill：模拟 Kubernetes Pod 被 kill。
+* pod-kill：模拟 Kubernetes Pod 被 kill。
 
-*   pod-failure：模拟 Kubernetes Pod 持续不可用，可以用来模拟节点宕机不可用场景。
+* pod-failure：模拟 Kubernetes Pod 持续不可用，可以用来模拟节点宕机不可用场景。
 
-*   container-kill：模拟 Container 被 kill。
+* container-kill：模拟 Container 被 kill。
 
-*   network-latency：模拟网络延迟。
+* network-latency：模拟网络延迟。
 
-*   network-loss：模拟网络丢包。
+* network-loss：模拟网络丢包。
 
-*   network-duplication：模拟网络包重复。
+* network-duplication：模拟网络包重复。
 
-*   network-corrupt：模拟网络包损坏。
+* network-corrupt：模拟网络包损坏。
 
-*   network-partition：模拟网络分区。
+* network-partition：模拟网络分区。
 
-*   cpu-burn：模拟 CPU 压力。
+* cpu-burn：模拟 CPU 压力。
 
-*   memory-burn：模拟 Memory 压力。
+* memory-burn：模拟 Memory 压力。
 
-*   clock-skew：模拟时钟偏移。
+* clock-skew：模拟时钟偏移。
 
-*   io-latency：模拟文件系统 I/O 延迟。
+* io-latency：模拟文件系统 I/O 延迟。
 
-*   io-fault：模拟文件系统 I/O 错误。
+* io-fault：模拟文件系统 I/O 错误。
 
-*   io-attribution-override：模拟文件异常。
+* io-attribution-override：模拟文件异常。
 
-*   kernel-injection: 模拟内核故障。
+* kernel-injection: 模拟内核故障。
 
 ### 2. 简单易用的可视化界面
 

@@ -6,7 +6,7 @@ summary: 本文将对数据冗余复制的过程进行详细展开，特别是�
 tags: ['TiKV 源码解析','社区']
 ---
 
-在 [《TiKV 源码解析系列文章（二）raft-rs proposal 示例情景分析》 ](https://pingcap.com/blog-cn/tikv-source-code-reading-2/) 中，我们主要介绍了 raft-rs 的基本 API 使用，其中，与应用程序进行交互的主要 API 是：
+在 [《TiKV 源码解析系列文章（二）raft-rs proposal 示例情景分析》](https://pingcap.com/blog-cn/tikv-source-code-reading-2/) 中，我们主要介绍了 raft-rs 的基本 API 使用，其中，与应用程序进行交互的主要 API 是：
 
 1. RawNode::propose 发起一次新的提交，尝试在 Raft 日志中追加一个新项；
 
@@ -52,11 +52,10 @@ pub struct Progress {
 }
 ```
 
-
 如代码注释中所说的那样，Leader 在给副本广播新的日志时，会从对应的副本的 `next_idx` 开始。这就蕴含了两个问题：
 
-1.  在刚开始启动的时候，所有副本的 `next_idx` 应该如何设置？
-2.  在接收并处理完成 Leader 广播的新写入后，其他副本应该如何向 Leader 更新 `next_idx`？
+1. 在刚开始启动的时候，所有副本的 `next_idx` 应该如何设置？
+2. 在接收并处理完成 Leader 广播的新写入后，其他副本应该如何向 Leader 更新 `next_idx`？
 
 第一个问题的答案在 `Raft::reset` 函数中。这个函数会在 Raft 完成选举之后选出的 Leader 上调用，会将 Leader 的所有其他副本的 `next_idx` 设置为跟 Leader 相同的值。之后，Leader 就可以会按照 Raft 论文里的规定，广播一条包含了自己的 term 的空 Entry 了。
 
@@ -78,7 +77,6 @@ fn Raft::handle_append_entries(&mut self, m: &Message) {
 self.send(to_send);
 ```
 
-
 其他副本调用 `maybe_append` 失败的原因可能是比 Leader 的日志更少，但是 Leader 在刚选举出来的时候将所有副本的 `next_idx` 设置为与自己相同的值了。这个时候这些副本就会在 MsgAppendResponse 中设置拒绝的标志。在 Leader 接收到这样的反馈之后，就可以将对应副本的 `next_idx` 设置为正确的值了。这个逻辑在 `Raft::handle_append_response` 中：
 
 ```rust
@@ -93,7 +91,6 @@ fn Raft::handle_append_response(&mut self, m: &Message, …) {
     }
 }
 ```
-
 
 以上伪代码中我们省略了一些丢弃乱序消息的代码，避免过多的细节造成干扰。
 

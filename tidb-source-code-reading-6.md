@@ -81,7 +81,7 @@ type SelectStmt struct {
 }
 ```
 
-对于本文所提到的语句 `SELECT name FROM t WHERE age > 10; ` name 会被解析为 Fields，`WHERE age > 10` 被解析为 Where 字段，`FROM t` 被解析为 From 字段。
+对于本文所提到的语句 `SELECT name FROM t WHERE age > 10;` name 会被解析为 Fields，`WHERE age > 10` 被解析为 Where 字段，`FROM t` 被解析为 From 字段。
 
 ## Planning
 
@@ -277,7 +277,6 @@ type task interface {
 
 ![explain](media/tidb-source-code-reading-6/2.jpg)
 
-
 整个流程是一个树形动态规划的算法，大家有兴趣可以跟一下相关的代码自行研究或者等待后续的文章。
 
 经过整个优化过程，我们已经得到一个物理查询计划，这个 `SELECT name FROM t WHERE age > 10;` 语句能够指定出来的查询计划大概是这样子的：
@@ -370,7 +369,6 @@ selectResult 实现了 SelectResult 这个接口，代表了一次查询的所�
 #### Root Executor
 
 能推送到 TiKV 上的计算请求目前有 TableScan、IndexScan、Selection、TopN、Limit、PartialAggregation 这样几个，其他更复杂的算子，还是需要在单个 tidb-server 上进行处理。所以整个计算是一个多 tikv-server 并行处理 + 单个 tidb-server 进行汇总的模式。 
-
 
 ## 总结
 
