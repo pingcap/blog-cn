@@ -85,7 +85,7 @@ TiDB 的事务采用 2-phase-commit 算法，一次事务提交会分为 Prewrit
 
 在 Prepare 的阶段，TiDB 会把 Prewrite 的数据发到 TiKV，同时并发写一条 P-binlog 到其中一个 Pump。 两个操作全部成功后才会进行 Commit 阶段，所以我们提交事务时就可以确定 P-binlog 已经成功保存。写 C-binlog 是在 TiKV 提交事务后异步发送的，告诉  Pump 这个事务提交了还是回滚了。
 
-###  写 binlog 对事务延迟的影响
+### 写 binlog 对事务延迟的影响
 
 * Prepare 阶段：并发写 P-binlog 到 Pump 和 Prewrite data 到 TiKV，如果请求 Pump 写 P-binlog 的速度快于写 TiKV 的速度，那么对延迟没有影响。一般而言写入 Pump 会比写入 TiKV 更快。
 
@@ -105,15 +105,15 @@ Pump client 的代码维护在 [`pump_client`](https://github.com/pingcap/tidb-t
 
 1. watch etcd
 
-	Pump 在运行时会将自己的状态信息上报到 PD（etcd）中，并且定时更新自己的状态。在创建 Pump client 的时候，会 [首先从 PD（etcd）中获取所有的 Pump 状态信息](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/client.go#L227)，根据 Pump 状态是否为 Online 初步判断 Pump 为 avaliable 或者 unavailable。然后 Pump client 会 [watch](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/client.go#L478) etcd 中的 Pump 状态变更，及时更新内存中维护的 Pump 状态。
+ Pump 在运行时会将自己的状态信息上报到 PD（etcd）中，并且定时更新自己的状态。在创建 Pump client 的时候，会 [首先从 PD（etcd）中获取所有的 Pump 状态信息](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/client.go#L227)，根据 Pump 状态是否为 Online 初步判断 Pump 为 avaliable 或者 unavailable。然后 Pump client 会 [watch](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/client.go#L478) etcd 中的 Pump 状态变更，及时更新内存中维护的 Pump 状态。
 
 2. binlog 重试机制
 
-	对于每个 Pump，在 Pump client 中都维护了一个变量 [`ErrNum`](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/pump.go#L70) 来记录该 Pump 写 binlog 的失败次数，当 ErrNum 超过一定的阈值，则判断 [该 Pump 不可用](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/pump.go#L174)，如果写 binlog 成功，则 [重置 `ErrNum`](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/pump.go#L162)。
+ 对于每个 Pump，在 Pump client 中都维护了一个变量 [`ErrNum`](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/pump.go#L70) 来记录该 Pump 写 binlog 的失败次数，当 ErrNum 超过一定的阈值，则判断 [该 Pump 不可用](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/pump.go#L174)，如果写 binlog 成功，则 [重置 `ErrNum`](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/pump.go#L162)。
 
 3. 发送探活请求
 
-	在某些情况下，比如网络抖动，可能会导致 Pump 写 binlog 失败，因此该 Pump 被 Pump client 判断状态为 unavailable，但是当网络恢复后，该 Pump 仍然可以提供写 binlog 服务。Pump client 实现了 [detect](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/client.go#L531) 机制，会定期向 unavailable 状态的 Pump 发送探活请求，如果探活请求成功，则更新 Pump 状态为 avaliable。
+ 在某些情况下，比如网络抖动，可能会导致 Pump 写 binlog 失败，因此该 Pump 被 Pump client 判断状态为 unavailable，但是当网络恢复后，该 Pump 仍然可以提供写 binlog 服务。Pump client 实现了 [detect](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/client.go#L531) 机制，会定期向 unavailable 状态的 Pump 发送探活请求，如果探活请求成功，则更新 Pump 状态为 avaliable。
 
 为了将 binlog 均匀地分发到所有 Pump，Pump client 使用 [`PumpSelector`](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/selector.go#L47) 为每一个 binlog 选择一个合适的 Pump，`PumpSelector` 是一个接口，提供 [`SetPumps`](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/selector.go#L49) 方法来设置可选的 Pump 列表，提供 [`Select`](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/selector.go#L52) 来为 binlog 选择 Pump。目前主要实现了 [Hash](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/selector.go#L59) 和 [Round-Robin](https://github.com/pingcap/tidb-tools/blob/c969908e6130dfbdb4ab80fb84f275df2a6fd877/tidb-binlog/pump_client/selector.go#L109) 两种策略。
 
