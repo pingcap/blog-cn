@@ -18,18 +18,17 @@ HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，�
 
 ## HAProxy 部分核心功能
 
-*   [高可用性](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.4)：HAProxy 提供优雅关闭服务和无缝切换的高可用功能；
+* [高可用性](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.4)：HAProxy 提供优雅关闭服务和无缝切换的高可用功能；
 
-*   [负载均衡](http://cbonte.github.io/haproxy-dconv/1.9/configuration.html#4.2-balance)：L4（TCP）和 L7（HTTP）负载均衡模式，至少 9 类均衡算法，比如 roundrobin，leastconn，random 等；
+* [负载均衡](http://cbonte.github.io/haproxy-dconv/1.9/configuration.html#4.2-balance)：L4（TCP）和 L7（HTTP）负载均衡模式，至少 9 类均衡算法，比如 roundrobin，leastconn，random 等；
 
-*   [健康检查](http://cbonte.github.io/haproxy-dconv/1.9/configuration.html#5.2-check)：对 HAProxy 配置的 HTTP 或者 TCP 模式状态进行检查；
+* [健康检查](http://cbonte.github.io/haproxy-dconv/1.9/configuration.html#5.2-check)：对 HAProxy 配置的 HTTP 或者 TCP 模式状态进行检查；
 
-*   [会话保持](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.6)：在应用程序没有提供会话保持功能的情况下，HAProxy 可以提供该项功能；
+* [会话保持](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.6)：在应用程序没有提供会话保持功能的情况下，HAProxy 可以提供该项功能；
 
-*   [SSL](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.2)：支持 HTTPS 通信和解析；
+* [SSL](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.2)：支持 HTTPS 通信和解析；
 
-*   [监控与统计](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.3)：通过 web 页面可以实时监控服务状态以及具体的流量信息。
-
+* [监控与统计](http://cbonte.github.io/haproxy-dconv/1.9/intro.html#3.3.3)：通过 web 页面可以实时监控服务状态以及具体的流量信息。
 
 ## HAProxy 部署操作
 
@@ -64,7 +63,6 @@ HAProxy 由 Linux 内核的核心贡献者 Willy Tarreau 于 2000 年编写，�
 - gcc
 - systemd-devel
 
-
 ### 3. 推荐版本
 
 根据官方建议，目前 HAProxy 稳定版本为稳定版 2.0，特性介绍参考 [这篇文章](https://www.haproxy.com/blog/haproxy-2-0-and-beyond/)。
@@ -82,14 +80,14 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下 step by step 操
 	which haproxy
 	```
 	
-2.  配置 HAProxy
+2. 配置 HAProxy
 
 	```
 	# yum 安装过程中会生成配置模版
 	vim /etc/haproxy/haproxy.cfg
 	```
 
-3.  启动  HAProxy
+3. 启动  HAProxy
 
 	方法一：直接启动
 	
@@ -103,7 +101,7 @@ HAProxy 配置 Database 负载均衡场景操作简单，以下 step by step 操
 	systemctl start haproxy.service
 	```
 
-4.  停止  HAProxy
+4. 停止  HAProxy
 
 	方法一：kill -9
 
@@ -155,7 +153,6 @@ Usage : haproxy [-f <cfgfile|cfgdir>]* [ -vdVD ] [ -n <maxconn> ] [ -N <maxpconn
 |-sf/-st &lt;unix_socket&gt; |在启动后，在 pidlist 中发送 FINISH 信号给 PID。收到此信号的进程将等待所有会话在退出之前完成，即优雅停止服务。此选项必须最后指定，后跟任意数量的 PID，SIGTTOU 和 SIGUSR1 都被发送。|
 |-x &lt;unix_socket&gt;,[&lt;bind options&gt;...]|获取 socket 信息。|
 |-S &lt;unix_socket&gt;,[&lt;bind options&gt;...]|分配新的 socket。|
-
 
 ## HAProxy 最佳实践
 

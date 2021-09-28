@@ -14,10 +14,10 @@ TiKV Engine SIG 是继 [Coprocessor SIG](https://pingcap.com/blog-cn/tikv-coproc
 
 Engine SIG 的工作主要涉及的模块包括：
 
-*   Engine Trait： TiKV 中存储引擎的抽象层。
-*   RocksDB：包括维护 TiKV 所使用的 RocksDB 分支，以及 rust-rocksdb 封装。
-*   Titan：提供 KV 分离支持的 RocksDB 存储引擎插件。
-*   未来 TiKV 对其它存储引擎的支持。
+* Engine Trait： TiKV 中存储引擎的抽象层。
+* RocksDB：包括维护 TiKV 所使用的 RocksDB 分支，以及 rust-rocksdb 封装。
+* Titan：提供 KV 分离支持的 RocksDB 存储引擎插件。
+* 未来 TiKV 对其它存储引擎的支持。
 
 ## 如何加入 Engine SIG
 
@@ -35,9 +35,9 @@ Engine SIG 的工作主要涉及的模块包括：
 
 近期 Engine SIG 工作会围绕在对 TiKV 已有存储引擎的改进上面，但我们会尽量选取一些对以后引入其它存储引擎也有意义的工作。具体有以下几方面：
 
-*   使用 [Bindgen](https://rust-lang.github.io/rust-bindgen/) 对 [rust-rocksdb](https://github.com/tikv/rust-rocksdb) 进行重构，减少新增存储引擎接口的开发复杂度。
-*   扩展 [failpoint](https://pingcap.com/blog-cn/tikv-source-code-reading-5/) 接口，允许为不同的存储引擎开发相应的插件，使得 TiKV 测试能够对存储引擎内部进行错误注入。
-*   [Titan](https://github.com/pingcap/titan) 存储引擎插件的性能和功能的改进。
+* 使用 [Bindgen](https://rust-lang.github.io/rust-bindgen/) 对 [rust-rocksdb](https://github.com/tikv/rust-rocksdb) 进行重构，减少新增存储引擎接口的开发复杂度。
+* 扩展 [failpoint](https://pingcap.com/blog-cn/tikv-source-code-reading-5/) 接口，允许为不同的存储引擎开发相应的插件，使得 TiKV 测试能够对存储引擎内部进行错误注入。
+* [Titan](https://github.com/pingcap/titan) 存储引擎插件的性能和功能的改进。
 
 详细任务列表见：[https://github.com/tikv/tikv/projects/22](https://github.com/tikv/tikv/projects/22)。
 

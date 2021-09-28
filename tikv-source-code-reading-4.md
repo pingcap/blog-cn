@@ -143,11 +143,9 @@ rust-prometheus 中 Counter 和 Histogram 指标支持 `local()` 函数，该函
 
 普通的全局指标使用流程如下图所示，多个线程直接利用原子操作更新全局指标：
 
-
 ![normal_metrics](media/tikv-source-code-reading-4/1.png)
 
 本地指标使用流程如下图所示，每个要用到该指标的线程都保存一份本地指标。更新本地指标操作开销很小，可以在频繁的操作中使用。随后，只需再定期将这个本地指标 flush 到全局指标，就能使得指标的更新操作真正生效。
-
 
 ![local_metrics](media/tikv-source-code-reading-4/2.png)
 
@@ -354,5 +352,3 @@ metrics.kv_get.start_coarse_timer();
 [`Histogram::local()`]: https://docs.rs/prometheus/0.5.0/prometheus/struct.Histogram.html#method.local
 [`LocalCounter`]: https://docs.rs/prometheus/0.5.0/prometheus/core/struct.GenericLocalCounter.html
 [`LocalHistogram`]: https://docs.rs/prometheus/0.5.0/prometheus/local/struct.LocalHistogram.html
-
-

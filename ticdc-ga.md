@@ -74,7 +74,7 @@ TiDB 在汽车之家已经稳定运行两年多的时间，承载了论坛回复
 
 知乎在首页个性化内容推荐、已读服务等场景中使用 TiDB 作为核心数据库，通过 TiCDC Open Protocol 输出日志到 Kafka，进行海量的消息处理。随着业务量级的增长，在使用的过程中遇到了诸多因 Kafka 架构和历史版本实现上的限制而引发的问题。考虑到 Pulsar 对原生跨地域复制（GEO-Replication）的支持同知乎未来基础设施云原生化的方向更加契合，知乎开始在一些业务中使用 Pulsar 替换 Kafka 。
 
-知乎对 TiCDC 的核心模块进行了一系列开发工作（https://github.com/pingcap/ticdc/pull/751， https://github.com/pingcap/ticdc/pull/869），把 TiCDC Sink 与 Pulsar 进行对接，实现 TiCDC 的数据同步到 Pulsar。借助 Pulsar 所具有的 GEO-Replication 功能，可以为 TiCDC 的消费者带来地理位置无关的变更事件订阅能力。Pulsar 集群的快速节点扩容、故障的快速恢复能力可以为 TiCDC 事件的消费方提供更优的数据实时性保障。
+知乎对 TiCDC 的核心模块进行了一系列开发工作（<https://github.com/pingcap/ticdc/pull/751>， <https://github.com/pingcap/ticdc/pull/869>），把 TiCDC Sink 与 Pulsar 进行对接，实现 TiCDC 的数据同步到 Pulsar。借助 Pulsar 所具有的 GEO-Replication 功能，可以为 TiCDC 的消费者带来地理位置无关的变更事件订阅能力。Pulsar 集群的快速节点扩容、故障的快速恢复能力可以为 TiCDC 事件的消费方提供更优的数据实时性保障。
 
 从前期业务的实践来看，Pulsar 与 TiCDC 的应用取得了理想效果。知乎将推动各项业务从 Kafka 向 Pulsar 进行全面的迁移，未来也将应用 Pulsar 到跨集群同步 TiDB 数据的场景下。
 
@@ -87,4 +87,3 @@ TiDB 在汽车之家已经稳定运行两年多的时间，承载了论坛回复
 ## 致谢
 
 感谢[所有 TiCDC 的贡献者](https://github.com/pingcap/ticdc/graphs/contributors)，TiCDC 能够走到 GA 离不开每一位贡献者的努力！
-

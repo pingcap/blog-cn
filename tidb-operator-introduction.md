@@ -85,5 +85,3 @@ TiDB Operator 需要运行在 Kubernetes v1.10 及以上版本。TiDB Operator �
 TiDB Operator 让 TiDB 成为真正意义上的 Cloud-Native 数据库，开源只是一个起点，需要 TiDB 社区和 Kubernetes 社区的共同参与。 
 
 大家在使用过程发现 bug 或缺失什么功能，都可以直接在 GitHub 上面提 issue 或 PR，一起参与讨论。要想成为 Contributor 具体可以参考 [Building TiDB Operator from Source Code](https://github.com/pingcap/tidb-operator/blob/master/docs/CONTRIBUTING.md) 这个文档。
-
-

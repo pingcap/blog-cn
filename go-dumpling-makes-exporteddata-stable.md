@@ -107,5 +107,4 @@ Dumpling 支持了通过 --params 参数设置导出数据库时 session 变量�
 
   一般来说，只要需要支持的数据库有对应的 database driver 或 client，比如 Oracle 数据库的 golang driver [godror](https://github.com/godror/godror)，我们都可以轻微改造导出语句和调用的 Go 代码库后就实现该数据库的导出支持。这里也欢迎社区的小伙伴们参与，帮助 Dumpling 支持导出更多类型的数据库。
 
-
 >联    系：channel #sig-migrate in the [tidbcommunity](https://join.slack.com/t/tidbcommunity/shared_invite/zt-9vpzdqh2-8LsybcK0US_nqwvfAjSU5A) slack workspace, you can join this channel through [this invitation link](https://slack.tidb.io/invite?team=tidb-community&channel=sig-migrate&ref=pingcap-community)。

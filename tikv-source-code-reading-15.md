@@ -50,7 +50,7 @@ SELECT (count * price) AS sum FROM orders WHERE order_id < 100
 
 ![图 7 sample(7/8)](media/tikv-source-code-reading-15/7-sample-7.png)
 
-最后 `+` 运算符弹出 `14 5`，结果为 `19 `，压入栈。
+最后 `+` 运算符弹出 `14 5`，结果为 `19`，压入栈。
 
 ![图 8 sample(8/8)](media/tikv-source-code-reading-15/8-sample-8.png)
 

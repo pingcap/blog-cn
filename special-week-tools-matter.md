@@ -52,11 +52,11 @@ Chaos Mesh 是我们最新开发的，基于 Kubernetes（K8s） 的一套 Chaos
 
 PITR 的核心功能在之前 PingCAP 举办的 2019 Hackathon 中已经完成，详见《[直击备份恢复的痛点：基于 TiDB Binlog 的快速时间点恢复](https://pingcap.com/blog-cn/fast-pitr-based-on-binlog/)》，在这次 SW 我们将其进一步完善增强，主要包括：
 
-1.  增加 CI，提升测试覆盖率。
+1. 增加 CI，提升测试覆盖率。
 
-2.  修复读取历史 DDL 报错问题。
+2. 修复读取历史 DDL 报错问题。
 
-3.  对压缩前预处理阶段提速，200 条 DDL 测试下，相比之前，提速 68 倍。
+3. 对压缩前预处理阶段提速，200 条 DDL 测试下，相比之前，提速 68 倍。
 
 后续，我们仍然会继续跟社区一起合作完成该项目，我们也在 Slack 上面建立了相关的 [working group](https://tidbcommunity.slack.com/?redir=%2Farchives%2FCRH5594F8)，欢迎感兴趣的同学参与。
 
@@ -79,4 +79,3 @@ PITR 的核心功能在之前 PingCAP 举办的 2019 Hackathon 中已经完成�
 经过接近一年的探索，Special Week 在 PingCAP 已经逐渐成为一个独特的文化。刚刚结束的 Q4 Sepcial Week 把 PingCAP 与用户和开源社区紧密结合在了一起。我们希望与社区在未来有更多的合作，完成更多有价值的项目。这也是为什么大家可以看到这次的 SW 的大部分讨论，设计，进度都公开到 GitHub 的原因。
 
 我们会整合这次 Sepcial Week 中产生的项目，建立一些社区可以参与的工作组，欢迎大家从 [这里](https://github.com/pingcap/community/tree/master/working-groups) 找到自己感兴趣的工作组，与我们一起构建 TiDB 生态工具社区。
-

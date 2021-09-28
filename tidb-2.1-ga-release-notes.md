@@ -70,7 +70,7 @@ tags: ['TiDB']
 * [增加环境变量 `tidb_slow_log_threshold` 动态设置 slow log 的阈值](https://pingcap.com/docs-cn/sql/tidb-specific/#tidb_slow_log_threshold)
 * [增加环境变量 `tidb_query_log_max_len` 动态设置日志中被截断的原始 SQL 语句的长度](https://pingcap.com/docs-cn/sql/tidb-specific/#tidb_query_log_max_len)
 
-###  DDL
+### DDL
 
 * 支持 Add Index 语句与其他 DDL 语句并行执行，避免耗时的 Add Index 操作阻塞其他操作
 * 优化 `Add Index` 的速度，在某些场景下速度大幅提升
@@ -127,7 +127,7 @@ tags: ['TiDB']
 
 ### 监控
 
-* 增加 `Filter `相关的监控
+* 增加 `Filter`相关的监控
 * 新增 etcd Raft 状态机相关监控
 
 ### 性能优化

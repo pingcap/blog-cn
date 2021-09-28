@@ -86,12 +86,9 @@ Rust 编译缓慢的根由在于语言的设计。
 
 那么，从历史上看，Rust 编译时间有多糟糕呢？这里有一个简单的统计表，可以看到 Rust 的自举（Self-Hosting）时间在过去几年里发生了怎样的变化，也就是使用 Rust 来构建它自己的时间。出于各种原因，Rust 构建自己不能直接与 Rust 构建其他项目相比，但我认为这能说明一些问题。
 
-
 首个 [Rust 编译器](https://gist.github.com/brson/31b6f8c5467b050779ce9aa05d41aa84/edit) 叫做 rustboot，始于 2010 年，是用 OCaml 编写的，它最终目的是被用于构建第二个由 Rust 实现的编译器 rustc，并由此开启了 Rust 自举的历程。除了基于 Rust 编写之外，rustc 还使用了 [LLVM](https://llvm.org/) 作为后端来生成机器代码，来代替之前 rustboot 的手写 x86 代码生成器。
 
 Rust 需要自举，那样就可以作为一种“自产自销（Dog-Fooding）”的语言。使用 Rust 编写编译器意味着 Rust 的作者们需要在语言设计过程的早期，使用自己的语言来编写实用的软件。在实现自举的过程中让 Rust 变成一种实用的语言。
-
-
 
 Rust 第一次自举构建是在 2011 年 4 月 20 日。该过程总共花了 [一个小时](https://mail.mozilla.org/pipermail/rust-dev/2011-April/000330.html)，这个编译时间对当时而言，很漫长，甚至还觉得有些可笑。
 
@@ -193,11 +190,11 @@ Rust 和 Servo 的共同发展创造了一个 [良性循环](https://en.wikipedi
 	* 并行运行编译器的分析阶段。稳定（Stable）频道尚不可用。
 	* 由 [@Zoxc](https://github.com/Zoxc) ,  [@michaelwoerister](https://github.com/michaelwoerister) ,  [@oli-obk](http://github.com/oli-obk) , 以及其他一些人开发。
 
-*  [MIR 级别的常量传播（constant propagation）](https://blog.rust-lang.org/inside-rust/2019/12/02/const-prop-on-by-default.html) 
+* [MIR 级别的常量传播（constant propagation）](https://blog.rust-lang.org/inside-rust/2019/12/02/const-prop-on-by-default.html) 
 	* 在 MIR 上执行常量传播，从而减少了 LLVM 对单态函数的重复工作。
 	* 由 [@wesleywiser](https://github.com/wesleywiser) 开发。
 
-*  [MIR 优化](https://github.com/rust-lang/rust/pulls?q=mir-opt) 
+* [MIR 优化](https://github.com/rust-lang/rust/pulls?q=mir-opt) 
 	* 优化 MIR 应该比优化单态 LLVM IR 更快。
 	* 稳定（Stable）编译器尚不可用。
 	* 由 [@wesleywiser](https://github.com/wesleywiser) 和其他人一起开发。
@@ -210,51 +207,51 @@ Rust 和 Servo 的共同发展创造了一个 [良性循环](https://en.wikipedi
 	* 生成有关 rustc 内部性能的详细信息。
 	* 由 [@wesleywiser](https://github.com/wesleywiser)  和  [@michaelwoerister](https://github.com/michaelwoerister) 开发。
 
-*  [共享单态化（Shared monomorphizations）](https://github.com/rust-lang/rust/issues/47317) 
+* [共享单态化（Shared monomorphizations）](https://github.com/rust-lang/rust/issues/47317) 
 	* 通过消除多个包（crate）中出现的单态化来减少代码膨胀。
 	* 如果优化级别小于 3，则默认启用。
 	* 由[@michaelwoerister](https://github.com/michaelwoerister) 开发。
 
-*  [Cranelift 后端](https://www.reddit.com/r/rust/comments/enxgwh/cranelift_backend_for_rust/) 
+* [Cranelift 后端](https://www.reddit.com/r/rust/comments/enxgwh/cranelift_backend_for_rust/) 
 	* 通过使用 [cranelift](https://github.com/bytecodealliance/cranelift) 来生成代码，减少了 Debug 模式的编译时间。
 	* 由 [@bjorn3](https://github.com/bjorn3) 开发。
 
-*  [perf.rust-lang.org](https://perf.rust-lang.org/) 
+* [perf.rust-lang.org](https://perf.rust-lang.org/) 
 	* 详细跟踪了 Rust 的编译时性能，基准测试持续增加中。
 	* 由 [@nrc](https://github.com/nrc) ,  [@Mark-Simulacrum](https://github.com/Mark-Simulacrum) ,  [@nnethercote](https://github.com/nnethercote) 以及其他人一起开发。
 
-*  [cargo-bloat](https://github.com/RazrFalcon/cargo-bloat) 
+* [cargo-bloat](https://github.com/RazrFalcon/cargo-bloat) 
 	* 查找二进制文件中占用最多空间的地方。膨胀（Bloat）会影响编译时间。
 	* 由 [@RazrFalcon](https://github.com/RazrFalcon) 和其他人一起开发。
 
-*  [cargo-feature-analyst](https://github.com/psinghal20/cargo-feature-analyst) 
+* [cargo-feature-analyst](https://github.com/psinghal20/cargo-feature-analyst) 
 	* 发现未使用的特性（features）。
 	* 由 [@psinghal20](https://github.com/psinghal20) 开发。
 
-*  [cargo-udeps](https://github.com/est31/cargo-udeps) 
+* [cargo-udeps](https://github.com/est31/cargo-udeps) 
 	* 发现未使用的包 （crate）。
 	* 由 [@est31](https://github.com/est31) 开发。
 
-*  [twiggy](https://github.com/rustwasm/twiggy) 
+* [twiggy](https://github.com/rustwasm/twiggy) 
 	* 分析代码大小，该大小与编译时间相关。
 	* 由 [@fitzgen](https://github.com/fitzgen) ,  [@data-pup](https://github.com/data-pup) 以及其他人一起开发。
 
-*  [rust-analyzer](https://github.com/rust-analyzer/rust-analyzer) 
+* [rust-analyzer](https://github.com/rust-analyzer/rust-analyzer) 
 	* 用于Rust的新语言服务器，其响应时间比原始 [RLS](https://github.com/rust-lang/rls) 更快。
 	* 由 [@matklad](https://github.com/matklad) ,  [@flodiebold](https://github.com/flodiebold) ,  [@kjeremy](https://github.com/kjeremy) 以及其他人一起开发。
 
-*  [“如何缓解 Rust 编译时间带来的痛苦”](https://vfoley.xyz/rust-compile-speed-tips/)
+* [“如何缓解 Rust 编译时间带来的痛苦”](https://vfoley.xyz/rust-compile-speed-tips/)
 	* vfoley 写的博文。
 
-*  [“关于 Rust 代码膨胀的思考”](https://raphlinus.github.io/rust/2019/08/21/rust-bloat.html) 
+* [“关于 Rust 代码膨胀的思考”](https://raphlinus.github.io/rust/2019/08/21/rust-bloat.html) 
 	* [@raphlinus](https://github.com/raphlinus) 写的博文。
 
 * Nicholas Nethercote 对 rustc 的优化工作：
-	*  [“2019 年 Rust 编译器如何提速”](https://blog.mozilla.org/nnethercote/2019/07/17/how-to-speed-up-the-rust-compiler-in-2019/) 
-	*  [“Rust 编译器的速度持续变快”](https://blog.mozilla.org/nnethercote/2019/07/25/the-rust-compiler-is-still-getting-faster/)
-	*  [“可视化 Rust 编译”](https://blog.mozilla.org/nnethercote/2019/10/10/visualizing-rust-compilation/)
-	*  [“如何在 2019 年进一步提升 Rust 编译器的速度”](https://blog.mozilla.org/nnethercote/2019/10/11/how-to-speed-up-the-rust-compiler-some-more-in-2019/)
-	*  [“如何在 2019 年最后一次提升 Rust 编译器”](https://blog.mozilla.org/nnethercote/2019/12/11/how-to-speed-up-the-rust-compiler-one-last-time-in-2019/)
+	* [“2019 年 Rust 编译器如何提速”](https://blog.mozilla.org/nnethercote/2019/07/17/how-to-speed-up-the-rust-compiler-in-2019/) 
+	* [“Rust 编译器的速度持续变快”](https://blog.mozilla.org/nnethercote/2019/07/25/the-rust-compiler-is-still-getting-faster/)
+	* [“可视化 Rust 编译”](https://blog.mozilla.org/nnethercote/2019/10/10/visualizing-rust-compilation/)
+	* [“如何在 2019 年进一步提升 Rust 编译器的速度”](https://blog.mozilla.org/nnethercote/2019/10/11/how-to-speed-up-the-rust-compiler-some-more-in-2019/)
+	* [“如何在 2019 年最后一次提升 Rust 编译器”](https://blog.mozilla.org/nnethercote/2019/12/11/how-to-speed-up-the-rust-compiler-one-last-time-in-2019/)
 
 对于未上榜的人员或项目，我需要说一声抱歉。
 

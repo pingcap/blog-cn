@@ -7,7 +7,7 @@ tags: ['TiKV', 'Raft', 'Lease Read','性能']
 ---
 
 
-##  Raft log read
+## Raft log read
 
 TiKV 是一个要保证线性一致性的分布式 KV 系统，所谓线性一致性，一个简单的例子就是在 t1 的时间我们写入了一个值，那么在 t1 之后，我们的读一定能读到这个值，不可能读到 t1 之前的值。
 

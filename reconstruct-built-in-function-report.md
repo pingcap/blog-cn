@@ -88,7 +88,7 @@ func (c *lengthFunctionClass) getFunction(args []Expression, ctx context.Context
     `bf.tp.[charset | collate | flag]`
 查看 MySQL 行为可以通过在终端启动
 
-    ` $ mysql -uroot \-\-column-type-info`，这样对于每一个查询语句，可以查看每一列详细的 metadata
+    `$ mysql -uroot \-\-column-type-info`，这样对于每一个查询语句，可以查看每一列详细的 metadata
 对于返回值类型为 string 的函数，以 [concat](https://github.com/pingcap/tidb/blob/master/expression/builtin_string.go#L204) 为例，当存在类型为 string 且包含 binary flag 的参数时，其返回值也应设置 binary flag
 
 - 对于**返回值类型为 Time** 的函数，需要注意，根据函数行为，设置
@@ -193,7 +193,6 @@ func (s *testPlanSuite) TestInferType(c *C) {
    - 表单填写地址：[http://cn.mikecrm.com/01wE8tX](http://cn.mikecrm.com/01wE8tX)
 4. 后台 AI 核查 GitHub ID 及资料信息，确认无误后随即便快递寄出属于你的限量版马克杯
 5. 期待你分享自己参与开源项目的感想和经验，TiDB Contributor Club 将和你一起分享开源的力量
-
 
 了解更多关于 TiDB 的资料请登陆我们的官方网站：[https://pingcap.com](https://pingcap.com)
 

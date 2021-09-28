@@ -48,13 +48,13 @@ TiDB-Binlog 的核心组件都在这个仓库，下面是各个关键目录：
 
 启动测试集群前，需要在 `bin` 目录下准备好相关组件的可执行文件：
 
-1.  pd-server：下载链接（[Linux](https://download.pingcap.org/pd-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/pd-master-darwin-amd64.tar.gz)）
+1. pd-server：下载链接（[Linux](https://download.pingcap.org/pd-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/pd-master-darwin-amd64.tar.gz)）
 
-2.  tikv-server：下载链接（[Linux](https://download.pingcap.org/tikv-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tikv-master-darwin-amd64.tar.gz)）
+2. tikv-server：下载链接（[Linux](https://download.pingcap.org/tikv-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tikv-master-darwin-amd64.tar.gz)）
 
-3.  tidb-server：下载链接（[Linux](https://download.pingcap.org/tidb-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tidb-master-darwin-amd64.tar.gz)）
+3. tidb-server：下载链接（[Linux](https://download.pingcap.org/tidb-master-linux-amd64.tar.gz) / [macOS](https://download.pingcap.org/tidb-master-darwin-amd64.tar.gz)）
 
-4.  `pump`, `drainer`, `binlogctl`：在 tidb-binlog 目录执行 `make build`
+4. `pump`, `drainer`, `binlogctl`：在 tidb-binlog 目录执行 `make build`
 
 脚本依赖 MySQL 命令行客户端来确定 TiDB 已经成功启动，所以我们还需要安装一个 MySQL 客户端。
 
@@ -88,7 +88,6 @@ $ bin/binlogctl -pd-urls=localhost:2379 -cmd pumps
 接下来我们可以用 MySQL 客户端连接上端口为 4000 或 4001 的 TiDB 数据库，插入一些测试数据。
 
 ![图例 2](media/tidb-binlog-source-code-reading-2/3.png)
-
 
 上图的演示中创建了一个叫 `hello_binlog` 的 database，在里面新建了 `user_info` 表并插入了两行数据。完成上述操作后，就可以连接到端口为 3306 的下游数据库验证同步是否成功：
 

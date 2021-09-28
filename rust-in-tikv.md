@@ -169,8 +169,3 @@ Ok, that’s what we have done and are doing. Here are what we will do in the fu
 - Be a strong advocate of Rust in China.
 
 ![合影](media/rust-in-tikv/10.jpg)
-
-
-
-
-

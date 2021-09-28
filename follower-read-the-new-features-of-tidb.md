@@ -25,9 +25,7 @@ tags: ['TiKV','Raft']
 
 **所以优化就很直接了：能不能在 Follower 上也处理客户端的读请求呢，这样不就分担了 Leader 的压力了吗？这个就是 Follower Read 了。**
 
-
 ## ReadIndex
-
 
 对于熟悉 Raft 的同学来说，沿着这个方向往下想，下一个问题一定就是：如何保证在 Follower 上读到最新的数据呢？如果只是无脑的将 Follower 上最近的 Committed Index 上的数据返回给客户端可以吗？答案是不行的（这里留个悬念，后面会再返回来讨论这个问题），原因显而易见，Raft 是一个 Quorum-based 的算法，一条 log 的写入成功，并不需要所有的 peers 都写入成功，只需要多数派同意就够了，所以有可能某个 Follower 上的本地数据还是老数据，这样一来就破坏线性一致性了。
 
@@ -37,9 +35,7 @@ tags: ['TiKV','Raft']
 
 **在 TiKV 这边比标准的 ReadIndex 更进一步，实现了 LeaseRead。其实 LeaseRead 的思想也很好理解，只需要保证 Leader 的租约比重选新的 Leader 的 Election Timeout 短就行，这里就不展开了。**
 
-
 ## Follower Read
-
 
 说到今天的主角，Follower Read，如何保证 Follower 上读到最新的数据呢？最土的办法就是将请求转发给 Leader，然后 Leader 返回最新的 Committed 的数据就好了嘛，Follower 当做 Proxy 来用。这个思路没有任何问题，而且实现起来也很简单还安全。但是，很明显这个地方可以优化成：Leader 只要告诉 Follower 当前最新的 Commit Index 就够了，因为无论如何，即使这个 Follower 本地没有这条日志，最终这条日志迟早都会在本地 Apply。
 
@@ -54,9 +50,7 @@ tags: ['TiKV','Raft']
 
 对于第二个问题，虽然对于延迟来说，不会有太多的提升，但是对于提升读的吞吐，减轻 Leader 的负担还是很有帮助的。总体来说是一个很好的优化。
 
-
 ## 未来？
-
 
 如果只是一个简单的性能优化的话，我其实也没有太多兴趣单独为它写一个 Blog，虽然简单，但是 Follower Read 确实是一个对未来很重要的功能。
 

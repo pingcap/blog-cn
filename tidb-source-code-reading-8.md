@@ -11,7 +11,6 @@ tags: ['TiDB 源码阅读','社区']
 
 本文是 TiDB 源码阅读系列文章的第八篇。内文会先简单介绍制定查询计划以及优化的过程，然后用较大篇幅详述在得到逻辑计划后，如何基于统计信息和不同的属性选择等生成各种不同代价的物理计划，通过比较物理计划的代价，最后选择一个代价最小的物理计划，即 Cost-Based Optimization（CBO）的过程。
 
-
 ## 优化器框架 
 
 一般优化器分两个阶段进行优化，即基于规则的优化（Rule-Based-Optimization，简称 RBO）和基于代价的优化（CBO）。 
@@ -71,11 +70,11 @@ func dagPhysicalOptimize(logic LogicalPlan) (PhysicalPlan,  error) {
 
 出于易读性的考虑，接下来不会按代码调用顺序介绍，下面的段落与上面代码的函数对应情况如下：
 
-*   prune prop 对应的函数 preparePossibleProperties。
+* prune prop 对应的函数 preparePossibleProperties。
 
-*   统计信息对应的获取函数 deriveStats。
+* 统计信息对应的获取函数 deriveStats。
 
-*   其余章节会介绍函数 convert2PhysicalPlan。
+* 其余章节会介绍函数 convert2PhysicalPlan。
 
 ### 整体流程
 
@@ -100,8 +99,6 @@ select sum(s.a),count(t.b) from s join t on s.a = t.a and s.c < 100 and t.c > 10
 ![图 2](media/tidb-source-code-reading-8/3.jpeg)
 
 <div class="caption-center"> 图 2 </div>
-
-
 
 得到了逻辑算子之后，我们怎么选择最优的物理算子呢？
 
@@ -132,7 +129,6 @@ for _, pp := range p.self.genPhysPlansByReqProp(prop) {
 ![图 3](media/tidb-source-code-reading-8/4.jpeg)
 
 <div class="caption-center"> 图 3 </div>
-
 
 （图中黑色字体算子为逻辑算子，蓝色字体为物理算子，黄色箭头为已经计算过代价的算子，会获取已经缓存在哈希表中的结果，红色虚线箭头为不符合 prop 的算子。）
 
@@ -192,7 +188,7 @@ type statsInfo struct {
 
 其中 count 字段表示这个表的数据行数，每个表有一个值。cardinality 字段是用于表示每一列 distinct 数据行数，每个 column 一个。cardinality 一般通过统计数据得到，也就是统计信息中对应表上对应列的 DNV（the number of distinct value）的值。此数据具体的获取方式有两种：
 
-*   方式一，使用真实的统计数据，具体公式如下：
+* 方式一，使用真实的统计数据，具体公式如下：
 
 ```
 statsTable.count / histogram.count * hist.NDV
@@ -200,7 +196,7 @@ statsTable.count / histogram.count * hist.NDV
 
 （statsTable.count 会根据 stats lease 定期更新，histogram.count 只有用户手动 analyze 才更新）
 
-*   方式二，使用一个估计值，由于统计数据在某些情况下还没有收集完成，此时没有统计数据，具体公式如下：
+* 方式二，使用一个估计值，由于统计数据在某些情况下还没有收集完成，此时没有统计数据，具体公式如下：
 
 ```
 statsTable.count * distinctFactor
@@ -208,9 +204,9 @@ statsTable.count * distinctFactor
 
 那么接下来我们举两个例子介绍通过统计数据获取算子的 statsInfo。
 
-*   DataSource，首先通过前面介绍的两种公式获取 count 和 cardinality，接着用可下推的表达式计算 selectivity 的值，`selectivity = row count after filter / row count before filter`，最后用计算的 selectivity 来调整原来的 count 和 cardinality 的值。
+* DataSource，首先通过前面介绍的两种公式获取 count 和 cardinality，接着用可下推的表达式计算 selectivity 的值，`selectivity = row count after filter / row count before filter`，最后用计算的 selectivity 来调整原来的 count 和 cardinality 的值。
 
-*   LogicalJoin（inner join），此算子的 count 获取的公式：
+* LogicalJoin（inner join），此算子的 count 获取的公式：
 
 ```
 N(join(s,t)) = N(s) * N(t) / (V(s.key) * V(t.key)) * Min(V(s.key), V(t.key))
@@ -226,15 +222,13 @@ N(join(s,t)) = N(s) * N(t) / (V(s.key) * V(t.key)) * Min(V(s.key), V(t.key))
 
 expected count 表示整个 SQL 结束前此算子期望读取的行数。例如 SQL：`select * from s where s.c1 < 5 order by id limit 3` (其中 c1 是索引列，id 是主键列)。我们可以简单认为得到两类可能的计划路径图，如图 4。 
 
-*   前者在 PhysicalLimit 时选择 id 有序，那么它的 expected count 为 3。因为有 c1 < 5 的过滤条件，所以在 TableScan 时 expected count 的值为 `min(n(s)，3 / f (σ(c1<5) ))` 。
+* 前者在 PhysicalLimit 时选择 id 有序，那么它的 expected count 为 3。因为有 c1 < 5 的过滤条件，所以在 TableScan 时 expected count 的值为 `min(n(s)，3 / f (σ(c1<5) ))` 。
 
-*   后者在 TopN 的时候虽然知道它需要读取 3 行，但是它是按 id 列有序，所以它的 expected count 为 Max，在 IndexScan 的时候 expected count 是 `count * f (σ(c1<5)`。
+* 后者在 TopN 的时候虽然知道它需要读取 3 行，但是它是按 id 列有序，所以它的 expected count 为 Max，在 IndexScan 的时候 expected count 是 `count * f (σ(c1<5)`。
 
 ![图 4](media/tidb-source-code-reading-8/5.jpeg)
 
 <div class="caption-center"> 图 4 </div>
-
-
 
 ### Task
 
@@ -250,9 +244,9 @@ select * from t where c < 1 and b < 1 and a = 1
 
 那么可以得到如下两种路径：
 
-*   doubleread（即IndexLookUpReader ）：`IndexScan( a = 1 and b < 1 ) -> TableScan -> Selection(c < 1)`
+* doubleread（即IndexLookUpReader ）：`IndexScan( a = 1 and b < 1 ) -> TableScan -> Selection(c < 1)`
 
-*   singleread（即IndexReader）：`IndexScan( b < 1 ) -> Selection( a = 1 and c < 1 )`
+* singleread（即IndexReader）：`IndexScan( b < 1 ) -> Selection( a = 1 and c < 1 )`
 
 不区分 cop single 和 cop double 的时候，去搜索最底层，这会导致情况二被提前舍弃。但是实际上这两种路径，在第一种路径考虑向 TiKV 读两次数据的情况后，其代价很有可能超过第二种路径。所以我们会区分 copsingle 和 cop double，不在 IndexScan 的时候比较，而是在 Selection 结束的时候再比较开销，那么就很可能选第二种计划路径。这样就比较符合实际情况。
 
@@ -283,5 +277,3 @@ select * from t join s on t.A = s.A and t.B = s.B
 properties 是在 DataSource 这个 logical 算子中获取的，因为此算子中可以得到对应的主键和索引信息。
 
 此处逻辑由文件 `plan/property_cols_prune.go` 里的 preparePossibleProperties 函数处理。
-
-

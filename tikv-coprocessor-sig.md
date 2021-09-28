@@ -1,5 +1,5 @@
 ---
-title: TiKV 项目首个 SIG 成立，一起走上 Contributor 进阶之路吧！ 
+title: TiKV 项目首个 SIG 成立，一起走上 Contributor 进阶之路吧！
 author: ['Long Heng']
 date: 2019-10-24
 summary: 今天是 1024 程序员节，我们正式成立 TiKV 项目的首个 SIG —— Coprocessor SIG，希望对 TiKV 项目感兴趣的小伙伴们都能加入进来，探索硬核的前沿技术，交流切磋，一起走上 Contributor 的进阶之路！
@@ -35,19 +35,19 @@ tags: ['社区','社区动态']
 1. 完善测试
 
 	* 为了进一步提高 Coprocessor 的集成测试覆盖率，TiKV 社区开源了 copr-test 集成测试框架（github.com/tikv/copr-test），便于社区为 Coprocessor 添加更多集成测试；
-	
+
 	* 从 TiDB port 的函数需要同时 port 单元测试，如果 TiDB 的单元测试没有覆盖所有的分支，需要补全单元测试；
-	
+
 	* Expression 的集成测试需要构造使用这个 Expression 的算子进行测试。
 
 2. 提升代码质量
 
 	* Framework: 计算框架改进，包括表达式计算框架、算子执行框架等；
-	
+
 	* Executor: 改进现有算子、与 TiDB 协作研发新算子；
-	
+
 	* Function: 维护现有的 UDF / AggrFn 实现或从  TiDB port 新的 UDF / AggrFn 实现；
-	
+
 	* 代码位置：[https://github.com/tikv/tikv/tree/master/components/tidb_query](https://github.com/tikv/tikv/tree/master/components/tidb_query)
 
 3. 设计与演进 Proposal
@@ -58,25 +58,24 @@ tags: ['社区','社区动态']
 
 1. 为了协同效率，我们要求 SIG 成员遵守一致的代码风格、提交规范、PR Description 等规定。具体请参考 [文档](https://github.com/tikv/tikv/blob/master/CONTRIBUTING.md)。
 
-
 2. 任务分配方式
 
 	* SIG Tech Lead 在 github.com/tikv/community 维护公开的成员列表与任务列表链接；
-	
+
 	* 新加入的 SIG 成员可有 2 周时间了解各个任务详情并认领一个任务，或参与一个现有任务的开发或推动。若未能在该时间内认领任务则会被移除 SIG；
-	
+
 	* SIG 成员需维持每个月参与开发任务，或参与关于现有功能或未来规划的设计与讨论。若连续一个季度不参与开发与讨论，视为不活跃状态，将会被移除 SIG。作为 acknowledgment，仍会处于成员列表的「Former Member」中。
 
 3. 定期同步进度，定期周会
 
 	* 每 2 周以文档形式同步一次当前各个项目的开发进度；
-	
+
 	* 每 2 周召开一次全组进度会议，时间依据参会人员可用时间另行协商。目前没有项目正在开发的成员可选择性参加以便了解各个项目进度。若参与开发的成员不能参加，需提前请假且提前将自己的月度进度更新至文档；
-	
+
 	* 每次会议由一名成员进行会议记录，在会议结束 24 小时内完成会议记录并公开。会议记录由小组成员轮流执行；
-	
-	*  Slack：[https://tikv-wg.slack.com](https://tikv-wg.slack.com/join/shared_invite/enQtNTUyODE4ODU2MzI0LWVlMWMzMDkyNWE5ZjY1ODAzMWUwZGVhNGNhYTc3MzJhYWE0Y2FjYjliYzY1OWJlYTc4OWVjZWM1NDkwN2QxNDE)（Channel #copr-sig-china）
-	
+
+	* Slack：[https://tikv-wg.slack.com](https://tikv-wg.slack.com/join/shared_invite/enQtNTUyODE4ODU2MzI0LWVlMWMzMDkyNWE5ZjY1ODAzMWUwZGVhNGNhYTc3MzJhYWE0Y2FjYjliYzY1OWJlYTc4OWVjZWM1NDkwN2QxNDE)（Channel #copr-sig-china）
+
 4. 通过更多线上、线下成员的活动进行交流合作。
 
 ## Coprocessor SIG 运营制度
@@ -84,7 +83,7 @@ tags: ['社区','社区动态']
 1. 考核 & 晋升制度
 
 	a. Coprocessor SIG Tech Lead 以月为单位对小组成员进行考核，决定成员是否可由 Active Contributor 晋升为 Reviewer：
-	
+
     + 熟悉代码库；
     + 获得至少 2 位 TiKV Committer 的提名；
     + PR 贡献满足以下任意一点：
@@ -92,9 +91,9 @@ tags: ['社区','社区动态']
         - Merge Coprocessor PR 总行数超过 1000 行；
         - 已完成一项难度为 Medium 或以上的任务；
         - 提出设计想法并得到采纳成为可执行任务超过 3 个。
-	
+
 	b. Coprocessor SIG Tech Lead 和 TiKV Maintainer 以季度为单位对小组成员进行考核，决定成员是否可由 Reviewer 晋升为 Committer：
-	
+
 	+ 表现出良好的技术判断力；
 	+ 在 TiKV / PingCAP 至少两个子项目中是 Reviewer；
 	+ 获得至少 2 位 TiKV Maintainer 的提名；
@@ -107,14 +106,14 @@ tags: ['社区','社区动态']
 2. 退出制度
 
 	a. SIG 成员在以下情况中会被移除 SIG，但保留相应的 Active Contributor / Reviewer / Committer 身份：
-	
-	   + 作为新成员未在指定时间内认领任务；
-	   + 连续一个季度处于不活跃状态。
-	
+
+	- 作为新成员未在指定时间内认领任务；
+	- 连续一个季度处于不活跃状态。
+
 	b. Reviewer 满足以下条件之一会被取消 Reviewer 身份且收回权限（后续重新考核后可恢复）：
-	
-	   + 超过一个季度没有 review 任何 Coprocessor 相关的 PR；
-	   + 有 2 位以上 Committer 认为 Reviewer 能力不足或活跃度不足。
+
+	- 超过一个季度没有 review 任何 Coprocessor 相关的 PR；
+	- 有 2 位以上 Committer 认为 Reviewer 能力不足或活跃度不足。
 
 3. Tech Lead 额外承担的职责
 

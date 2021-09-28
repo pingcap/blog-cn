@@ -24,13 +24,13 @@ tags: ['Chaos Mesh','TiPocket']
 
 目前我们已经在 TiPocket 提供了多种类型的故障注入： 
 
-*   Network：基于 Chaos Mesh 的 NetworkChaos，提供模拟的网络分区，或者链路随机的丢包、乱序、重复、时延等。
+* Network：基于 Chaos Mesh 的 NetworkChaos，提供模拟的网络分区，或者链路随机的丢包、乱序、重复、时延等。
 
-*   Time Skew：基于 TimeChaos，模拟待测试容器发生时间偏移。TimeChaos 的实现也是非常有趣，感兴趣的话可以参考我们以前的 [文章](https://pingcap.com/blog/simulating-clock-skew-in-k8s-without-affecting-other-containers-on-node/)。
+* Time Skew：基于 TimeChaos，模拟待测试容器发生时间偏移。TimeChaos 的实现也是非常有趣，感兴趣的话可以参考我们以前的 [文章](https://pingcap.com/blog/simulating-clock-skew-in-k8s-without-affecting-other-containers-on-node/)。
 
-*   Kill：通过 PodChaos 来 kill 对应的 pod。细分下来我们也实现了多种 kill 类型，最简单的就是随机删除集群内的任意pod；如果针对各个组件，也有专门的 Chaos 随机 kill 一个或两个 TiKV 节点，或者是专门 kill PD 的 leader 节点。
+* Kill：通过 PodChaos 来 kill 对应的 pod。细分下来我们也实现了多种 kill 类型，最简单的就是随机删除集群内的任意pod；如果针对各个组件，也有专门的 Chaos 随机 kill 一个或两个 TiKV 节点，或者是专门 kill PD 的 leader 节点。
 
-*   IO：基于 IOChaos，我们用的比较多的是给 TiKV 注入 IO Delay，再去看写入的情况。
+* IO：基于 IOChaos，我们用的比较多的是给 TiKV 注入 IO Delay，再去看写入的情况。
 
 解决了故障注入的问题，那么接下来我们就需要判断我们的系统在 TiDB 注入了故障后，是否符合预期呢？
 
@@ -68,11 +68,11 @@ Argo 是一个为 Kubernetes 而设计的工作流引擎，很早就在社区中
 
 Argo 为工作流抽象出了几种 [CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)。最主要的包括了 Workflow Template、Workflow 以及 Cron Workflow。
 
-*   Workflow Template 可以理解成工作流的模版，我们可以为每个不同的测试任务预先定义好模版，实际运行测试时传入不同的参数。
+* Workflow Template 可以理解成工作流的模版，我们可以为每个不同的测试任务预先定义好模版，实际运行测试时传入不同的参数。
 
-*   Workflow 将多个工作流模版进行编排，以不同的顺序组合起来进行执行，即实际运行的任务。基于 Argo 本身提供的能力，我们还可以在 pipeline 中实现条件判断、循环、DAG 等多种复杂的能力。
+* Workflow 将多个工作流模版进行编排，以不同的顺序组合起来进行执行，即实际运行的任务。基于 Argo 本身提供的能力，我们还可以在 pipeline 中实现条件判断、循环、DAG 等多种复杂的能力。
 
-*   Cron Workflow 顾名思义，以 cron 的方式运行 Workflow，非常适合我们想要长期运行某些测试任务的情况。 
+* Cron Workflow 顾名思义，以 cron 的方式运行 Workflow，非常适合我们想要长期运行某些测试任务的情况。 
 
 下面我们看一个简单示例：
 
@@ -116,20 +116,20 @@ Loki 采用了跟 Prometheus 一样的 label 系统，我们可以很轻松的�
 
 上面介绍了这么多，最后让我们看一下在 TiPocket 中一个完整的混沌实验到底是什么样子的呢？
 
-1.  创建 Argo Cron Workflow 任务，在这个 Cron Workflow 中定义待测试的集群，注入的故障，用来检查 TiDB 集群正确性的测试 Case，以及任务的执行时间等。在 Cron Workflow 在运行过程中有需要的话还支持实时查看 Case 的日志。
+1. 创建 Argo Cron Workflow 任务，在这个 Cron Workflow 中定义待测试的集群，注入的故障，用来检查 TiDB 集群正确性的测试 Case，以及任务的执行时间等。在 Cron Workflow 在运行过程中有需要的话还支持实时查看 Case 的日志。
 
 	![4-创建任务](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/4-创建任务.png)
 
-2.  集群内部通过 Prometheus-operator 运行了 Prometheus。在 Prometheus 中配置了针对 Argo workflow 的告警规则。如果任务失败，则会发送到 Alertmanager，再由 Alertmanager 发送到 Slack channel 通知结果。
+2. 集群内部通过 Prometheus-operator 运行了 Prometheus。在 Prometheus 中配置了针对 Argo workflow 的告警规则。如果任务失败，则会发送到 Alertmanager，再由 Alertmanager 发送到 Slack channel 通知结果。
 
 	![5-反馈结果](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/5-反馈结果.png)
 
-3.  警报中包含了对应 Argo Workflow 的地址，在 Workflow 页面中我们可以直接点击链接跳转到 Grafana 查找集群监控及日志。此时就可以进入下图的日志 Dashboard 进行查询了。
+3. 警报中包含了对应 Argo Workflow 的地址，在 Workflow 页面中我们可以直接点击链接跳转到 Grafana 查找集群监控及日志。此时就可以进入下图的日志 Dashboard 进行查询了。
 
 	![6-监控日志](media/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/6-监控日志.png)
 
 	不过这个时候也由不太方便的地方。目前在 Grafana logs dashboard 中，没有办法设置日志查询的 step 参数。这个参数用来控制日志查询时的采样，并且为了控制查询的数量，它会随着你查询的总时间而自动调整。比如查询 1 分钟的日志，step 会自动配置成 1s；查询1天的日志，step 可能变成了 30s，在这个时候就会有部分日志展示不出来。所以一般推荐尽量加入多的过滤条件进行搜索，或者使用 Loki 的命令行工具 logcli 将所有日志下载下来再查询。
 
-4.  如果测试 Case 正常结束，那么集群会正常清理，等待 Argo 调度下一次测试的执行。
+4. 如果测试 Case 正常结束，那么集群会正常清理，等待 Argo 调度下一次测试的执行。
 
 **以上就是我们如何利用 Chaos Mesh 和一些开源项目打造自动化混沌测试平台的完整流程。如果你也对混沌工程感兴趣的话，欢迎一起参与 [TiPocket](https://github.com/pingcap/tipocket) 和 [Chaos Mesh](https://github.com/pingcap/chaos-mesh) !**

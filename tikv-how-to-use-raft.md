@@ -141,4 +141,4 @@ HardState 和 ConfState 是 protobuf，定义：
 6. 将 committed_entries apply 到 State Machine。
 7. 调用 advance 告知 Raft 已经处理完 ready。
 
-##### -第一部分完结-
+### -第一部分完结-

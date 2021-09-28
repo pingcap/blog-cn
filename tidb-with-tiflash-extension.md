@@ -137,4 +137,3 @@ TiFlash 带来了全新的融合体验。TiFlash 节点并不只是单纯的从 
 目前 TiFlash 正在与部分合作伙伴进行内部 POC，预计年底之前会发布一个 GA 版本，敬请期待。
 
 （对 TiFlash 感兴趣的朋友欢迎私聊作者，交流更多技术细节～ weiwan@pingcap.com）
-

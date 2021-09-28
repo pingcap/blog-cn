@@ -86,8 +86,8 @@ TiDB 现在并没有使用 1PC 的方式，但不排除未来也针对单个 reg
 5. Split1 的 Leader 尝试将 Row 1 获取一个 read lock。如果这行数据之前有 write lock，则会持续等待。如果之前已经有另一个事务上了一个 read lock，则不会等待。至于 deadlock，仍然采用上面的  `wound-wait` 处理方式。
 6. Leader 获取到 Row 1 的数据并且返回。
 7. . Clients 开始发起一个 commit request，包括 Row 2，Row 3 的改动。所有的跟这个事务关联的 Split 都变成参与者 participants。
-8.  一个 participant 成为协调者 coordinator，譬如这个 case 里面 Row 2 成为 coordinator。Coordinator 的作用是确保事务在所有 participants 上面要不提交成功，要不失败。这些都是在 participants 和 coordinator 各自的 Split Leader 上面完成的。
-9.  Participants 开始获取 lock
+8. 一个 participant 成为协调者 coordinator，譬如这个 case 里面 Row 2 成为 coordinator。Coordinator 的作用是确保事务在所有 participants 上面要不提交成功，要不失败。这些都是在 participants 和 coordinator 各自的 Split Leader 上面完成的。
+9. Participants 开始获取 lock
 	+ Split 2 对 Row 2 获取 write lock。
 	+ Split 3 对 Row 3 获取 write lock。
 	+ Split 1 确定仍然持有 Row 1 的 read lock。

@@ -78,7 +78,6 @@ CDC（Change Data Capture）工具用于捕捉 TiDB 上的数据变更数据并�
 
 4.0 版本中我们通过 [BR（Backup&Restore）](https://pingcap.com/blog-cn/cluster-data-security-backup/) 工具提供快速备份与恢复数据的功能，备份与恢复的性能高达 1GB/秒，再也不用担心因为数据量过大，无法完成备份与恢复，从根本上解决删库跑路的问题。当研发、DBA 不小心通过 Truncate Table 将数据删除时，我们也贴心的提供 flashback 命令快速恢复被删除的数据。
 
-
 ### 安全
 
 4.0 版本中我们提供了动态更新各个组件 TLS 证书的功能，解决了 TLS 证书到期系统需要重新生成、更新证书并重启服务的问题。
@@ -93,21 +92,21 @@ CDC（Change Data Capture）工具用于捕捉 TiDB 上的数据变更数据并�
 
 4.0 版本的开发过程中，社区依然给我们很有力的支持，在这里对各位贡献者表示由衷的感谢。如下：
 
-*  [PR/14942](https://github.com/pingcap/tidb/pull/14942),[PR/14919](https://github.com/pingcap/tidb/pull/14919), [PR/14696](https://github.com/pingcap/tidb/pull/14696):  [gauss1314](https://github.com/gauss1314) and [hsqlu](https://github.com/hsqlu) helped to refine the output of `explain`.
+* [PR/14942](https://github.com/pingcap/tidb/pull/14942),[PR/14919](https://github.com/pingcap/tidb/pull/14919), [PR/14696](https://github.com/pingcap/tidb/pull/14696):  [gauss1314](https://github.com/gauss1314) and [hsqlu](https://github.com/hsqlu) helped to refine the output of `explain`.
 
-*   [PR/14600](https://github.com/pingcap/tidb/pull/14600):  [hsqlu](https://github.com/hsqlu) helped to accomplish spilling intermediate results to disk when the execution engine exceeds the memory protection ratio.
+* [PR/14600](https://github.com/pingcap/tidb/pull/14600):  [hsqlu](https://github.com/hsqlu) helped to accomplish spilling intermediate results to disk when the execution engine exceeds the memory protection ratio.
 
-*   [PR/10512](https://github.com/pingcap/tidb/pull/10512), [PR/12305](https://github.com/pingcap/tidb/pull/12305) and [Issue/14332](https://github.com/pingcap/tidb/issues/14332): [hailanwhu](https://github.com/hailanwhu) and [sduzh](https://github.com/sduzh) together supported the `Index Merge` feature. Enables TiDB SQL Engine to use more than one index to improve the performance and robustness of query processing.
+* [PR/10512](https://github.com/pingcap/tidb/pull/10512), [PR/12305](https://github.com/pingcap/tidb/pull/12305) and [Issue/14332](https://github.com/pingcap/tidb/issues/14332): [hailanwhu](https://github.com/hailanwhu) and [sduzh](https://github.com/sduzh) together supported the `Index Merge` feature. Enables TiDB SQL Engine to use more than one index to improve the performance and robustness of query processing.
 
-*   [PR/14458](https://github.com/pingcap/tidb/pull/14458):  [catror](https://github.com/catror) vectorized the `Merge Join` executor which greatly improved the execution performance. It gets 57% faster than before in 4 threads.
+* [PR/14458](https://github.com/pingcap/tidb/pull/14458):  [catror](https://github.com/catror) vectorized the `Merge Join` executor which greatly improved the execution performance. It gets 57% faster than before in 4 threads.
 
-*   [PR/14238](https://github.com/pingcap/tidb/pull/14238): [pingyu](https://github.com/pingyu) optimized the execution performance of Window Function,
+* [PR/14238](https://github.com/pingcap/tidb/pull/14238): [pingyu](https://github.com/pingyu) optimized the execution performance of Window Function,
 
-*   [TiKV #5725](https://github.com/tikv/tikv/pull/5725): @niedhui Implemented the new row format at TiKV side.
+* [TiKV #5725](https://github.com/tikv/tikv/pull/5725): @niedhui Implemented the new row format at TiKV side.
 
-*   [TiKV #6685](https://github.com/tikv/tikv/pull/6685), [TiKV #6592](https://github.com/tikv/tikv/pull/6592), [TiKV #6713](https://github.com/tikv/tikv/pull/6713): @TennyZhuang Added collation support for index executor and built-in functions at TiKV side.
+* [TiKV #6685](https://github.com/tikv/tikv/pull/6685), [TiKV #6592](https://github.com/tikv/tikv/pull/6592), [TiKV #6713](https://github.com/tikv/tikv/pull/6713): @TennyZhuang Added collation support for index executor and built-in functions at TiKV side.
 
-*   [TiKV #5866](https://github.com/tikv/tikv/pull/5866), [TiKV #6000](https://github.com/tikv/tikv/pull/6000): @TennyZhuang greatly improved the performance of several built-in functions at TiKV side.
+* [TiKV #5866](https://github.com/tikv/tikv/pull/5866), [TiKV #6000](https://github.com/tikv/tikv/pull/6000): @TennyZhuang greatly improved the performance of several built-in functions at TiKV side.
 
 ## Quick Start
 
@@ -137,7 +136,7 @@ mysql -h localhost -P 4000 -u root
 tiup client
 ```
 
-###  TiOps Quick Start
+### TiOps Quick Start
 
 下载安装 rpm 包
 

@@ -50,7 +50,6 @@ tags: ['性能调优','最佳实践']
 
   <div class="caption-center">图 3 查看 Propose wait duration</div>
 
-
 ### 优化方法
 
 既然我们已经知道了性能问题的根源，那么就可以从两方面入手：减少单个 TiKV 实例的 Region 数；减少单个 Region 的消息数。根据不同版本，具体可以参考以下优化方法：

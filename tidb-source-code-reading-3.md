@@ -8,6 +8,7 @@ tags: ['TiDB 源码阅读','社区']
 
 
 ## 概述
+
 上一篇文章讲解了 TiDB 项目的结构以及三个核心部分，本篇文章从 SQL 处理流程出发，介绍哪里是入口，对 SQL 需要做哪些操作，知道一个 SQL 是从哪里进来的，在哪里处理，并从哪里返回。
 
 SQL 有很多种，比如读、写、修改、删除以及管理类的 SQL，每种 SQL 有自己的执行逻辑，不过大体上的流程是类似的，都在一个统一的框架下运转。
@@ -52,6 +53,7 @@ SQL 有很多种，比如读、写、修改、删除以及管理类的 SQL，每
 ```
 	445:	data, err := cc.readPacket()
 ```
+
 然后调用 dispatch() 方法处理收到的请求：
 
 ```
@@ -146,6 +148,7 @@ Session 中最重要的函数是 [Execute](https://github.com/pingcap/tidb/blob/
 		TableHints []*TableOptimizerHint
 	}
 ```
+
 其中，`FROM t` 会被解析为 `FROM` 字段，`WHERE c > 1` 被解析为 `Where` 字段，`*` 被解析为 `Fields` 字段。所有的语句的结构够都被抽象为一个 `ast.StmtNode`，这个接口读者可以自行看注释，了解一下。这里只提一点，大部分 ast 包中的数据结构，都实现了 `ast.Node` 接口，这个接口有一个 `Accept` 方法，后续对 AST 的处理，主要依赖这个 Accept 方法，以 [Visitor 模式](https://en.wikipedia.org/wiki/Visitor_pattern)遍历所有的节点以及对 AST 做结构转换。
 
 ### 制定查询计划以及优化
@@ -182,7 +185,6 @@ Session 中最重要的函数是 [Execute](https://github.com/pingcap/tidb/blob/
 			txnStartTS:  ctx.Txn().StartTS(),
 		}, nil
 ```
-
 
 这个结构实现了 [`ast.RecordSet`](https://github.com/pingcap/tidb/blob/source-code/ast/ast.go#L136) 接口，从字面上大家可以看出，这个接口代表了查询结果集的抽象，我们看一下它的几个方法：
 
@@ -249,8 +251,3 @@ TiDB 的执行引擎是以 Volcano 模型运行，所有的物理 Executor 构�
 <div class="caption-center">SQL 层执行过程</div>
 
 通过这篇文章，相信大家已经了解了 TiDB 中语句的执行框架，整个逻辑还是比较简单，框架中具体的模块的详细解释会在后续章节中给出。下一篇文章会用具体的语句为例，帮助大家理解本篇文章。
-
-
-
-
-

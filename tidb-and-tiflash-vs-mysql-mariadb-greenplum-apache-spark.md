@@ -181,4 +181,3 @@ mysql> select count(*) from ontime where 1845 = CRSDepTime;
 >* Greenplum 16 Segments (DISTRIBUTED RANDOMLY)
 >
 >* Oracle noparallel
-

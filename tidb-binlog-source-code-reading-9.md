@@ -10,15 +10,15 @@ tags: ['TiDB Binlog 源码阅读','社区']
 
 [TiDB Binlog（github.com/pingcap/tidb-binlog）](http://mp.weixin.qq.com/s?__biz=MzI3NDIxNTQyOQ==&mid=2247487391&idx=1&sn=3e173b9c634e028824a69f67a506dd11&chksm=eb1628f5dc61a1e35fcbad1525857678de705b202a9d9765a71de8e79d2229cc5440686a10fc&scene=21#wechat_redirect)用于收集 TiDB 的 binlog，并准实时同步给下游。 同步数据这一步重要操作由 Drainer 模块支持，它可以将 binlog 同步到 TiDB / MySQL / Kafka / File （增量备份）等下游组件。
 
-*   对于 TiDB 和 MySQL 两种类型的下游组件，Drainer 会从 binlog 中还原出对应的 SQL 操作在下游直接执行；
+* 对于 TiDB 和 MySQL 两种类型的下游组件，Drainer 会从 binlog 中还原出对应的 SQL 操作在下游直接执行；
 
-*   对于 Kafka 和 File（增量备份）两种类型的下游组件，输出约定编码格式的 binlog。用户可以定制后续各种处理流程，如更新搜索引擎索引、清除缓存、增量备份等。TiDB Binlog 自带工具 Reparo 实现了将增量备份数据（下游类型为 File（增量备份））同步到 TiDB / MySQL 的功能。
+* 对于 Kafka 和 File（增量备份）两种类型的下游组件，输出约定编码格式的 binlog。用户可以定制后续各种处理流程，如更新搜索引擎索引、清除缓存、增量备份等。TiDB Binlog 自带工具 Reparo 实现了将增量备份数据（下游类型为 File（增量备份））同步到 TiDB / MySQL 的功能。
 
 本文将按以下几个小节介绍 Drainer 如何将收到的 binlog 同步到下游：
 
-1.  Drainer Sync 模块：Drainer 通过 `Sync` 模块调度整个同步过程，所有的下游相关的同步逻辑统一封装成了 `Syncer` 接口。
+1. Drainer Sync 模块：Drainer 通过 `Sync` 模块调度整个同步过程，所有的下游相关的同步逻辑统一封装成了 `Syncer` 接口。
 
-2.  恢复工具 Reparo （读音：reh-PAH-roh）：从下游保存的 File（增量备份）中读取 binlog 同步到 TiDB / MySQL。
+2. 恢复工具 Reparo （读音：reh-PAH-roh）：从下游保存的 File（增量备份）中读取 binlog 同步到 TiDB / MySQL。
 
 ## Drainer Sync 模块
 

@@ -119,4 +119,3 @@ Operator 开箱即用给我们很多稳定性上的增强，也就是说在稳�
 第二案例是我们国内的某消费金融公司。上线的是系统归档和跑批业务，整个线上集群是有 60 多个物理节点，他们最显著的一点就是在用了 TiDB Kuberentes 之后，整个混部的硬件成本下降到原来物理机部署的 30% 左右。因此在整体的性价比上是一个巨大的提升。
 
 最后总结一下，什么是 TiDB 在 K8s 上的最佳实践？其实只有一句话，Keep Calm and Use TiDB Operator。当然，用 TiDB Operator 本身还是需要一定的上手成本的，这点我们也在不断的做改进，大家可以参考我们的官网，看一下 TiDB Operator 的 [一系列文档](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable)，让这个运维专家来为你的 TiDB Kuberentes 之旅保驾护航。
-

@@ -95,7 +95,6 @@ TiDB 的架构及原理在 [官网](https://pingcap.com/) 里有详细介绍，�
 | PD | 3 | Intel(R) Xeon(R) CPU E5-2620 v3 @ 2.40GHz | 128G | SSD Raid 5 | 2.0.3 | CentOS Linux release 7.3.1611 |
 | TiKV | 4 | Intel(R) Xeon(R) CPU E5-2620 v3 @ 2.40GHz | 128G | SSD Raid 5 | 2.0.3 | CentOS Linux release 7.3.1611 |
 
-
 ### 5.3 压测内容以及结果
 
 #### 5.3.1 标准 Select 压测

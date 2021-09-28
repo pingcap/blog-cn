@@ -38,11 +38,11 @@ TiDB 4.0 新提供 TiDB Dashboard 图形化界面，内置各种有力工具方�
 TiFlash 是配合 TiDB 体系的列存引擎，它和 TiDB 无缝结合，在线 DDL、无缝扩容、自动容错等等方便运维的特点也在 TiFlash 中得到继承。其次，TiFlash 可以**实时**与行存保持同步。
 关于 TiFlash 的性能与架构原理，可以参考以下几篇文章：
 
-*   [一两个节点、一两条命令，轻松让 TiDB 分析场景无痛提速十倍](https://pingcap.com/blog-cn/10x-improving-analytical-processing-ability-of-tidb-with-tiflash/)
+* [一两个节点、一两条命令，轻松让 TiDB 分析场景无痛提速十倍](https://pingcap.com/blog-cn/10x-improving-analytical-processing-ability-of-tidb-with-tiflash/)
 
-*   [为了证明它的速度，我们一口气对比了 Oracle、MySQL、MariaDB、Greenplum、Apache Spark](https://pingcap.com/blog-cn/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/)
+* [为了证明它的速度，我们一口气对比了 Oracle、MySQL、MariaDB、Greenplum、Apache Spark](https://pingcap.com/blog-cn/tidb-and-tiflash-vs-mysql-mariadb-greenplum-apache-spark/)
 
-*   [TiFlash：并非另一个 T+1 列存数据库](https://pingcap.com/blog-cn/tiflash-column-database/)
+* [TiFlash：并非另一个 T+1 列存数据库](https://pingcap.com/blog-cn/tiflash-column-database/)
 
 点击查看 [TiFlash 官方操作文档](https://pingcap.com/docs-cn/stable/reference/tiflash/overview/)。
 

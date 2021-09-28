@@ -52,16 +52,15 @@ customerCategory: 电商
 
 阿里云服务器：
 
-*   TiDB / PD：3 台 i1 型 机器，16c 64g ；
+* TiDB / PD：3 台 i1 型 机器，16c 64g ；
 
-*   TiKV ：5 台 i2 型机器，16c 128g， 1.8T*2 每台机器部署两个 KV；
+* TiKV ：5 台 i2 型机器，16c 128g， 1.8T*2 每台机器部署两个 KV；
 
-*   监控机一台。
+* 监控机一台。
 
 目前我们将线上 RDS 中三个库的数据通过 Binlog 同步到 TiDB ，高峰期 QPS 23k 左右，接入了业务端部分查询服务；未来我们会将更多 RDS 库数据同步过来，并交付给更多业务组使用。因为 TiDB 是新上项目，之前的业务线也没有线上 SQL 迁移的经历，所以在写入性能上也没有历史数据对比。
 
 ![](media/user-case-keruyun/3.png)
-
 
 ### 2. 性能对比
 
@@ -69,11 +68,9 @@ customerCategory: 电商
 
 ![](media/user-case-keruyun/4.png)
 
-
 （2）查询两个索引后的数字列，返回 10 条记录（每条记录只返回 10 字节左右的 2 个小字段）的性能，这个测的是返回小数据量以及多一个查询条件对性能的影响。
 
 ![](media/user-case-keruyun/5.png)
-
 
 （3）查询一个索引后的数字列，按照另一个索引的日期字段排序（索引建立的时候是倒序，排序也是倒序），并且 Skip 100 条记录后返回 10 条记录的性能，这个测的是 Skip 和 Order 对性能的影响。
 
@@ -85,11 +82,11 @@ customerCategory: 电商
 
 （5）TiDB 对比 MySQL 复杂 SQL 执行速率：
 
-*   Table 1  TiDB 数据量 5 千万，MySQL数据量 2.5 千万；
+* Table 1  TiDB 数据量 5 千万，MySQL数据量 2.5 千万；
 
-*   Table 2  TiDB 数据量 5 千万，MySQL数据量 2.5 千万；
+* Table 2  TiDB 数据量 5 千万，MySQL数据量 2.5 千万；
 
-*   Table 3  TiDB 数据量 5 千万，MySQL数据量 2.5 千万。
+* Table 3  TiDB 数据量 5 千万，MySQL数据量 2.5 千万。
 
 **a. 对应 SQL：**
 
@@ -123,7 +120,6 @@ AND c.delivery_type in(1,2,3,4,15)
 ```
 
 ![](media/user-case-keruyun/8.png)
-
 
  **b. 对应 SQL：**
 
@@ -166,7 +162,6 @@ GROUP BY p.relate_id  ) c
 
 ![](media/user-case-keruyun/9.png)
 
-
  **c. 对应 SQL：**
 
 ```
@@ -208,7 +203,6 @@ AND c.delivery_type in(1,2,3,4,15)
 
 ![](media/user-case-keruyun/10.png)
 
-
 **d. 对应 SQL：**
 
 ```
@@ -233,7 +227,6 @@ GROUP BY t.id
 ```
 
 ![](media/user-case-keruyun/11.png)
-
 
 **e. 对应 SQL：**
 
@@ -262,7 +255,6 @@ group by t.id ;
 
 ![](media/user-case-keruyun/12.png)
 
-
 （6）OLTP 对比测试结果：
 
 ![](media/user-case-keruyun/13.png)
@@ -270,7 +262,6 @@ group by t.id ;
 ![](media/user-case-keruyun/14.png)
 
 ![](media/user-case-keruyun/15.png)
-
 
 （7）简单测试结论：
 
@@ -293,5 +284,3 @@ group by t.id ;
 ## 致谢
 
 感谢 TiDB 的厂商的人员给予了我们巨大的支持，希望我们能够提供给 TiDB 一些有意义的信息和建议，在 TiDB 成长的路上添砖加瓦。
-
-

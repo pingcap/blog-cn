@@ -151,7 +151,7 @@ TiDB 实现悲观事务的方式很聪明而且优雅，我们仔细思考了 Pe
 
 * `BEGIN PESSIMISTIC`
 
-* `BEGIN /*!90000 PESSIMISTIC */ `
+* `BEGIN /*!90000 PESSIMISTIC */`
 
 用这两种 BEGIN 开始的事务，都会进入悲观事务模式，就这么简单。
 

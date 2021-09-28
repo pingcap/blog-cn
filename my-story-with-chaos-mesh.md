@@ -102,5 +102,3 @@ Chaos Mesh 开源消息发布的当天，直接登上了 Hacker News 首页，�
 时间在继续，我和 Chaos Mesh 的故事也才刚刚开始。在接下来的日子里，挑战不止，精彩无限存在！我将与社区一起努力，将 Chaos Mesh 打造成为真正的混沌工程标准！Chaos Mesh，未来可期！ 
 
 最后附上 Chaos Mesh 社区调查链接，填写有惊喜哦：[https://bit.ly/2LzES5o](https://bit.ly/2LzES5o)
-
-

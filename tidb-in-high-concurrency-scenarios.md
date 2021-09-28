@@ -16,17 +16,17 @@ tags: ['TiDB','最佳实践']
 
 高并发批量插入场景，通常存在于业务系统中的批量任务中，例如清算以及结算等业务。它存在以下显著的特点：
 
-*   数据量大
+* 数据量大
 
-*   需要短时间内将历史数据入库
+* 需要短时间内将历史数据入库
 
-*   需要短时间内读取大量数据
+* 需要短时间内读取大量数据
 
 这就对 TiDB 提出了一些挑战：
 
-*   写入/读取能力是否可以线性水平扩展
+* 写入/读取能力是否可以线性水平扩展
 
-*   数据在持续大并发写入，性能是否稳定不衰减
+* 数据在持续大并发写入，性能是否稳定不衰减
 
 对于分布式数据库来说，除了本身的基础性能之外，最重要的就是充分利用所有节点能力，避免出现单个节点成为瓶颈。
 
@@ -39,7 +39,6 @@ TiDB 对于数据的切分，按 Region 为单位，一个 Region 有大小限�
 ![图 1 TiDB 数据概览](media/tidb-in-high-concurrency-scenarios/1.png)
 
 <div class="caption-center">图 1 TiDB 数据概览</div>
-
 
 只要业务的写入没有 AUTO_INCREMENT 的主键或者单调递增的索引（也即没有业务上的写入热点，更多细节参见 [TiDB 正确使用方式](https://zhuanlan.zhihu.com/p/25574778)）。从原理上来说，TiDB 依靠这个架构，是可以线性扩展读写能力，并且可以充分利用分布式的资源的。这一点上 TiDB 尤其适合高并发批量写入场景的业务。
 
@@ -68,11 +67,9 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 
 到目前为止，似乎已经符合了我们上述提到的 TiDB 最佳实践了，业务上没有热点产生，只要我们有足够的机器，就可以充分利用 TiDB 的分布式能力了。要验证这一点，我们可以在实验环境中试一试（实验环境部署拓扑是 2 个 TiDB 节点，3 个 PD 节点，6 个 TiKV 节点，请大家忽略 QPS，这里的测试只是为了阐述原理，并非 benchmark）：
 
-
 ![图 2 监控截图](media/tidb-in-high-concurrency-scenarios/2.png)
 
 <div class="caption-center">图 2 监控截图</div>
-
 
 客户端在短时间内发起了 “密集” 的写入，TiDB 收到的请求是 3K QPS。如果没有意外的话，压力应该均摊给 6 个 TiKV 节点。但是从 TiKV 节点的 CPU 使用情况上看，存在明显的写入倾斜（tikv - 3 节点是写入热点）：
 
@@ -83,7 +80,6 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 ![图 4 监控截图](media/tidb-in-high-concurrency-scenarios/4.png)
 
 <div class="caption-center">图 4 监控截图</div>
-
 
 [Raft store CPU](https://pingcap.com/docs-cn/v3.0/reference/key-monitoring-metrics/tikv-dashboard/) 代表 raftstore 线程的 CPU 使用率，通常代表着写入的负载，在这个场景下 tikv-3 是 raft 的 leader，tikv-0 跟 tikv-1 是 raft 的 follower，其他的 tikv 节点的负载几乎为空。
 
@@ -106,7 +102,6 @@ INSERT INTO TEST_HOTSPOT(id, age, user_name, email) values(%v, %v, '%v', '%v');
 ![图 6 TiKV Region 分裂流程](media/tidb-in-high-concurrency-scenarios/6.png)
 
 <div class="caption-center">图 6 TiKV Region 分裂流程</div>
-
 
 上图简单描述了这个过程，持续写入，TiKV 会将 Region 切分。但是由于是由原 Leader 所在的 Store 首先发起选举，所以大概率下旧的 Store 会成为新切分好的两个 Region 的 Leader。对于新切分好的 Region 2，3。也会重复之前发生在 Region 1 上的事情。也就是压力会密集地集中在 TiKV-Node 1 中。
 
@@ -134,11 +129,9 @@ SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)]
 
 读者可能会有疑问，为何 TiDB 不自动将这个切分动作提前完成？大家先看一下下图：
 
-
 ![图 8 Table Region Range](media/tidb-in-high-concurrency-scenarios/8.png)
 
 <div class="caption-center">图 8 Table Region Range</div>
-
 
 从图 8 可以知道，Table 行数据 key 的编码之中，行数据唯一可变的是行 ID （rowID）。在 TiDB 中 rowID 是一个 Int64 整形。那么是否我们将 Int64 整形范围均匀切分成我们要的份数，然后均匀分布在不同的节点就可以解决问题呢？
 
@@ -172,7 +165,6 @@ SPLIT TABLE TEST_HOTSPOT BETWEEN (0) AND (9223372036854775807) REGIONS 128;
 
 我们再重新运行插入负载：
 
-
 ![图 9 监控截图](media/tidb-in-high-concurrency-scenarios/9.png)
 
 <div class="caption-center">图 9 监控截图</div>
@@ -185,13 +177,11 @@ SPLIT TABLE TEST_HOTSPOT BETWEEN (0) AND (9223372036854775807) REGIONS 128;
 
 <div class="caption-center">图 11 监控截图</div>
 
-
 可以看到已经消除了明显的热点问题了。
 
 当然，这里只是举例了一个简单的表，还有索引热点的问题。如何预先切散索引相关的 Region？
 
 这个问题可以留给读者，通过 [Split Region 文档](https://pingcap.com/docs-cn/v3.0/reference/sql/statements/split-region/#split-region-%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3) 可以获得更多的信息。
-
 
 ### 更复杂一些的情况
 
@@ -199,7 +189,7 @@ SPLIT TABLE TEST_HOTSPOT BETWEEN (0) AND (9223372036854775807) REGIONS 128;
 
 要避免由 _tidb_rowid 带来的写入热点问题，可以在建表时，使用 SHARD_ROW_ID_BITS  和 PRE_SPLIT_REGIONS 这两个建表 option（查看什么是 [PRE_SPLIT_REGIONS](https://pingcap.com/docs-cn/v3.0/reference/sql/statements/split-region/#pre-split-regions)）。
 
-SHARD_ROW_ID_BITS 用来把 _tidb_rowid 列生成的行 ID 随机打散，pre_split_regions 用来在建完表后就预先 split region。注意：pre_split_regions 必须小于等于 shard_row_id_bits。
+SHARD_ROW_ID_BITS 用来把_tidb_rowid 列生成的行 ID 随机打散，pre_split_regions 用来在建完表后就预先 split region。注意：pre_split_regions 必须小于等于 shard_row_id_bits。
 
 示例：
 
@@ -207,13 +197,12 @@ SHARD_ROW_ID_BITS 用来把 _tidb_rowid 列生成的行 ID 随机打散，pre_sp
 create table t (a int, b int) shard_row_id_bits = 4 pre_split_regions=·3; 
 ```
 
-*   SHARD_ROW_ID_BITS = 4 表示 tidb_rowid 的值会随机分布成 16 （16=2^4） 个范围区间。
+* SHARD_ROW_ID_BITS = 4 表示 tidb_rowid 的值会随机分布成 16 （16=2^4） 个范围区间。
 
-*   pre_split_regions=3 表示建完表后提前 split 出 8 (2^3) 个 region。
+* pre_split_regions=3 表示建完表后提前 split 出 8 (2^3) 个 region。
 
 在表 t 开始写入后，数据写入到提前 split 好的 8 个 region 中，这样也避免了刚开始建表完后因为只有一个 region 而存在的写热点问题。
 
- 
 ## 参数配置
 
 ### 关闭 TiDB 的 Latch 机制
@@ -224,4 +213,3 @@ TiDB 2.1 版本中在 SQL 层引入了 [latch 机制](https://pingcap.com/docs-c
 [txn-local-latches]
 enabled = false
 ```
-

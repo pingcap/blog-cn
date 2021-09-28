@@ -16,7 +16,6 @@ TiSpark 是将 Spark SQL 直接运行在 TiDB 存储引擎 TiKV 上的 OLAP 解�
 
 <div class="caption-center">TiSpark 架构图</div>
 
-
 + TiSpark 深度整合了 Spark Catalyst 引擎, 可以对计算提供精确的控制，使 Spark 能够高效的读取 TiKV 中的数据，提供索引支持以实现高速的点查；
 
 + 通过多种计算下推减少 Spark SQL 需要处理的数据大小，以加速查询；利用 TiDB 的内建的统计信息选择更优的查询计划。
@@ -72,6 +71,7 @@ block-cache-size = "1GB"
 [storage]
 scheduler-worker-pool-size = 4
 ```
+
 #### 3.1.2 Spark / TiSpark 集群独立部署配置
 
 关于 Spark 的详细硬件推荐配置请参考[官网](https://spark.apache.org/docs/latest/hardware-provisioning.html)，如下是根据 TiSpark 场景的简单阐述。
@@ -87,6 +87,7 @@ Spark 的具体配置方式也请参考[官方说明](https://spark.apache.org/d
  	SPARK_WORKER_MEMORY=32g
  	SPARK_WORKER_CORES=8
 ```
+
 #### 3.1.3 TiSpark 与 TiKV 集群混合部署配置
 
 对于 TiKV、TiSpark 混合部署场景，请在原有 TiKV 预留资源之外累加 Spark 所需部分并分配 25% 的内存作为系统本身占用。

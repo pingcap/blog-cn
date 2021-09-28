@@ -118,5 +118,3 @@ image: /images/media/DevCon2018/15.JPG
 最后，就是大家有很多的地理位置相关的查询这种特性，我们计划是在 2018 年的 Q4 到 2019 年的 Q1 来提供。
 
 ![](media/DevCon2018/14.jpeg)
-
-

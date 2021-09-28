@@ -7,7 +7,6 @@ tags: ['TiDB']
 
 2018 年 1 月 19 日，TiDB 发布 1.1 Alpha 版。该版本对 MySQL 兼容性、SQL 优化器、系统稳定性、性能做了大量的工作。
 
-
 ## TiDB
 
 - SQL parser
@@ -54,11 +53,6 @@ tags: ['TiDB']
 
 源码地址：[https://github.com/pingcap/tidb](https://github.com/pingcap/tidb)
 
-
-
 **如今，在社区和 PingCAP 技术团队的共同努力下，TiDB 1.1 Alpha 版已发布，在此感谢社区的小伙伴们长久以来的参与和贡献。**
 
-
-
 > 作为世界级开源的分布式关系型数据库，TiDB 灵感来自于 Google Spanner/F1，具备『分布式强一致性事务、在线弹性水平扩展、故障自恢复的高可用、跨数据中心多活』等核心特性。TiDB 于 2015 年 5 月在 GitHub 创建，同年 12 月发布 Alpha 版本，而后于 2016 年 6 月发布 Beta 版，12 月发布 RC1 版， 2017 年 3 月发布 RC2 版，6月份发布 RC3 版，8月份发布 RC4 版，并在 10 月发版 TiDB 1.0。
-

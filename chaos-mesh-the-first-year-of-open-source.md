@@ -11,12 +11,12 @@ Chaos Mesh 开源刚刚一周年，这一年来，Chaos Mesh 产品不断迭代�
 在这篇文章中，笔者会从多个方面和大家一起回顾 Chaos Mesh 在这一年中的变化与成长，畅谈一些 Chaos Mesh 未来的目标与计划。
 
 ## 产品：明确目标，茁壮成长
-这一年里， Chaos Mesh 在大家共同的努力下在以肉眼可见的速度成长着。从第一个版本，到最近我们刚刚发布的 [1.1](](https://github.com/chaos-mesh/chaos-mesh/releases/tag/v1.1.0)
-) 版本，无论是功能上，还是易用性，安全性等方面，Chaos Mesh 都有了很大的提升。
+
+这一年里， Chaos Mesh 在大家共同的努力下在以肉眼可见的速度成长着。从第一个版本，到最近我们刚刚发布的 [1.1](https://github.com/chaos-mesh/chaos-mesh/releases/tag/v1.1.0) 版本，无论是功能上，还是易用性，安全性等方面，Chaos Mesh 都有了很大的提升。
 
 ### 功能方面
 
-刚开源的时候，Chaos Mesh 支持 PodChaos，NetworkChaos 以及 IOChaos，经过这一年的不断丰富，Chaos Mesh 已经能够全方位的对网路、时间、JVM 应用、文件系统、操作系统等进行故障注入。这一年中 Chaos Mesh 共新增 5 类故障类型：  
+刚开源的时候，Chaos Mesh 支持 PodChaos，NetworkChaos 以及 IOChaos，经过这一年的不断丰富，Chaos Mesh 已经能够全方位的对网路、时间、JVM 应用、文件系统、操作系统等进行故障注入。这一年中 Chaos Mesh 共新增 5 类故障类型：
 
 - StressChaos: 模拟 CPU，Memory 压力场景
 
@@ -24,7 +24,7 @@ Chaos Mesh 开源刚刚一周年，这一年来，Chaos Mesh 产品不断迭代�
 
 - DNSChaos：模拟 DNS 服务故障
 
-- KernelChaos：模拟内核故障  
+- KernelChaos：模拟内核故障
 
 - JVMChaos：模拟 JVM 应用异常 (Reviewing)
 
@@ -38,7 +38,7 @@ Chaos Mesh 开源刚刚一周年，这一年来，Chaos Mesh 产品不断迭代�
 
 ### 易用性方面
 
-为了能够让用户快速体验 Chaos Mesh，我们单独提供了一键安装脚本，用户只需要执行一条命令，就可以在本地快速地体验 Chaos Mesh。此外，我们还实现了全新组件 Chaos Dashboard，Chaos Dashboard 极大地简化了管理混沌实验的复杂度，用户可以直接通过可视化界面来管理和监控混沌实验。  
+为了能够让用户快速体验 Chaos Mesh，我们单独提供了一键安装脚本，用户只需要执行一条命令，就可以在本地快速地体验 Chaos Mesh。此外，我们还实现了全新组件 Chaos Dashboard，Chaos Dashboard 极大地简化了管理混沌实验的复杂度，用户可以直接通过可视化界面来管理和监控混沌实验。
 
 ![2](media/chaos-mesh-the-first-year-of-open-source/2.png)
 
@@ -46,22 +46,23 @@ Chaos Mesh 开源刚刚一周年，这一年来，Chaos Mesh 产品不断迭代�
 
 ### 安全性方面
 
-这一年中，Chaos Mesh 在提高安全性方面同样作出了诸多努力。Chaos Mesh 提供更加完善的 Selectors 用来控制实验范围，支持设置特定的 Namespaces 来保护重要应用。此外，Chaos Mesh 还支持在 Namespace 权限使用，用户可以把 Chaos Mesh 的权限范围限制在特定某个 Namespace 下，如此一来可以更大程度控制实验的“爆炸半径”，提供更加安全的混沌实验体现。  
+这一年中，Chaos Mesh 在提高安全性方面同样作出了诸多努力。Chaos Mesh 提供更加完善的 Selectors 用来控制实验范围，支持设置特定的 Namespaces 来保护重要应用。此外，Chaos Mesh 还支持在 Namespace 权限使用，用户可以把 Chaos Mesh 的权限范围限制在特定某个 Namespace 下，如此一来可以更大程度控制实验的“爆炸半径”，提供更加安全的混沌实验体现。
 
 此外，Chaos Mesh 直接复用 Kubernetes 的原生权限机制，在 Chaos Dashboard 组件上支持身份验证，以避免其他用户的误操作造成混沌实验的失败或者不可控。
 
-## 生态：不断深入，互帮互助 
+## 生态：不断深入，互帮互助
 
 在这一年，Chaos Mesh 成功进入 CNCF 沙箱托管项目，这意味 Chaos Mesh 得到整个云原生社区的初步认可，这也意味 Chaos Mesh 后续也将承担推动云原生社区发展的责任，以及推动混沌工程在云原生应用领域上落地。在这一年中 Chaos Mesh 和整个云原生生态相互配合，共同成长。
 
-### Grafana 
+### Grafana
 
 Chaos Mesh 为了进一步提高混沌实验的可观测性，单独开发了 [Grafana 插件](https://github.com/chaos-mesh/chaos-mesh-datasource)，方便用户直接将混沌实验的信息展示在自己的监控面板上。用户在 Grafana 上安装了此插件后，可以直接在应用的监控面板上开启混沌实验信息按钮，混沌实验的相关信息会以 [Annotations](https://grafana.com/docs/grafana/latest/dashboards/annotations/) 的方式在当前的面板上展示出来，这样用户就可以在一个界面上同时观察到应用的运行情况以及当前运行的混沌实验信息。
 
-### Github Action 
+### Github Action
 
 为了帮助用户在开发阶段就运行混沌实验，我们开发了 [chaos-mesh-action](https://github.com/chaos-mesh/chaos-mesh-action) 这个项目，让 Chaos Mesh 运行在 GitHub Actions 的 workflow 中，让 Chaos Mesh 可以更方便地集成到系统的日常开发、测试中，为 GitHub 上每一次代码的提交保驾护航。
-### TiPocket 
+
+### TiPocket
 
 TiPocket 是一个同时集成 Chaos Mesh 和 Argo 的自动化测试平台，实现完全自动化的混沌实验。通常我们进行混沌实验的时候，存在很多步骤，比如部署待测试应用，运行 workload，以及注入异常，业务检查等等，为了让这些步骤完全的自动化起来，TiPocket 在 Chaos Mesh 的基础上引入了 Argo 工具，一方面 Chaos Mesh 提供丰富的故障注入能力，另一方面 Argo 提供灵活的编排和调度能力。
 
@@ -97,7 +98,7 @@ Chaos Mesh 是社区驱动的项目，项目和生态的迭代和演进离不开
 
 ![4](media/chaos-mesh-the-first-year-of-open-source/4.png)
 
-这一年中我们成功发布了 1.1 版本，经过一段时间的积累以及接受用户各种反馈，Chaos Mesh  有了更加明确的目标，朝着构建完善的混沌工程生态不断前行。目前我们正在快速开发 Chaos Mesh 2.0 版本，在 2.0 中， Chaos Mesh 将引入内嵌的 Workflow 引擎，用来支持定义和管理更加灵活的混沌实验场景，以及引入应用状态检查机制和提供更加完善的混沌实验报告。2.0 版本预计会在几个月后发布，并且项目的后续计划安排，我们会及时在项目的 [roadmap](https://github.com/chaos-mesh/chaos-mesh/blob/master/ROADMAP.md) 上持续更新。 
+这一年中我们成功发布了 1.1 版本，经过一段时间的积累以及接受用户各种反馈，Chaos Mesh  有了更加明确的目标，朝着构建完善的混沌工程生态不断前行。目前我们正在快速开发 Chaos Mesh 2.0 版本，在 2.0 中， Chaos Mesh 将引入内嵌的 Workflow 引擎，用来支持定义和管理更加灵活的混沌实验场景，以及引入应用状态检查机制和提供更加完善的混沌实验报告。2.0 版本预计会在几个月后发布，并且项目的后续计划安排，我们会及时在项目的 [roadmap](https://github.com/chaos-mesh/chaos-mesh/blob/master/ROADMAP.md) 上持续更新。
 
 ## 最后
 

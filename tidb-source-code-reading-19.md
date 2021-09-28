@@ -9,7 +9,6 @@ tags: ['TiDB 源码阅读','社区']
 
 [TiDB 源码阅读系列文章（十八）](http://pingcap.com/blog-cn/tidb-source-code-reading-18/) 中，我们介绍了数据读写过程中 tikv-client 需要解决的几个具体问题，本文将继续介绍 tikv-client 里的两个主要的模块——负责处理分布式计算的 copIterator 和执行二阶段提交的 twoPhaseCommitter。
 
-
 ## copIterator
 
 ### copIterator 是什么
@@ -92,7 +91,7 @@ copIterator 在 `Next` 里会根据结果是否有序，选择相应的执行模
 
 * [从 `memBuffer` 和 `lockedKeys` 里收集所有的 key 和 mutation](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L91)
 
-    `memBuffer` 里的 key 是有序排列的，我们从头遍历 `memBuffer` 可以顺序的收集到事务里需要修改的 key，value 长度为 0 的 entry 表示 `DELETE` 操作，value 长度大于 0 表示 `PUT` 操作，`memBuffer` 里的第一个 key 做为事务的 primary key。`lockKeys` 里保存的是不需要修改，但需要加读锁的 key，也会做为 mutation 的 `LOCK ` 操作，写到 TiKV 上。
+    `memBuffer` 里的 key 是有序排列的，我们从头遍历 `memBuffer` 可以顺序的收集到事务里需要修改的 key，value 长度为 0 的 entry 表示 `DELETE` 操作，value 长度大于 0 表示 `PUT` 操作，`memBuffer` 里的第一个 key 做为事务的 primary key。`lockKeys` 里保存的是不需要修改，但需要加读锁的 key，也会做为 mutation 的 `LOCK` 操作，写到 TiKV 上。
 
 * [计算事务的大小是否超过限制](https://github.com/pingcap/tidb/blob/v2.1.0-rc.2/store/tikv/2pc.go#L132)
 

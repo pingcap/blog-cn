@@ -11,11 +11,5 @@
             "pattern": "^#.+$"
         }
     ],
-    "replacementPatterns": [
-        {
-            "comment": "remove anchor part",
-            "pattern": "#.+$",
-            "replacement": ""
-        }
-    ]
+    "replacementPatterns": []
 }
