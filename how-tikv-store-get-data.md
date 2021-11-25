@@ -219,8 +219,8 @@ CREATE TABLE t1 {
 
 ```
 PK
-t_11_1 -> (1, “a”, 10, “hello”)
-t_11_2 -> (2, “b”, 12, “world”)
+t_11_1 -> (“a”, 10, “hello”)
+t_11_2 -> (“b”, 12, “world”)
 
 Unique Name
 i_12_a -> 1
