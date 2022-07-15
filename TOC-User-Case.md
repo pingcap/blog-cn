@@ -61,7 +61,6 @@
   - [翼支付](user-case-bestpay.md)
   - [平安科技](user-case-pingankeji.md)
   - [微众银行](user-case-webank.md)
-  - [华泰证券](user-case-huataizhengquan.md)
   - [ZaloPay](user-case-zalopay.md)
   - [马上消费](user-case-mashangxiaofei.md)
   - [贝壳金服](user-case-beikejinfu.md)
