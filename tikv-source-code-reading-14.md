@@ -31,7 +31,7 @@ TiKV 读取数据并计算的模块，我们定义为 Coprocessor，该概念灵
 
 如图，以上查询语句在 TiDB 中处理如下：
 
-1. TiDB 收到查询语句，对语句进行分析，计算出物理执行计划，组织称 TiKV 的 Coprocessor 请求。
+1. TiDB 收到查询语句，对语句进行分析，计算出物理执行计划，组织成 TiKV 的 Coprocessor 请求。
 2. TiDB 将该 Coprocessor 请求根据数据的分布，分发到所有相关的 TiKV 上。
 3. TiKV 在收到该 Coprocessor 请求后，根据请求算子对数据进行过滤聚合，然后返回给 TiDB。
 4. TiDB 在收到所有数据的返回结果后，进行二次聚合，并将最终结果计算出来，返回给客户端。
@@ -76,7 +76,7 @@ DAG 顾名思义，是由一系列算子组成的有向无环图，算子在代�
 
 ## 算子概览
 
-在向量化计算模型中，所有算子都实现了 `BatchExecutor`接口，其主要定义了一个 `get_batch` 的函数：
+在向量化计算模型中，所有算子都实现了 `BatchExecutor`接口，其主要定义了一个 `next_batch` 的函数：
 
 ```
 pub trait BatchExecutor: Send {
